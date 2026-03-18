@@ -1,10 +1,10 @@
 ---
-title: Claude Code Obsidian Skills
 tags:
   - obsidian
   - claude-code
   - skills
 created: 2026-03-17
+updated: 2026-03-17
 ---
 
 # Claude Code Obsidian Skills
@@ -18,10 +18,6 @@ created: 2026-03-17
 - 管理 tasks、properties
 - 開發與除錯 plugin（reload、截圖、DOM 檢查）
 
-→ [[daily-append-bug]]
-
----
-
 ## obsidian:obsidian-markdown
 
 撰寫與編輯 Obsidian Flavored Markdown。
@@ -32,8 +28,6 @@ created: 2026-03-17
 - Frontmatter properties
 - Embeds、標籤、雙向連結
 
----
-
 ## obsidian:json-canvas
 
 建立與編輯 `.canvas` 畫布檔案。
@@ -41,8 +35,6 @@ created: 2026-03-17
 **功能**
 - 新增 nodes、edges、groups
 - 視覺化連結筆記、心智圖、流程圖
-
----
 
 ## obsidian:obsidian-bases
 
@@ -53,10 +45,10 @@ created: 2026-03-17
 - 篩選、排序、公式
 - 統整多張筆記的 properties
 
----
-
 ## obsidian:defuddle
 
 從網頁擷取乾淨的 Markdown 內容。
 
-→ [[defuddle-副作用]]
+## 相關
+- [[defuddle-副作用]]
+- [[daily-append-bug]]

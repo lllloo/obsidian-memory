@@ -1,3 +1,4 @@
 {
-  "folder": "Inbox"
+  "folder": "Inbox",
+  "template": "Templates/card"
 }
