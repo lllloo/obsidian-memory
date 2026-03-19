@@ -22,5 +22,5 @@ Claude Code 使用 `obsidian:obsidian-cli` skill 呼叫 CLI 指令，直接讀�
 | `obsidian search query="..."`              | 搜尋 vault  |
 
 ## 相關
-- [[Skills]]
+- [[Obsidian Skills 總覽]]
 - [[daily-append-bug]]

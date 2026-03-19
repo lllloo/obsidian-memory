@@ -16,4 +16,4 @@ updated: 2026-03-17
 在 CLAUDE.md 明確指定：讀取 URL 時直接用 WebFetch，不觸發 defuddle。
 
 ## 相關
-- [[Skills]]
+- [[Obsidian Skills 總覽]]
