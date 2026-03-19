@@ -19,4 +19,4 @@ updated: 2026-03-17
 2. `obsidian append path="<date>.md" content="內容"`
 
 ## 相關
-- [[Claude Code 整合]]
+- [[Obsidian CLI 整合指南]]

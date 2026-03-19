@@ -7,7 +7,7 @@ created: 2026-03-17
 updated: 2026-03-17
 ---
 
-# Claude Code 整合
+# Obsidian CLI 整合指南
 
 透過 **Obsidian CLI** 讓 Claude Code 操作 Obsidian vault。
 
