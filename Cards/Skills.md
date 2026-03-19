@@ -49,6 +49,12 @@ updated: 2026-03-17
 
 從網頁擷取乾淨的 Markdown 內容。
 
+**功能**
+- 移除導覽列、廣告等雜訊
+- 輸出精簡的 Markdown，節省 token
+
+> [!warning] 本機未安裝 Defuddle CLI，直接用 WebFetch 取代
+
 ## 相關
 - [[defuddle-副作用]]
 - [[daily-append-bug]]
