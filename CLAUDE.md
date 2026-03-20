@@ -17,8 +17,14 @@
 
 ## 已知問題
 
-`daily:append` 有 bug（exit code 127），一律改用：
+`daily:append` 在 Git Bash 環境 exit code 127（shell 差異造成）。
 
+**解法一（推薦）**：用 PowerShell 包一層：
+```bash
+powershell.exe -Command "obsidian daily:append content='內容'"
+```
+
+**解法二**（備用）：
 1. `obsidian daily:path` 取得路徑
 2. `obsidian append path="<date>.md" content="內容"`
 

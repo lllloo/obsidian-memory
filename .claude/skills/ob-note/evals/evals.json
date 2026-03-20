@@ -1,0 +1,52 @@
+{
+  "skill_name": "ob-note",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "新增一個關於 Vue Composable 最佳實踐的筆記",
+      "expected_output": "在 Obsidian Inbox/ 建立新筆記，套用 card 模板，frontmatter 有 created 和 updated 日期屬性，Obsidian 自動開啟該筆記",
+      "files": [],
+      "expectations": [
+        "執行了 obsidian create 指令並帶有 template=card 和 open 參數",
+        "執行了 obsidian property:set 設定 created 屬性",
+        "執行了 obsidian property:set 設定 updated 屬性",
+        "標題包含 Vue Composable 相關字詞，未加日期前綴",
+        "回應確認筆記已建立並提供路徑"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "幫我記一下今天完成了計畫，把 ob-note skill 建起來了",
+      "expected_output": "取得今日日記路徑後，追加一條記錄到今日日記",
+      "files": [],
+      "expectations": [
+        "執行了 obsidian daily:path 取得路徑",
+        "執行了 obsidian append 追加內容到今日日記",
+        "沒有使用 obsidian daily:append（有已知 bug）",
+        "回應確認已追加到今日日記"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "看一下今天的日記",
+      "expected_output": "顯示今日日記的內容",
+      "files": [],
+      "expectations": [
+        "執行了 obsidian daily:read",
+        "回應中顯示或摘要了日記內容",
+        "沒有建立新筆記或修改日記"
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "幫我找關於 TypeScript 的筆記",
+      "expected_output": "在 vault 中搜尋 TypeScript 相關筆記並列出結果",
+      "files": [],
+      "expectations": [
+        "執行了 obsidian search:context 指令",
+        "搜尋關鍵字包含 TypeScript",
+        "回應列出找到的筆記清單或告知未找到"
+      ]
+    }
+  ]
+}
