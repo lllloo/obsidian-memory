@@ -28,6 +28,18 @@ powershell.exe -Command "obsidian <指令>"
 1. `obsidian daily:path` 取得今日路徑
 2. `obsidian append path="<date>.md" content="內容"`
 
+## 安全規則
+
+此 vault 的內容會透過 Quartz 發佈到公開網站（ob.bugloop.com）。**所有寫入或修改的內容在 commit 前必須檢查，確保不包含以下敏感資料：**
+
+- API key、secret、token
+- 密碼、帳號憑證
+- 私人 IP、內部網址
+- 個人隱私資訊（身分證、電話、地址等）
+- 任何不適合公開的內容
+
+若發現既有筆記含有敏感資料，應立即移除並通知用戶。
+
 ## 規則
 
 ### 日記
