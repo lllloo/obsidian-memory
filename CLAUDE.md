@@ -17,15 +17,15 @@
 
 ## 已知問題
 
-`daily:append` 在 Git Bash 環境 exit code 127（shell 差異造成）。
+Obsidian CLI 在 Git Bash 環境下部分指令會回傳 exit code 127（shell 差異造成）。
 
-**解法一（推薦）**：用 PowerShell 包一層：
+**Windows (Git Bash)**：用 PowerShell 包一層：
 ```bash
-powershell.exe -Command "obsidian daily:append content='內容'"
+powershell.exe -Command "obsidian <指令>"
 ```
 
-**解法二**（備用）：
-1. `obsidian daily:path` 取得路徑
+**macOS/Linux**：若遇到同類問題，改用等效的兩步驟拆解。例如 `daily:append` 失敗時：
+1. `obsidian daily:path` 取得今日路徑
 2. `obsidian append path="<date>.md" content="內容"`
 
 ## 規則

@@ -1,1 +1,6 @@
 .obsidian/workspace.json
+.obsidian/workspace-mobile.json
+node_modules/
+public/
+.quartz-cache/
+.DS_Store
