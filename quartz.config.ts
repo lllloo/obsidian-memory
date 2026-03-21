@@ -14,7 +14,7 @@ const config: QuartzConfig = {
     enablePopovers: true,
     analytics: null,
     locale: "zh-TW",
-    baseUrl: "lllloo.github.io/obsidian-memory",
+    baseUrl: "ob.bugloop.com",
     ignorePatterns: ["private", "Templates", ".obsidian", ".claude", "CLAUDE.md", "node_modules"],
     defaultDateType: "created",
     theme: {
