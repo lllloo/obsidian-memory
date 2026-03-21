@@ -45,13 +45,15 @@ powershell.exe -Command "obsidian <指令>"
 ### 日記
 
 - 若有未填佔位符，先 `create overwrite` 填入再追加：
+  - `title:` → 今日日期（如 `2026-03-19`）
   - `created:` / `updated:` → 今日日期
-  - `# 標題` → 今日日期（如 `2026-03-19`）
 - 追加內容保持簡潔，不加多餘標題或結構
 
 ### 筆記
 
-- 標題用用戶說的主題，不加日期前綴
+- `title:` 用用戶說的主題，不加日期前綴
+- 不使用 `# 標題` heading，Quartz 會從 frontmatter `title` 自動產生
+- 若筆記尚未完成，可加 `draft: true` 防止發佈到網站
 - Tags：優先沿用現有 tags，沒有才建新的（小寫、`-` 連接）
 - Tag 格式一律用 YAML 清單：
   ```yaml
