@@ -1,4 +1,5 @@
 ---
+title: Claude Code Obsidian Skills
 tags:
   - obsidian
   - claude-code
@@ -6,8 +7,6 @@ tags:
 created: 2026-03-17
 updated: 2026-03-17
 ---
-
-# Claude Code Obsidian Skills
 
 ## obsidian:obsidian-cli
 

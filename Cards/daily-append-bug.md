@@ -1,4 +1,5 @@
 ---
+title: daily:append 失效
 tags:
   - obsidian
   - cli
@@ -6,8 +7,6 @@ tags:
 created: 2026-03-17
 updated: 2026-03-20
 ---
-
-# daily:append 失效
 
 `daily:append` 在 Claude Code（Git Bash）環境回傳 exit code 127 導致失敗。
 

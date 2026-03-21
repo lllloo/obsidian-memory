@@ -1,12 +1,11 @@
 ---
+title: skill-creator 是什麼
 tags:
   - claude-code
   - skill
 created: 2026-03-19
 updated: 2026-03-19
 ---
-
-# skill-creator 是什麼
 
 用來**建立、修改、優化 Claude Code 技能（skills）**的工具。
 

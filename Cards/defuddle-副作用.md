@@ -1,4 +1,5 @@
 ---
+title: "obsidian:defuddle 被意外觸發"
 tags:
   - obsidian
   - skill
@@ -6,8 +7,6 @@ tags:
 created: 2026-03-17
 updated: 2026-03-17
 ---
-
-# obsidian:defuddle 被意外觸發
 
 遇到 URL 會自動觸發 `obsidian:defuddle`，但本機未安裝 Defuddle CLI，導致失敗。
 

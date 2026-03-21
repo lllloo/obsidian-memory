@@ -1,12 +1,9 @@
 ---
+title:
 tags:
 created:
 updated:
 ---
 
-# 標題
-
-
 
 ## 相關
-- [[]]
