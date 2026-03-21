@@ -8,7 +8,7 @@ import * as Plugin from "./quartz/plugins"
  */
 const config: QuartzConfig = {
   configuration: {
-    pageTitle: "Barney's Memory",
+    pageTitle: "Memory Pieces",
     pageTitleSuffix: "",
     enableSPA: true,
     enablePopovers: true,
