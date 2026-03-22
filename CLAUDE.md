@@ -6,7 +6,15 @@
 |--------|------|----------|
 | `Inbox/` | 日記 | `Inbox/YYYY-MM-DD.md` |
 | `Cards/` | 筆記 | `Cards/<標題>.md` |
+| `Topics/` | MOC 與主題資料夾 | `Topics/<主題>.md` 或 `Topics/<主題>/` |
 | `Templates/` | 模板 | — |
+
+### 筆記組織策略（混合式）
+
+1. **新筆記一律放 `Cards/`**
+2. 當某個主題累積足夠筆記，在 `Topics/` 建立 **MOC** 筆記（如 `Topics/Obsidian.md`），用 wikilinks 串連相關筆記
+3. 當 MOC 下的筆記多到需要獨立管理時，將 MOC 轉為 `Topics/<主題>/index.md`，相關筆記搬入該資料夾
+4. **不要主動拆資料夾**，由用戶決定何時拆分
 
 ## 模板
 
