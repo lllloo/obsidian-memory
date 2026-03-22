@@ -3,7 +3,7 @@ title: Claude Code Obsidian Skills
 tags:
   - obsidian
   - claude-code
-  - skills
+  - skill
 created: 2026-03-17
 updated: 2026-03-21
 ---
