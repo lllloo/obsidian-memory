@@ -6,8 +6,7 @@ title: 記憶拼圖
 
 ## 主題
 
-- **[[Obsidian CLI 整合指南|Obsidian × Claude Code]]** — 用 AI 操作知識庫的實驗紀錄
-- **[[Obsidian Skills 總覽|Skills 總覽]]** — Claude Code 可用的 Obsidian 技能一覽
+- **[[Obsidian]]** — 用 Obsidian 搭配 Claude Code 打造個人知識庫
 
 ## 依標籤探索
 
