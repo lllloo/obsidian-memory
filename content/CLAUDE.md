@@ -57,6 +57,11 @@ powershell.exe -Command "obsidian <指令>"
   - `created:` / `updated:` → 今日日期
 - 追加內容保持簡潔，不加多餘標題或結構
 
+### 筆記命名
+
+- **檔案名稱不可含空格**，空格一律改為 `-`（例：`Obsidian-CLI-整合指南.md`）
+- Wikilink 需對應實際檔名（含 `-`）：`[[Obsidian-CLI-整合指南]]`
+
 ### 筆記
 
 - `title:` 用用戶說的主題，不加日期前綴

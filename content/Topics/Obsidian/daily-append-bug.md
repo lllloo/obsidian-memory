@@ -30,4 +30,4 @@ powershell.exe -Command "obsidian daily:append content='內容'"
 2. `obsidian append path="<date>.md" content="內容"`
 
 ## 相關
-- [[Obsidian CLI 整合指南]]
+- [[Obsidian-CLI-整合指南]]

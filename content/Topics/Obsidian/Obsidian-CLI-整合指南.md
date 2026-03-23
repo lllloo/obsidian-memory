@@ -76,5 +76,5 @@ obsidian <指令> [參數]
 | `obsidian dev:errors` | 查看錯誤 |
 
 ## 相關
-- [[Obsidian Skills 總覽]]
+- [[Obsidian-Skills-總覽]]
 - [[daily-append-bug]]
