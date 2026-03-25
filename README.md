@@ -29,6 +29,18 @@ content/
 找 <關鍵字>          → 搜尋 vault
 ```
 
+也可以使用 `/ob` 指令直接呼叫。
+
+### 全域掛載（讓所有專案都能使用）
+
+將 agent 與指令 symlink 至全域，不需在此 repo 目錄下也能使用：
+
+```powershell
+# 在 repo 根目錄執行（需開啟 Developer Mode 或以管理員執行）
+New-Item -ItemType SymbolicLink -Path "$env:USERPROFILE\.claude\agents\obsidian.md" -Target "$PWD\.claude\agents\obsidian.md"
+New-Item -ItemType SymbolicLink -Path "$env:USERPROFILE\.claude\commands\ob.md" -Target "$PWD\.claude\commands\ob.md"
+```
+
 ## 本地預覽
 
 ```bash
