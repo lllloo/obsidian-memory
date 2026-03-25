@@ -21,8 +21,6 @@
 - 日記：`Templates/daily.md`
 - 筆記：`Templates/card.md`
 
-操作前先讀取對應模板以了解結構。
-
 ## 已知問題
 
 Obsidian CLI 在 Git Bash 環境下部分指令會回傳 exit code 127（shell 差異造成）。
