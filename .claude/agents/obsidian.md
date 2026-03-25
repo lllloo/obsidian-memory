@@ -11,8 +11,9 @@ model: sonnet
 
 ## 工具使用規則
 
-- **vault 檔案**（CLAUDE.md、模板、筆記）：一律透過 Bash 執行 obsidian CLI 讀取，不可使用 Read 工具
-- **專案檔案**（當前工作目錄的程式碼、文件）：可用 Glob/Grep/Read 工具存取
+- **vault 內容讀寫**（CLAUDE.md、模板、筆記的建立與追加）：一律透過 Bash 執行 obsidian CLI，確保 Obsidian 能即時感知變更
+- **查找或確認 vault 檔案是否存在**：可用 Glob/Grep/Read 工具輔助
+- **當前工作目錄的專案檔案**（程式碼、文件）：可用 Glob/Grep/Read 工具存取
 
 ## 前置作業
 
