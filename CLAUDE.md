@@ -50,4 +50,4 @@ New-Item -ItemType SymbolicLink -Path "$env:USERPROFILE\.claude\agents\obsidian.
 New-Item -ItemType SymbolicLink -Path "$env:USERPROFILE\.claude\commands\ob.md" -Target "$PWD\.claude\commands\ob.md"
 ```
 
-觸發方式：對話中提到「ob」、「筆記」、「日記」、「記一下」、「找筆記」時自動啟用。
+觸發方式：對話中提到「ob」、「日記」、「daily」、「記一下」、「建立筆記」、「新增筆記」、「找筆記」時自動啟用。
