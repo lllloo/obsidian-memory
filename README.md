@@ -21,19 +21,33 @@ content/
 
 ## 使用 Claude Code
 
-對話中提到「ob」、「筆記」、「日記」即可觸發助手：
+此 repo 內建兩個 Claude Code 設定，讓你在對話中直接操作 Obsidian vault：
+
+### `/ob` 指令（`.claude/commands/ob.md`）
+
+`/ob` 是一個 slash command，輸入後會把你的需求轉交給 Obsidian agent 處理：
 
 ```
-記一下今天...        → 追加到今日日記
-新增一篇關於...的筆記  → 建立新筆記
-找 <關鍵字>          → 搜尋 vault
+/ob 記一下今天完成了 XXX
+/ob 新增一篇關於 React hooks 的筆記
+/ob 找跟 CSS 有關的筆記
 ```
 
-也可以使用 `/ob` 指令直接呼叫。
+### Obsidian Agent（`.claude/agents/obsidian.md`）
+
+Agent 是實際執行操作的角色，透過 Obsidian CLI 與 vault 互動。收到需求後會自動判斷模式：
+
+| 說了什麼 | 動作 |
+|---------|------|
+| 「今天」、「日記」、「記一下」 | 追加到今日日記 |
+| 主題、概念、「建立」、「新增」 | 建立新筆記 |
+| 「找」、「搜尋」、「查」 | 搜尋 vault |
+
+也可以不用 `/ob`，直接在對話中提到「ob」、「筆記」、「日記」即會自動觸發。
 
 ### 全域掛載（讓所有專案都能使用）
 
-將 agent 與指令 symlink 至全域，不需在此 repo 目錄下也能使用：
+預設只有在此 repo 目錄下才能使用上述設定。透過 symlink 掛載至全域後，在任何專案的 Claude Code 對話中都能呼叫：
 
 ```powershell
 # 在 repo 根目錄執行（需開啟 Developer Mode 或以管理員執行）
