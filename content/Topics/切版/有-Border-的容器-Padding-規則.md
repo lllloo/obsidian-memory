@@ -1,5 +1,5 @@
 ---
-title: CSS Border 容器的 Padding 規則
+title: 有 Border 的容器 Padding 規則
 tags:
   - css
   - frontend
