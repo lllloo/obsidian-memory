@@ -45,8 +45,9 @@ npm run test               # 執行測試
 **建立 symlink（Windows，需開啟 Developer Mode 或以管理員執行）：**
 
 ```powershell
-New-Item -ItemType SymbolicLink -Path "$env:USERPROFILE\.claude\agents\obsidian.md" -Target "D:\code\obsidian-memory\.claude\agents\obsidian.md"
-New-Item -ItemType SymbolicLink -Path "$env:USERPROFILE\.claude\commands\ob.md" -Target "D:\code\obsidian-memory\.claude\commands\ob.md"
+# 在 repo 根目錄執行
+New-Item -ItemType SymbolicLink -Path "$env:USERPROFILE\.claude\agents\obsidian.md" -Target "$PWD\.claude\agents\obsidian.md"
+New-Item -ItemType SymbolicLink -Path "$env:USERPROFILE\.claude\commands\ob.md" -Target "$PWD\.claude\commands\ob.md"
 ```
 
 觸發方式：對話中提到「ob」、「筆記」、「日記」、「記一下」、「找筆記」時自動啟用。
