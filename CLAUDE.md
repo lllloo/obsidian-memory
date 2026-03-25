@@ -33,12 +33,20 @@ npm run test               # 執行測試
 
 筆記結構、命名規則、tag 格式、安全規範等詳見 [`content/CLAUDE.md`](content/CLAUDE.md)。
 
-## Claude Code Agent
+## Claude Code Agent 與指令
 
-`.claude/agents/obsidian.md` 為 Obsidian 筆記操作 agent，透過 symlink 掛載至全域：
+此 repo 統一管理 Obsidian 相關的 Claude Code 設定，透過 symlink 掛載至全域，讓這些設定在任何專案目錄都能生效。
 
-```
-~/.claude/agents/obsidian.md -> .claude/agents/obsidian.md
+| 檔案 | 全域路徑 | 用途 |
+|------|---------|------|
+| `.claude/agents/obsidian.md` | `~/.claude/agents/obsidian.md` | Obsidian 筆記操作 agent |
+| `.claude/commands/ob.md` | `~/.claude/commands/ob.md` | `/ob` 指令定義 |
+
+**建立 symlink（Windows，需開啟 Developer Mode 或以管理員執行）：**
+
+```powershell
+New-Item -ItemType SymbolicLink -Path "$env:USERPROFILE\.claude\agents\obsidian.md" -Target "D:\code\obsidian-memory\.claude\agents\obsidian.md"
+New-Item -ItemType SymbolicLink -Path "$env:USERPROFILE\.claude\commands\ob.md" -Target "D:\code\obsidian-memory\.claude\commands\ob.md"
 ```
 
 觸發方式：對話中提到「ob」、「筆記」、「日記」、「記一下」、「找筆記」時自動啟用。
