@@ -15,3 +15,7 @@ CSS 切版相關的筆記集合，涵蓋版面配置原則與常見陷阱。
 
 - [[避免魔術數字]] — 固定 px 寬度的使用原則，應改用語意化寫法
 - [[有-Border-的容器-Padding-規則]] — 有 border 的容器，padding 應放到子元件
+
+## Pencil 設計稿讀取
+
+- [[Pencil-設計稿讀取規範-節點視覺屬性]] — 遞迴讀取所有節點，fill / stroke / cornerRadius / opacity 每個屬性都有意義
