@@ -18,4 +18,4 @@ CSS 切版相關的筆記集合，涵蓋版面配置原則與常見陷阱。
 
 ## Pencil 設計稿讀取
 
-- [[Pencil-設計稿讀取規範-節點視覺屬性]] — 遞迴讀取所有節點，fill / stroke / cornerRadius / opacity 每個屬性都有意義
+- [[Pencil-讀取規則]] — 遞迴讀取所有節點，讀 ref 必須確認 descendants override
