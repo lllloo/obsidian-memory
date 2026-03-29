@@ -14,7 +14,7 @@ updated: 2026-03-22
 
 - Quartz 直接整合在 vault 的 repo 中
 - `content/` 即 Obsidian vault 根目錄，內含 `Cards/`、`Inbox/`、`Topics/` 等資料夾，Quartz 直接讀取
-- `ignorePatterns` 排除 Templates、.obsidian、.claude、CLAUDE.md
+- `ignorePatterns` 排除 Templates、.obsidian、CLAUDE.md、Inbox
 - 部署網址：[ob.bugloop.com](https://ob.bugloop.com)
 
 ## 部署流程
@@ -32,7 +32,7 @@ pageTitle: "Memory Pieces"
 baseUrl: "ob.bugloop.com"
 locale: "zh-TW"
 defaultDateType: "created"
-ignorePatterns: ["private", "Templates", ".obsidian", "CLAUDE.md"]
+ignorePatterns: ["private", "Templates", ".obsidian", "CLAUDE.md", "Inbox"]
 ```
 
 ## 筆記格式
@@ -47,6 +47,3 @@ ignorePatterns: ["private", "Templates", ".obsidian", "CLAUDE.md"]
 npx quartz build --serve
 # http://localhost:8080
 ```
-
-## 相關
-- [[Obsidian]]
