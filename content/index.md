@@ -1,11 +1,14 @@
 ---
 title: 記憶拼圖
+created: 2026-03-29
+updated: 2026-03-29
 ---
 
 開發路上的筆記與發現，挑有興趣的看就好。
 
 ## 主題
 
+- **[[Topics/Claude-Code/index|Claude Code]]** — Claude Code 工具、設定與技巧
 - **[[Topics/Obsidian/index|Obsidian]]** — 用 Obsidian 搭配 Claude Code 打造個人知識庫
 - **[[Topics/切版/index|切版]]** — CSS 版面配置原則與常見陷阱
 

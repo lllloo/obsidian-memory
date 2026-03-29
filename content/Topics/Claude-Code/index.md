@@ -17,4 +17,4 @@ Claude Code 相關工具、設定與技巧的筆記集合。
 
 ## 相關主題
 
-- [[Obsidian]] — 用 Claude Code 操作 Obsidian vault 的筆記集合
+- [[Topics/Obsidian/index|Obsidian]] — 用 Claude Code 操作 Obsidian vault 的筆記集合
