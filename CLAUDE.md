@@ -33,8 +33,8 @@ npm run test               # 執行測試
 
 筆記結構、命名規則、tag 格式、安全規範等詳見 [`content/CLAUDE.md`](content/CLAUDE.md)。
 
-**核心規範 (Core Mandates)：**
-- **Obsidian 寫入規範優先級**：在進行任何 `content/` 目錄下的讀取、建立或修改操作前，**必須**先完整讀取並嚴格遵循 `content/CLAUDE.md` 中的命名規則、Frontmatter 格式與安全規範。此文件內容具有最高指令效力。
+請遵循以下子模組的規範：
+- @content/CLAUDE.md
 
 ## Claude Code Agent 與指令
 
