@@ -21,7 +21,7 @@ tags:
 
 ## 目前已安裝的 Agent
 
-### awesome-claude-code-subagents（9/127+）
+### awesome-claude-code-subagents
 
 已安裝：
 
@@ -49,9 +49,9 @@ Core Development 未安裝：
 - mobile-developer — iOS/Android 跨平台開發（React Native/Flutter）
 - websocket-engineer — WebSocket 即時雙向通訊、大規模連線管理
 
-完整清單 127+ 個，另有 Quality/Security、Data/AI、DevExp 等 10 大類，按需安裝。
+另有 Quality/Security、Data/AI、DevExp 等 10 大類，按需安裝。
 
-### everything-claude-code（10/30）
+### everything-claude-code
 
 已安裝：
 
