@@ -9,10 +9,9 @@ Obsidian 個人知識庫，以 [Quartz 4](https://quartz.jzhao.xyz/) 發佈至 `
 ## 常用指令
 
 ```bash
-npx quartz build --serve   # 本地預覽（localhost:8080）
-npm run check              # TypeScript 型別檢查 + Prettier 格式驗證
-npm run format             # 自動格式化
-npm run test               # 執行測試
+npx quartz build --serve         # 本地預覽（localhost:8080）
+npm run check                    # TypeScript 型別檢查 + Prettier 格式驗證
+npm run format                   # 自動格式化
 ```
 
 ## 架構
@@ -25,9 +24,11 @@ npm run test               # 執行測試
 
 ## Quartz 重要行為
 
-- `ignorePatterns` 包含 `Templates`、`CLAUDE.md`、`private`、`.obsidian`，這些不會發佈
+- `ignorePatterns` 包含 `private`、`Templates`、`.obsidian`、`CLAUDE.md`、`Inbox`，這些不會發佈至網站
 - frontmatter 加 `draft: true` 的筆記會被 `RemoveDrafts` plugin 過濾，不發佈
 - 日期優先順序：frontmatter → git → filesystem（`CreatedModifiedDate` plugin）
+- Plugin pipeline：transformers（解析 Markdown）→ filters（篩選頁面）→ emitters（產生 HTML/靜態資源）
+- Wikilink 以 `shortest` 解析（`CrawlLinks`），連結目標需在 `content/` 下存在對應檔案
 
 ## Obsidian Vault 規則
 
