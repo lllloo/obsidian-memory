@@ -52,6 +52,10 @@ model: sonnet
 - **C、H**（跨筆記）：需要建立主題索引後比對。若檔案超過 50 個，先用 frontmatter title + tags 建索引，再挑可疑配對深入比對
 - 若 vault 很大，分批處理，不要一次 Read 太多檔案
 
+## 例外規則
+
+- **`draft: true` 的筆記**：若 frontmatter 含 `draft: true`，代表用戶已明確標記為草稿、Quartz 不會發佈。此類檔案的 **G 類問題（TODO、未完成段落、空段落）一律不回報**，視為預期行為。其他類別（A/B/C/R 系列等）仍要正常檢查。
+
 ## 輸出格式
 
 最後以此 JSON 格式輸出（純 JSON，不加其他文字）：
@@ -92,4 +96,5 @@ model: sonnet
 **重要**：
 - `fix_hint` 要具體到 fixer 能直接動手（指出行號、要改的字串）
 - `R5`、`R6`、`R7`、`H` 的 `fix_hint` 一律寫 `REPORT_ONLY`
+- `summary.total_issues` 和 `summary.by_category` **必須從最終的 `issues` 陣列實算**，不可憑印象填寫，以免統計與明細不一致
 - 若無任何違規，輸出 `{"summary": {"total_issues": 0}, "issues": []}`
