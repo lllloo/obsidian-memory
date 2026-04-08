@@ -55,3 +55,11 @@ New-Item -ItemType SymbolicLink -Path "$env:USERPROFILE\.claude\commands\ob.md" 
 ```
 
 觸發方式：對話中提到「ob」、「日記」、「daily」、「記一下」、「建立筆記」、「新增筆記」、「找筆記」時自動啟用。
+
+## Vault 稽核工作流
+
+`/vault-check` 指令會對 `content/` 執行 vault 規則稽核與自動修正迴圈：
+
+- `vault-evaluator` agent：依 `content/CLAUDE.md` 規則掃描違規與內容錯誤
+- `vault-fixer` agent：接收違規清單對 `content/` 執行自動修正
+- 修正在獨立 git branch 上進行，最後交用戶審核
