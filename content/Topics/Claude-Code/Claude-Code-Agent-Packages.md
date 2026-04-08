@@ -1,7 +1,7 @@
 ---
 title: Claude Code Agent Packages
 created: 2026-03-22
-updated: 2026-03-29
+updated: 2026-04-08
 tags:
   - claude-code
   - ai-tools
@@ -17,7 +17,7 @@ tags:
 ## everything-claude-code
 
 - **來源**：[affaan-m/everything-claude-code](https://github.com/affaan-m/everything-claude-code)
-- **說明**：完整的 Claude Code 工作流 agent 套件，包含架構規劃、程式碼審查、重構、安全審查、TDD、E2E 測試、文件更新等開發流程各階段的專用 agent
+- **說明**：完整的 Claude Code 工作流 agent 套件，涵蓋規劃/架構、程式碼審查、重構、安全/效能、TDD、E2E 測試、文件更新，以及 GAN Harness（Planner/Generator/Evaluator 三件組）等開發流程各階段的專用 agent
 
 ## 目前已安裝的 Agent
 
@@ -53,27 +53,49 @@ Core Development 未安裝：
 
 ### everything-claude-code
 
-已安裝：
+已安裝（共 23 個）：
 
+**規劃與架構**
+- planner — 複雜功能與重構的整體規劃
 - architect — 系統架構、可擴展性與技術決策
-- build-error-resolver — 建置/TypeScript 錯誤快速修復
-- code-reviewer — 程式碼品質、安全與可維護性審查
-- doc-updater — Codemap 與文件同步更新
-- e2e-runner — E2E 測試（Vercel Agent Browser / Playwright）
-- loop-operator — 自動迴圈執行、監控與介入
-- planner — 複雜功能與重構的規劃
-- refactor-cleaner — 死碼清理（knip/depcheck/ts-prune）
+- code-architect — 分析現有 codebase 慣例，產出功能架構藍圖（檔案、介面、資料流、建置順序）
+- code-explorer — 深入分析現有功能：追蹤執行路徑、繪製架構層次與相依關係
+
+**程式碼品質與審查**
+- code-reviewer — 程式碼品質、安全與可維護性審查（寫/改後即用）
+- code-simplifier — 簡化與精煉程式碼，保留行為
+- typescript-reviewer — TypeScript/JavaScript 審查（型別安全、非同步正確性、慣用模式）
+- silent-failure-hunter — 審查被吞掉的錯誤、錯誤 fallback、缺失的錯誤傳播
+- type-design-analyzer — 型別設計的封裝性、不變量與約束強制
 - security-reviewer — 安全漏洞檢測（SSRF/注入/OWASP Top 10）
+- performance-optimizer — 效能瓶頸、記憶體洩漏、bundle 優化
+
+**建置與重構**
+- build-error-resolver — 建置/TypeScript 錯誤快速修復（最小 diff）
+- refactor-cleaner — 死碼清理（knip/depcheck/ts-prune）
+
+**測試**
 - tdd-guide — 測試驅動開發（80%+ 覆蓋率）
+- e2e-runner — E2E 測試（Vercel Agent Browser / Playwright fallback）
+
+**文件與工作流**
+- doc-updater — Codemap 與文件同步更新
+- docs-lookup — 透過 Context7 MCP 即時查詢函式庫/API 文件
+- loop-operator — 自動迴圈執行、監控與介入
+- harness-optimizer — Agent harness 設定的可靠性、成本與吞吐量優化
+
+**GAN Harness**（配合 `gan-style-harness` skill 使用）
+- gan-planner — 將一句提示展開為完整產品規格（功能、Sprint、評估標準、設計方向）
+- gan-generator — 實作功能、讀取 Evaluator 回饋，迭代至品質門檻
+- gan-evaluator — 透過 Playwright 測試運行中的應用，評分並提供可行動回饋
+
+**溝通**
+- chief-of-staff — Email/Slack/LINE/Messenger 訊息分級與草稿回覆
 
 未安裝：
 
-- docs-lookup — 透過 Context7 MCP 即時查詢函式庫/API 文件
-- chief-of-staff — Email/Slack/LINE/Messenger 訊息分級與草稿回覆
-- harness-optimizer — Agent harness 設定的可靠性、成本與吞吐量優化
 - python-reviewer — Python 程式碼審查
 - database-reviewer — 資料庫/Supabase 審查
-- typescript-reviewer — TypeScript/JavaScript 程式碼審查
 - cpp-reviewer — C++ 程式碼審查
 - cpp-build-resolver — C++ 建置錯誤修復
 - go-reviewer — Go 程式碼審查
@@ -87,7 +109,6 @@ Core Development 未安裝：
 - pytorch-build-resolver — PyTorch/CUDA 訓練建置錯誤修復
 - flutter-reviewer — Flutter/Dart 審查（widget、狀態管理、效能、無障礙）
 - healthcare-reviewer — 醫療應用審查（臨床安全、PHI 合規、EMR/EHR）
-- performance-optimizer — 效能瓶頸分析、記憶體洩漏偵測與 bundle 優化
 
 ### 自訂
 
