@@ -50,3 +50,4 @@ updated: 2026-04-02
 
 ```bash
 claude --agent gan-planner -p Build
+```

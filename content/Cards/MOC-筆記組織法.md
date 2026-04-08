@@ -22,9 +22,9 @@ MOC（Map of Content）是用一篇筆記作為某個主題的索引，透過 wi
 ```
 Inbox/                  ← 日記
 Cards/                  ← 未分類筆記先放這
-├── Quartz 部署筆記.md
-├── MOC 筆記組織法.md
-└── skill-creator 是什麼.md
+├── Quartz-部署筆記.md
+├── MOC-筆記組織法.md
+└── skill-creator-是什麼.md
 Topics/                 ← 主題區
 ├── Vue.md              ← MOC（初期，單檔索引）
 └── Obsidian/           ← 升級後的資料夾

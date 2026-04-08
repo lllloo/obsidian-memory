@@ -94,7 +94,7 @@ await fetch(webhookUrl, {
 ## 限制
 
 - 每個 Webhook 每秒最多 **5 則**訊息（rate limit）
--  最長 **2000** 字元
+- 最長 **2000** 字元
 - 每個請求最多 **10 個** embeds
 - Webhook URL 是機密，不要公開（任何人都能用它發訊息）
 
