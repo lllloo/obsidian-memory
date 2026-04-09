@@ -1,5 +1,5 @@
 ---
-title: Claude-Code-雙帳號設定
+title: Claude Code 雙帳號設定
 tags:
   - claude-code
   - windows
