@@ -45,6 +45,7 @@ npm run format                   # 自動格式化
 |------|---------|------|
 | `.claude/agents/obsidian.md` | `~/.claude/agents/obsidian.md` | Obsidian 筆記操作 agent |
 | `.claude/commands/ob.md` | `~/.claude/commands/ob.md` | `/ob` 指令定義 |
+| `.claude/skills/youtube-channel-to-notes/` | `~/.claude/skills/youtube-channel-to-notes/` | YouTube 頻道影片轉 Obsidian 筆記 |
 
 **建立 symlink（Windows，需開啟 Developer Mode 或以管理員執行）：**
 
