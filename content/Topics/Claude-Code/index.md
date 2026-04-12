@@ -16,6 +16,11 @@ Claude Code 相關工具、設定與技巧的筆記集合。
 - [[skill-creator-是什麼]] — 建立與優化 Claude Code Skills 的工具
 - [[GAN-Style-Harness]] — GAN 多 agent 協作系統
 
+## 設定與技巧
+
+- [[Claude-Code-Dangerously-Skip-Permissions]] — `--dangerously-skip-permissions` 旗標說明
+- [[Claude-Code-雙帳號設定]] — 在同一台機器管理多個 Claude Code 帳號
+
 ## 相關主題
 
 - [[Topics/Obsidian/index|Obsidian]] — 用 Claude Code 操作 Obsidian vault 的筆記集合

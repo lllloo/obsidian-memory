@@ -13,6 +13,7 @@ updated: 2026-03-22
 
 - [[Obsidian-CLI-整合指南]] — CLI 常用指令速查
 - [[Obsidian-Skills-總覽]] — Claude Code 可用的 Obsidian 技能一覽
+- [[Obsidian-Skills-推薦清單]] — 精選推薦的 Obsidian Skills 清單
 - [[Quartz-部署筆記]] — 把 vault 發佈成靜態網站
 
 ## 方法論
