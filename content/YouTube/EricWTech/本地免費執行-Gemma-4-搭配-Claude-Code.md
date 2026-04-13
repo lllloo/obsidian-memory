@@ -10,10 +10,9 @@ source: https://www.youtube.com/watch?v=CLXjqdu4Ivc
 
 ## 重點摘要
 
-根據 defuddle 抓取的資料，此影片 transcript 內容極少，僅取得片段開頭。
+- Google 發布 Gemma 4（開源模型），目前準確度最高的開源模型
+- 僅需 7.2GB RAM 即可本地執行（支援 MacBook 等消費級硬體）
+- 作者將 Gemma 4 透過 Ollama 整合到 Claude Code，建立完全本地化、免費的 AI 程式碼助手工作流
+- 關鍵字提示涵蓋：gemma 4 ollama、claude code local model、run claude code locally、gemma 4 e2b、local llm coding
 
-**影片描述（來自 description）：**
-Google 發布 Gemma — 最高準確度的開源模型，僅需 7.2GB RAM 即可本地執行，作者將其直接整合到 Claude Code，建立完全本地化的免費 AI 程式碼助手工作流。
-
-**關鍵字（來自 meta tags）：**
-gemma 4 claude code, free claude code, gemma 4 ollama, claude code local model, ollama claude code, run claude code locally, gemma 4 e2b, claude code free, local llm coding, gemma 4 tutorial, claude code setup, local ai coding, gemma 4 macbook, claude code without api
+（此影片 transcript 無法取得，以上資訊來自影片描述與 meta tags）

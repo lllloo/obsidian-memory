@@ -133,11 +133,17 @@ N. <標題> — <URL>
 2. 從 JSON 取出 `published` 欄位（ISO 8601 格式），擷取日期部分（YYYY-MM-DD）寫入 frontmatter
 3. 若 `published` 欄位不存在或為空，改用 Chrome 導航到影片頁面，以 `document.querySelector('meta[itemprop="datePublished"]').content` 取得上傳日期
 4. 從 JSON 取出 `contentMarkdown` 作為筆記內容來源
-5. 根據取得的內容建立筆記
+5. 依下方「內容品質標準」撰寫筆記
 
 **筆記規則（必須嚴格遵守）：**
 - 檔案路徑：content/YouTube/<頻道名>/<繁體中文精簡標題>.md
-- 檔案名稱：繁體中文，技術名詞與品牌名保留英文，不可含空格（用 `-` 連接），不超過 40 字元，不可含 `?:;"'` 等特殊字元
+- 檔案名稱命名規則：
+  - 繁體中文為主，技術名詞與品牌名保留英文
+  - 不可含空格；英文/數字與中文之間用 `-` 連接（例：`Claude-Code準確度提升技巧`）；中文詞之間不加符號
+  - 只保留核心主題，去掉副標題（`-效果更好還更便宜`、`-非工程師也能懂` 等說明性後綴一律刪除）
+  - 去掉日期（`-2026年4月` 等）
+  - 不超過 30 字元
+  - 不可含 `?:;"'` 等特殊字元
 - frontmatter 格式：
   ---
   title: <影片標題的繁體中文翻譯>（技術名詞與品牌名保留英文）
@@ -149,11 +155,19 @@ N. <標題> — <URL>
   source: <youtube url>
   ---
 - 不使用 # 標題 heading（Quartz 從 frontmatter 自動產生）
-- 內容結構（以繁體中文撰寫）：
-  - **只寫重點摘要**（條列式），從 defuddle 抓到的 transcript 或 description 中萃取關鍵觀點
-  - **禁止放原始 transcript**、逐字稿、或任何帶時間戳的逐段文字
-  - **禁止推測或自行補充** defuddle 沒有抓到的內容
-  - 若 defuddle 內容不足，只記錄實際取得的欄位（如 description），省略無資料的段落
+
+**內容品質標準（重要）：**
+
+情況 A — defuddle 抓到完整 transcript（contentMarkdown 超過 500 字）：
+- 依影片的自然章節，用 `##` heading 分段（例：`## 核心架構`、`## 設定步驟`、`## 實際案例`）
+- 每段用條列或短段落說明該章節的重點，包含具體細節（指令、設定路徑、數值等）
+- 可用 code block 呈現指令或結構
+- **禁止放原始逐字稿**或帶時間戳的文字
+- 目標：讀者不看影片也能完全理解並執行
+
+情況 B — defuddle 只抓到 description 或極少內容（不足 500 字）：
+- 寫一個 `## 重點摘要` 段落，條列實際取得的資訊
+- **禁止推測或補充** defuddle 沒有的內容
 
 每個筆記建立後確認檔案存在。全部完成後回報結果清單。
 ```
@@ -164,11 +178,11 @@ N. <標題> — <URL>
 
 | # | 影片標題 | 筆記路徑 | published | 狀態 |
 |---|---------|---------|-----------|------|
-| 1 | ... | content/YouTube/<頻道名>/... | YYYY-MM-DD | ✓ 完整 / ⚠ defuddle timeout |
+| 1 | ... | content/YouTube/<頻道名>/... | YYYY-MM-DD | ✓ 完整 / ⚠ 內容不足 |
 
 ## 注意事項
 
-- **defuddle 內容不足**：若 defuddle 抓不到 transcript 或內容極少，只記錄實際取得的欄位（如 description），不推測、不補充，並省略無資料的段落
+- **defuddle 內容不足**：transcript 不足 500 字時走情況 B，只寫重點摘要，不推測補充
 - **published fallback**：defuddle `--json` 有時不回傳 `published`，需用 Chrome 的 `meta[itemprop="datePublished"]` 作為備援
 - **tags**：一律加 `youtube`，可依頻道主題加額外標籤（如 `claude-code`）
 - **檔名長度**：超過 40 字元的標題適當縮短，保留關鍵詞

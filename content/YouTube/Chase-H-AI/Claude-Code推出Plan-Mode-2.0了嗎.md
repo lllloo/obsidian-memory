@@ -9,17 +9,56 @@ published: 2026-04-06
 source: https://www.youtube.com/watch?v=eEYbwJWVQtQ
 ---
 
-## 描述
+## Ultra Plan 是什麼
 
-測試 Claude Code 新功能 Ultra Plan，與傳統 Plan Mode 進行頭對頭比較，評估兩者在速度、品質與 skill 呼叫方面的差異。
+Claude Code 洩漏資料中出現、隨後正式發布的新功能。運作方式：
 
-## 重點摘要
+1. 在本地 terminal 啟動 plan mode session
+2. 該 session 被推送至雲端 Claude Code（瀏覽器介面）進行處理
+3. 在網頁介面審閱並修改計畫
+4. 點擊「Approve Plan」將計畫帶回 terminal 執行
 
-- **Ultra Plan 是什麼**：Claude Code 洩漏資料中出現的新功能，已正式發布。在本地 terminal 啟動 plan mode 後，將計畫推送至雲端 Claude 網頁介面進行處理
-- **啟用方式**：在最新版 Claude Code 輸入 `ultraplan` 或 `/ultraplan` 即可觸發，需事先建立含至少一個 commit 的 GitHub repo
-- **速度差異顯著**：Ultra Plan 約 30 秒完成規劃，本地 Plan Mode 同一任務花費超過 5 分鐘
-- **使用者介面優勢**：Ultra Plan 提供網頁介面，可直接 highlight 計畫內容留言修改，比在 terminal 輸入更直覺
-- **主要缺點**：測試中 Ultra Plan 未遵循 prompt 中指定的 frontend design skill，忽略了 Google Fonts 等設計細節；本地 Plan Mode 則有正確呼叫 skill
-- **程式碼品質**：由另一個 Claude Code session 比較兩個方案，差異不大，Ultra Plan 多出幾百行程式碼
-- **適用場景**：Ultra Plan 可能在極度複雜的大型專案才能展現優勢，小型 Kanban board 測試不足以拉開差距
-- **結論**：尚不建議完全取代本地 Plan Mode，skill 無法正確呼叫是重大問題，建議自行測試複雜專案
+啟用指令：
+
+```
+ultraplan
+# 或
+/ultraplan
+```
+
+**前置需求**：必須有已建立且至少含一個 commit 的 GitHub repo。
+
+## Ultra Plan vs 本地 Plan Mode 頭對頭測試
+
+測試任務：從零建立一個 Kanban board web app（greenfield project），要求使用 frontend-design skill。
+
+| 項目 | 本地 Plan Mode | Ultra Plan |
+|---|---|---|
+| 規劃時間 | 5 分鐘以上（需重啟一次）| 約 30 秒 |
+| 是否遵循 skill 指令 | 是（用了 Google Fonts、frontend-design 排版）| 否（完全忽略 skill）|
+| 架構輸出 | 含技術選型、排版細節 | 含 Mermaid 圖、依賴清單，程式碼量多幾百行 |
+| 介面操作 | terminal 純文字 | 可 highlight 特定段落留言或 emoji |
+| 計畫品質（AI 評審）| Gary Tan 認為 Ultra Plan 略優 | 同左 |
+
+## 前端產出比較
+
+- 本地 Plan Mode（有 frontend-design skill）：卡片有陰影層次、橙色小裝飾、優先度顏色標示
+- Ultra Plan：功能相同，視覺較平，缺少 skill 帶來的設計細節
+
+兩者後端程式碼品質差異不大，主要差在框架選擇與程式碼行數。
+
+## 使用建議
+
+**適合用 Ultra Plan 的情境：**
+- 需要快速規劃且 skills 不重要的場景
+- 專案夠複雜，能讓 Ultra Plan 發揮額外運算資源的優勢（簡單 Kanban 可能不夠複雜）
+
+**不適合的情境：**
+- 需要在計畫階段調用特定 skill（Ultra Plan 穩定忽略 skill 指令）
+- 已有精心設計的 skill workflow 的用戶
+
+**核心問題**：Ultra Plan 無法可靠地呼叫 skills，這是重大缺陷。作者在影片外部測試也重現了同樣問題。
+
+## 結論
+
+Ultra Plan **不是** 本地 Plan Mode 的直接替代品，是速度與 skill 支援的取捨。目前感覺是倉促發布的功能（文件薄弱，從洩漏到上線僅 2 天），預期未來會有大量更新與改進。建議自行測試複雜專案，結果因專案而異。
