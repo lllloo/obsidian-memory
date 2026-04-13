@@ -8,47 +8,14 @@ published: 2026-04-10
 source: https://youtu.be/DIHIllggaTw
 ---
 
-Eric W Tech 介紹五種 Claude Code Agent 模式，從最基本到全自動，讓 AI 工具從單一對話模式升級為多 Agent 並行架構。
+**影片描述**：本影片介紹五種 Claude Code Agent 模式，從最簡單到完全自主，幫助開發者告別「一次一個任務」的瓶頸，改以多 Agent 並行架構大幅提升效率。作者曾任 Amazon、Microsoft 資深 AI 軟體工程師，以實際使用案例逐一示範每種模式的觸發方式與應用場景。
 
-## 影片描述
-
-大多數人使用 Claude Code 的方式是一次一個任務、等待回應、再給下一個，這形成了瓶頸。本影片示範五種 Agent 模式，從簡單到完全自主，讓你可以在 Claude Code 執行工作的同時去喝咖啡。
-
-## 五大 Agent 模式重點摘要
-
-### 1. Sequential Flow（順序流程）
-- 讓 AI Agent 依序完成一個任務接著一個任務
-- 範例：`fix tickets` 技能自動化整個 bug 修復流水線
-- 流程：讀取 Jira ticket → 用 Playwright 重現問題 → 研究 → 實作 → 多 sub-agent 審查 → 驗證 → commit → 部署 → 推進 QA
-- 適用場景：需要按順序完成的自動化工作流程
-
-### 2. Split & Merge（分割與合併）
-- 將單一大任務拆分給不同 sub-agent 並行處理，最後合併回 orchestrator
-- 範例：`agent-db-audit` 技能讓多個 sub-agent 同時稽核資料庫（schema、安全性、查詢效能）
-- 也可用於 Pull Request 審查流程：同時觸發多個專業審查 agent
-- 優勢：完成速度更快、避免 context 污染、各 agent 專注特定領域
-
-### 3. Agent Teams（Agent 團隊）
-- 與 sub-agent 的差異：各 agent 之間有共享通訊管道
-- 適合處理需要跨元件協作的任務（如前後端共同開發同一功能）
-- 可設置「devil's advocate」角色，持續挑戰其他 agent 的決策
-- 不適用場景：各 agent 各自完成獨立工作、無需溝通時
-
-### 4. Operator（Git Worktrees 隔離環境）
-- 為每個 Claude Code session 建立獨立的隔離環境
-- 可同時開多個終端機 session，各 session 在不同 Git worktree 中運作
-- 實際應用：同時產生多個 UI 設計變體，選擇最佳結果後刪除其他
-- 兩大優勢：加速開發、便於 A/B 測試
-
-### 5. Headless Mode（無頭模式）— 作者最愛
-- 使用 `claude -p "prompt"` 在背景執行，不需在 Claude session 中互動
-- 可搭配 cron job 排程自動執行
-- 結合 **Ralph Loop**：讓 AI Agent 持續循環執行直到達成目標
-- 作者實際案例：`iterative review` 技能，指定執行 5 次迴圈審查
-  - 每次迭代使用全新 context window
-  - 每個 headless session 觸發 5-7 個 sub-agent 並行運作
-  - 最終將所有迭代的發現彙整成單一報告
-
-## 補充資訊
-
-作者背景：曾任 Amazon、Microsoft 資深 AI 軟體工程師，現在經營付費社群教授 AI agent 與自動化。
+**重點摘要：**
+- **Sequential Flow（順序流程）**：讓 Agent 依序執行任務，範例為 `fix tickets` 技能，自動完成讀取 Jira ticket → Playwright 重現 bug → 研究實作 → 多 Agent 審查 → 驗證 → commit → 部署 → 推進 QA 的完整流水線。
+- **Split & Merge（分割合併）**：將大任務拆給多個 sub-agent 並行處理後合併，範例包括資料庫稽核（schema/安全性/查詢效能同時跑）及 PR 多角度並行審查，優勢是速度更快且避免 context 污染。
+- **Agent Teams（Agent 團隊）**：與 sub-agent 最大差異在於各 Agent 之間有**共享通訊管道**，適合跨元件協作任務（如前後端同步開發同一功能），可設置 devil's advocate 角色持續挑戰決策；若各 Agent 工作完全獨立則不適合。
+- **Operator（Git Worktrees 隔離）**：為每個 Claude Code session 建立獨立環境，可同時開多個 worktree 各跑不同任務，實用於 A/B 測試 UI 變體，選出最佳結果後直接丟棄其他，同時降低出錯風險。
+- **Headless Mode（無頭模式）**：作者最愛的模式，用 `claude -p "prompt"` 在終端機背景執行，不需進入互動 session；可搭配 cron 排程或 Ruff Loop 讓 Agent 持續迴圈執行直到達成目標。
+- **實際案例 — iterative review**：作者封裝的技能指定執行 5 次迭代，每次 headless session 觸發 5-7 個 sub-agent 並行審查，每個 session 擁有全新 context window，最終彙整所有迭代發現成單一報告。
+- 各 Agent 模式可**任意組合**，例如在 headless session 內同時跑 split & merge，進一步提升自動化程度。
+- 作者強調使用這些模式的核心目標：讓 Claude Code 在你離開後仍能自行運作，把手動干預降到最低。

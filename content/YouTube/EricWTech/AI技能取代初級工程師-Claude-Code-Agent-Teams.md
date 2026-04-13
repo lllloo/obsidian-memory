@@ -8,63 +8,13 @@ published: 2026-03-09
 source: https://youtu.be/PjenU4zwY5U
 ---
 
-## 影片描述
+**影片描述**：作者展示自製的 Claude Code Skill「Fix Ticket」，能從讀取 Jira 票券到部署修復、更新票券狀態，全程自動化 bug 修復流水線，並整合多代理程式碼審查與 Playwright 自動化測試驗證。目標是讓 AI 自動化初階工程師約 90% 的日常工作。
 
-示範作者自製的 Claude Code Skill「Fix Ticket」，能從讀取 Jira 票券到部署修復、更新票券狀態，全程自動化 bug 修復流水線，涵蓋多代理程式碼審查與 Playwright 自動化測試驗證。
-
-## 重點摘要
-
-### Fix Ticket Skill 是什麼
-
-- 一個 Claude Code Skill，自動化整個 bug 修復流程
-- 目標：讓 AI 處理初階工程師的大部分工作（讀票、研究、實作、審查、部署）
-- 開源，放在作者的 GitHub（startup-cloud-skills）
-
-### 完整自動化流水線（8 個階段）
-
-1. **Branch Strategy**：詢問在哪個 branch 工作（main / feature branch / work tree）
-2. **Read Jira Ticket**：讀取票券描述與所有評論，產生摘要
-3. **QA Verify（Playwright）**：用 Playwright CLI Skill 在瀏覽器中重現 bug，截圖確認
-4. **Plan**：研究根本原因、製作 bug flow diagram、提出修復方案，請用戶確認
-5. **Implementation**：實作修復，執行 build 與 lint 確保通過
-6. **Multi-Agent Code Review**：
-   - 3 個並行審查代理，從不同角度審查（race condition、edge case、silent failure）
-   - 發現問題後自動修正
-7. **QA Check**：再次用 Playwright 驗證修復已生效
-8. **Vercel Deploy & Jira Handoff**：
-   - 每 45 秒輪詢 Vercel 部署狀態
-   - 部署成功後在 Jira 留下完整測試說明，並指派給 QA 工程師
-
-### Skill 參數設定
-
-| 參數 | 說明 |
-|------|------|
-| `ticket` | Jira 票券編號（如 `CAN-191`） |
-| `branch` | 工作 branch（main / new / feature / work-tree） |
-| `skip_review` | 是否跳過程式碼審查 |
-| `skip_jira` | 是否跳過 Jira 更新 |
-| `skip_deploy` | 是否跳過 Vercel 部署監控 |
-| `skip_qa` | 是否跳過 QA 驗證步驟 |
-| `auto_commit` | 是否自動 commit（預設 true） |
-| `assign_to` | 完成後指派給誰 |
-
-### 所需 MCP 與工具
-
-- Jira MCP
-- Vercel MCP
-- Supabase MCP
-- Playwright CLI Skill（上一影片介紹）
-
-### 組成結構
-
-Fix Ticket 是一個「mega skill」，內含多個子 Skill：
-- `dev-team`：規劃、審查、實作、建立 PR 的代理團隊
-- `review-team`：5 個代理組成的 PR 審查團隊（含 devil's advocate 角色）
-- `review-fix`：平行代理即時審查修復
-- `playwright-cli`：無頭瀏覽器自動化測試
-
-### 核心價值
-
-這個 Skill 複製了初階工程師的典型工作流程：
-**讀票 → 研究 → 分析 → 實作 → 審查 → 驗證 → 部署 → 交接**
-作者認為可以自動化一名初階工程師約 90% 的日常工作。
+**重點摘要：**
+- **Fix Ticket 是什麼**：一個 Claude Code Skill（mega skill），開源放在作者 GitHub（startup-cloud-skills），封裝了從讀票到部署的完整 bug 修復流水線，內含 `dev-team`、`review-team`、`review-fix`、`playwright-cli` 等多個子 skill。
+- **完整 8 階段自動化流程**：① Branch Strategy（詢問工作 branch）→ ② 讀取 Jira Ticket 並摘要 → ③ Playwright 重現 bug 截圖確認 → ④ 研究根本原因並提出修復計畫（需用戶確認）→ ⑤ 實作修復並執行 build/lint → ⑥ 3 個並行代理從不同角度審查（race condition、edge case、silent failure）並自動修正 → ⑦ Playwright 再次驗證修復生效 → ⑧ Vercel 部署監控（每 45 秒輪詢）並在 Jira 留下測試說明指派 QA。
+- **彈性參數控制**：skill 支援 `skip_review`、`skip_jira`、`skip_deploy`、`skip_qa` 等旗標，可視需要跳過特定階段，`auto_commit` 預設為 true，`assign_to` 可指定完成後指派對象。
+- **所需 MCP 工具**：Jira MCP、Vercel MCP、Supabase MCP，以及上集介紹的 Playwright CLI Skill，工具鏈完整才能執行全流程。
+- **Multi-Agent Code Review 細節**：review-team 由 5 個代理組成（含 devil's advocate 角色），review-fix 則負責在審查發現問題後立即派遣平行代理修正，審查層層疊加提升準確率。
+- **實際示範結果**：作者以自己的 SaaS 應用 Jira 看板為例，從觸發 skill 到部署完成、Jira 票券更新全程無需手動介入，展示了從 bug 發現到 QA 交接的完整閉環。
+- **核心價值主張**：Fix Ticket 複製了初階工程師「讀票→研究→分析→實作→審查→驗證→部署→交接」的典型工作流程，作者認為可自動化約 90% 的初階工程師日常工作。

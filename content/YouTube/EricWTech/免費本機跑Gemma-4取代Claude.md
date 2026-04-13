@@ -8,17 +8,11 @@ published: 2026-04-08
 source: https://youtu.be/CLXjqdu4Ivc
 ---
 
-EricWTech 介紹如何在本機執行 Google 開源模型 Gemma 4，打造免費的 AI 程式開發環境，取代付費的 Claude。
+**影片描述**：Google 發布 Gemma 4 開源模型，號稱目前準確率最高、僅需 7.2GB RAM 即可本機執行。作者示範在 MacBook 上用 Ollama 將 Gemma 4 接入 Claude Code，打造零費用的 AI 程式開發環境。
 
-## 影片描述
-
-Google 發布了自家的開源模型 Gemma 4，本影片示範如何在本地端免費執行此模型，建立不需付費的 AI 輔助程式開發環境。
-
-## 重點摘要
-
-defuddle 僅取得影片開頭部分，完整逐字稿未能抓取。根據影片標題與描述推斷，本影片涵蓋：
-
-- Google Gemma 4 開源模型介紹
-- 在本機執行 Gemma 4 的設定步驟
-- 與 Claude 等付費方案的比較
-- 免費 AI 程式開發工作流程建立方式
+**重點摘要：**
+- **安裝流程**：2 分鐘內完成 Ollama 安裝並 pull Gemma 4 E2B 模型，一行指令即可啟動。
+- **接入 Claude Code**：啟動時指定本機 Ollama 模型，無需 API key，完全免費。
+- **Gemma 4 適用場景**：單一檔案編輯、小型重構等低複雜度任務表現良好。
+- **Gemma 4 限制**：多檔案跨 context 的任務能力不足，作者明確指出此為主要瓶頸。
+- **建議替代方案**：複雜任務作者推薦改用免費雲端模型（透過 OpenRouter），兼顧免費與較高準確率。

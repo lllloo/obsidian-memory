@@ -11,32 +11,14 @@ published: 2026-04-02
 source: https://youtu.be/rJCgvnXgOiU
 ---
 
-RAG Anything 解決了大多數 RAG 系統只能處理純文字的問題，可處理 PDF 掃描件、圖片、圖表等非文字文件，並與 LightRAG 無縫整合。
+**影片描述**：RAG Anything 解決了幾乎所有 RAG 系統（包括 LightRAG）的共同弱點——只能處理純文字。同一個 LightRAG 團隊開發，可直接疊加在現有 LightRAG 系統上，處理掃描 PDF、圖表、圖片等非文字文件。
 
-## 核心概念
-
-- **問題**：LightRAG 及一般 RAG 系統只能處理文字文件，無法處理圖表、掃描 PDF 等
-- **解法**：RAG Anything 來自 LightRAG 同一個團隊，直接插入 LightRAG 系統
-- **本地解析**：使用 MinerU（開源文件解析器）在本機執行，零成本
-
-## 運作原理
-
-1. **MinerU 解析**：將文件拆分為 header、text、chart、image、latex equation 等元件
-2. **兩條路徑**：
-   - 文字路徑：透過 PaddleOCR 轉為可讀文字
-   - 圖片路徑：截圖處理
-3. **送至 LLM**（如 GPT-4.5 mini）：產生 embeddings + entities/relationships
-4. **合併**：RAG Anything 的 vector DB + knowledge graph 與 LightRAG 合併 → 統一查詢
-
-## 安裝與使用
-
-- 提供 oneshot prompt 讓 Claude Code 自動安裝
-- 預設使用 GPT-4.5 nano + text-embedding-3-large
-- 上傳非文字文件需透過 Python script（不能用 LightRAG UI），以 Claude Code skill 觸發即可
-- 預設使用 CPU 執行 MinerU；如需加速可切換 GPU 版 PyTorch
-
-## 重點摘要
-
-- 查詢方式與 LightRAG 完全相同，差異只在上傳流程
-- Skills 與 oneshot prompt 可在 Chase AI 免費社群取得
-- 實際 Demo：成功查詢含長條圖的假 PDF（Novatech SaaS 收益分析）的月度數據
+**重點摘要：**
+- 核心問題：LightRAG 和大多數 RAG 系統無法處理非文字文件（掃描 PDF、圖表、圖片、LaTeX 方程式），RAG Anything 專門解決這個問題。
+- 解析引擎 MinerU：開源文件解析器，在本機免費執行，將文件拆解為 header、text、chart、image、latex 等元件，再分兩條路徑處理——文字路徑（PaddleOCR 轉可讀文字）和圖片路徑（截圖處理）。
+- 處理流程：MinerU 解析後，兩條路徑分別送至 GPT-4.5 nano（或其他 LLM），產生 embeddings 和 entities/relationships，分別建立各自的 vector DB 和 knowledge graph，再合併成一套統一的知識庫。
+- 與 LightRAG 整合：RAG Anything 最終的 vector DB + knowledge graph 會與現有 LightRAG 的合併，形成「rag everything」，查詢方式與原本完全相同。
+- 安裝方式：提供 oneshot prompt 給 Claude Code 自動安裝（需在 LightRAG 目錄執行），系統比 LightRAG 稍重，需下載 MinerU 及其相依套件；預設使用 GPT-4.5 nano + text-embedding-3-large。
+- 重要限制：上傳非文字文件必須透過 Python script，不能用 LightRAG Web UI；以 Claude Code skill 觸發即可，對用戶而言操作無感。
+- 設計哲學：先在本機以 MinerU 解析，再用 LLM 處理，避免把大量截圖全部丟給 GPT 處理（昂貴且慢），是一種「先低成本分類再精準處理」的架構。
+- 實際 Demo：成功查詢含長條圖的假 PDF（Novatech SaaS 收益分析），可正確回答月度收益數據問題。

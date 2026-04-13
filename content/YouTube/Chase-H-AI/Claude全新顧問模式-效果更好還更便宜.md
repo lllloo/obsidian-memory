@@ -9,29 +9,13 @@ published: 2026-04-09
 source: https://youtu.be/hGYfsvlQ5Ok
 ---
 
-Anthropic 發布 Advisor Strategy，讓 Opus 擔任顧問、Sonnet/Haiku 執行，達到更佳效果且成本更低。
+**影片描述**：Anthropic 發布 Advisor Strategy，讓 Opus 擔任顧問角色、Sonnet 或 Haiku 擔任執行者，透過動態雙向互動達到更佳效果，且成本比單獨使用 Opus 低許多。此功能透過 API 自動運作，適合在 Claude Code 以外使用 Anthropic API 的應用程式。
 
-## 影片重點摘要
-
-### 運作方式
-- **Opus 擔任 Advisor**：負責規劃與指導
-- **Sonnet 或 Haiku 擔任 Executor**：執行所有工作（包含 tool calls）
-- 非一次性規劃，而是持續來回互動：Sonnet 遇到無法解決的決策時自動回頭請教 Opus
-- Opus 全程保有完整 shared context，但不執行任何 tool call
-
-### 效能對比（Sonnet 4.6 High + Opus Advisor vs 單純 Sonnet 4.6 High）
-| 指標 | 有 Advisor | 無 Advisor |
-|------|-----------|-----------|
-| SWE-Bench | 74.8 | 72.1 |
-| BrowseComp | 60.4 | 58.1 |
-| 成本/任務 | ~$0.96 | ~$19 |
-
-### 適用情境
-- 使用 Anthropic API 的應用程式（非 Claude Code 原生功能）
-- 需要介於 Sonnet 與 Opus 效能之間的場景
-- API 呼叫需指定 `type: advisor` 及 `max_uses`（最多諮詢 Opus 的次數）
-
-### 與 Claude Code Plan Mode 的差異
-- Claude Code 的 plan mode 是一次性：Opus 規劃 → Sonnet 執行
-- Advisor Strategy 是持續動態的雙向互動
-- Advisor Strategy 透過 API 自動運作，不需手動切換
+**重點摘要：**
+- Advisor Strategy 與 Claude Code Plan Mode 最大差異在於它是「持續動態」的：Sonnet 遇到無法解決的問題時會自動回頭請教 Opus，而非一次性規劃後就自行執行。
+- Opus 全程保有完整 shared context，但不執行任何 tool call，所有工具操作都由 Sonnet 或 Haiku 執行，以此控制成本。
+- 效能測試顯示，Sonnet 4.6 High + Opus Advisor 在 SWE-Bench 達 74.8（vs 單獨 72.1），成本約 $0.96/任務（vs 單獨 $19），效能更好且更便宜。
+- 相同的優勢在 BrowseComp（60.4 vs 58.1）和 Terminal Bench 均獲得驗證，且每次都更便宜。
+- 這填補了「想要比 Sonnet 更強但 Opus 又太貴」的需求缺口，提供介於兩者之間的效能，卻以低於正常 Sonnet 的成本達成。
+- 使用方式：調整 API 呼叫，指定 `type: advisor` 與 `max_uses`（Opus 最多被諮詢的次數上限）。
+- 此功能是 API 層級的功能，不是 Claude Code 的原生功能；適合用於有 Anthropic API 整合的自製 web 應用或 agent 系統。

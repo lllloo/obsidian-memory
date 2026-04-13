@@ -9,55 +9,16 @@ published: 2026-04-09
 source: https://youtu.be/KjEFy5wjFQg
 ---
 
-Chase H 介紹 2026 年 4 月最值得安裝的 10 個 Claude Code 工具，涵蓋 plugins、CLI 工具與 skills。
+**影片描述**：Chase H 整理 2026 年 4 月最值得安裝的 10 個 Claude Code 工具，從 plugins、CLI 工具到 skills 一次涵蓋，適合新手入門也適合老手補齊工具箱。每個工具都附有實際使用情境說明。
 
-## 影片重點摘要
-
-### 1. Codex Plugin
-- 使用 OpenAI Codex 進行 adversarial code review
-- 彌補 Claude 對自己程式碼過於寬容的問題
-- 需要 OpenAI 帳號（ChatGPT Go plan 即可）
-
-### 2. Obsidian + Obsidian Skills
-- Obsidian 作為輕量 RAG 系統
-- CEO 官方 Skills repo 教 Claude Code 最佳使用方式
-- 適合個人助理與大量 Markdown 文件專案
-
-### 3. Auto Research
-- 機器學習演算法自動優化程式
-- 自動執行實驗、捨棄失敗變更、提交成功變更
-
-### 4. AwesomeDesign.md
-- 解決 Claude Code 前端設計能力不足的問題
-- 從熱門網站萃取設計風格的 Markdown 模板（Claude、Notion、Figma 等）
-- 首週即獲 38,000 stars
-
-### 5. Firecrawl CLI
-- 強大的網頁爬取工具，可突破反機器人保護
-- 回傳 LLM 友善的結構化格式
-- 有開源版（免費）與付費 API 版
-
-### 6. Playwright CLI
-- 優於 Playwright MCP，更有效且更便宜
-- 讓 Claude Code 透過 accessibility tree 操控瀏覽器
-- 比截圖方式快且省 token
-
-### 7. NotebookLM CLI
-- 連結 Claude Code 與 Google NotebookLM
-- 支援批次下載、投影片修訂、全文存取
-- 運算分析外包給 Google，大幅節省 token
-
-### 8. Skill Creator Skill
-- 建立與測試自訂 skills
-- 可執行 benchmark 與 A/B 測試衡量 skill 效能
-- 屬於 Claude Code 官方 plugin
-
-### 9. LightRAG
-- 開源 Graph RAG 系統
-- 比 Obsidian 更強大，適合大量文件（數千份以上）
-- 免費，比 Microsoft Graph RAG 輕量
-
-### 10. GWS CLI
-- 連結 Claude Code 與整個 Google Suite
-- 可操作 Gmail、Google Docs、Calendar
-- 由 Google 開發者（非官方）建立，提供大量預製 workflow skills
+**重點摘要：**
+- **Codex Plugin（#1）**：讓 OpenAI Codex 對 Claude 的程式碼做 adversarial review，解決 AI 自我評分過於寬鬆的問題；需 ChatGPT 帳號（Go plan $7/月即可），指令：`codex:adversarial review`。
+- **Obsidian + Obsidian Skills（#2）**：Obsidian 作為輕量 RAG 替代方案，搭配 Obsidian CEO 官方 skills repo 讓 Claude Code 發揮最大效益；適合個人助理或 Markdown 文件密集型專案。
+- **Auto Research（#3）**：機器學習式的自動優化工具，讓 Claude Code 對指定程式跑大量實驗、自動丟棄失敗變更、提交成功變更，全程無需人工干預。
+- **AwesomeDesign.md（#4）**：從 Claude、Figma、Notion 等熱門網站萃取設計風格為 Markdown 模板，解決 Claude Code 前端設計能力不足的痛點；一週即獲 38,000 stars。
+- **Firecrawl CLI（#5）**：強大網頁爬取工具，可突破反機器人防護，回傳 LLM 友善的結構化格式；開源版免費，付費版有更強的 bot 繞過能力。
+- **Playwright CLI（#6）**：比 Playwright MCP 更有效且更便宜；Claude Code 透過 accessibility tree（非截圖）操控 Chrome，速度快且省 token；適合任何需要瀏覽器自動化的任務。
+- **NotebookLM CLI（#7）**：透過 CLI 橋接 Claude Code 與 Google NotebookLM（原本無 API）；分析運算外包給 Google，大幅省 Claude token；支援批次下載、投影片修訂、全文存取。
+- **Skill Creator Skill（#8）**：最重要的 skill 之一；不只建立 skill，還能跑 benchmark 與 A/B 測試量化 skill 效能；官方 Claude Code plugin，`/plugin` 市集搜尋安裝。
+- **LightRAG（#9）**：開源 Graph RAG，適合 Obsidian 無法負荷的大量文件場景（數千份以上）；免費，比 Microsoft Graph RAG 輕量許多。
+- **GWS CLI（#10）**：連接 Claude Code 與整個 Google Suite（Gmail、Docs、Calendar）；Google 員工非官方開發，附帶大量預製 workflow skills；設定稍繁瑣，需在 Google Cloud 啟用多項設定。

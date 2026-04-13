@@ -1,6 +1,6 @@
 ---
 name: youtube-channel-to-notes
-description: 當使用者提供 YouTube 頻道網址並想要建立筆記時使用此 skill。用 Claude in Chrome 抓取頻道影片清單（最多 30 部），用平行 subagents 將每部影片建立成 Obsidian vault 筆記（content/YouTube/<頻道名>/）。觸發詞：提供 YouTube 頻道 URL、「幫我把這個頻道的影片建成筆記」、「youtube 轉筆記」、「抓頻道影片」。
+description: 當使用者提供 YouTube 頻道網址並想要建立筆記時使用此 skill。用 Claude in Chrome 抓取頻道影片清單（最多 10 部），用平行 subagents 將每部影片建立成 Obsidian vault 筆記（content/YouTube/<頻道名>/）。觸發詞：提供 YouTube 頻道 URL、「幫我把這個頻道的影片建成筆記」、「youtube 轉筆記」、「抓頻道影片」。
 ---
 
 # YouTube Channel to Notes
@@ -18,7 +18,7 @@ description: 當使用者提供 YouTube 頻道網址並想要建立筆記時使�
 使用 **Claude in Chrome**（mcp__claude-in-chrome 工具）抓取頻道影片清單：
 
 1. 導航到頻道的 `/videos` 頁面
-2. 用 `javascript_tool` 執行以下腳本，從 `window.ytInitialData` 直接讀取影片資料（無需捲動，最多 30 部，video ID 完整可靠）：
+2. 用 `javascript_tool` 執行以下腳本，從 `window.ytInitialData` 直接讀取影片資料（無需捲動，最多 10 部，video ID 完整可靠）：
 
 ```javascript
 const data = window.ytInitialData;
@@ -39,14 +39,14 @@ for (const tab of tabs) {
     }
   }
 }
-document.title = videos.slice(0, 30).join('###');
+document.title = videos.slice(0, 10).join('###');
 ```
 
 3. 讀取 tab title（`tabs_context_mcp` 取得 `title` 欄位），以 `###` 分割各筆，再以 `|||` 分割標題與 hex-encoded video ID
 4. hex 解碼：每兩個十六進位字元還原為一個字元，得到 11 碼的 video ID
 5. 組成 URL：`https://www.youtube.com/watch?v=<videoId>`
 
-> **為什麼用 `ytInitialData`**：YouTube 頁面的 `javascript_tool` 回傳值會被安全過濾 BLOCKED（含 cookie/query string 資料）。透過 `document.title` 傳遞資料可繞過此限制；`ytInitialData` 是 YouTube SSR 預載的物件，包含完整 30 部影片資料，不需捲動、video ID 不會截斷或重複。
+> **為什麼用 `ytInitialData`**：YouTube 頁面的 `javascript_tool` 回傳值會被安全過濾 BLOCKED（含 cookie/query string 資料）。透過 `document.title` 傳遞資料可繞過此限制；`ytInitialData` 是 YouTube SSR 預載的物件，包含完整影片資料，不需捲動、video ID 不會截斷或重複。
 
 ## 步驟 2：增量同步檢查
 
@@ -101,8 +101,10 @@ N. <標題> — <URL>
   source: <youtube url>
   ---
 - 不使用 # 標題 heading（Quartz 從 frontmatter 自動產生）
-- 內容包含：影片描述、重點摘要（若 defuddle 有抓到內容），以繁體中文撰寫
-- 若 defuddle 抓不到內容，僅記錄標題與連結
+- 內容結構（以繁體中文撰寫，**只放 defuddle 實際抓到的資料，禁止推測或自行補充**）：
+  1. **影片描述**：若 `description` 欄位有值，翻譯並整理成 2-3 句
+  2. **重點摘要**：若 `contentMarkdown` 有實質內容（逐字稿/描述），提取核心重點 5-10 條，每條 1-2 句；內容豐富可超過 10 條
+  3. 若某欄位為空或內容不足，直接省略該段落，不補充推測內容
 
 每個筆記建立後確認檔案存在。全部完成後回報結果清單。
 ```
@@ -164,10 +166,10 @@ views:
 
 ## 注意事項
 
-- **defuddle timeout**：若某部影片抓取失敗，subagent 仍應建立基本筆記（標題 + URL + `status: done`），不中斷整批
+- **defuddle 內容不足**：若 defuddle 抓不到 transcript 或內容極少，只記錄實際取得的欄位（如 description），不推測、不補充，並省略無資料的段落
 - **published fallback**：defuddle `--json` 有時不回傳 `published`，需用 Chrome 的 `meta[itemprop="datePublished"]` 作為備援
 - **tags**：一律加 `youtube`，可依頻道主題加額外標籤（如 `claude-code`）
 - **檔名長度**：超過 40 字元的標題適當縮短，保留關鍵詞
-- **增量同步**：再次執行同一頻道時，Step 2 會過濾已有筆記，只建立新影片的筆記；`ytInitialData` 最多回傳 30 部（最新的），足以涵蓋一般更新週期
+- **增量同步**：再次執行同一頻道時，Step 2 會過濾已有筆記，只建立新影片的筆記；`ytInitialData` 最多回傳 10 部（最新的），足以涵蓋一般更新週期
 - **重複筆記**：若同名檔案已存在，跳過不覆寫
 - **不發佈**：`content/YouTube/` 已在 ignorePatterns，無需加 `draft: true`

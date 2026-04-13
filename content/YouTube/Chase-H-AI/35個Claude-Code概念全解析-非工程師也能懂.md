@@ -9,41 +9,14 @@ published: 2026-04-08
 source: https://youtu.be/UAMAAoSPu8o
 ---
 
-Chase H 為非技術背景用戶整理 35 個 Claude Code 核心概念，分四個階段從入門到進階。
+**影片描述**：Chase H 專為非技術背景用戶整理 35 個 Claude Code 核心概念，分四個學習階段從入門到 Power User。目標是讓完全新手也能建立清晰的路線圖，不被每天湧出的新功能壓垮。
 
-## 四個學習階段
-
-### 第一階段：核心必知（Concepts 1-5）
-1. **claude.ai vs Claude Code 的差異**：同樣的大腦，但 Claude Code 有「手」，能實際操作電腦
-2. **安裝 Claude Code**：一行指令安裝，支援 Mac/Linux/WSL 及 Windows PowerShell
-3. **在哪裡使用**：Terminal、VS Code、Claude Desktop App、Co-work 均可，推薦從 Terminal 入手
-4. **權限設定（Permissions）**：
-   - 預設：每次修改都需確認
-   - Accept Edits On：自動編輯文件，bash 指令仍需確認
-   - `--dangerously-skip-permissions`：完全略過確認，最快但需謹慎
-5. **Plan Mode**：讓 Claude Code 先規劃再執行，填補 prompt 的漏洞，提升輸出品質
-
-### 第二階段：核心功能
-6. **使用心態**：把 Claude Code 當協作者，主動追問不懂的概念
-7. **CLAUDE.md**：專案記憶文件，告訴 Claude Code 關於專案的所有規則
-8. **Context Window**：Claude Code 的短期記憶，過大時需壓縮或開新會話
-9. **Compact 指令**：壓縮 context，保留重要資訊
-10. **技術棧選擇**：詢問 Claude Code 建議，理解推薦理由
-
-### 第三階段：進階技巧
-- **Skills（技能）**：擴展 Claude Code 能力的 Markdown 指令集
-- **Plugins**：從官方 marketplace 安裝
-- **多代理協作（Multi-agent）**：用多個 Claude Code 實例平行處理任務
-- **Git 整合**：版本控制與分支管理
-- **MCP（Model Context Protocol）**：連接外部工具與服務
-
-### 第四階段：進階 Power User
-- **Ultra Plan**：雲端規劃模式，速度更快
-- **Auto Research**：機器學習自動優化工具
-- **LightRAG**：開源 Graph RAG 系統
-- **Obsidian 知識庫**：輕量 RAG 替代方案
-- **GWS CLI**：Google Suite 整合
-
-## 關鍵心態
-- Claude Code 是無限耐心的導師，要主動追問、真正理解，而非只是盲目按 Accept
-- 與其他人的差異化在於：你能理解 AI 在做什麼，而不只是當「vibe coder」
+**重點摘要：**
+- claude.ai vs Claude Code 的最大差異：兩者用同樣的 AI 大腦（Opus 4.6），但 Claude Code 有「手」——能實際操作電腦（寫程式、存取檔案、與系統互動），claude.ai 只能對話。
+- 安裝只需一行指令：Mac/Linux/WSL 和 Windows PowerShell 各有對應版本，輸入 `claude` 即可啟動；推薦用 VS Code 作為入門環境，既有終端機又能看到檔案結構。
+- 三種權限設定：預設（每次確認）、Accept Edits On（自動編輯文件但 bash 指令仍需確認）、`--dangerously-skip-permissions`（完全略過，效率最高但需謹慎）；多數用戶最終都停在第三種。
+- Plan Mode 的核心價值：強迫 Claude Code 先規劃再執行，透過來回問答填補 prompt 的漏洞；是提升輸出品質最簡單的方式。
+- 使用心態最重要：不要只是盲目按 Accept——當 Claude Code 推薦技術棧時，要追問「為什麼用這個」，Claude Code 是無限耐心的導師，主動追問才能與只會複製貼上的「vibe coder」區別開來。
+- CLAUDE.md 是專案記憶文件：Claude Code 每次執行任何操作都會參考它，放的內容要真正重要且幾乎適用於所有 prompt；Claude Code 建立專案時會自動生成。
+- Context Window 管理是隱藏的高階技能：建議不超過 20 萬 tokens；越接近上限，Claude Code 效能越差且每次 prompt 成本越高；用 `/clear` 重置 session，Claude Code 會從 codebase 而非對話記憶恢復狀態。
+- 進階概念包含：Skills（Markdown 指令集）、Plugins（官方市集）、Multi-agent（平行處理）、MCP（連接外部工具）、Git 整合、Ultra Plan、LightRAG、Obsidian 知識庫、GWS CLI 等，新手不需馬上學，知道存在即可。
