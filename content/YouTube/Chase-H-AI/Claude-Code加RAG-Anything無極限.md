@@ -1,5 +1,5 @@
 ---
-title: Claude Code + RAG-Anything = LIMITLESS
+title: Claude Code + RAG-Anything = 無極限
 tags:
   - youtube
   - claude-code
@@ -7,6 +7,8 @@ tags:
   - ai
 created: 2026-04-12
 updated: 2026-04-12
+published: 2026-04-02
+status: done
 source: https://youtu.be/rJCgvnXgOiU
 ---
 

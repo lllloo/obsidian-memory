@@ -1,24 +1,24 @@
 filters:
   and:
-    - file.inFolder("YouTube/Chase-H-AI")
+    - file.inFolder("YouTube/EricWTech")
     - file.ext == "md"
 properties:
+  status:
+    displayName: 狀態
+  published:
+    displayName: 上傳日期
   source:
     displayName: 連結
-  created:
-    displayName: 日期
   file.name:
     displayName: 筆記
 views:
   - type: table
     name: 影片清單
-    groupBy:
-      property: created
-      direction: DESC
     order:
       - file.name
+      - status
+      - published
       - source
-      - created
     sort:
-      - property: file.name
-        direction: ASC
+      - property: published
+        direction: DESC

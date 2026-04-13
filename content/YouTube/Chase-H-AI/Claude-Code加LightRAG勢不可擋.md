@@ -1,5 +1,5 @@
 ---
-title: Claude Code + LightRAG = UNSTOPPABLE
+title: Claude Code + LightRAG = 勢不可擋
 tags:
   - youtube
   - claude-code
@@ -8,6 +8,8 @@ tags:
   - ai
 created: 2026-04-12
 updated: 2026-04-12
+published: 2026-04-01
+status: done
 source: https://youtu.be/QHlB-RJfx8w
 ---
 

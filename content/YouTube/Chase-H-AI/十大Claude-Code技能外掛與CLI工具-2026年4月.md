@@ -1,10 +1,12 @@
 ---
-title: "Top 10 Claude Code Skills, Plugins & CLIs (April 2026)"
+title: "十大 Claude Code 技能、外掛與 CLI 工具（2026 年 4 月）"
 tags:
   - youtube
   - claude-code
 created: 2026-04-12
 updated: 2026-04-12
+published: 2026-04-09
+status: done
 source: https://youtu.be/KjEFy5wjFQg
 ---
 

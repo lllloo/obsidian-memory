@@ -1,10 +1,12 @@
 ---
-title: "Claude's New Advisor Mode: Better Results + CHEAPER"
+title: "Claude 全新顧問模式：效果更好，還更便宜"
 tags:
   - youtube
   - claude-code
 created: 2026-04-12
 updated: 2026-04-12
+published: 2026-04-09
+status: done
 source: https://youtu.be/hGYfsvlQ5Ok
 ---
 

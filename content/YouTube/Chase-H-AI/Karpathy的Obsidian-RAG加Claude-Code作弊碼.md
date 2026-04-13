@@ -1,5 +1,5 @@
 ---
-title: "Karpathy's Obsidian RAG + Claude Code = CHEAT CODE"
+title: "Karpathy 的 Obsidian RAG + Claude Code = 作弊碼"
 tags:
   - youtube
   - claude-code
@@ -7,6 +7,8 @@ tags:
   - rag
 created: 2026-04-12
 updated: 2026-04-12
+published: 2026-04-04
+status: done
 source: https://youtu.be/OSZdFnQmgRw
 ---
 

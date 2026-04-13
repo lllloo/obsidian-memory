@@ -1,10 +1,12 @@
 ---
-title: "Caveman Claude Code Is the New Meta (Here's the Science)"
+title: "穴居人式 Claude Code 才是新王道（科學原理解析）"
 tags:
   - youtube
   - claude-code
 created: 2026-04-12
 updated: 2026-04-12
+published: 2026-04-07
+status: done
 source: https://youtu.be/4FO1Liu-ttk
 ---
 

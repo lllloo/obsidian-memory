@@ -1,10 +1,12 @@
 ---
-title: "All 35 Claude Code Concepts Explained for Non Coders"
+title: "35 個 Claude Code 概念全解析（非工程師也能懂）"
 tags:
   - youtube
   - claude-code
 created: 2026-04-12
 updated: 2026-04-12
+published: 2026-04-08
+status: done
 source: https://youtu.be/UAMAAoSPu8o
 ---
 

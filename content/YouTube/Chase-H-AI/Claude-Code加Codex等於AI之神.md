@@ -1,5 +1,5 @@
 ---
-title: Claude Code + Codex = AI GOD
+title: Claude Code + Codex = AI 之神
 tags:
   - youtube
   - claude-code
@@ -8,6 +8,8 @@ tags:
   - ai
 created: 2026-04-12
 updated: 2026-04-12
+published: 2026-03-30
+status: done
 source: https://youtu.be/L7NPhaUBpZE
 ---
 

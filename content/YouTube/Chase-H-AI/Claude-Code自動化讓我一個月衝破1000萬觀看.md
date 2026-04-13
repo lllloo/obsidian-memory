@@ -1,5 +1,5 @@
 ---
-title: These Claude Code Automations Got Me 10M Views in 1 Month
+title: 這些 Claude Code 自動化讓我一個月內衝破 1000 萬觀看
 tags:
   - youtube
   - claude-code
@@ -8,6 +8,8 @@ tags:
   - obsidian
 created: 2026-04-12
 updated: 2026-04-12
+published: 2026-03-30
+status: done
 source: https://youtu.be/7q_rbT1a9dE
 ---
 

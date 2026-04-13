@@ -1,10 +1,12 @@
 ---
-title: "Did Claude Code Just Get Plan Mode 2.0?"
+title: "Claude Code 剛推出 Plan Mode 2.0 了嗎？"
 tags:
   - youtube
   - claude-code
 created: 2026-04-12
 updated: 2026-04-12
+published: 2026-04-06
+status: done
 source: https://youtu.be/eEYbwJWVQtQ
 ---
 
