@@ -1,11 +1,11 @@
 ---
 title: Claude Code 雙帳號設定
+created: 2026-04-09
+updated: 2026-04-09
 tags:
   - claude-code
   - windows
   - workflow
-created: 2026-04-09
-updated: 2026-04-09
 ---
 
 透過 `CLAUDE_CONFIG_DIR` 環境變數指向不同目錄，可以在同一台機器上切換多個 Claude Code 帳號。預設帳號使用 `~/.claude`，第二帳號使用自訂目錄 `~/.claude-p`。

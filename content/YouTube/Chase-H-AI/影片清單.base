@@ -3,8 +3,6 @@ filters:
     - file.inFolder("YouTube/Chase-H-AI")
     - file.ext == "md"
 properties:
-  status:
-    displayName: 狀態
   published:
     displayName: 上傳日期
   source:
@@ -16,9 +14,8 @@ views:
     name: 影片清單
     order:
       - file.name
-      - status
       - published
       - source
     sort:
       - property: published
-        direction: DESC
+        direction: ASC

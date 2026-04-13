@@ -6,7 +6,6 @@ tags:
 created: 2026-04-12
 updated: 2026-04-12
 published: 2026-04-07
-status: done
 source: https://youtu.be/4FO1Liu-ttk
 ---
 

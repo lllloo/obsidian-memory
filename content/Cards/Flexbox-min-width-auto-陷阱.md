@@ -1,4 +1,7 @@
 ---
+title: Flexbox min-width auto 陷阱
+created: 2026-04-13
+updated: 2026-04-13
 tags:
   - css
   - flexbox

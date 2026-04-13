@@ -1,11 +1,11 @@
 ---
 title: Discord Webhook 使用指南
+created: 2026-04-07
+updated: 2026-04-07
 tags:
   - api
   - discord
   - workflow
-created: 2026-04-07
-updated: 2026-04-07
 ---
 
 ## 什麼是 Discord Webhook

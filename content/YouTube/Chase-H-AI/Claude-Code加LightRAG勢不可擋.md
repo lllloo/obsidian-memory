@@ -9,7 +9,6 @@ tags:
 created: 2026-04-12
 updated: 2026-04-12
 published: 2026-04-01
-status: done
 source: https://youtu.be/QHlB-RJfx8w
 ---
 

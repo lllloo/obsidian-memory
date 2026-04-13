@@ -1,12 +1,12 @@
 ---
 title: Awesome Design MD
+created: 2026-04-12
+updated: 2026-04-12
 tags:
   - design
   - design-system
   - ai-coding
   - resources
-created: 2026-04-12
-updated: 2026-04-12
 ---
 
 [AWESOMEDESIGN.md](https://getdesign.md/) 是 [awesome-design-md](https://github.com/VoltAgent/awesome-design-md) GitHub 收藏的瀏覽前端，收集熱門網站設計系統靈感的資源。提供各大品牌的 DESIGN.md 文件，可直接丟給 coding agents 來建立對應風格的 UI。

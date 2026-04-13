@@ -1,11 +1,11 @@
 ---
 title: Quartz 部署筆記
+created: 2026-03-22
+updated: 2026-03-22
 tags:
   - quartz
   - obsidian
   - deploy
-created: 2026-03-22
-updated: 2026-03-22
 ---
 
 把 Obsidian vault 透過 [Quartz 4](https://quartz.jzhao.xyz) 發佈成靜態網站的紀錄。

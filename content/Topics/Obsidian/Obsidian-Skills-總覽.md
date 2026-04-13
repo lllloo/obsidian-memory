@@ -1,11 +1,11 @@
 ---
 title: Claude Code Obsidian Skills
+created: 2026-03-17
+updated: 2026-03-21
 tags:
   - obsidian
   - claude-code
   - skill
-created: 2026-03-17
-updated: 2026-03-21
 ---
 
 [Obsidian Skills](https://github.com/kepano/obsidian-skills) 是一組讓 Claude Code 操作 Obsidian vault 的技能。

@@ -60,6 +60,19 @@ powershell.exe -Command "obsidian <指令>"
 - **檔案名稱不可含空格**，空格一律改為 `-`（例：`Obsidian-CLI-整合指南.md`）
 - Wikilink 需對應實際檔名（含 `-`）：`[[Obsidian-CLI-整合指南]]`
 
+### Frontmatter 屬性
+
+**card.md 標準屬性：**
+- `title`、`created`、`updated`、`source`、`tags`
+
+**daily.md 標準屬性：**
+- `title`、`created`、`updated`、`tags`（預設含 `daily`）
+
+**特殊屬性：**
+- `draft: true` — 草稿，Quartz 不發佈；完成後移除
+- `source` 無來源時可省略
+- `tags` 固定放最後，且使用 YAML 清單格式
+
 ### 筆記
 
 - `title:` 用用戶說的主題，不加日期前綴

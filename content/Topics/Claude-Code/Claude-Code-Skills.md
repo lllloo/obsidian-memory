@@ -1,10 +1,10 @@
 ---
 title: Claude Code Skills
+created: 2026-03-29
+updated: 2026-03-29
 tags:
   - claude-code
   - ai-tools
-created: 2026-03-29
-updated: 2026-03-29
 ---
 
 透過 `npx skills` 安裝的全域 Skills（`npx skills ls -g`）。

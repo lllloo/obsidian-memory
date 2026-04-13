@@ -1,11 +1,11 @@
 ---
 title: "claude --dangerously-skip-permissions"
+created: 2026-04-09
+updated: 2026-04-09
 tags:
   - claude-code
   - cli
   - automation
-created: 2026-04-09
-updated: 2026-04-09
 ---
 
 `--dangerously-skip-permissions` 是 Claude Code CLI 的旗標，啟用後會跳過所有權限確認提示，讓 Claude 全自動執行所有操作。

@@ -1,12 +1,12 @@
 ---
 title: 切版
+created: 2026-03-25
+updated: 2026-03-25
 tags:
   - 切版
   - css
   - frontend
   - moc
-created: 2026-03-25
-updated: 2026-03-25
 ---
 
 CSS 切版相關的筆記集合，涵蓋版面配置原則與常見陷阱。

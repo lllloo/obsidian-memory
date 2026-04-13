@@ -1,11 +1,11 @@
 ---
 title: Pencil 讀取規則
+created: 2026-03-26
+updated: 2026-03-26
 tags:
   - 切版
   - frontend
   - css
-created: 2026-03-26
-updated: 2026-03-26
 ---
 
 **讀取任何 Node，必須遞迴到所有葉節點。不能只確認容器層的屬性就停止。**

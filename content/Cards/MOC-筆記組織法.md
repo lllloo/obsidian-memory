@@ -1,10 +1,10 @@
 ---
 title: MOC 筆記組織法
+created: 2026-03-22
+updated: 2026-03-22
 tags:
   - obsidian
   - workflow
-created: 2026-03-22
-updated: 2026-03-22
 ---
 
 MOC（Map of Content）是用一篇筆記作為某個主題的索引，透過 wikilinks 串連相關筆記。

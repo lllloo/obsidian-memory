@@ -1,10 +1,10 @@
 ---
 title: GAN Style Harness
+created: 2026-04-02
+updated: 2026-04-02
 tags:
   - claude-code
   - ai-tools
-created: 2026-04-02
-updated: 2026-04-02
 ---
 
 模仿 GAN（生成對抗網路）概念的多 agent 協作系統，三個 agent 透過對抗式迴圈反覆提升產出品質。來自 [everything-claude-code](https://github.com/affaan-m/everything-claude-code) 的 gan-style-harness skill，靈感源自 Anthropic 2026/03 的 harness 設計論文。

@@ -1,11 +1,11 @@
 ---
 title: Obsidian CLI 整合指南
+created: 2026-03-17
+updated: 2026-03-22
 tags:
   - obsidian
   - claude-code
   - cli
-created: 2026-03-17
-updated: 2026-03-22
 ---
 
 透過 [Obsidian CLI](https://obsidian.md/help/cli) 讓 Claude Code 操作 Obsidian vault。

@@ -1,11 +1,11 @@
 ---
 title: 有 Border 的容器 Padding 規則
+created: 2026-03-24
+updated: 2026-03-24
 tags:
   - css
   - frontend
   - 切版
-created: 2026-03-24
-updated: 2026-03-24
 ---
 
 **當外層容器有 `border`（邊框）時，內部的 padding 不能加在外層容器上，必須分配到各子區塊。**

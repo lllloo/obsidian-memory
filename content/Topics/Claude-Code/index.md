@@ -1,10 +1,10 @@
 ---
 title: Claude Code
+created: 2026-03-29
+updated: 2026-03-29
 tags:
   - claude-code
   - moc
-created: 2026-03-29
-updated: 2026-03-29
 ---
 
 Claude Code 相關工具、設定與技巧的筆記集合。

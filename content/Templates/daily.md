@@ -1,7 +1,7 @@
 ---
 title:
-tags:
-  - daily
 created:
 updated:
+tags:
+  - daily
 ---

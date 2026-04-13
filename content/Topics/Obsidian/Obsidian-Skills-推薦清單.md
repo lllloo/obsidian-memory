@@ -1,12 +1,12 @@
 ---
 title: Obsidian Skills 推薦清單
+created: 2026-04-10
+updated: 2026-04-10
+source: https://www.youtube.com/watch?v=ivApMNUlmWg
 tags:
   - obsidian
   - skill
   - claude-code
-created: 2026-04-10
-updated: 2026-04-10
-source: https://www.youtube.com/watch?v=ivApMNUlmWg
 ---
 
 ## 推薦安裝的 9 個 Skills

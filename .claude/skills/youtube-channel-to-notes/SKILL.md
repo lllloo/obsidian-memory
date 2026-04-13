@@ -99,7 +99,6 @@ N. <標題> — <URL>
   updated: <今日 YYYY-MM-DD>
   published: <影片上傳日期 YYYY-MM-DD>
   source: <youtube url>
-  status: done
   ---
 - 不使用 # 標題 heading（Quartz 從 frontmatter 自動產生）
 - 內容包含：影片描述、重點摘要（若 defuddle 有抓到內容），以繁體中文撰寫
@@ -136,8 +135,6 @@ filters:
     - file.inFolder("YouTube/<頻道名>")
     - file.ext == "md"
 properties:
-  status:
-    displayName: 狀態
   published:
     displayName: 上傳日期
   source:
@@ -149,12 +146,12 @@ views:
     name: 影片清單
     order:
       - file.name
-      - status
       - published
       - source
     sort:
       - property: published
         direction: DESC
+
 ```
 
 ## 步驟 6：彙整結果
