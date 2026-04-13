@@ -11,7 +11,7 @@ description: 當使用者提供 YouTube 頻道網址並想要建立筆記時使�
 
 - 筆記存放：`content/YouTube/<頻道名>/`（例：`content/YouTube/Chase-H-AI/`）
 - 此資料夾已在 `quartz.config.ts` 的 `ignorePatterns` 中，**不會發佈到網站**
-- 每個頻道資料夾下建立一個 `影片清單.base` 作為動態索引
+- 每個頻道資料夾下建立 `01.index.md` 與 `02.影片清單.base` 作為索引（數字前綴確保固定排第一）
 
 ## 步驟 1：抓取影片清單
 
@@ -48,9 +48,9 @@ document.title = videos.slice(0, 10).join('###');
 
 > **為什麼用 `ytInitialData`**：YouTube 頁面的 `javascript_tool` 回傳值會被安全過濾 BLOCKED（含 cookie/query string 資料）。透過 `document.title` 傳遞資料可繞過此限制；`ytInitialData` 是 YouTube SSR 預載的物件，包含完整影片資料，不需捲動、video ID 不會截斷或重複。
 
-## 步驟 2：增量同步檢查
+## 步驟 2：增量同步檢查 + 建立資料夾
 
-在建立筆記前，先確認是否為更新情境：
+先確認是否為更新情境：
 
 ```bash
 # 取得頻道資料夾中已有筆記的所有 source URL
@@ -63,9 +63,57 @@ grep -rh "^source:" content/YouTube/<頻道名>/ --include="*.md" 2>/dev/null | 
 
 > 比對方式：影片 URL 格式為 `https://www.youtube.com/watch?v=<videoId>`，直接比對 video ID 即可（URL 格式不同但 ID 相同也算已存在）
 
-## 步驟 3：分批平行處理
+## 步驟 3：建立 01.index.md
 
-將影片清單分成每批 5-6 部，在**同一個 response** 中用 Agent tool 平行啟動所有 subagents。
+**在啟動文章生成前**，先在頻道資料夾建立 `01.index.md`（若已存在則跳過）：
+
+```markdown
+---
+title: <頻道名>
+tags:
+  - youtube
+  - channel
+created: <今日 YYYY-MM-DD>
+updated: <今日 YYYY-MM-DD>
+source: <頻道 URL>
+---
+
+![[02.影片清單]]
+```
+
+## 步驟 4：建立 02.影片清單.base
+
+**在啟動文章生成前**，先在頻道資料夾建立 `02.影片清單.base`（若已存在則跳過）：
+
+```yaml
+filters:
+  and:
+    - file.inFolder("YouTube/<頻道名>")
+    - file.ext == "md"
+    - file.name != "01.index"
+properties:
+  published:
+    displayName: 上傳日期
+  source:
+    displayName: 連結
+  file.name:
+    displayName: 筆記
+views:
+  - type: table
+    name: 影片清單
+    order:
+      - file.name
+      - published
+      - source
+    sort:
+      - property: published
+        direction: DESC
+
+```
+
+## 步驟 5：分批平行處理文章
+
+01.index.md 與 02.影片清單.base 建立完成後，將影片清單分成每批 5-6 部，在**同一個 response** 中用 Agent tool 平行啟動所有 subagents。
 
 每個 subagent 的任務 prompt 格式：
 
@@ -101,59 +149,13 @@ N. <標題> — <URL>
   source: <youtube url>
   ---
 - 不使用 # 標題 heading（Quartz 從 frontmatter 自動產生）
-- 內容結構（以繁體中文撰寫，**只放 defuddle 實際抓到的資料，禁止推測或自行補充**）：
-  1. **影片描述**：若 `description` 欄位有值，翻譯並整理成 2-3 句
-  2. **重點摘要**：若 `contentMarkdown` 有實質內容（逐字稿/描述），提取核心重點 5-10 條，每條 1-2 句；內容豐富可超過 10 條
-  3. 若某欄位為空或內容不足，直接省略該段落，不補充推測內容
+- 內容結構（以繁體中文撰寫）：
+  - **只寫重點摘要**（條列式），從 defuddle 抓到的 transcript 或 description 中萃取關鍵觀點
+  - **禁止放原始 transcript**、逐字稿、或任何帶時間戳的逐段文字
+  - **禁止推測或自行補充** defuddle 沒有抓到的內容
+  - 若 defuddle 內容不足，只記錄實際取得的欄位（如 description），省略無資料的段落
 
 每個筆記建立後確認檔案存在。全部完成後回報結果清單。
-```
-
-## 步驟 4：建立 index.md
-
-在頻道資料夾建立 `index.md`（若已存在則跳過）：
-
-```markdown
----
-title: <頻道名>
-tags:
-  - youtube
-  - channel
-created: <今日 YYYY-MM-DD>
-updated: <今日 YYYY-MM-DD>
-source: <頻道 URL>
----
-
-![[影片清單]]
-```
-
-## 步驟 5：建立 影片清單.base
-
-所有筆記建立完成後，在頻道資料夾建立 `影片清單.base`：
-
-```yaml
-filters:
-  and:
-    - file.inFolder("YouTube/<頻道名>")
-    - file.ext == "md"
-properties:
-  published:
-    displayName: 上傳日期
-  source:
-    displayName: 連結
-  file.name:
-    displayName: 筆記
-views:
-  - type: table
-    name: 影片清單
-    order:
-      - file.name
-      - published
-      - source
-    sort:
-      - property: published
-        direction: DESC
-
 ```
 
 ## 步驟 6：彙整結果

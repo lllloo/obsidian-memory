@@ -2,6 +2,7 @@ filters:
   and:
     - file.inFolder("YouTube/EricWTech")
     - file.ext == "md"
+    - file.name != "01.index"
 properties:
   published:
     displayName: 上傳日期

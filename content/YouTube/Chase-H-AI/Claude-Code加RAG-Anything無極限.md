@@ -1,24 +1,23 @@
 ---
-title: Claude Code + RAG-Anything = 無極限
+title: Claude Code 加 RAG-Anything 無極限
 tags:
   - youtube
   - claude-code
-  - rag
-  - ai
-created: 2026-04-12
-updated: 2026-04-12
+created: 2026-04-13
+updated: 2026-04-13
 published: 2026-04-02
-source: https://youtu.be/rJCgvnXgOiU
+source: https://www.youtube.com/watch?v=rJCgvnXgOiU
 ---
 
-**影片描述**：RAG Anything 解決了幾乎所有 RAG 系統（包括 LightRAG）的共同弱點——只能處理純文字。同一個 LightRAG 團隊開發，可直接疊加在現有 LightRAG 系統上，處理掃描 PDF、圖表、圖片等非文字文件。
+## 描述
 
-**重點摘要：**
-- 核心問題：LightRAG 和大多數 RAG 系統無法處理非文字文件（掃描 PDF、圖表、圖片、LaTeX 方程式），RAG Anything 專門解決這個問題。
-- 解析引擎 MinerU：開源文件解析器，在本機免費執行，將文件拆解為 header、text、chart、image、latex 等元件，再分兩條路徑處理——文字路徑（PaddleOCR 轉可讀文字）和圖片路徑（截圖處理）。
-- 處理流程：MinerU 解析後，兩條路徑分別送至 GPT-4.5 nano（或其他 LLM），產生 embeddings 和 entities/relationships，分別建立各自的 vector DB 和 knowledge graph，再合併成一套統一的知識庫。
-- 與 LightRAG 整合：RAG Anything 最終的 vector DB + knowledge graph 會與現有 LightRAG 的合併，形成「rag everything」，查詢方式與原本完全相同。
-- 安裝方式：提供 oneshot prompt 給 Claude Code 自動安裝（需在 LightRAG 目錄執行），系統比 LightRAG 稍重，需下載 MinerU 及其相依套件；預設使用 GPT-4.5 nano + text-embedding-3-large。
-- 重要限制：上傳非文字文件必須透過 Python script，不能用 LightRAG Web UI；以 Claude Code skill 觸發即可，對用戶而言操作無感。
-- 設計哲學：先在本機以 MinerU 解析，再用 LLM 處理，避免把大量截圖全部丟給 GPT 處理（昂貴且慢），是一種「先低成本分類再精準處理」的架構。
-- 實際 Demo：成功查詢含長條圖的假 PDF（Novatech SaaS 收益分析），可正確回答月度收益數據問題。
+介紹 RAG-Anything，解決傳統 RAG 只能處理純文字的限制，支援圖片、圖表、掃描 PDF 等非文字文件，直接整合至 LightRAG 系統。
+
+## 重點摘要
+
+- **解決的問題**：傳統 RAG 系統（包含昨日介紹的 LightRAG）只能處理文字文件，無法處理含圖片、圖表、掃描 PDF 的文件；RAG-Anything 解決了這個缺口
+- **來源**：由開發 LightRAG 的同一團隊打造，可直接作為 LightRAG 的外掛層疊加使用
+- **運作原理**：針對非文字文件，RAG-Anything 進行與 LightRAG 相同的知識圖譜建構流程，最終將兩個知識圖譜合併成一個統一的查詢入口
+- **設置方式**：需在本機下載解析非文字文件的模型；非文字文件的匯入需透過腳本（無法用 LightRAG UI），適合用 Claude Code 來協助處理
+- **缺點**：系統較重，需額外本機模型；非文字文件無法透過既有的 LightRAG 網頁介面直接匯入
+- **前提條件**：本集假設已看過 LightRAG 集並完成基本設置，RAG-Anything 是其延伸

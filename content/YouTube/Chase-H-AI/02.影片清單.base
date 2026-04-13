@@ -2,6 +2,7 @@ filters:
   and:
     - file.inFolder("YouTube/Chase-H-AI")
     - file.ext == "md"
+    - file.name != "01.index"
 properties:
   published:
     displayName: 上傳日期
@@ -18,4 +19,4 @@ views:
       - source
     sort:
       - property: published
-        direction: ASC
+        direction: DESC
