@@ -4,25 +4,29 @@
 
 對每部影片：
 
-1. 執行 `npx defuddle parse <url> --json` 取得完整 JSON（含 contentMarkdown、published 等欄位）
-2. 若 defuddle 失敗（exit code 非 0 或輸出為空），用 curl 確認影片是否可用：
+1. 執行以下指令取得完整 JSON（含 contentMarkdown、published 等欄位）；優先用全域安裝的 defuddle，找不到時 fallback 到 npx：
+   ```bash
+   defuddle parse <url> --json 2>/dev/null || npx defuddle parse <url> --json
+   ```
+2. 若 defuddle 失敗（exit code 非 0 或輸出為空），用 curl 一次取得可用性與上傳日期：
    ```bash
    curl -s "https://www.youtube.com/watch?v=<videoId>" \
      -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36" \
      -H "Accept-Language: en-US,en;q=0.9" \
-     | python3 -c "import sys; html=sys.stdin.read(); print('unavailable' if 'videoUnavailableRenderer' in html else 'available')"
+     | python3 -c "
+import sys, re
+html = sys.stdin.read()
+avail = 'unavailable' if 'videoUnavailableRenderer' in html else 'available'
+m = re.search(r'itemprop=\"datePublished\" content=\"([^\"]+)\"', html)
+date = m.group(1)[:10] if m else ''
+print('STATUS:' + avail)
+print('DATE:' + date)
+"
    ```
-   - 若輸出為 `unavailable` → **跳過，不建立筆記**，回報「⚠ 影片已刪除，跳過」
-   - 若輸出為 `available` → 影片正常，繼續執行
+   - 若 `STATUS:unavailable` → **跳過，不建立筆記**，回報「⚠ 影片已刪除，跳過」
+   - 若 `STATUS:available` → 影片正常，繼續執行；`DATE:` 行的值即為上傳日期
 3. 從 JSON 取出 `published` 欄位（ISO 8601 格式），擷取日期部分（YYYY-MM-DD）寫入 frontmatter
-4. 若 `published` 欄位不存在或為空：用 curl 取得上傳日期（步驟 2 已抓過頁面時可重複使用）：
-   ```bash
-   curl -s "https://www.youtube.com/watch?v=<videoId>" \
-     -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36" \
-     -H "Accept-Language: en-US,en;q=0.9" \
-     | python3 -c "import sys,re; html=sys.stdin.read(); m=re.search(r'itemprop=\"datePublished\" content=\"([^\"]+)\"', html); print(m.group(1)[:10] if m else '')"
-   ```
-   若仍為空則 `published` 欄位留空
+4. 若 `published` 欄位不存在或為空：使用步驟 2 的 `DATE:` 值；若仍為空則 `published` 欄位留空
 5. 從 JSON 取出 `contentMarkdown` 作為筆記內容來源
 6. 依下方「內容品質標準」撰寫筆記
 

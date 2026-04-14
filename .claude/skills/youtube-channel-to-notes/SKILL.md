@@ -15,7 +15,9 @@ description: 當使用者提供 YouTube 頻道網址並想要建立筆記時使�
 
 ## 步驟 1：抓取影片清單與頻道簡介
 
-用 `curl + python3` 一次抓取頻道頁面，同時取出影片清單與頻道簡介：
+**影片數量上限**：從用戶 prompt 解析（如「最多 20 部」→ `LIMIT=20`），未指定則預設 `10`，最大不超過 `30`（ytInitialData 的實際限制）。執行前先確定 `LIMIT` 的值，再帶入下方指令。
+
+用 `curl + python3` 一次抓取頻道頁面，同時取出影片清單與頻道簡介（將 `<LIMIT>` 替換為實際數字，例如 `10`）：
 
 ```bash
 curl -s "https://www.youtube.com/@<handle>/videos" \
@@ -24,6 +26,7 @@ curl -s "https://www.youtube.com/@<handle>/videos" \
   | python3 -c "
 import sys, json, re
 html = sys.stdin.read()
+LIMIT = <LIMIT>
 
 # 頻道簡介
 desc_m = re.search(r'<meta name=\"description\" content=\"([^\"]*)\"', html)
@@ -35,14 +38,9 @@ if not m:
     print('ERROR:notFound')
     exit(1)
 start = m.end()
-depth, i = 0, start
-for i, c in enumerate(html[start:], start):
-    if c == '{': depth += 1
-    elif c == '}':
-        depth -= 1
-        if depth == 0: break
 try:
-    data = json.loads(html[start:i+1])
+    decoder = json.JSONDecoder()
+    data, _ = decoder.raw_decode(html[start:])
     tabs = data['contents']['twoColumnBrowseResultsRenderer']['tabs']
     count = 0
     for tab in tabs:
@@ -50,7 +48,7 @@ try:
         if not grid: continue
         for item in grid.get('contents', []):
             r = item.get('richItemRenderer', {}).get('content', {}).get('videoRenderer')
-            if r and count < 10:
+            if r and count < LIMIT:
                 print('VIDEO:' + r['videoId'] + '|||' + r['title']['runs'][0]['text'])
                 count += 1
 except Exception as e:
@@ -166,7 +164,7 @@ N. <標題> — <URL>
 
 ## 注意事項
 
-- **defuddle 內容不足**：transcript 不足 500 字時走情況 B，只寫重點摘要，不推測補充
+- **defuddle 內容不足**：contentMarkdown 無時間戳格式（`**0:00**`）時走情況 B，只寫重點摘要，不推測補充
 - **published fallback**：defuddle `--json` 有時不回傳 `published`，可用 `curl` 抓影片頁面後 grep `itemprop="datePublished"` 取得；若仍為空則留空
 - **tags**：一律加 `youtube`，可依頻道主題加額外標籤（如 `claude-code`）
 - **檔名長度**：超過 40 字元的標題適當縮短，保留關鍵詞

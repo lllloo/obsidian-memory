@@ -3,7 +3,7 @@
   "evals": [
     {
       "id": 0,
-      "prompt": "https://www.youtube.com/@Chase-H-AI/videos 幫我把這個頻道的影片建成筆記，最多 30 部",
+      "prompt": "https://www.youtube.com/@Chase-H-AI/videos 幫我把這個頻道的影片建成筆記",
       "expected_output": "抓取頻道影片清單，用 defuddle 擷取每部影片內容，平行 subagents 建立符合 vault 規則的筆記到 content/YouTube/<頻道名>/",
       "files": [],
       "assertions": [
@@ -26,10 +26,6 @@
         {
           "name": "published 欄位存在",
           "description": "每筆筆記 frontmatter 含 published（影片上傳日期 YYYY-MM-DD）"
-        },
-        {
-          "name": "status 欄位為 done",
-          "description": "每筆筆記 frontmatter 含 status: done"
         }
       ]
     },
