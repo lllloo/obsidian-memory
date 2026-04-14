@@ -1,6 +1,6 @@
 ---
 name: youtube-channel-to-notes
-description: 當使用者提供 YouTube 頻道網址並想要建立筆記時使用此 skill。用 curl + python3 抓取頻道影片清單（最多 10 部），用平行 subagents 將每部影片建立成 Obsidian vault 筆記（content/YouTube/<頻道名>/）。觸發詞：提供 YouTube 頻道 URL、「幫我把這個頻道的影片建成筆記」、「youtube 轉筆記」、「抓頻道影片」。
+description: 當使用者提供 YouTube **頻道** URL（含 @handle 的網址，如 youtube.com/@XXX 或 youtube.com/@XXX/videos）並想建立、同步或整理 Obsidian 筆記時，一定要用此 skill。觸發情境：「頻道影片建成筆記」、「youtube 轉筆記」、「yt 轉 ob」、「整理到 vault」、「存成 Obsidian 筆記」、「同步這個頻道」、「看有沒有新影片沒存到的」、「抓頻道影片」。不應觸發：單部影片 URL（watch?v=XXX）、使用者明確說「不用建筆記」或只是查詢既有筆記。
 ---
 
 # YouTube Channel to Notes
