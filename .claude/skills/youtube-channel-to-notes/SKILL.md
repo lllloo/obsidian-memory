@@ -130,10 +130,16 @@ N. <標題> — <URL>
 **步驟：**
 對每部影片：
 1. 執行 `npx defuddle parse <url> --json` 取得完整 JSON（含 contentMarkdown、published 等欄位）
-2. 從 JSON 取出 `published` 欄位（ISO 8601 格式），擷取日期部分（YYYY-MM-DD）寫入 frontmatter
-3. 若 `published` 欄位不存在或為空，改用 Chrome 導航到影片頁面，以 `document.querySelector('meta[itemprop="datePublished"]').content` 取得上傳日期
-4. 從 JSON 取出 `contentMarkdown` 作為筆記內容來源
-5. 依下方「內容品質標準」撰寫筆記
+2. 若 defuddle 失敗（exit code 非 0 或輸出為空），用 Chrome 導航到影片頁面，執行以下 JS 確認影片是否可用：
+   ```javascript
+   const item = window.ytInitialData.contents.twoColumnWatchNextResults.results.results.contents[0].itemSectionRenderer && window.ytInitialData.contents.twoColumnWatchNextResults.results.results.contents[0].itemSectionRenderer.contents[0].backgroundPromoRenderer;
+   document.title = item ? (item.title.runs[0].text) : 'available';
+   ```
+   若 title 包含「這部影片已無法播放」→ **跳過，不建立筆記**，回報「⚠ 影片已刪除，跳過」
+3. 從 JSON 取出 `published` 欄位（ISO 8601 格式），擷取日期部分（YYYY-MM-DD）寫入 frontmatter
+4. 若 `published` 欄位不存在或為空，改用 Chrome 導航到影片頁面，以 `document.querySelector('meta[itemprop="datePublished"]').content` 取得上傳日期
+5. 從 JSON 取出 `contentMarkdown` 作為筆記內容來源
+6. 依下方「內容品質標準」撰寫筆記
 
 **筆記規則（必須嚴格遵守）：**
 - 檔案路徑：content/YouTube/<頻道名>/<繁體中文精簡標題>.md
@@ -188,4 +194,5 @@ N. <標題> — <URL>
 - **檔名長度**：超過 40 字元的標題適當縮短，保留關鍵詞
 - **增量同步**：再次執行同一頻道時，Step 2 會過濾已有筆記，只建立新影片的筆記；`ytInitialData` 最多回傳 10 部（最新的），足以涵蓋一般更新週期
 - **重複筆記**：若同名檔案已存在，跳過不覆寫
+- **影片已刪除**：defuddle 失敗時用 Chrome 確認，若出現「這部影片已無法播放」直接跳過，不建立任何筆記
 - **不發佈**：`content/YouTube/` 已在 ignorePatterns，無需加 `draft: true`
