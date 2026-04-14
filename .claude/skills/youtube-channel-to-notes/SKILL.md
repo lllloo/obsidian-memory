@@ -1,6 +1,6 @@
 ---
 name: youtube-channel-to-notes
-description: 當使用者提供 YouTube 頻道網址並想要建立筆記時使用此 skill。用 Claude in Chrome 抓取頻道影片清單（最多 10 部），用平行 subagents 將每部影片建立成 Obsidian vault 筆記（content/YouTube/<頻道名>/）。觸發詞：提供 YouTube 頻道 URL、「幫我把這個頻道的影片建成筆記」、「youtube 轉筆記」、「抓頻道影片」。
+description: 當使用者提供 YouTube 頻道網址並想要建立筆記時使用此 skill。用 curl + python3 抓取頻道影片清單（最多 10 部），用平行 subagents 將每部影片建立成 Obsidian vault 筆記（content/YouTube/<頻道名>/）。觸發詞：提供 YouTube 頻道 URL、「幫我把這個頻道的影片建成筆記」、「youtube 轉筆記」、「抓頻道影片」。
 ---
 
 # YouTube Channel to Notes
@@ -13,53 +13,63 @@ description: 當使用者提供 YouTube 頻道網址並想要建立筆記時使�
 - 此資料夾已在 `quartz.config.ts` 的 `ignorePatterns` 中，**不會發佈到網站**
 - 每個頻道資料夾下建立 `01.index.md` 與 `02.影片清單.base` 作為索引（數字前綴確保固定排第一）
 
-## 步驟 1：抓取影片清單
+## 步驟 1：抓取影片清單與頻道簡介
 
-使用 **Claude in Chrome**（mcp__claude-in-chrome 工具）抓取頻道影片清單：
+用 `curl + python3` 一次抓取頻道頁面，同時取出影片清單與頻道簡介：
 
-1. 導航到頻道的 `/videos` 頁面
-2. 用 `javascript_tool` 執行以下腳本，從 `window.ytInitialData` 直接讀取影片資料（無需捲動，最多 10 部，video ID 完整可靠）：
+```bash
+curl -s "https://www.youtube.com/@<handle>/videos" \
+  -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36" \
+  -H "Accept-Language: en-US,en;q=0.9" \
+  | python3 -c "
+import sys, json, re
+html = sys.stdin.read()
 
-```javascript
-try {
-  const data = window.ytInitialData;
-  const tabs = data.contents.twoColumnBrowseResultsRenderer.tabs;
-  let videos = [];
-  for (const tab of tabs) {
-    const content = tab.tabRenderer && tab.tabRenderer.content;
-    if (!content) continue;
-    const section = content.richGridRenderer;
-    if (!section) continue;
-    for (const item of section.contents || []) {
-      const r = item.richItemRenderer && item.richItemRenderer.content && item.richItemRenderer.content.videoRenderer;
-      if (r) {
-        videos.push(r.title.runs[0].text + '|||' + r.videoId);
-      }
-    }
-  }
-  const result = videos.slice(0, 10).join('###');
-  if (result.length > 1500) {
-    document.title = 'TRUNCATED###' + result.substring(0, 1500);
-  } else {
-    document.title = result;
-  }
-} catch(e) {
-  document.title = 'ERROR:structureMismatch###' + e.message;
-}
+# 頻道簡介
+desc_m = re.search(r'<meta name=\"description\" content=\"([^\"]*)\"', html)
+print('DESC:' + (desc_m.group(1)[:300] if desc_m else ''))
+
+# 影片清單（從 ytInitialData SSR 物件取出，不需執行 JS）
+m = re.search(r'var ytInitialData = ', html)
+if not m:
+    print('ERROR:notFound')
+    exit(1)
+start = m.end()
+depth, i = 0, start
+for i, c in enumerate(html[start:], start):
+    if c == '{': depth += 1
+    elif c == '}':
+        depth -= 1
+        if depth == 0: break
+try:
+    data = json.loads(html[start:i+1])
+    tabs = data['contents']['twoColumnBrowseResultsRenderer']['tabs']
+    count = 0
+    for tab in tabs:
+        grid = tab.get('tabRenderer', {}).get('content', {}).get('richGridRenderer')
+        if not grid: continue
+        for item in grid.get('contents', []):
+            r = item.get('richItemRenderer', {}).get('content', {}).get('videoRenderer')
+            if r and count < 10:
+                print('VIDEO:' + r['videoId'] + '|||' + r['title']['runs'][0]['text'])
+                count += 1
+except Exception as e:
+    print('ERROR:' + str(e))
+"
 ```
 
-3. 讀取 tab title（`tabs_context_mcp` 取得 `title` 欄位），依以下規則處理：
-   - 若 title 以 `ERROR:` 開頭 → **立即停止**，告知用戶「ytInitialData 結構異常，請回報錯誤訊息：`<error message>`」
-   - 若 title 以 `TRUNCATED###` 開頭 → 移除前綴繼續解析，並在步驟 6 彙整表格後標注「⚠ 資料可能截斷，部分影片未處理」
-   - 正常情況：以 `###` 分割各筆，再以 `|||` 分割標題與 video ID
-4. 組成 URL：`https://www.youtube.com/watch?v=<videoId>`
-6. 從頻道 URL 取得頻道名稱，並正規化：
-   - 來源優先順序：URL 路徑中的 `@handle`（去掉 `@`）→ 頁面 `<title>` 標籤文字
-   - 正規化規則：空格轉 `-`，移除 `?:;"'!@#$%^&*()+=[]{}|\\/<>` 等特殊字元，保留英數字、中文字、`-`、`_`
-   - 範例：`Chase H AI` → `Chase-H-AI`、`AI進化論!` → `AI進化論`
-   - 後續所有步驟的 `<頻道名>` 皆使用正規化後的名稱
+解析輸出：
+- `DESC:<text>` → 頻道簡介（Step 3 使用，可能為空）
+- `VIDEO:<videoId>|||<title>` → 每行一部影片，最多 10 行
+- `ERROR:<message>` → **立即停止**，告知用戶錯誤訊息
 
-> **為什麼用 `ytInitialData` + `document.title`**：`javascript_tool` 回傳值若含 `?=&` 等 query string 字元會被過濾 BLOCKED。改用 `document.title` 傳遞資料可繞過此限制。Video ID 本身（11 碼英數字 + `-_`）不含這些字元，可直接放入 title，無需額外編碼。`ytInitialData` 是 YouTube SSR 預載物件，含完整影片資料，不需捲動且 video ID 不會截斷或重複。
+組成影片 URL：`https://www.youtube.com/watch?v=<videoId>`
+
+從頻道 URL 取得頻道名稱並正規化：
+- 來源：URL 路徑中的 `@handle`（去掉 `@`）
+- 正規化規則：空格轉 `-`，移除 `?:;"'!@#$%^&*()+=[]{}|\\/<>` 等特殊字元，保留英數字、中文字、`-`、`_`
+- 範例：`Chase H AI` → `Chase-H-AI`、`AI進化論!` → `AI進化論`
+- 後續所有步驟的 `<頻道名>` 皆使用正規化後的名稱
 
 ## 步驟 2：增量同步檢查 + 建立資料夾
 
@@ -80,14 +90,7 @@ grep -rh "^source:" content/YouTube/<頻道名>/ --include="*.md" 2>/dev/null | 
 
 **在啟動文章生成前**，先在頻道資料夾建立 `01.index.md`（若已存在則跳過）。
 
-建立前，用 `javascript_tool` 從頻道頁面（此時仍開著）抓取頻道簡介：
-
-```javascript
-const desc = document.querySelector('meta[name="description"]')?.content || '';
-document.title = desc.substring(0, 300);
-```
-
-讀取 tab title 取得簡介文字（可能為空）。寫入 index 時置於 frontmatter 下方、`![[02.影片清單]]` 上方；若為空則省略。
+頻道簡介已在步驟 1 的 `DESC:` 行取得，直接使用即可（可能為空）。寫入 index 時置於 frontmatter 下方、`![[02.影片清單]]` 上方；若為空則省略。
 
 ```markdown
 ---
@@ -164,10 +167,10 @@ N. <標題> — <URL>
 ## 注意事項
 
 - **defuddle 內容不足**：transcript 不足 500 字時走情況 B，只寫重點摘要，不推測補充
-- **published fallback**：defuddle `--json` 有時不回傳 `published`，需用 Chrome 的 `meta[itemprop="datePublished"]` 作為備援
+- **published fallback**：defuddle `--json` 有時不回傳 `published`，可用 `curl` 抓影片頁面後 grep `itemprop="datePublished"` 取得；若仍為空則留空
 - **tags**：一律加 `youtube`，可依頻道主題加額外標籤（如 `claude-code`）
 - **檔名長度**：超過 40 字元的標題適當縮短，保留關鍵詞
 - **增量同步**：再次執行同一頻道時，Step 2 會過濾已有筆記，只建立新影片的筆記；`ytInitialData` 最多回傳 10 部（最新的），足以涵蓋一般更新週期
 - **重複筆記**：若同名檔案已存在，跳過不覆寫
-- **影片已刪除**：defuddle 失敗時用 Chrome 確認，若出現「這部影片已無法播放」直接跳過，不建立任何筆記
+- **影片已刪除**：defuddle 失敗時，subagent 依 subagent-note-creator.md 的流程確認後跳過
 - **不發佈**：`content/YouTube/` 已在 ignorePatterns，無需加 `draft: true`

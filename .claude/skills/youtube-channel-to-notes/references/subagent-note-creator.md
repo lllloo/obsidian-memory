@@ -5,15 +5,24 @@
 對每部影片：
 
 1. 執行 `npx defuddle parse <url> --json` 取得完整 JSON（含 contentMarkdown、published 等欄位）
-2. 若 defuddle 失敗（exit code 非 0 或輸出為空），用 Chrome 導航到影片頁面，執行以下 JS 確認影片是否可用：
-   ```javascript
-   const item = window.ytInitialData.contents.twoColumnWatchNextResults.results.results.contents[0].itemSectionRenderer && window.ytInitialData.contents.twoColumnWatchNextResults.results.results.contents[0].itemSectionRenderer.contents[0].backgroundPromoRenderer;
-   document.title = item ? item.title.runs[0].text : 'available';
+2. 若 defuddle 失敗（exit code 非 0 或輸出為空），用 curl 確認影片是否可用：
+   ```bash
+   curl -s "https://www.youtube.com/watch?v=<videoId>" \
+     -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36" \
+     -H "Accept-Language: en-US,en;q=0.9" \
+     | python3 -c "import sys; html=sys.stdin.read(); print('unavailable' if 'videoUnavailableRenderer' in html else 'available')"
    ```
-   - 若 title 包含「這部影片已無法播放」→ **跳過，不建立筆記**，回報「⚠ 影片已刪除，跳過」
-   - 若 title 為 `available` → 影片正常，繼續執行
+   - 若輸出為 `unavailable` → **跳過，不建立筆記**，回報「⚠ 影片已刪除，跳過」
+   - 若輸出為 `available` → 影片正常，繼續執行
 3. 從 JSON 取出 `published` 欄位（ISO 8601 格式），擷取日期部分（YYYY-MM-DD）寫入 frontmatter
-4. 若 `published` 欄位不存在或為空：用 Chrome 導航到影片頁面（若尚未開啟），執行 `document.querySelector('meta[itemprop="datePublished"]').content` 取得上傳日期；若仍為空則 `published` 欄位留空
+4. 若 `published` 欄位不存在或為空：用 curl 取得上傳日期（步驟 2 已抓過頁面時可重複使用）：
+   ```bash
+   curl -s "https://www.youtube.com/watch?v=<videoId>" \
+     -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36" \
+     -H "Accept-Language: en-US,en;q=0.9" \
+     | python3 -c "import sys,re; html=sys.stdin.read(); m=re.search(r'itemprop=\"datePublished\" content=\"([^\"]+)\"', html); print(m.group(1)[:10] if m else '')"
+   ```
+   若仍為空則 `published` 欄位留空
 5. 從 JSON 取出 `contentMarkdown` 作為筆記內容來源
 6. 依下方「內容品質標準」撰寫筆記
 
