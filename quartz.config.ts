@@ -15,7 +15,7 @@ const config: QuartzConfig = {
     analytics: null,
     locale: "zh-TW",
     baseUrl: "ob.bugloop.com",
-    ignorePatterns: ["private", "Templates", ".obsidian", "CLAUDE.md", "Inbox", "YouTube"],
+    ignorePatterns: ["private", "Templates", ".obsidian", "CLAUDE.md", "Inbox", "YouTube", "Clippings"],
     defaultDateType: "created",
     theme: {
       fontOrigin: "googleFonts",
