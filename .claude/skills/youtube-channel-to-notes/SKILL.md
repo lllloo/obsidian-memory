@@ -33,10 +33,7 @@ try {
     for (const item of section.contents || []) {
       const r = item.richItemRenderer && item.richItemRenderer.content && item.richItemRenderer.content.videoRenderer;
       if (r) {
-        const title = r.title.runs[0].text;
-        const vid = r.videoId;
-        const hex = Array.from(vid).map(c => c.charCodeAt(0).toString(16).padStart(2,'0')).join('');
-        videos.push(title + '|||' + hex);
+        videos.push(r.title.runs[0].text + '|||' + r.videoId);
       }
     }
   }
@@ -54,16 +51,15 @@ try {
 3. 讀取 tab title（`tabs_context_mcp` 取得 `title` 欄位），依以下規則處理：
    - 若 title 以 `ERROR:` 開頭 → **立即停止**，告知用戶「ytInitialData 結構異常，請回報錯誤訊息：`<error message>`」
    - 若 title 以 `TRUNCATED###` 開頭 → 移除前綴繼續解析，並在步驟 6 彙整表格後標注「⚠ 資料可能截斷，部分影片未處理」
-   - 正常情況：以 `###` 分割各筆，再以 `|||` 分割標題與 hex-encoded video ID
-4. hex 解碼：每兩個十六進位字元還原為一個字元，得到 11 碼的 video ID
-5. 組成 URL：`https://www.youtube.com/watch?v=<videoId>`
+   - 正常情況：以 `###` 分割各筆，再以 `|||` 分割標題與 video ID
+4. 組成 URL：`https://www.youtube.com/watch?v=<videoId>`
 6. 從頻道 URL 取得頻道名稱，並正規化：
    - 來源優先順序：URL 路徑中的 `@handle`（去掉 `@`）→ 頁面 `<title>` 標籤文字
    - 正規化規則：空格轉 `-`，移除 `?:;"'!@#$%^&*()+=[]{}|\\/<>` 等特殊字元，保留英數字、中文字、`-`、`_`
    - 範例：`Chase H AI` → `Chase-H-AI`、`AI進化論!` → `AI進化論`
    - 後續所有步驟的 `<頻道名>` 皆使用正規化後的名稱
 
-> **為什麼用 `ytInitialData`**：YouTube 頁面的 `javascript_tool` 回傳值會被安全過濾 BLOCKED（含 cookie/query string 資料）。透過 `document.title` 傳遞資料可繞過此限制；`ytInitialData` 是 YouTube SSR 預載的物件，包含完整影片資料，不需捲動、video ID 不會截斷或重複。
+> **為什麼用 `ytInitialData` + `document.title`**：`javascript_tool` 回傳值若含 `?=&` 等 query string 字元會被過濾 BLOCKED。改用 `document.title` 傳遞資料可繞過此限制。Video ID 本身（11 碼英數字 + `-_`）不含這些字元，可直接放入 title，無需額外編碼。`ytInitialData` 是 YouTube SSR 預載物件，含完整影片資料，不需捲動且 video ID 不會截斷或重複。
 
 ## 步驟 2：增量同步檢查 + 建立資料夾
 
@@ -82,7 +78,16 @@ grep -rh "^source:" content/YouTube/<頻道名>/ --include="*.md" 2>/dev/null | 
 
 ## 步驟 3：建立 01.index.md
 
-**在啟動文章生成前**，先在頻道資料夾建立 `01.index.md`（若已存在則跳過）：
+**在啟動文章生成前**，先在頻道資料夾建立 `01.index.md`（若已存在則跳過）。
+
+建立前，用 `javascript_tool` 從頻道頁面（此時仍開著）抓取頻道簡介：
+
+```javascript
+const desc = document.querySelector('meta[name="description"]')?.content || '';
+document.title = desc.substring(0, 300);
+```
+
+讀取 tab title 取得簡介文字（可能為空）。寫入 index 時置於 frontmatter 下方、`![[02.影片清單]]` 上方；若為空則省略。
 
 ```markdown
 ---
@@ -94,6 +99,8 @@ created: <今日 YYYY-MM-DD>
 updated: <今日 YYYY-MM-DD>
 source: <頻道 URL>
 ---
+
+<頻道簡介（若有）>
 
 ![[02.影片清單]]
 ```
