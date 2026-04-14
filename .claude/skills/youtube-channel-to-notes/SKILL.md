@@ -21,30 +21,47 @@ description: 當使用者提供 YouTube 頻道網址並想要建立筆記時使�
 2. 用 `javascript_tool` 執行以下腳本，從 `window.ytInitialData` 直接讀取影片資料（無需捲動，最多 10 部，video ID 完整可靠）：
 
 ```javascript
-const data = window.ytInitialData;
-const tabs = data.contents.twoColumnBrowseResultsRenderer.tabs;
-let videos = [];
-for (const tab of tabs) {
-  const content = tab.tabRenderer && tab.tabRenderer.content;
-  if (!content) continue;
-  const section = content.richGridRenderer;
-  if (!section) continue;
-  for (const item of section.contents || []) {
-    const r = item.richItemRenderer && item.richItemRenderer.content && item.richItemRenderer.content.videoRenderer;
-    if (r) {
-      const title = r.title.runs[0].text;
-      const vid = r.videoId;
-      const hex = Array.from(vid).map(c => c.charCodeAt(0).toString(16).padStart(2,'0')).join('');
-      videos.push(title + '|||' + hex);
+try {
+  const data = window.ytInitialData;
+  const tabs = data.contents.twoColumnBrowseResultsRenderer.tabs;
+  let videos = [];
+  for (const tab of tabs) {
+    const content = tab.tabRenderer && tab.tabRenderer.content;
+    if (!content) continue;
+    const section = content.richGridRenderer;
+    if (!section) continue;
+    for (const item of section.contents || []) {
+      const r = item.richItemRenderer && item.richItemRenderer.content && item.richItemRenderer.content.videoRenderer;
+      if (r) {
+        const title = r.title.runs[0].text;
+        const vid = r.videoId;
+        const hex = Array.from(vid).map(c => c.charCodeAt(0).toString(16).padStart(2,'0')).join('');
+        videos.push(title + '|||' + hex);
+      }
     }
   }
+  const result = videos.slice(0, 10).join('###');
+  if (result.length > 1500) {
+    document.title = 'TRUNCATED###' + result.substring(0, 1500);
+  } else {
+    document.title = result;
+  }
+} catch(e) {
+  document.title = 'ERROR:structureMismatch###' + e.message;
 }
-document.title = videos.slice(0, 10).join('###');
 ```
 
-3. 讀取 tab title（`tabs_context_mcp` 取得 `title` 欄位），以 `###` 分割各筆，再以 `|||` 分割標題與 hex-encoded video ID
+3. 讀取 tab title（`tabs_context_mcp` 取得 `title` 欄位），依以下規則處理：
+   - 若 title 以 `ERROR:` 開頭 → **立即停止**，告知用戶「ytInitialData 結構異常，請回報錯誤訊息：`<error message>`」
+   - 若 title 以 `TRUNCATED###` 開頭 → 移除前綴繼續解析，並在步驟 6 彙整表格後標注「⚠ 資料可能截斷，部分影片未處理」
+   - 正常情況：以 `###` 分割各筆，再以 `|||` 分割標題與 hex-encoded video ID
 4. hex 解碼：每兩個十六進位字元還原為一個字元，得到 11 碼的 video ID
 5. 組成 URL：`https://www.youtube.com/watch?v=<videoId>`
+6. 從頻道 URL 取得頻道名稱，並正規化：
+   - 來源優先順序：URL 路徑中的 `@handle`（去掉 `@`）→ 頁面 `<title>` 標籤文字
+   - 正規化規則：空格轉 `-`，移除 `?:;"'!@#$%^&*()+=[]{}|\\/<>` 等特殊字元，保留英數字、中文字、`-`、`_`
+   - 範例：`Chase H AI` → `Chase-H-AI`、`AI進化論!` → `AI進化論`
+   - 後續所有步驟的 `<頻道名>` 皆使用正規化後的名稱
 
 > **為什麼用 `ytInitialData`**：YouTube 頁面的 `javascript_tool` 回傳值會被安全過濾 BLOCKED（含 cookie/query string 資料）。透過 `document.title` 傳遞資料可繞過此限制；`ytInitialData` 是 YouTube SSR 預載的物件，包含完整影片資料，不需捲動、video ID 不會截斷或重複。
 
@@ -119,6 +136,7 @@ views:
 
 ```
 任務：用 defuddle 抓取 YouTube 影片內容，並在 Obsidian vault 建立筆記。
+詳細指示請先 Read `.claude/skills/youtube-channel-to-notes/references/subagent-note-creator.md`。
 
 筆記存放位置：content/YouTube/<頻道名>/
 今日日期：<YYYY-MM-DD>
@@ -126,56 +144,6 @@ views:
 **影片清單（處理第 N-M 部）：**
 N. <標題> — <URL>
 ...
-
-**步驟：**
-對每部影片：
-1. 執行 `npx defuddle parse <url> --json` 取得完整 JSON（含 contentMarkdown、published 等欄位）
-2. 若 defuddle 失敗（exit code 非 0 或輸出為空），用 Chrome 導航到影片頁面，執行以下 JS 確認影片是否可用：
-   ```javascript
-   const item = window.ytInitialData.contents.twoColumnWatchNextResults.results.results.contents[0].itemSectionRenderer && window.ytInitialData.contents.twoColumnWatchNextResults.results.results.contents[0].itemSectionRenderer.contents[0].backgroundPromoRenderer;
-   document.title = item ? (item.title.runs[0].text) : 'available';
-   ```
-   若 title 包含「這部影片已無法播放」→ **跳過，不建立筆記**，回報「⚠ 影片已刪除，跳過」
-3. 從 JSON 取出 `published` 欄位（ISO 8601 格式），擷取日期部分（YYYY-MM-DD）寫入 frontmatter
-4. 若 `published` 欄位不存在或為空，改用 Chrome 導航到影片頁面，以 `document.querySelector('meta[itemprop="datePublished"]').content` 取得上傳日期
-5. 從 JSON 取出 `contentMarkdown` 作為筆記內容來源
-6. 依下方「內容品質標準」撰寫筆記
-
-**筆記規則（必須嚴格遵守）：**
-- 檔案路徑：content/YouTube/<頻道名>/<繁體中文精簡標題>.md
-- 檔案名稱命名規則：
-  - 繁體中文為主，技術名詞與品牌名保留英文
-  - 不可含空格；英文/數字與中文之間用 `-` 連接（例：`Claude-Code準確度提升技巧`）；中文詞之間不加符號
-  - 只保留核心主題，去掉副標題（`-效果更好還更便宜`、`-非工程師也能懂` 等說明性後綴一律刪除）
-  - 去掉日期（`-2026年4月` 等）
-  - 不超過 30 字元
-  - 不可含 `?:;"'` 等特殊字元
-- frontmatter 格式：
-  ---
-  title: <影片標題的繁體中文翻譯>（技術名詞與品牌名保留英文）
-  tags:
-    - youtube
-  created: <今日 YYYY-MM-DD>
-  updated: <今日 YYYY-MM-DD>
-  published: <影片上傳日期 YYYY-MM-DD>
-  source: <youtube url>
-  ---
-- 不使用 # 標題 heading（Quartz 從 frontmatter 自動產生）
-
-**內容品質標準（重要）：**
-
-情況 A — defuddle 抓到完整 transcript（contentMarkdown 超過 500 字）：
-- 依影片的自然章節，用 `##` heading 分段（例：`## 核心架構`、`## 設定步驟`、`## 實際案例`）
-- 每段用條列或短段落說明該章節的重點，包含具體細節（指令、設定路徑、數值等）
-- 可用 code block 呈現指令或結構
-- **禁止放原始逐字稿**或帶時間戳的文字
-- 目標：讀者不看影片也能完全理解並執行
-
-情況 B — defuddle 只抓到 description 或極少內容（不足 500 字）：
-- 寫一個 `## 重點摘要` 段落，條列實際取得的資訊
-- **禁止推測或補充** defuddle 沒有的內容
-
-每個筆記建立後確認檔案存在。全部完成後回報結果清單。
 ```
 
 ## 步驟 6：彙整結果
