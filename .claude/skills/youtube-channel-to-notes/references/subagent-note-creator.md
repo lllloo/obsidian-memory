@@ -8,7 +8,21 @@
    ```bash
    defuddle parse <url> --json 2>/dev/null || npx defuddle parse <url> --json
    ```
-2. 若 defuddle 失敗（exit code 非 0 或輸出為空），用 curl 一次取得可用性與上傳日期：
+   **取得 transcript 後必須驗證內容**：確認 contentMarkdown 的主題與影片標題相關。若內容明顯是其他頻道的影片（YouTube 頁面有時會把推薦影片或廣告的 transcript 注入），視為 defuddle 失敗，改走步驟 1b。
+
+1b. **youtube-transcript-api fallback**（defuddle 失敗或 transcript 不符時）：
+   ```bash
+   pip install youtube-transcript-api -q
+   python3 -c "
+   from youtube_transcript_api import YouTubeTranscriptApi
+   transcript = YouTubeTranscriptApi.get_transcript('<videoId>', languages=['en', 'zh-TW', 'zh'])
+   for t in transcript:
+       print(f\"**{int(t['start']//60)}:{int(t['start']%60):02d}** {t['text']}\")
+   "
+   ```
+   此方法直接用 video ID 抓字幕，不受頁面推薦影片干擾，是比 curl 更可靠的 fallback。若仍失敗，再走步驟 2。
+
+2. 若以上皆失敗，用 curl 一次取得可用性與上傳日期：
    ```bash
    curl -s "https://www.youtube.com/watch?v=<videoId>" \
      -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36" \

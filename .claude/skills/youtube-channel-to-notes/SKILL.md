@@ -168,7 +168,11 @@ N. <標題> — <URL>
 - **published fallback**：defuddle `--json` 有時不回傳 `published`，可用 `curl` 抓影片頁面後 grep `itemprop="datePublished"` 取得；若仍為空則留空
 - **tags**：一律加 `youtube`，可依頻道主題加額外標籤（如 `claude-code`）
 - **檔名長度**：超過 40 字元的標題適當縮短，保留關鍵詞
-- **增量同步**：再次執行同一頻道時，Step 2 會過濾已有筆記，只建立新影片的筆記；`ytInitialData` 最多回傳 10 部（最新的），足以涵蓋一般更新週期
+- **增量同步**：再次執行同一頻道時，Step 2 會過濾已有筆記，只建立新影片的筆記；`ytInitialData` 最多回傳 30 部（最新的），足以涵蓋一般更新週期
+- **往前追溯限制**：ytInitialData 最多回傳 30 部。若頻道已存筆記 ≥ 20 篇，往前追溯會撞到此限制（30 部全被已存的覆蓋），無法取得更舊的影片；需改走 YouTube continuation token API（非本 skill 範圍）
+- **YouTube 429 rate limit**：大量平行抓取多頻道時容易觸發。受影響的影片先建立為 `draft: true` 筆記保留位置，等數小時後 rate limit 解除再補完內容
+- **published 欄位不穩定**：defuddle 解析 YouTube 頁面時 `published` 欄位常為空，大多數影片需要 fallback 用 curl 抓 `itemprop="datePublished"` meta tag，這是正常現象
+- **Windows Python subprocess 編碼**：若在 skill 外用 Python `subprocess` 抓 YouTube 頁面，必須用 bytes 模式（不加 `text=True`）再手動 `.decode('utf-8', errors='replace')`，否則 Windows 預設 cp950 會解碼失敗
 - **重複筆記**：若同名檔案已存在，跳過不覆寫
 - **影片已刪除**：defuddle 失敗時，subagent 依 subagent-note-creator.md 的流程確認後跳過
 - **不發佈**：`content/YouTube/` 已在 ignorePatterns，無需加 `draft: true`
