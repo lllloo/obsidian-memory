@@ -18,7 +18,7 @@ content/
 │   ├── Claude-Code/   — Skills、Agent Packages、Hooks、GAN Harness
 │   ├── Obsidian/      — CLI 整合、Skills、Quartz 部署
 │   └── 切版/          — Pencil 讀取規則、Flexbox、Border 規則
-└── YouTube/       — 323 篇影片摘要，13 個頻道
+└── YouTube/       — 390 篇影片摘要，13 個頻道
     ├── AIJasonZ/              — Cursor、Gemini、Claude 設計工作流
     ├── AILABS-393/            — Claude Code 進階技巧、OpenClaw、RAG
     ├── Chase-H-AI/            — Claude Code 實戰、RAG、Obsidian 整合

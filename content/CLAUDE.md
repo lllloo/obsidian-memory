@@ -87,6 +87,18 @@ powershell.exe -Command "obsidian <指令>"
   ```
 - 建立後加 `open` 讓 Obsidian 自動開啟
 
+## 更新規則
+
+每次新增或批次更新筆記後，必須同步更新 `master-index.md`：
+- YouTube 篇數（`YouTube/ — N 篇影片摘要`）
+- 若有新頻道，加入頻道清單與描述
+
+## YouTube 筆記語言規範
+
+所有 YouTube 影片筆記正文內容一律以**繁體中文**撰寫。
+- 技術名詞、品牌名、工具名保留英文（例：Claude Code、OpenAI、defuddle）
+- 若 defuddle 取得英文 transcript，需翻譯整理為繁體中文後再寫入筆記
+
 ## 查詢規則
 
 查詢相關知識時：
