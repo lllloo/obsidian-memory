@@ -87,6 +87,14 @@ powershell.exe -Command "obsidian <指令>"
   ```
 - 建立後加 `open` 讓 Obsidian 自動開啟
 
+## 查詢規則
+
+查詢相關知識時：
+1. 先讀 `master-index.md` 確認資料位置
+2. 主題筆記 → 對應 `Topics/` 子目錄
+3. 影片摘要 → 依主題選對應 `YouTube/<頻道>/`
+4. 跨主題 → Grep 搜尋 tag（frontmatter 中的 tags 欄位）
+
 ### 回應格式
 
 - 日記：「已追加到今日日記 ✓」+ 簡短顯示內容

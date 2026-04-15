@@ -24,7 +24,7 @@ npm run format                   # 自動格式化
 
 ## Quartz 重要行為
 
-- `ignorePatterns` 包含 `private`、`Templates`、`.obsidian`、`CLAUDE.md`、`Inbox`，這些不會發佈至網站
+- `ignorePatterns` 包含 `private`、`Templates`、`.obsidian`、`CLAUDE.md`、`Inbox`、`YouTube`、`Clippings`，這些不會發佈至網站
 - frontmatter 加 `draft: true` 的筆記會被 `RemoveDrafts` plugin 過濾，不發佈
 - 日期優先順序：frontmatter → git → filesystem（`CreatedModifiedDate` plugin）
 - Plugin pipeline：transformers（解析 Markdown）→ filters（篩選頁面）→ emitters（產生 HTML/靜態資源）
@@ -33,6 +33,8 @@ npm run format                   # 自動格式化
 ## Obsidian Vault 規則
 
 筆記結構、命名規則、tag 格式、安全規範等詳見 [`content/CLAUDE.md`](content/CLAUDE.md)。
+
+查詢 vault 知識時，先讀 [`content/master-index.md`](content/master-index.md) 確認資料夾與 tag 分布，再導航到對應位置。
 
 請遵循以下子模組的規範：
 - @content/CLAUDE.md
@@ -44,7 +46,10 @@ npm run format                   # 自動格式化
 | 檔案 | 全域路徑 | 用途 |
 |------|---------|------|
 | `.claude/agents/obsidian.md` | `~/.claude/agents/obsidian.md` | Obsidian 筆記操作 agent |
+| `.claude/agents/vault-evaluator.md` | — | 稽核 vault 規則違規 |
+| `.claude/agents/vault-fixer.md` | — | 自動修正稽核結果 |
 | `.claude/commands/ob.md` | `~/.claude/commands/ob.md` | `/ob` 指令定義 |
+| `.claude/commands/vault-check.md` | — | `/vault-check` 稽核迴圈 |
 | `.claude/skills/youtube-channel-to-notes/` | `~/.claude/skills/youtube-channel-to-notes/` | YouTube 頻道影片轉 Obsidian 筆記 |
 
 **建立 symlink（Windows，需開啟 Developer Mode 或以管理員執行）：**
