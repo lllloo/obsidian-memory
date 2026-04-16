@@ -6,6 +6,7 @@ created: 2026-04-15
 updated: 2026-04-15
 published: 2025-12-29
 source: https://www.youtube.com/watch?v=fop_yxV-mPo
+parent: "[[01.index]]"
 ---
 
 ## 核心概念：Agentic Layer

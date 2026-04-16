@@ -6,6 +6,7 @@ created: 2026-04-15
 updated: 2026-04-15
 published: 2025-05-08
 source: https://www.youtube.com/watch?v=ynhl8KjjS3Y
+parent: "[[01.index]]"
 ---
 
 ## Mem0 框架概覽

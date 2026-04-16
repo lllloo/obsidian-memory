@@ -6,6 +6,7 @@ created: 2026-04-15
 updated: 2026-04-15
 published: 2025-07-25
 source: https://www.youtube.com/watch?v=T1Lowy1mnEg
+parent: "[[01.index]]"
 ---
 
 本影片目標是幫助開發者從基礎原理理解 AI Agent，跳脫框架噪音，專注於 7 個核心 building block。Dave 以 Python 程式碼示範，並強調在生產環境中盡量減少 LLM API 呼叫，優先使用 deterministic 程式碼。

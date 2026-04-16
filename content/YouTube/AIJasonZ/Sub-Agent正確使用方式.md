@@ -6,6 +6,7 @@ created: 2026-04-15
 updated: 2026-04-15
 published: 2025-08-14
 source: https://www.youtube.com/watch?v=LCYBVpSB0Wo
+parent: "[[01.index]]"
 ---
 
 ## 為什麼 Sub-Agent 常讓人失望

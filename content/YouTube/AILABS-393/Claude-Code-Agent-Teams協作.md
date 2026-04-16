@@ -6,6 +6,7 @@ created: 2026-04-15
 updated: 2026-04-15
 published: 2026-02-09
 source: https://www.youtube.com/watch?v=MSyWjPDrHJw
+parent: "[[01.index]]"
 ---
 
 ## Agent Teams vs Sub Agents

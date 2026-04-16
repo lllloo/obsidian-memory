@@ -6,6 +6,7 @@ created: 2026-04-15
 updated: 2026-04-15
 published: 2025-03-26
 source: https://www.youtube.com/watch?v=KHDMoQ2Sp2s
+parent: "[[01.index]]"
 ---
 
 ## RAG vs CAG 比較

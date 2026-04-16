@@ -4,12 +4,11 @@ tags:
   - youtube
   - claude-code
   - multi-agent
-  - tmux
-  - agent-sandbox
 created: 2026-04-13
 updated: 2026-04-13
 published: 2026-02-09
 source: https://www.youtube.com/watch?v=RpUTF_U4kiw
+parent: "[[01.index]]"
 ---
 
 ## 核心三元素

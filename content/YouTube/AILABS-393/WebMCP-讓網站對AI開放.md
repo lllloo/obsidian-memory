@@ -6,6 +6,7 @@ created: 2026-04-15
 updated: 2026-04-15
 published: 2026-02-19
 source: https://www.youtube.com/watch?v=uprZUcv0FSc
+parent: "[[01.index]]"
 ---
 
 ## 現有瀏覽器 Agent 的根本問題

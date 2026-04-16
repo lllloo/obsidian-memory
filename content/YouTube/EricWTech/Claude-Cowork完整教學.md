@@ -6,6 +6,7 @@ created: 2026-04-15
 updated: 2026-04-15
 published: 2026-03-27
 source: https://www.youtube.com/watch?v=3FCYpGz7ptM
+parent: "[[01.index]]"
 ---
 
 ## Claude Chat vs Claude Code vs Claude Cowork 差異

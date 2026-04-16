@@ -8,6 +8,7 @@ created: 2026-04-14
 updated: 2026-04-14
 published: 2026-02-07
 source: https://www.youtube.com/watch?v=S2WTTMXYcYY
+parent: "[[01.index]]"
 ---
 
 ## 與舊 Sub-agent 的差異
@@ -18,7 +19,7 @@ source: https://www.youtube.com/watch?v=S2WTTMXYcYY
 
 ## 啟用方式
 
-1. 更新 Claude Code 到 2.1.34+
+1. 更新 Claude Code 到 2.1.32+
 2. 在 `settings.json` 加入：`CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1`
 3. 建議搭配 tmux/iTerm2 使用 split view：`claude --teammate --mode`
 

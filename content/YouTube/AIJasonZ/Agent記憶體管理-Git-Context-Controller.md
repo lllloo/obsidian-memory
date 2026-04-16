@@ -9,6 +9,7 @@ created: 2026-04-14
 updated: 2026-04-14
 published: 2026-02-18
 source: https://www.youtube.com/watch?v=pAIF7vZm5k0
+parent: "[[01.index]]"
 ---
 
 ## 問題：Context Window 限制

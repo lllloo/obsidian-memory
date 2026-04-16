@@ -3,13 +3,12 @@ title: 如何建構並交付 AI 客製化解決方案
 tags:
   - youtube
   - ai-agent
-  - freelance
-  - software-engineering
   - claude-code
 created: 2026-04-13
 updated: 2026-04-13
 published: 2026-04-13
 source: https://www.youtube.com/watch?v=Q679gH7oszg
+parent: "[[01.index]]"
 ---
 
 ## 背景

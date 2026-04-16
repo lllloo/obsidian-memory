@@ -6,6 +6,7 @@ created: 2026-04-15
 updated: 2026-04-15
 published: 2026-03-28
 source: https://www.youtube.com/watch?v=6SnFH43qPAw
+parent: "[[01.index]]"
 ---
 
 ## AutoResearch（Karpathy）

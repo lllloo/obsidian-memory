@@ -6,6 +6,7 @@ created: 2026-04-15
 updated: 2026-04-15
 published: 2026-03-19
 source: https://www.youtube.com/watch?v=qqcpiDXPCvY
+parent: "[[01.index]]"
 ---
 
 ## 為何需要 Stitch

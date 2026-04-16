@@ -6,12 +6,13 @@ created: 2026-04-15
 updated: 2026-04-15
 published: 2025-03-13
 source: https://www.youtube.com/watch?v=0pGxoubWI6s
+parent: "[[01.index]]"
 ---
 
 ## 開發者必知的 7 個重點
 
 1. **向下相容**：Responses API 是 Chat Completions API 的超集，現有功能全部保留
-2. **遷移時間軸**：Chat Completions API 將於 2026 年底下線；新專案建議直接使用 Responses API
+2. **遷移時間軸**：**Assistants API** 將於 2026 年 8 月下線（非 Chat Completions API，後者無下線計畫）；新專案建議直接使用 Responses API
 3. **新功能**：Web 搜尋、File 搜尋、簡化介面、新 developer role、Reasoning 參數控制
 4. **本質不變**：沒有帶來 LLM 新能力，只是讓原本需要多步驟的操作用單一 API 呼叫完成
 5. **API 結構改變**：`client.responses.create()` 取代 `client.chat.completions.create()`

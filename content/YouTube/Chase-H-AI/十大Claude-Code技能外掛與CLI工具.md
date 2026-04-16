@@ -7,19 +7,20 @@ created: 2026-04-13
 updated: 2026-04-13
 published: 2026-04-09
 source: https://www.youtube.com/watch?v=KjEFy5wjFQg
+parent: "[[01.index]]"
 ---
 
 ## 1. Codex Plugin
 
 將 OpenAI Codex 接入 Claude Code，專門用於程式碼 review。LLM 天生對自己的程式碼評價偏高，由外部 agent 做 adversarial review 可得到更直率的批評。
 
-**安裝：** 搜尋「Codex plugin Claude Code」找到 GitHub，複製指令貼入 Claude Code，執行 `reload plugins` 與 `codeex setup`。需要 OpenAI 帳號（ChatGPT $7/月 Go 方案即可）。
+**安裝：** 搜尋「Codex plugin Claude Code」找到 GitHub，複製指令貼入 Claude Code，執行 `reload plugins` 與 `/codex:setup`。需要 OpenAI 帳號（ChatGPT $7/月 Go 方案即可）。
 
 **常用指令：**
 ```
-codeex adversarial review   # 對抗式審查，深入檢查實作品質
-codeex review               # 一般審查
-codeex rescue               # 讓 Codex 接管特定功能的開發
+/codex:adversarial-review   # 對抗式審查，深入檢查實作品質
+/codex:review               # 一般審查
+/codex:rescue               # 讓 Codex 接管特定功能的開發
 ```
 
 ## 2. Obsidian + Obsidian Skills

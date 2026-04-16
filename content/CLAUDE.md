@@ -55,6 +55,16 @@ powershell.exe -Command "obsidian <指令>"
   - `created:` / `updated:` → 今日日期
 - 追加內容保持簡潔，不加多餘標題或結構
 
+### Obsidian Bases（.base 檔案）
+
+- wikilink 必須加副檔名：`[[02.影片清單.base]]`，不加會找不到檔案
+- embed 同理：`![[02.影片清單.base]]`
+- `.base` 檔案的內容**不會在圖譜產生連結**，這是 Obsidian 已知限制
+- 要讓筆記出現在圖譜中，需在筆記 frontmatter 加 `parent` property 指向 index：
+  ```yaml
+  parent: "[[01.index]]"
+  ```
+
 ### 色碼與特殊符號
 
 - `#` 開頭的內容（如 hex 色碼 `#57F287`）在 Obsidian 會被解讀為 tag，**必須用反引號包住**：`` `#57F287` ``
@@ -63,6 +73,10 @@ powershell.exe -Command "obsidian <指令>"
 
 - **檔案名稱不可含空格**，空格一律改為 `-`（例：`Obsidian-CLI-整合指南.md`）
 - Wikilink 需對應實際檔名（含 `-`）：`[[Obsidian-CLI-整合指南]]`
+
+### 自動更新 updated
+
+**每次修改任何 `.md` 檔案內容時，必須同步將 frontmatter 的 `updated` 欄位更新為今日日期（`YYYY-MM-DD`）。** 無論是追加內容、修改欄位、還是程式化批次更新，都適用此規則。
 
 ### Frontmatter 屬性
 

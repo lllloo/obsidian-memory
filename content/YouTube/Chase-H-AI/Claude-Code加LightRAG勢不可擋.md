@@ -7,6 +7,7 @@ created: 2026-04-13
 updated: 2026-04-13
 published: 2026-04-01
 source: https://www.youtube.com/watch?v=QHlB-RJfx8w
+parent: "[[01.index]]"
 ---
 
 ## 為何 RAG 沒死

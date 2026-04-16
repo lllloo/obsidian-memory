@@ -6,6 +6,7 @@ created: 2026-04-15
 updated: 2026-04-15
 published: 2025-11-10
 source: https://www.youtube.com/watch?v=OIKTsVjTVJE
+parent: "[[01.index]]"
 ---
 
 ## 問題：MCP Server 的 context 消耗

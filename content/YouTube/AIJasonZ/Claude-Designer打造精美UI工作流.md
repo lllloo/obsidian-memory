@@ -6,6 +6,7 @@ created: 2026-04-15
 updated: 2026-04-15
 published: 2025-03-19
 source: https://www.youtube.com/watch?v=PLbwB5_HIdc
+parent: "[[01.index]]"
 ---
 
 ## 核心工作流：兩步驟產出高品質 UI

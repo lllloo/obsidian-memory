@@ -6,6 +6,7 @@ created: 2026-04-15
 updated: 2026-04-15
 published: 2025-02-13
 source: https://www.youtube.com/watch?v=9lBTS5dM27c
+parent: "[[01.index]]"
 ---
 
 ## 核心概念
@@ -16,7 +17,7 @@ source: https://www.youtube.com/watch?v=9lBTS5dM27c
 
 ## 提取（Extraction）
 
-Docling 可以將各種格式（PDF、DOCX、PowerPoint、網頁）統一轉換成 `DollingDocument` 物件：
+Docling 可以將各種格式（PDF、DOCX、PowerPoint、網頁）統一轉換成 `DoclingDocument` 物件：
 
 ```python
 from docling.document_converter import DocumentConverter

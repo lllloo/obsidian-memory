@@ -4,11 +4,11 @@ tags:
   - youtube
   - claude-code
   - agentic-engineering
-  - stripe
 created: 2026-04-13
 updated: 2026-04-13
 published: 2026-03-02
 source: https://www.youtube.com/watch?v=V5A1IU8VVp4
+parent: "[[01.index]]"
 ---
 
 ## 核心對比：Vibe Coding vs Agentic Engineering

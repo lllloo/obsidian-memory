@@ -9,6 +9,7 @@ created: 2026-04-14
 updated: 2026-04-14
 published: 2026-01-24
 source: https://www.youtube.com/watch?v=fG95XsBO5U4
+parent: "[[01.index]]"
 ---
 
 ## 問題：MCP 的 Token 開銷

@@ -6,6 +6,7 @@ created: 2026-04-13
 updated: 2026-04-13
 published: 2026-04-10
 source: https://www.youtube.com/watch?v=DIHIllggaTw
+parent: "[[01.index]]"
 ---
 
 ## Pattern 1：Sequential Flow（循序流）
@@ -108,6 +109,3 @@ claude -p "每天早上7點執行 review-skill on main branch"
 
 **搭配 Loop 使用：** 設定「持續執行直到 bug 修復」，讓 Claude 自己循環，直到觸發 breakpoint 條件才停止。
 
-4. **Operator / Git Worktrees**：為每個 Claude Code session 建立隔離環境。可同時開多個 terminal 跑不同 session，各自在獨立 worktree 執行，互不衝突。用途：A/B 測試不同 UI 或功能實作，選最佳結果合回 main branch。
-
-5. **Headless Mode（無頭模式）**：最常用。用 `claude -p "<prompt>"` 在背景執行，不需進入互動 session。可排程、結合 skills 組成全自動流程。搭配 **Ralph Loop** 可讓 agent 持續迴圈直到條件達成（如：iterative review — 跑 5 次 iteration，每次 fresh context window，spin up 5-7 sub agent，最後彙整成單一報告）。

@@ -6,6 +6,7 @@ created: 2026-04-15
 updated: 2026-04-15
 published: 
 source: https://www.youtube.com/watch?v=3kgx0YxCriM
+parent: "[[01.index]]"
 ---
 
 ## 核心定位
@@ -23,7 +24,7 @@ Opus 4.5 = 工程師的模型。Anthropic 明確針對兩項能力訓練：
 | Opus 4.1 | $15/M | $75/M |
 | Opus 4.5 | ~$5/M | $25/M |
 
-降價約 1/3，同時 Open Router 測量速度約 60 tokens/秒。
+降至約 1/3（降幅約 67%），同時 Open Router 測量速度約 60 tokens/秒。
 
 ## 能力 1：Enhanced Agent Delegation
 

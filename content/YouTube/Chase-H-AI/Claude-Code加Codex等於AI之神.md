@@ -7,6 +7,7 @@ created: 2026-04-13
 updated: 2026-04-13
 published: 2026-03-30
 source: https://www.youtube.com/watch?v=L7NPhaUBpZE
+parent: "[[01.index]]"
 ---
 
 ## 背景與動機

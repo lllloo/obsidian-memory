@@ -7,6 +7,7 @@ created: 2026-04-13
 updated: 2026-04-13
 published: 2026-04-12
 source: https://www.youtube.com/watch?v=celLbDMGy8w
+parent: "[[01.index]]"
 ---
 
 ## 三者是什麼

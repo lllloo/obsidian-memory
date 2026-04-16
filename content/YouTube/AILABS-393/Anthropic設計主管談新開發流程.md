@@ -7,6 +7,7 @@ created: 2026-04-14
 updated: 2026-04-14
 published: ""
 source: https://www.youtube.com/watch?v=X4vAlWtsJD4
+parent: "[[01.index]]"
 ---
 
 ## 舊流程為什麼存在

@@ -6,6 +6,7 @@ created: 2026-04-15
 updated: 2026-04-15
 published: 2025-10-17
 source: https://www.youtube.com/watch?v=1WImBwiA7RA
+parent: "[[01.index]]"
 ---
 
 ## 什麼是 Claude Skills

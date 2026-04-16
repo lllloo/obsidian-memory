@@ -7,6 +7,7 @@ created: 2026-04-14
 updated: 2026-04-14
 published: 2026-04-07
 source: https://www.youtube.com/watch?v=YsdQE6juGXY
+parent: "[[01.index]]"
 ---
 
 ## Claude 計畫與限制機制說明

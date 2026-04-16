@@ -3,12 +3,12 @@ title: AI Agent 的 5 大複雜度層級
 tags:
   - youtube
   - ai-agent
-  - software-architecture
   - claude-code
 created: 2026-04-13
 updated: 2026-04-13
 published: 2026-04-13
 source: https://www.youtube.com/watch?v=BaXTos7B1vY
+parent: "[[01.index]]"
 ---
 
 ## 核心問題

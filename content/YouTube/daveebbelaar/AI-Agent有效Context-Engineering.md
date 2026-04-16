@@ -3,12 +3,11 @@ title: AI Agent 有效的 Context Engineering（為何 Agent 在實踐中仍然�
 tags:
   - youtube
   - ai-agent
-  - context-engineering
-  - llm
 created: 2026-04-13
 updated: 2026-04-13
 published: 2025-12-19
 source: https://www.youtube.com/watch?v=nkJXADeI62c
+parent: "[[01.index]]"
 ---
 
 ## 問題的根源：不是模型，是 Context

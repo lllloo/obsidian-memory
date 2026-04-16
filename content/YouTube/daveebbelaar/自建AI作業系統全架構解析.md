@@ -3,12 +3,12 @@ title: 自建 AI 作業系統全架構解析
 tags:
   - youtube
   - ai-agent
-  - software-architecture
   - claude-code
 created: 2026-04-13
 updated: 2026-04-13
 published: 2026-03-20
 source: https://www.youtube.com/watch?v=rZX1OYetbSM
+parent: "[[01.index]]"
 ---
 
 ## 什麼是 AI 作業系統

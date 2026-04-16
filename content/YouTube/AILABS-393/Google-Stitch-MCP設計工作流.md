@@ -6,6 +6,7 @@ created: 2026-04-15
 updated: 2026-04-15
 published: 2026-01-25
 source: https://www.youtube.com/watch?v=VNx9Gy5pHZI
+parent: "[[01.index]]"
 ---
 
 ## Google Stitch MCP 整合

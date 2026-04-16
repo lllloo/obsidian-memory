@@ -6,6 +6,7 @@ created: 2026-04-15
 updated: 2026-04-15
 published: 2026-03-21
 source: https://www.youtube.com/watch?v=qt4xzTLY1BQ
+parent: "[[01.index]]"
 ---
 
 ## 系統概覽

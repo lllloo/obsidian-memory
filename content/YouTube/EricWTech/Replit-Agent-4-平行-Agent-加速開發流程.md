@@ -6,6 +6,7 @@ created: 2026-04-13
 updated: 2026-04-13
 published: 2026-04-13
 source: https://www.youtube.com/watch?v=TdJwBiv3zS0
+parent: "[[01.index]]"
 ---
 
 ## 核心定位
@@ -65,10 +66,3 @@ Agent 4 不是「更快的程式碼生成」，而是**壓縮設計→規劃→�
 
 作者評價：Agent 3 主打自主性，Agent 4 主打**創意控制**——你在重要的地方保持參與，系統負責重複性的協調工作。
 
-4. **Build Together（協作建構）**：多人可在同專案各自開 thread 互不干擾。Core 方案任務依序執行；Pro 方案平行執行，更接近真實團隊作業方式。
-
-**重要轉變：**
-- 不再需要預選技術棧（舊版 stack selector 將消失）
-- 支援現有專案，非僅限新建
-- 支援 mobile app 預覽（透過 Expo Go）
-- Agent 4 vs Agent 3：Agent 3 強調自主性，Agent 4 強調創意控制與可見度

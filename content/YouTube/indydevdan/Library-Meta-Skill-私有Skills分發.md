@@ -9,6 +9,7 @@ created: 2026-04-13
 updated: 2026-04-13
 published: 2026-03-16
 source: https://www.youtube.com/watch?v=_vpNQ6IwP9w
+parent: "[[01.index]]"
 ---
 
 ## 問題定義

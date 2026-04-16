@@ -6,6 +6,7 @@ created: 2026-04-15
 updated: 2026-04-15
 published: 2026-03-13
 source: https://www.youtube.com/watch?v=P-PA4YSX-qQ
+parent: "[[01.index]]"
 ---
 
 ## 什麼是 GWS CLI

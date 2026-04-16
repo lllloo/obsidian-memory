@@ -9,6 +9,7 @@ created: 2026-04-13
 updated: 2026-04-13
 published: 2026-03-23
 source: https://www.youtube.com/watch?v=TqjmTZRL31E
+parent: "[[01.index]]"
 ---
 
 ## 三大創新

@@ -6,6 +6,7 @@ created: 2026-04-15
 updated: 2026-04-15
 published: 
 source: https://www.youtube.com/watch?v=uULvhQrKB_c
+parent: "[[01.index]]"
 ---
 
 ## 為何 CLI 優於 MCP

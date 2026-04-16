@@ -6,6 +6,7 @@ created: 2026-04-15
 updated: 2026-04-15
 published: 2025-11-03
 source: https://www.youtube.com/watch?v=p0mrXfwAbCg
+parent: "[[01.index]]"
 ---
 
 ## Agentic Scaling Framework

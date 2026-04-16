@@ -7,6 +7,7 @@ created: 2026-04-13
 updated: 2026-04-13
 published: 2026-04-02
 source: https://www.youtube.com/watch?v=rJCgvnXgOiU
+parent: "[[01.index]]"
 ---
 
 ## 解決的問題

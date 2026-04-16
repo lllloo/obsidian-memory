@@ -7,6 +7,7 @@ created: 2026-04-14
 updated: 2026-04-14
 published: ""
 source: https://www.youtube.com/watch?v=uEit1oOJK0w
+parent: "[[01.index]]"
 ---
 
 ## 三大框架的定位比較

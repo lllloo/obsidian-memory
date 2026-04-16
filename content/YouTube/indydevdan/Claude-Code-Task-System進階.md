@@ -3,13 +3,13 @@ title: Claude Code Task System：Anti-Hype 進階 Agentic Coding
 tags:
   - youtube
   - claude-code
-  - task-system
+  - ai-agent
   - multi-agent
-  - meta-prompt
 created: 2026-04-13
 updated: 2026-04-13
 published: 2026-04-13
 source: https://www.youtube.com/watch?v=4_2j5wgt_ds
+parent: "[[01.index]]"
 ---
 
 ## 背景：為何值得關注

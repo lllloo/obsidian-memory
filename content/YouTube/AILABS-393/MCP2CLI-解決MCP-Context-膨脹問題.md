@@ -7,6 +7,7 @@ created: 2026-04-14
 updated: 2026-04-14
 published: ""
 source: https://www.youtube.com/watch?v=LqN_ItMqovA
+parent: "[[01.index]]"
 ---
 
 ## MCP 的核心問題

@@ -8,6 +8,7 @@ created: 2026-04-14
 updated: 2026-04-14
 published: 2026-04-13
 source: https://www.youtube.com/watch?v=kQu5pWKS8GA
+parent: "[[01.index]]"
 ---
 
 本影片以「七個層次」的架構解構 Claude Code 的記憶問題，從最基礎的原生記憶系統一路進化到多模態 Agentic RAG，為每個層次提供學習路線圖。

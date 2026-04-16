@@ -7,6 +7,7 @@ created: 2026-04-14
 updated: 2026-04-14
 published: 2026-03-28
 source: https://www.youtube.com/watch?v=b0lwCDNOFUY
+parent: "[[01.index]]"
 ---
 
 ## 核心問題：AI 設計過於相似

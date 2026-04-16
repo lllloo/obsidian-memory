@@ -8,6 +8,7 @@ created: 2026-04-14
 updated: 2026-04-14
 published: 2026-03-05
 source: https://www.youtube.com/watch?v=kJPvfoLtFFY
+parent: "[[01.index]]"
 ---
 
 ## 背景：2025 年 12 月的轉折

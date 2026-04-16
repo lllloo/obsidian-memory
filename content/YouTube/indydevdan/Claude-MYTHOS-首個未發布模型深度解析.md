@@ -2,13 +2,12 @@
 title: Claude MYTHOS：Anthropic 首個未發布模型深度解析
 tags:
   - youtube
-  - claude-mythos
-  - ai-safety
   - agentic-engineering
 created: 2026-04-13
 updated: 2026-04-13
 published: 2026-04-13
 source: https://www.youtube.com/watch?v=RvowJ_hmLps
+parent: "[[01.index]]"
 ---
 
 ## 核心事件

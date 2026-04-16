@@ -4,12 +4,11 @@ tags:
   - youtube
   - claude-code
   - playwright
-  - browser-automation
-  - ui-testing
 created: 2026-04-13
 updated: 2026-04-13
 published: 2026-02-16
 source: https://www.youtube.com/watch?v=efctPj6bjCY
+parent: "[[01.index]]"
 ---
 
 ## 核心理念

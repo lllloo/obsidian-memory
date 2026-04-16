@@ -6,6 +6,7 @@ created: 2026-04-15
 updated: 2026-04-15
 published: 2026-03-31
 source: https://www.youtube.com/watch?v=TX91PdBn_IA
+parent: "[[01.index]]"
 ---
 
 ## 為什麼使用 Superpowers

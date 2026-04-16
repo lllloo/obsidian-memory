@@ -6,6 +6,7 @@ created: 2026-04-15
 updated: 2026-04-15
 published: 2026-02-11
 source: https://www.youtube.com/watch?v=TmsH-RIHvas
+parent: "[[01.index]]"
 ---
 
 ## 1. Insights 指令分析工作習慣

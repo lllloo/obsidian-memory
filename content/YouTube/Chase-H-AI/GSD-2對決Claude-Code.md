@@ -6,6 +6,7 @@ created: 2026-04-15
 updated: 2026-04-15
 published: 2026-03-17
 source: https://www.youtube.com/watch?v=ZgfybHGxzJU
+parent: "[[01.index]]"
 ---
 
 ## GSD 2 的重大變化

@@ -7,6 +7,7 @@ created: 2026-04-14
 updated: 2026-04-14
 published: 2026-03-31
 source: https://www.youtube.com/watch?v=nBH07G-zayk
+parent: "[[01.index]]"
 ---
 
 ## 核心結論：大部分 Harness 已成過時包袱

@@ -7,6 +7,7 @@ created: 2026-04-14
 updated: 2026-04-14
 published: ""
 source: https://www.youtube.com/watch?v=pDoBe4qbFPE
+parent: "[[01.index]]"
 ---
 
 ## 對話保留期設定

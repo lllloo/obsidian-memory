@@ -9,6 +9,7 @@ created: 2026-04-13
 updated: 2026-04-13
 published: 2026-03-30
 source: https://www.youtube.com/watch?v=M30gp1315Y4
+parent: "[[01.index]]"
 ---
 
 ## 核心主張：一個 Agent 不夠

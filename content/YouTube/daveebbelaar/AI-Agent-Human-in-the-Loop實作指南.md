@@ -3,12 +3,11 @@ title: 如何為 AI Agent 建構 Human-in-the-Loop（實作指南）
 tags:
   - youtube
   - ai-agent
-  - human-in-the-loop
-  - python
 created: 2026-04-13
 updated: 2026-04-13
 published: 2026-01-19
 source: https://www.youtube.com/watch?v=7GOxUgVTz3s
+parent: "[[01.index]]"
 ---
 
 ## Human-in-the-Loop 的核心概念

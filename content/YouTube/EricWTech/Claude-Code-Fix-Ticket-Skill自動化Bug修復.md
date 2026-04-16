@@ -6,6 +6,7 @@ created: 2026-04-15
 updated: 2026-04-15
 published: 2026-03-09
 source: https://www.youtube.com/watch?v=PjenU4zwY5U
+parent: "[[01.index]]"
 ---
 
 ## Fix Ticket Skill 概覽

@@ -6,6 +6,7 @@ created: 2026-04-13
 updated: 2026-04-13
 published: 2026-04-11
 source: https://www.youtube.com/watch?v=xqqlbGbJs08
+parent: "[[01.index]]"
 ---
 
 ## 核心問題

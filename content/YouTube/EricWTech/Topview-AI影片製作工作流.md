@@ -6,6 +6,7 @@ created: 2026-04-15
 updated: 2026-04-15
 published: 2026-03-11
 source: https://www.youtube.com/watch?v=8JJYpFOJrBQ
+parent: "[[01.index]]"
 ---
 
 ## 問題：多工具造成協調開銷

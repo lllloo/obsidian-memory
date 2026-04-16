@@ -6,6 +6,7 @@ created: 2026-04-15
 updated: 2026-04-15
 published: 2026-03-30
 source: https://www.youtube.com/watch?v=7q_rbT1a9dE
+parent: "[[01.index]]"
 ---
 
 ## 內容創作四大階段

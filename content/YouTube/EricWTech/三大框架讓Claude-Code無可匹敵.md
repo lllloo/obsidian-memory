@@ -6,6 +6,7 @@ created: 2026-04-13
 updated: 2026-04-13
 published: 2026-04-02
 source: https://www.youtube.com/watch?v=bzutStZJ1Ig
+parent: "[[01.index]]"
 ---
 
 ## 三個框架解決的問題各不同

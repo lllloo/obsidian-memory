@@ -1,11 +1,13 @@
 ---
 title: 本地免費執行 Gemma 4 搭配 Claude Code
+draft: true
 tags:
   - youtube
 created: 2026-04-13
 updated: 2026-04-15
 published: 2026-04-08
 source: https://www.youtube.com/watch?v=CLXjqdu4Ivc
+parent: "[[01.index]]"
 ---
 
 ## 簡介

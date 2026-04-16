@@ -6,6 +6,7 @@ created: 2026-04-15
 updated: 2026-04-15
 published: 2026-03-12
 source: https://www.youtube.com/watch?v=0QpfkpKyJr4
+parent: "[[01.index]]"
 ---
 
 ## 企業 AI 碎片化問題

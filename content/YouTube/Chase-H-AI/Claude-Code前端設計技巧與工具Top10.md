@@ -3,12 +3,12 @@ title: Claude Code 前端設計技巧、Plugins 與 CLIs Top 10
 tags:
   - youtube
   - claude-code
-  - frontend
   - design
 created: 2026-04-16
 updated: 2026-04-16
 published: 2026-04-15
 source: https://www.youtube.com/watch?v=Q9ty3eopOPs
+parent: "[[01.index]]"
 ---
 
 這部影片介紹 10 種工具與技巧，幫助使用者在 Claude Code 中產出高品質前端設計，對抗千篇一律的「AI slop」美學（紫色漸層、Inter 字體、大量 bento box 卡片）。

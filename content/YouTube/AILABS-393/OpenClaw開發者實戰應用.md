@@ -6,6 +6,7 @@ created: 2026-04-15
 updated: 2026-04-15
 published: 2026-02-22
 source: https://www.youtube.com/watch?v=hp7n45JqvIw
+parent: "[[01.index]]"
 ---
 
 ## 依賴管理自動化
@@ -51,7 +52,7 @@ source: https://www.youtube.com/watch?v=hp7n45JqvIw
 提供 PRD，讓 OpenClaw 全程自主處理：
 
 - 結合 Codex 與 Gemini 3 各自優勢
-- 自動建立 app、push 到 GitHub、部署到 Versel
+- 自動建立 app、push 到 GitHub、部署到 Vercel
 - 回傳部署連結與執行摘要
 
 注意：OpenClaw 無法自行回應 Claude Code 的權限提示，需在 `.claude/settings.json` 預設權限，或使用 `--dangerously-skip-permissions` flag。

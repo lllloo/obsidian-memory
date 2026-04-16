@@ -12,53 +12,20 @@ description: 當使用者提供 YouTube **頻道** URL（含 @handle 的網址�
 - 筆記存放：`content/YouTube/<頻道名>/`（例：`content/YouTube/Chase-H-AI/`）
 - 此資料夾已在 `quartz.config.ts` 的 `ignorePatterns` 中，**不會發佈到網站**
 - 每個頻道資料夾下建立 `01.index.md` 與 `02.影片清單.base` 作為索引（數字前綴確保固定排第一）
+- 影片筆記的 frontmatter 需加 `parent: "[[01.index]]"`，讓 Obsidian 圖譜能從影片連回頻道 index（`.base` 檔案不產生圖譜連結，只有 property link 有效）
 
 ## 步驟 1：抓取影片清單與頻道簡介
 
-**影片數量上限**：從用戶 prompt 解析（如「最多 20 部」→ `LIMIT=20`），未指定則預設 `10`，最大不超過 `30`（ytInitialData 的實際限制）。執行前先確定 `LIMIT` 的值，再帶入下方指令。
-
-用 `curl + python3` 一次抓取頻道頁面，同時取出影片清單與頻道簡介（將 `<LIMIT>` 替換為實際數字，例如 `10`）：
+用 `scripts/fetch_videos.py` 一次抓取頻道頁面，同時取出影片清單與頻道簡介：
 
 ```bash
-curl -s "https://www.youtube.com/@<handle>/videos" \
-  -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36" \
-  -H "Accept-Language: en-US,en;q=0.9" \
-  | python3 -c "
-import sys, json, re
-html = sys.stdin.read()
-LIMIT = <LIMIT>
-
-# 頻道簡介
-desc_m = re.search(r'<meta name=\"description\" content=\"([^\"]*)\"', html)
-print('DESC:' + (desc_m.group(1)[:300] if desc_m else ''))
-
-# 影片清單（從 ytInitialData SSR 物件取出，不需執行 JS）
-m = re.search(r'var ytInitialData = ', html)
-if not m:
-    print('ERROR:notFound')
-    exit(1)
-start = m.end()
-try:
-    decoder = json.JSONDecoder()
-    data, _ = decoder.raw_decode(html[start:])
-    tabs = data['contents']['twoColumnBrowseResultsRenderer']['tabs']
-    count = 0
-    for tab in tabs:
-        grid = tab.get('tabRenderer', {}).get('content', {}).get('richGridRenderer')
-        if not grid: continue
-        for item in grid.get('contents', []):
-            r = item.get('richItemRenderer', {}).get('content', {}).get('videoRenderer')
-            if r and count < LIMIT:
-                print('VIDEO:' + r['videoId'] + '|||' + r['title']['runs'][0]['text'])
-                count += 1
-except Exception as e:
-    print('ERROR:' + str(e))
-"
+python3 .claude/skills/youtube-channel-to-notes/scripts/fetch_videos.py <handle> 2>/dev/null || \
+python  .claude/skills/youtube-channel-to-notes/scripts/fetch_videos.py <handle>
 ```
 
 解析輸出：
 - `DESC:<text>` → 頻道簡介（Step 3 使用，可能為空）
-- `VIDEO:<videoId>|||<title>` → 每行一部影片，最多 10 行
+- `VIDEO:<videoId>|||<title>` → 每行一部影片（頁面上有幾部就幾部）
 - `ERROR:<message>` → **立即停止**，告知用戶錯誤訊息
 
 組成影片 URL：`https://www.youtube.com/watch?v=<videoId>`
@@ -69,26 +36,59 @@ except Exception as e:
 - 範例：`Chase H AI` → `Chase-H-AI`、`AI進化論!` → `AI進化論`
 - 後續所有步驟的 `<頻道名>` 皆使用正規化後的名稱
 
-## 步驟 2：增量同步檢查 + 建立資料夾
+## 步驟 2：增量同步檢查 + 內容篩選 + 建立資料夾
 
 先確認是否為更新情境：
 
 ```bash
-# 取得頻道資料夾中已有筆記的所有 source URL
-grep -rh "^source:" content/YouTube/<頻道名>/ --include="*.md" 2>/dev/null | sed 's/source: //'
+# 讀取上次同步的 checkpoint ID（從 01.index.md frontmatter）
+grep "^last_sync_id:" content/YouTube/<頻道名>/01.index.md 2>/dev/null | sed 's/last_sync_id: //'
 ```
 
-- 若資料夾**不存在**或**無任何筆記**：全部影片都處理，建立資料夾 `mkdir -p content/YouTube/<頻道名>`
-- 若已有筆記：將抓到的影片清單與已有的 source URL 比對，**過濾掉已存在的影片**，只保留新的
+**Checkpoint 過濾邏輯：**
+- 若資料夾**不存在**或 `01.index.md` **無 `last_sync_id`**：全部影片都處理，建立資料夾 `mkdir -p content/YouTube/<頻道名>`
+- 若有 `last_sync_id`：在步驟 1 抓到的清單中找到該 ID 的位置，**只取它上方（更新）的影片**
+  - 若 `last_sync_id` 不在清單中（距上次同步太久）：全部都算新的
+  - 若 `last_sync_id` 是清單第一筆：無新影片，輸出「已是最新，無需更新」並結束
 - 若過濾後**沒有新影片**：輸出「已是最新，無需更新」並結束
 
-> 比對方式：影片 URL 格式為 `https://www.youtube.com/watch?v=<videoId>`，直接比對 video ID 即可（URL 格式不同但 ID 相同也算已存在）
+**Source URL 去重（checkpoint 之後必做）：**
+
+即使通過 checkpoint 篩選，也必須再排除「已有筆記的影片」——防止 checkpoint 失效時（如距上次 sync 超過 30 部）產生重複：
+
+```bash
+# 取出資料夾內所有筆記已記錄的 video ID
+grep -rh "^source: https://www.youtube.com/watch" content/YouTube/<頻道名>/ 2>/dev/null \
+  | grep -oP "(?<=v=)[A-Za-z0-9_-]+"
+```
+
+將輸出的 ID 集合與待處理清單比對，**移除任何 ID 已出現在現有筆記 source 欄位的影片**，不論檔名是否相同。
+
+> 此方式天然避免重抓曾刪除的影片：刪除的影片比 checkpoint 舊，不會出現在過濾結果中。
+
+### 內容篩選規則（新影片套用）
+
+確認為新影片後，依標題判斷是否值得建立筆記。**以下類型直接跳過**，不建立筆記：
+
+**跳過（無技術價值）：**
+- 新聞 / 週報類：標題含「AI News」「News You Can Use」「本週」「This Week」「Weekly」「AI 週報」「重大發佈」等
+- 純時事 / 爭議：公司收購、訴訟、爭議事件、產品發布公告（無教學內容）
+- 純觀點 / 抱怨：個人感想、預測、使用心得流水帳、無具體技術步驟
+- Python 專屬教學：標題明確針對 Python 開發者，且無通用 AI 概念（如「Python for AI」「PydanticAI」「FastAPI」課程）
+
+**保留（有技術價值）：**
+- 技術教學、工具使用方法、架構設計概念
+- 新工具 / 新 API 介紹（含實際操作示範）
+- 軟體工程實踐（TDD、測試、系統設計等）
+- 可帶來新觀念或新應用的內容
+
+判斷模糊時，傾向**跳過**而非強行建立低品質筆記。
 
 ## 步驟 3：建立 01.index.md
 
 **在啟動文章生成前**，先在頻道資料夾建立 `01.index.md`（若已存在則跳過）。
 
-頻道簡介已在步驟 1 的 `DESC:` 行取得，直接使用即可（可能為空）。寫入 index 時置於 frontmatter 下方、`![[02.影片清單]]` 上方；若為空則省略。
+頻道簡介已在步驟 1 的 `DESC:` 行取得（可能為空）。寫入 index 前，**將簡介翻譯為繁體中文**（技術名詞/品牌名保留英文）；若為空則省略。
 
 ```markdown
 ---
@@ -99,11 +99,12 @@ tags:
 created: <今日 YYYY-MM-DD>
 updated: <今日 YYYY-MM-DD>
 source: <頻道 URL>
+last_sync_id: <步驟 1 清單中第一筆的 videoId>
 ---
 
 <頻道簡介（若有）>
 
-![[02.影片清單]]
+![[02.影片清單.base]]
 ```
 
 ## 步驟 4：建立 02.影片清單.base
@@ -155,7 +156,7 @@ N. <標題> — <URL>
 ...
 ```
 
-## 步驟 6：彙整結果
+## 步驟 6：彙整結果 + 更新 Checkpoint
 
 輸出彙整表格：
 
@@ -163,17 +164,34 @@ N. <標題> — <URL>
 |---|---------|---------|-----------|------|
 | 1 | ... | content/YouTube/<頻道名>/... | YYYY-MM-DD | ✓ 完整 / ⚠ 內容不足 |
 
+**更新 checkpoint**：所有筆記建立完成後，將 `01.index.md` 的 `last_sync_id` 更新為**步驟 1 清單中第一筆**的 video ID（即目前頻道最新的影片）：
+
+```bash
+# 用 Python 更新（跨平台，避免 Windows sed -i 不穩定）
+python -c "
+import re
+path = 'content/YouTube/<頻道名>/01.index.md'
+text = open(path, encoding='utf-8').read()
+text = re.sub(r'^last_sync_id: .*', 'last_sync_id: <NEW_ID>', text, flags=re.MULTILINE)
+text = re.sub(r'^updated: .*', 'updated: <TODAY>', text, flags=re.MULTILINE)
+open(path, 'w', encoding='utf-8').write(text)
+"
+```
+
+> 若本次無新影片（早已是最新），不需更新 checkpoint。
+
+**更新 `master-index.md`**：同步更新 `content/master-index.md` 中的 YouTube 篇數（`YouTube/ — N 篇影片摘要`）；若為新頻道，加入頻道清單與描述。
+
 ## 注意事項
 
-- **defuddle 內容不足**：contentMarkdown 無時間戳格式（`**0:00**`）時走情況 B，只寫重點摘要，不推測補充
-- **published fallback**：defuddle `--json` 有時不回傳 `published`，可用 `curl` 抓影片頁面後 grep `itemprop="datePublished"` 取得；若仍為空則留空
+- **defuddle 內容不足**：contentMarkdown 無時間戳格式（`**0:00**`）時走 subagent-note-creator.md 的情況 B，只寫重點摘要，不推測補充
 - **tags**：一律加 `youtube`，可依頻道主題加額外標籤（如 `claude-code`）
 - **檔名長度**：超過 40 字元的標題適當縮短，保留關鍵詞
-- **增量同步**：再次執行同一頻道時，Step 2 會過濾已有筆記，只建立新影片的筆記；`ytInitialData` 最多回傳 30 部（最新的），足以涵蓋一般更新週期
-- **往前追溯限制**：ytInitialData 最多回傳 30 部。若頻道已存筆記 ≥ 20 篇，往前追溯會撞到此限制（30 部全被已存的覆蓋），無法取得更舊的影片；需改走 YouTube continuation token API（非本 skill 範圍）
+- **增量同步**：再次執行同一頻道時，Step 2 會用 checkpoint 過濾，只建立新影片的筆記；ytInitialData 一次最多回傳約 30 部，足以涵蓋一般更新週期
+- **往前追溯限制**：ytInitialData 最多回傳約 30 部。若距上次同步超過 30 部新影片，checkpoint 不會出現在清單中，全部都會視為新的。更早的影片需改走 YouTube continuation token API（非本 skill 範圍）
 - **YouTube 429 rate limit**：大量平行抓取多頻道時容易觸發。受影響的影片先建立為 `draft: true` 筆記保留位置，等數小時後 rate limit 解除再補完內容
-- **published 欄位不穩定**：defuddle 解析 YouTube 頁面時 `published` 欄位常為空，大多數影片需要 fallback 用 curl 抓 `itemprop="datePublished"` meta tag，這是正常現象
+- **published 欄位不穩定**：defuddle 解析 YouTube 頁面時 `published` 欄位常為空，屬正常現象。無論 defuddle 是否成功，只要 `published` 為空都需用 curl 抓 `itemprop="datePublished"` meta tag 補全；若仍為空才留空
 - **Windows Python subprocess 編碼**：若在 skill 外用 Python `subprocess` 抓 YouTube 頁面，必須用 bytes 模式（不加 `text=True`）再手動 `.decode('utf-8', errors='replace')`，否則 Windows 預設 cp950 會解碼失敗
-- **重複筆記**：若同名檔案已存在，跳過不覆寫
+- **重複筆記**：Step 2 的 Source URL 去重是主要防線（以 video ID 為準，不依賴檔名）；subagent 寫檔前也會再做一次 grep 確認。兩道防線確保同一支影片不會產生兩份筆記
 - **影片已刪除**：defuddle 失敗時，subagent 依 subagent-note-creator.md 的流程確認後跳過
 - **不發佈**：`content/YouTube/` 已在 ignorePatterns，無需加 `draft: true`

@@ -6,6 +6,7 @@ created: 2026-04-15
 updated: 2026-04-15
 published: 2026-02-25
 source: https://www.youtube.com/watch?v=romGzY0Xu0s
+parent: "[[01.index]]"
 ---
 
 ## Superpowers 是什麼

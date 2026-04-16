@@ -6,6 +6,7 @@ created: 2026-04-15
 updated: 2026-04-15
 published: 2026-01-29
 source: https://www.youtube.com/watch?v=LC7kGTDoWRY
+parent: "[[01.index]]"
 ---
 
 ## 開發週期的壓縮

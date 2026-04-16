@@ -6,6 +6,7 @@ created: 2026-04-15
 updated: 2026-04-15
 published: 
 source: https://www.youtube.com/watch?v=VqDs46A8pqE
+parent: "[[01.index]]"
 ---
 
 ## 問題背景

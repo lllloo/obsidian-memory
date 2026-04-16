@@ -6,6 +6,7 @@ created: 2026-04-15
 updated: 2026-04-15
 published: 2026-01-20
 source: https://www.youtube.com/watch?v=3FZIdRZsUMM
+parent: "[[01.index]]"
 ---
 
 ## 軟體開發的中間層正在消失

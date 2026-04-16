@@ -6,6 +6,7 @@ created: 2026-04-15
 updated: 2026-04-15
 published: 2025-06-10
 source: https://www.youtube.com/watch?v=iq97iSsBsR4
+parent: "[[01.index]]"
 ---
 
 ## 垂直 Agent 的機會

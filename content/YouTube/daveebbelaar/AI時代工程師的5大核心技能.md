@@ -3,12 +3,12 @@ title: AI 時代工程師的 5 大核心技能
 tags:
   - youtube
   - ai-agent
-  - software-engineering
   - claude-code
 created: 2026-04-13
 updated: 2026-04-13
 published: 2026-03-27
 source: https://www.youtube.com/watch?v=mz73sVy6-X8
+parent: "[[01.index]]"
 ---
 
 ## 背景：AI 改寫開發方式

@@ -6,6 +6,7 @@ created: 2026-04-15
 updated: 2026-04-15
 published: 2026-03-22
 source: https://www.youtube.com/watch?v=TwkdDcO4vWQ
+parent: "[[01.index]]"
 ---
 
 ## 安裝與使用方式

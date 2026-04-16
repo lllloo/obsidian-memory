@@ -6,6 +6,7 @@ created: 2026-04-15
 updated: 2026-04-15
 published: 2026-03-23
 source: https://www.youtube.com/watch?v=V3xDTx2XwGg
+parent: "[[01.index]]"
 ---
 
 ## ETH Zurich 研究結論

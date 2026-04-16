@@ -7,6 +7,7 @@ created: 2026-04-14
 updated: 2026-04-14
 published: 2026-04-03
 source: https://www.youtube.com/watch?v=AhXfI1rSUPc
+parent: "[[01.index]]"
 ---
 
 ## Frontend Design Plugin（開源）

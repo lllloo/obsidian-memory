@@ -6,6 +6,7 @@ created: 2026-04-15
 updated: 2026-04-15
 published: 2025-09-22
 source: https://www.youtube.com/watch?v=6wR6xblSays
+parent: "[[01.index]]"
 ---
 
 ## 為什麼需要 Custom Agents

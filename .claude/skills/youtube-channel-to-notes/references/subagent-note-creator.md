@@ -1,8 +1,16 @@
 # Subagent：YouTube 影片轉 Obsidian 筆記
 
+> **Python 指令**：以下指令用 `python3`；Windows 環境若 `python3` 無效，改用 `python`。
+
 ## 步驟
 
 對每部影片：
+
+0. **重複偵測（先做）**：在抓取內容前，確認此影片尚未有對應筆記：
+   ```bash
+   grep -rl "source: https://www.youtube.com/watch?v=<videoId>" content/YouTube/<頻道名>/
+   ```
+   若有任何輸出（即已存在對應筆記），**跳過此影片**，回報「⏭ 已有筆記，跳過」。
 
 1. 執行以下指令取得完整 JSON（含 contentMarkdown、published 等欄位）；優先用全域安裝的 defuddle，找不到時 fallback 到 npx：
    ```bash
@@ -40,7 +48,18 @@ print('DATE:' + date)
    - 若 `STATUS:unavailable` → **跳過，不建立筆記**，回報「⚠ 影片已刪除，跳過」
    - 若 `STATUS:available` → 影片正常，繼續執行；`DATE:` 行的值即為上傳日期
 3. 從 JSON 取出 `published` 欄位（ISO 8601 格式），擷取日期部分（YYYY-MM-DD）寫入 frontmatter
-4. 若 `published` 欄位不存在或為空：使用步驟 2 的 `DATE:` 值；若仍為空則 `published` 欄位留空
+4. 若 `published` 欄位不存在或為空（defuddle 常回傳空值，屬正常現象）：用 curl 抓影片頁面取得上傳日期：
+   ```bash
+   curl -s "https://www.youtube.com/watch?v=<videoId>" \
+     -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36" \
+     -H "Accept-Language: en-US,en;q=0.9" \
+     | python3 -c "
+import sys, re
+m = re.search(r'itemprop=\"datePublished\" content=\"([^\"]+)\"', sys.stdin.read())
+print(m.group(1)[:10] if m else '')
+"
+   ```
+   若仍為空，`published` 欄位留空
 5. 從 JSON 取出 `contentMarkdown` 作為筆記內容來源
 6. 依下方「內容品質標準」撰寫筆記
 
@@ -65,6 +84,7 @@ print('DATE:' + date)
   updated: <今日 YYYY-MM-DD>
   published: <影片上傳日期 YYYY-MM-DD>
   source: <youtube url>
+  parent: "[[01.index]]"
   ---
   ```
 - 不使用 `#` 標題 heading（Quartz 從 frontmatter 自動產生）

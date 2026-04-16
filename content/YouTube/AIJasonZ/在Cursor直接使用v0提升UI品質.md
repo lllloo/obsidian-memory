@@ -6,6 +6,7 @@ created: 2026-04-15
 updated: 2026-04-15
 published: 2025-05-25
 source: https://www.youtube.com/watch?v=0KYWJWY62d4
+parent: "[[01.index]]"
 ---
 
 ## v0 模型整合 Cursor

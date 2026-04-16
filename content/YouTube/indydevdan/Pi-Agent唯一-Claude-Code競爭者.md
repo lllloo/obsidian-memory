@@ -3,12 +3,12 @@ title: Pi Coding Agent：唯一真正的 Claude Code 競爭者
 tags:
   - youtube
   - claude-code
-  - pi-agent
   - agentic-engineering
 created: 2026-04-13
 updated: 2026-04-13
 published: 2026-02-23
 source: https://www.youtube.com/watch?v=f8cfH5XX-XU
+parent: "[[01.index]]"
 ---
 
 ## 為何 Pi 是唯一的競爭者

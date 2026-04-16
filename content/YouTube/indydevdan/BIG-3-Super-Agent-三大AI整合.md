@@ -6,6 +6,7 @@ created: 2026-04-15
 updated: 2026-04-15
 published: 2025-10-13
 source: https://www.youtube.com/watch?v=Ur3TJm0BckQ
+parent: "[[01.index]]"
 ---
 
 ## 核心理念：不要單一工具忠誠度

@@ -7,6 +7,7 @@ created: 2026-04-13
 updated: 2026-04-13
 published: 2026-04-07
 source: https://www.youtube.com/watch?v=4FO1Liu-ttk
+parent: "[[01.index]]"
 ---
 
 ## Caveman 是什麼

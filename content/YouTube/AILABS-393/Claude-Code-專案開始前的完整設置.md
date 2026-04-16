@@ -7,6 +7,7 @@ created: 2026-04-14
 updated: 2026-04-14
 published: 2026-04-10
 source: https://www.youtube.com/watch?v=ywIhw15za9Y
+parent: "[[01.index]]"
 ---
 
 ## 規劃需求（Plan Requirements）

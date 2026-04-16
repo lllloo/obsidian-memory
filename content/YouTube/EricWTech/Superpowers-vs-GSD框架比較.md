@@ -6,6 +6,7 @@ created: 2026-04-16
 updated: 2026-04-16
 published: 2026-04-15
 source: https://www.youtube.com/watch?v=GJmlik1C4Tg
+parent: "[[01.index]]"
 ---
 
 ## 測試情境設定

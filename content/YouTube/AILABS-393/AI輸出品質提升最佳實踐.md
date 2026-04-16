@@ -6,6 +6,7 @@ created: 2026-04-15
 updated: 2026-04-15
 published: 2026-03-03
 source: https://www.youtube.com/watch?v=cop_G65D7PA
+parent: "[[01.index]]"
 ---
 
 ## manifest.md 作為資料夾導航基礎

@@ -6,6 +6,7 @@ created: 2026-04-15
 updated: 2026-04-15
 published: 2026-03-26
 source: https://www.youtube.com/watch?v=1PXFAFMgdns
+parent: "[[01.index]]"
 ---
 
 ## 層級一：只有 Prompt

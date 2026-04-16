@@ -6,6 +6,7 @@ created: 2026-04-15
 updated: 2026-04-15
 published: 
 source: https://www.youtube.com/watch?v=u5GkG71PkR0
+parent: "[[01.index]]"
 ---
 
 ## 核心概念

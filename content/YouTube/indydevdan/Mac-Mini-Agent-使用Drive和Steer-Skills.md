@@ -3,12 +3,12 @@ title: Mac Mini Agents：用 Drive 和 Steer Skills 取代 OpenClaw
 tags:
   - youtube
   - claude-code
-  - mac-mini
-  - agent-autonomy
+  - ai-agent
 created: 2026-04-13
 updated: 2026-04-13
 published: 2026-03-09
 source: https://www.youtube.com/watch?v=LOazLNQnB80
+parent: "[[01.index]]"
 ---
 
 ## OpenClaw 的問題

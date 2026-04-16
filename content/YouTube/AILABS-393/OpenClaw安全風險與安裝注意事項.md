@@ -6,11 +6,12 @@ created: 2026-04-15
 updated: 2026-04-15
 published: 2026-02-04
 source: https://www.youtube.com/watch?v=M3P0hQMQtq0
+parent: "[[01.index]]"
 ---
 
 ## OpenClaw 是什麼
 
-OpenClaw（原名 Claudebot，後改為 MoltBot，最終在 3 天內完成最快重新命名成為 OpenClaw）是一個自架的 AI 助理，成為史上成長最快的開源專案之一。
+OpenClaw（原名 Clawdbot，後改為 MoltBot，最終在 3 天內完成重新命名成為 OpenClaw）是一個自架的 AI 助理，成為史上成長最快的開源專案之一。
 
 重要澄清：**開源不等於免費，自架不等於安全。**
 

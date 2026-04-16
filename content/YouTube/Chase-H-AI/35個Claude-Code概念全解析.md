@@ -7,6 +7,7 @@ created: 2026-04-13
 updated: 2026-04-13
 published: 2026-04-08
 source: https://www.youtube.com/watch?v=UAMAAoSPu8o
+parent: "[[01.index]]"
 ---
 
 ## Section 1：核心基礎（概念 1–5）

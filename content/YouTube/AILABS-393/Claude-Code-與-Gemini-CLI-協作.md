@@ -7,6 +7,7 @@ created: 2026-04-14
 updated: 2026-04-14
 published: ""
 source: https://www.youtube.com/watch?v=XdtBAm2pM-0
+parent: "[[01.index]]"
 ---
 
 ## 為什麼要把 Claude Code 和 Gemini CLI 混用

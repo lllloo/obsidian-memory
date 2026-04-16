@@ -6,6 +6,7 @@ created: 2026-04-15
 updated: 2026-04-15
 published: 2026-03-28
 source: https://www.youtube.com/watch?v=o85Y5omRQq0
+parent: "[[01.index]]"
 ---
 
 ## 核心概念
@@ -48,9 +49,9 @@ OpenRouter 提供 AI Model Rankings，可按程式語言篩選：
 | 模型 | 用途 | 費用（每 1M tokens） |
 |------|------|-------------------|
 | openrouter/auto | 免費，學習用 | $0 |
-| MiniMax M2.5 | 程式設計高人氣，高 CP 值 | ~$2 |
-| Claude Sonnet 4.6 | 程式設計 Top 5 | ~$18 |
-| Claude Opus 4.6 | 程式設計 Top 4 | ~$30 |
+| MiniMax M2.5 | 程式設計高人氣，高 CP 值 | input ~$0.12 / output ~$1 |
+| Claude Sonnet 4.6 | 程式設計 Top 5 | input ~$3 / output ~$15 |
+| Claude Opus 4.6 | 程式設計 Top 4 | input ~$5 / output ~$25 |
 
 **推薦**：MiniMax M2.5（OpenRouter 程式設計排行榜高名次，費用約 Sonnet 的 1/9）
 

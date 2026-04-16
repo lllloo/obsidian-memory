@@ -2,14 +2,12 @@
 title: 完整 End-to-End GenAI 專案實戰：AI 新聞聚合器
 tags:
   - youtube
-  - ai-engineering
-  - python
   - rag
-  - deployment
 created: 2026-04-13
 updated: 2026-04-13
 published: 2025-11-15
 source: https://www.youtube.com/watch?v=E8zpgNPx8jE
+parent: "[[01.index]]"
 ---
 
 ## 專案概覽：AI 新聞聚合器

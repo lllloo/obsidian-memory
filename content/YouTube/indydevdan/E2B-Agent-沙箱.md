@@ -6,6 +6,7 @@ created: 2026-04-15
 updated: 2026-04-15
 published: 2025-11-17
 source: https://www.youtube.com/watch?v=1ECn5zrVUB4
+parent: "[[01.index]]"
 ---
 
 ## 核心概念：Agent Sandbox 是什麼

@@ -6,6 +6,7 @@ created: 2026-04-15
 updated: 2026-04-15
 published: 2026-01-17
 source: https://www.youtube.com/watch?v=e4giCKHIJy8
+parent: "[[01.index]]"
 ---
 
 ## 主流 AI 程式編輯器比較

@@ -6,6 +6,7 @@ created: 2026-04-15
 updated: 2026-04-15
 published: 2026-03-08
 source: https://www.youtube.com/watch?v=nN5R9DFYsXY
+parent: "[[01.index]]"
 ---
 
 ## Playwright 三種使用方式

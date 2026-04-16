@@ -3,11 +3,11 @@ title: Anthropic Tool Calling 2.0
 tags:
   - youtube
   - ai-agent
-  - anthropic
 created: 2026-04-14
 updated: 2026-04-14
 published: 2026-02-22
 source: https://www.youtube.com/watch?v=3wglqgskzjQ
+parent: "[[01.index]]"
 ---
 
 ## 傳統 Tool Calling 的問題
@@ -26,7 +26,7 @@ source: https://www.youtube.com/watch?v=3wglqgskzjQ
 - 改為讓 LLM 直接輸出一段程式碼，在沙盒中執行多個工具
 - 可在程式碼中使用 for loop、條件判斷，實現更複雜的工作流
 
-啟用方式：在 agent 回應中加入 `code_execution` 工具，並在每個工具定義中加入 `allowed_caller: "code_execution_20260120"` 參數。
+啟用方式：在 agent 回應中加入 `code_execution` 工具，並在每個工具定義中加入 `allowed_callers: ["code_execution_20260120"]` 參數。
 
 效果：減少 30-50% token 消耗，大幅減少 LLM 呼叫次數。
 

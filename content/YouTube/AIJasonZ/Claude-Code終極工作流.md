@@ -6,6 +6,7 @@ created: 2026-04-15
 updated: 2026-04-15
 published: 2025-07-24
 source: https://www.youtube.com/watch?v=UZb0if-7wGE
+parent: "[[01.index]]"
 ---
 
 ## 初始設定

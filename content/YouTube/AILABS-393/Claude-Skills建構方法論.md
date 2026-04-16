@@ -6,6 +6,7 @@ created: 2026-04-15
 updated: 2026-04-15
 published: 2026-02-16
 source: https://www.youtube.com/watch?v=aEqKWI-0N0c
+parent: "[[01.index]]"
 ---
 
 ## Anthropic 官方 Skills 建構指南重點
