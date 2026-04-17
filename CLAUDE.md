@@ -50,7 +50,8 @@ npm run format                   # 自動格式化
 | `.claude/agents/vault-fixer.md` | — | 自動修正稽核結果 |
 | `.claude/commands/ob.md` | `~/.claude/commands/ob.md` | `/ob` 指令定義 |
 | `.claude/commands/vault-check.md` | — | `/vault-check` 稽核迴圈 |
-| `.claude/skills/youtube-channel-to-notes/` | `~/.claude/skills/youtube-channel-to-notes/` | YouTube 頻道影片轉 Obsidian 筆記 |
+| `.claude/skills/vault-youtube-sync/` | `~/.claude/skills/vault-youtube-sync/` | YouTube 頻道影片轉 Obsidian 筆記 |
+| `.claude/skills/vault-topic-moc/` | — | 多篇筆記整合為主題 MOC（含 generator/reviewer 迴圈）|
 
 **建立 symlink（Windows，需開啟 Developer Mode 或以管理員執行）：**
 
