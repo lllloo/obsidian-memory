@@ -18,24 +18,23 @@ content/
 │   ├── Claude-Code/   — Skills、Agent Packages、Hooks、GAN Harness
 │   ├── Obsidian/      — CLI 整合、Skills、Quartz 部署
 │   └── 切版/          — Pencil 讀取規則、Flexbox、Border 規則
-└── YouTube/       — 138 篇影片摘要，6 個頻道
+└── YouTube/       — 86 篇影片摘要，5 個頻道
     ├── AIJasonZ/              — Claude 設計工作流、Skills、Agent 記憶體管理
     ├── AILABS-393/            — Claude Code 進階技巧、OpenClaw、RAG
     ├── Chase-H-AI/            — Claude Code 實戰、RAG、Obsidian 整合
     ├── EricWTech/             — Claude Code 自動化、Skill 系統
     ├── daveebbelaar/          — Python、AI Agent 工程、LLM Evals
-    ├── indydevdan/            — Agentic 工程、Claude Code SDK
 ```
 
 ## Tag 查詢指南
 
 | 主題 | Tags | 篇數 |
 |------|------|------|
-| Claude Code 實作 | `claude-code` | 40 |
-| AI Agent 架構 | `ai-agent` `multi-agent` `agentic-engineering` `agent-harness` | 15+5+3+4 |
-| RAG / 知識庫 | `rag` | 3 |
-| MCP | `mcp` | 2 |
-| 其他 | `memory` `chrome` `design` `skills` `playwright` | 各 1 |
+| Claude Code 實作 | `claude-code` | 28 |
+| AI Agent 架構 | `ai-agent` | 7 |
+| RAG / 知識庫 | `rag` | 2 |
+| MCP | `mcp` | 1 |
+| 其他 | `memory` `design` | 1 / 3 |
 | Obsidian 操作 | `obsidian` `cli` | Topics/ + Cards/ |
 | 前端 / CSS | `css` `flexbox` | Cards/ |
 
