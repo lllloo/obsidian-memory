@@ -1,5 +1,5 @@
 ---
-name: youtube-channel-to-notes
+name: vault-youtube-sync
 description: 當使用者提供 YouTube **頻道** URL（含 @handle 的網址，如 youtube.com/@XXX 或 youtube.com/@XXX/videos）並想建立、同步或整理 Obsidian 筆記時，一定要用此 skill。觸發情境：「頻道影片建成筆記」、「youtube 轉筆記」、「yt 轉 ob」、「整理到 vault」、「存成 Obsidian 筆記」、「同步這個頻道」、「看有沒有新影片沒存到的」、「抓頻道影片」。不應觸發：單部影片 URL（watch?v=XXX）、使用者明確說「不用建筆記」或只是查詢既有筆記。
 ---
 
@@ -19,8 +19,8 @@ description: 當使用者提供 YouTube **頻道** URL（含 @handle 的網址�
 用 `scripts/fetch_videos.py` 一次抓取頻道頁面，同時取出影片清單與頻道簡介：
 
 ```bash
-python3 .claude/skills/youtube-channel-to-notes/scripts/fetch_videos.py <handle> 2>/dev/null || \
-python  .claude/skills/youtube-channel-to-notes/scripts/fetch_videos.py <handle>
+python3 .claude/skills/vault-youtube-sync/scripts/fetch_videos.py <handle> 2>/dev/null || \
+python  .claude/skills/vault-youtube-sync/scripts/fetch_videos.py <handle>
 ```
 
 解析輸出：
@@ -145,7 +145,7 @@ views:
 
 ```
 任務：用 defuddle 抓取 YouTube 影片內容，並在 Obsidian vault 建立筆記。
-詳細指示請先 Read `.claude/skills/youtube-channel-to-notes/references/subagent-note-creator.md`。
+詳細指示請先 Read `.claude/skills/vault-youtube-sync/references/subagent-note-creator.md`。
 
 筆記存放位置：content/YouTube/<頻道名>/
 今日日期：<YYYY-MM-DD>
