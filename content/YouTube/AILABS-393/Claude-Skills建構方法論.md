@@ -3,7 +3,7 @@ title: Claude Skills 建構方法論
 tags:
   - youtube
 created: 2026-04-15
-updated: 2026-04-15
+updated: 2026-04-16
 published: 2026-02-16
 source: https://www.youtube.com/watch?v=aEqKWI-0N0c
 parent: "[[01.index]]"
@@ -81,3 +81,17 @@ References 是 domain-specific 的細分知識包，可持續擴充 skill 的知
 - `prompting_rules.md`：13 條測試迭代出的 prompting 規則
 - `design_patterns.md`：設計模式
 - `frontend_aesthetics.md`：前端美學指引
+
+設計原則：references 文件應聚焦單一知識面向，讓 Claude 只在需要時載入對應模組，避免一次塞入過多背景知識影響輸出品質。
+
+## 核心心態
+
+Anthropic 官方強調的建構流程核心是**測試 → 觀察 → 修正**的迭代循環。skill 不是一次設計到位，而是在實際使用中不斷發現問題、補強規則：
+
+- 用 description 控制「何時啟動」
+- 用 Progressive Disclosure 控制「載入多少」
+- 用 Validation Gates 控制「何時放行」
+- 用 Error Handling 把踩過的坑記下來，讓 Claude 下次知道怎麼處理
+- 用 References 模組化知識，讓 skill 可以持續成長而不臃腫
+
+最終目標：打造一個 Claude 能穩定、可預期地執行的自動化工作流程。

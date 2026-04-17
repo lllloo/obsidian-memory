@@ -3,8 +3,8 @@ title: Claude Opus 4.5：工程師的最強模型
 tags:
   - youtube
 created: 2026-04-15
-updated: 2026-04-15
-published: 
+updated: 2026-04-16
+published: 2025-12-01
 source: https://www.youtube.com/watch?v=3kgx0YxCriM
 parent: "[[01.index]]"
 ---

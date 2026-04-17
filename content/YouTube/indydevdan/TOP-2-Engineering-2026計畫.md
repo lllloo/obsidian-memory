@@ -3,8 +3,8 @@ title: TOP 2% Engineering：2026 年成為頂尖 Agentic 工程師的計畫
 tags:
   - youtube
 created: 2026-04-15
-updated: 2026-04-15
-published: 
+updated: 2026-04-16
+published: 2025-12-22
 source: https://www.youtube.com/watch?v=u-SQ0Jsv4mI
 parent: "[[01.index]]"
 ---

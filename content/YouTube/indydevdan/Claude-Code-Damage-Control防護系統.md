@@ -3,8 +3,8 @@ title: Claude Code 很強大…直到它刪掉 Production：Damage Control 防�
 tags:
   - youtube
 created: 2026-04-15
-updated: 2026-04-15
-published: 
+updated: 2026-04-16
+published: 2026-01-05
 source: https://www.youtube.com/watch?v=VqDs46A8pqE
 parent: "[[01.index]]"
 ---

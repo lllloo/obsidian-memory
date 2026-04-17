@@ -3,8 +3,8 @@ title: 十個讓 Claude Code 如虎添翼的 CLI 工具
 tags:
   - youtube
 created: 2026-04-15
-updated: 2026-04-15
-published: 
+updated: 2026-04-16
+published: 2026-03-21
 source: https://www.youtube.com/watch?v=uULvhQrKB_c
 parent: "[[01.index]]"
 ---

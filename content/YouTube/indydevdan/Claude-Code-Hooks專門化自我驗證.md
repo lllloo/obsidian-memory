@@ -3,8 +3,8 @@ title: Claude Code 資深工程師常忽略的 Hooks 功能：專門化自我驗
 tags:
   - youtube
 created: 2026-04-15
-updated: 2026-04-15
-published: 
+updated: 2026-04-16
+published: 2026-01-19
 source: https://www.youtube.com/watch?v=u5GkG71PkR0
 parent: "[[01.index]]"
 ---

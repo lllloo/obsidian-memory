@@ -3,8 +3,8 @@ title: Agent Threads：如何像 Boris Cherny 一樣出貨，Thread-Based Engine
 tags:
   - youtube
 created: 2026-04-15
-updated: 2026-04-15
-published: 
+updated: 2026-04-16
+published: 2026-01-12
 source: https://www.youtube.com/watch?v=-WBHNFAB0OE
 parent: "[[01.index]]"
 ---

@@ -3,8 +3,8 @@ title: 投資 AI 前必懂的 7 個術語
 tags:
   - youtube
 created: 2026-04-15
-updated: 2026-04-15
-published: 
+updated: 2026-04-16
+published: 2025-09-25
 source: https://www.youtube.com/watch?v=hKC_pI_yhZc
 parent: "[[01.index]]"
 ---

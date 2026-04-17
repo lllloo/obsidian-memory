@@ -3,8 +3,8 @@ title: Agent Experts：終於出現了真正會學習的 Agents
 tags:
   - youtube
 created: 2026-04-15
-updated: 2026-04-15
-published: 
+updated: 2026-04-16
+published: 2025-12-15
 source: https://www.youtube.com/watch?v=zTcDwqopvKE
 parent: "[[01.index]]"
 ---

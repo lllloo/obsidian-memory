@@ -3,8 +3,8 @@ title: RAW Agentic Coding：從零建立 Agent Skill
 tags:
   - youtube
 created: 2026-04-15
-updated: 2026-04-15
-published: 
+updated: 2026-04-16
+published: 2025-12-08
 source: https://www.youtube.com/watch?v=X2ciJedw2vU
 parent: "[[01.index]]"
 ---
