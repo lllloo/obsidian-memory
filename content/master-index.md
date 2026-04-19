@@ -12,7 +12,6 @@ tags:
 content/
 ├── Cards/         — 快速筆記（CSS、Docker、設計工具等）
 ├── Clippings/     — 網頁剪貼
-├── Templates/     — 模板（card.md）
 ├── Topics/        — 主題 MOC，3 個子目錄
 │   ├── Claude-Code/   — Skills、Agent Packages、Hooks、GAN Harness
 │   ├── Obsidian/      — CLI 整合、Skills、Quartz 部署

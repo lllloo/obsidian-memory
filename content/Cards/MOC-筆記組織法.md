@@ -30,7 +30,6 @@ Topics/                 ← 主題區
     ├── index.md        ← 原本的 MOC
     ├── CLI 整合指南.md
     └── ...
-Templates/              ← 模板
 ```
 
 ### 演進流程

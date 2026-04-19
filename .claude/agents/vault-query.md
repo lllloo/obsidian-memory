@@ -36,7 +36,7 @@ model: sonnet
   - `Topics/` — 主題 MOC，含子目錄 `Claude-Code/`、`Obsidian/`、`切版/`
   - `YouTube/` — 150+ 影片摘要，6 個頻道子目錄（AIJasonZ、AILABS-393、Chase-H-AI、EricWTech、daveebbelaar、indydevdan）
   - `Clippings/` — 網頁剪貼
-- **搜尋時排除**：`Templates/`、`.obsidian/`
+- **搜尋時排除**：`.obsidian/`
 - 筆記規則（來自 `content/CLAUDE.md`）：
   - 檔名不含空格，用 `-` 連接（如 `Obsidian-CLI-整合指南.md`）
   - Frontmatter 必有 `title`、`created`、`updated`、`tags`（YAML 清單）
@@ -53,7 +53,7 @@ model: sonnet
 
 - 對 `<VAULT_ROOT>` 下的候選資料夾 Glob 列出 `.md` 檔
 - 對檔案集合 Grep frontmatter tags（例：`^\s*-\s+(claude-code|rag|memory)$`）
-- 排除匹配：`Templates/`、`.obsidian/`
+- 排除匹配：`.obsidian/`
 
 ### L3：正文 Grep 與驗證
 

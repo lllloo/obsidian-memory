@@ -16,8 +16,7 @@ content/
 ├── Cards/      # 單篇筆記
 ├── Topics/     # MOC 與主題資料夾
 ├── YouTube/    # YouTube 影片摘要
-├── Clippings/  # 網頁剪貼
-└── Templates/  # 筆記模板
+└── Clippings/  # 網頁剪貼
 ```
 
 詳細規則見 [content/CLAUDE.md](content/CLAUDE.md)。

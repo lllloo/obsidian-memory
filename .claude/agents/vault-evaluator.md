@@ -16,7 +16,7 @@ model: sonnet
 1. 讀取 `content/CLAUDE.md` 取得 vault 規則（命名、frontmatter、安全規則等）
 2. 用 `Glob` 找出所有要掃描的 Markdown 檔案：
    - 掃描範圍：`content/**/*.md`
-   - 排除：`content/Templates/**`、`content/.obsidian/**`、`content/CLAUDE.md`
+   - 排除：`content/.obsidian/**`、`content/CLAUDE.md`
 
 ## 檢查類別
 
