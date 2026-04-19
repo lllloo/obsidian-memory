@@ -19,10 +19,10 @@ $ARGUMENTS
 ```
 Vault 命中 N 筆：
 
-1. [[<title>]] — content/<path>
+1. [[<title>]] — <path>
    <summary>
 
-2. [[<title>]] — content/<path>
+2. [[<title>]] — <path>
    <summary>
 ```
 
@@ -39,5 +39,6 @@ Vault 無相關筆記。
 
 ## 注意
 
+- `path` 為 repo-relative 路徑，固定以 `content/` 開頭
 - 本指令**不觸發 WebSearch**（與全域 Search-First 協議不同）
 - 若使用者想同時查 web，請直接問問題讓全域協議處理

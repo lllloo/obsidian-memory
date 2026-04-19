@@ -47,7 +47,7 @@ npm run format                   # 自動格式化
 |------|---------|------|
 | `.claude/CLAUDE.md` | `~/.claude/CLAUDE.md` | 全域協議：Vault + WebSearch 並行查詢 |
 | `.claude/agents/obsidian.md` | `~/.claude/agents/obsidian.md` | Obsidian 筆記操作 agent（讀寫） |
-| `.claude/agents/vault-query.md` | `~/.claude/agents/vault-query.md` | Vault 唯讀查詢 agent（搭配 WebSearch 並行） |
+| `.claude/agents/vault-query.md` | `~/.claude/agents/vault-query.md` | Vault 唯讀查詢 agent（動態解析 vault 路徑，搭配 WebSearch 並行） |
 | `.claude/agents/vault-evaluator.md` | — | 稽核 vault 規則違規 |
 | `.claude/agents/vault-fixer.md` | — | 自動修正稽核結果 |
 | `.claude/commands/ob.md` | `~/.claude/commands/ob.md` | `/ob` 筆記操作 |
@@ -96,7 +96,9 @@ ln -sf "$PWD/.claude/commands/vault.md" ~/.claude/commands/vault.md
 Vault 同時作為 Claude Code 的優質參考資料來源，與 WebSearch 互補並行：
 
 - **協議**：`.claude/CLAUDE.md`（symlink 至 `~/.claude/CLAUDE.md`）定義 Vault + Web 並行查詢流程
-- **查詢 agent**：`.claude/agents/vault-query.md`（唯讀 Read/Glob/Grep/Bash），三層搜尋 master-index → tag → 正文 Grep
+- **路徑解析**：`vault-query` 會先動態解析本機 vault 根目錄（常見為 `~/code/obsidian-memory/content/`），再進行查詢
+- **查詢 agent**：`.claude/agents/vault-query.md`（Read/Glob/Grep + 僅限唯讀用途的 Bash），三層搜尋 master-index → tag → 正文 Grep
+- **path 契約**：`vault-query` 對外回傳的 `path` 一律正規化為 repo-relative 的 `content/...`
 - **手動指令**：`/vault <問題>` 只查 vault，不做 WebSearch
 - **自動觸發**：技術/知識性提問時，依 CLAUDE.md 協議自動並行呼叫 vault-query + WebSearch，綜合雙來源答覆
-- **唯讀保證**：vault-query agent 不具 Write/Edit 工具；建檔一律由使用者用 `/ob` 手動觸發
+- **唯讀約束**：vault-query agent 不具 Write/Edit 工具；若需 Bash 也僅限 path discovery 與 grep/cat/find 等唯讀命令；建檔一律由使用者用 `/ob` 手動觸發

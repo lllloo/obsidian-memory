@@ -2,11 +2,12 @@
 
 ## 優質參考資料來源：Obsidian Vault
 
-使用者維護一個 Obsidian vault 作為優質參考資料，由使用者手動管理（透過 `/ob`、`/vault-check`）。Claude Code 對此 vault **唯讀**，絕不自動寫入。
+使用者維護一個 Obsidian vault 作為優質參考資料，由使用者手動管理（透過 `/ob`、`/vault-check`）。Claude Code 對此 vault 僅做查詢；若需用 shell，也只允許唯讀命令，絕不自動寫入。
 
-- **位置**：`/home/user/obsidian-memory/content/`
+- **位置**：查詢時先解析本機 vault 根目錄；常見位置是 `~/code/obsidian-memory/content/`
 - **入口**：`content/master-index.md`
 - **結構**：`Cards/`（快速筆記）、`Topics/`（MOC）、`YouTube/`（150+ 影片摘要）、`Inbox/`（日記）、`Clippings/`（剪貼）
+- **path 格式**：對外回傳一律正規化為 repo-relative 的 `content/...`
 - **特色**：繁中整理、含個人註解與踩坑、wikilink 串連
 
 ## 查詢協議（Vault + Web 並行）
@@ -37,13 +38,13 @@
 
 ### 4. 引用格式（命中時必加）
 
-答覆末尾加：
+答覆末尾加（其中 `<path>` 已含 `content/` 前綴）：
 
 ```
 來源：
 
 Vault（個人筆記）：
-- [[<title>]] — content/<path>.md
+- [[<title>]] — <path>
 
 Web：
 - [<頁面標題>](<URL>)
