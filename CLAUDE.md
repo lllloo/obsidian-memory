@@ -45,10 +45,13 @@ npm run format                   # 自動格式化
 
 | 檔案 | 全域路徑 | 用途 |
 |------|---------|------|
-| `.claude/agents/obsidian.md` | `~/.claude/agents/obsidian.md` | Obsidian 筆記操作 agent |
+| `.claude/CLAUDE.md` | `~/.claude/CLAUDE.md` | 全域協議：Vault + WebSearch 並行查詢 |
+| `.claude/agents/obsidian.md` | `~/.claude/agents/obsidian.md` | Obsidian 筆記操作 agent（讀寫） |
+| `.claude/agents/vault-query.md` | `~/.claude/agents/vault-query.md` | Vault 唯讀查詢 agent（搭配 WebSearch 並行） |
 | `.claude/agents/vault-evaluator.md` | — | 稽核 vault 規則違規 |
 | `.claude/agents/vault-fixer.md` | — | 自動修正稽核結果 |
-| `.claude/commands/ob.md` | `~/.claude/commands/ob.md` | `/ob` 指令定義 |
+| `.claude/commands/ob.md` | `~/.claude/commands/ob.md` | `/ob` 筆記操作 |
+| `.claude/commands/vault.md` | `~/.claude/commands/vault.md` | `/vault` 只查 vault（不做 WebSearch） |
 | `.claude/commands/vault-check.md` | — | `/vault-check` 稽核迴圈 |
 | `.claude/skills/youtube-channel-to-notes/` | `~/.claude/skills/youtube-channel-to-notes/` | YouTube 頻道影片轉 Obsidian 筆記 |
 
@@ -56,11 +59,29 @@ npm run format                   # 自動格式化
 
 ```powershell
 # 在 repo 根目錄執行
+New-Item -ItemType SymbolicLink -Path "$env:USERPROFILE\.claude\CLAUDE.md" -Target "$PWD\.claude\CLAUDE.md"
 New-Item -ItemType SymbolicLink -Path "$env:USERPROFILE\.claude\agents\obsidian.md" -Target "$PWD\.claude\agents\obsidian.md"
+New-Item -ItemType SymbolicLink -Path "$env:USERPROFILE\.claude\agents\vault-query.md" -Target "$PWD\.claude\agents\vault-query.md"
 New-Item -ItemType SymbolicLink -Path "$env:USERPROFILE\.claude\commands\ob.md" -Target "$PWD\.claude\commands\ob.md"
+New-Item -ItemType SymbolicLink -Path "$env:USERPROFILE\.claude\commands\vault.md" -Target "$PWD\.claude\commands\vault.md"
 ```
 
-觸發方式：對話中提到「ob」、「日記」、「daily」、「記一下」、「建立筆記」、「新增筆記」、「找筆記」時自動啟用。
+**建立 symlink（Linux / macOS）：**
+
+```bash
+# 在 repo 根目錄執行
+mkdir -p ~/.claude/agents ~/.claude/commands
+ln -sf "$PWD/.claude/CLAUDE.md" ~/.claude/CLAUDE.md
+ln -sf "$PWD/.claude/agents/obsidian.md" ~/.claude/agents/obsidian.md
+ln -sf "$PWD/.claude/agents/vault-query.md" ~/.claude/agents/vault-query.md
+ln -sf "$PWD/.claude/commands/ob.md" ~/.claude/commands/ob.md
+ln -sf "$PWD/.claude/commands/vault.md" ~/.claude/commands/vault.md
+```
+
+觸發方式：
+- 對話中提到「ob」、「日記」、「daily」、「記一下」、「建立筆記」、「找筆記」→ 啟用 `obsidian` agent
+- 技術/知識性問題 → 依 `.claude/CLAUDE.md` 協議自動並行呼叫 `vault-query` + WebSearch
+- `/vault <問題>` → 只查 vault，不做 WebSearch
 
 ## Vault 稽核工作流
 
@@ -69,3 +90,13 @@ New-Item -ItemType SymbolicLink -Path "$env:USERPROFILE\.claude\commands\ob.md" 
 - `vault-evaluator` agent：依 `content/CLAUDE.md` 規則掃描違規與內容錯誤
 - `vault-fixer` agent：接收違規清單對 `content/` 執行自動修正
 - 修正在獨立 git branch 上進行，最後交用戶審核
+
+## Vault 作為 Claude Code 資料來源
+
+Vault 同時作為 Claude Code 的優質參考資料來源，與 WebSearch 互補並行：
+
+- **協議**：`.claude/CLAUDE.md`（symlink 至 `~/.claude/CLAUDE.md`）定義 Vault + Web 並行查詢流程
+- **查詢 agent**：`.claude/agents/vault-query.md`（唯讀 Read/Glob/Grep/Bash），三層搜尋 master-index → tag → 正文 Grep
+- **手動指令**：`/vault <問題>` 只查 vault，不做 WebSearch
+- **自動觸發**：技術/知識性提問時，依 CLAUDE.md 協議自動並行呼叫 vault-query + WebSearch，綜合雙來源答覆
+- **唯讀保證**：vault-query agent 不具 Write/Edit 工具；建檔一律由使用者用 `/ob` 手動觸發
