@@ -39,6 +39,10 @@ npm run format                   # 自動格式化
 請遵循以下子模組的規範：
 - @content/CLAUDE.md
 
+## 文件同步規則
+
+**修改 `CLAUDE.md` 的 Claude Code 設定清單、symlink 指令、觸發方式、或 vault 協議時，必須同步更新 `README.md` 對應區塊**。兩者面向不同受眾（CLAUDE.md 給 Claude Code、README.md 給使用者），但資訊需一致。新增 agent / command / skill 時尤其要記得同步。
+
 ## Claude Code Agent 與指令
 
 此 repo 統一管理 Obsidian 相關的 Claude Code 設定，透過 symlink 掛載至全域，讓這些設定在任何專案目錄都能生效。
