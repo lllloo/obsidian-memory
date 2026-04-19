@@ -16,7 +16,7 @@ npm run format                   # 自動格式化
 
 ## 架構
 
-- `content/` — Obsidian vault（筆記、日記、模板），Quartz 從此目錄讀取 Markdown 建站
+- `content/` — Obsidian vault（筆記、模板），Quartz 從此目錄讀取 Markdown 建站
 - `quartz/` — Quartz 框架原始碼（不需修改）
 - `quartz.config.ts` — 站台設定（外觀、plugins、ignorePatterns）
 - `quartz.layout.ts` — 版面配置
@@ -24,7 +24,7 @@ npm run format                   # 自動格式化
 
 ## Quartz 重要行為
 
-- `ignorePatterns` 包含 `private`、`Templates`、`.obsidian`、`CLAUDE.md`、`Inbox`、`YouTube`、`Clippings`，這些不會發佈至網站
+- `ignorePatterns` 包含 `private`、`Templates`、`.obsidian`、`CLAUDE.md`、`YouTube`、`Clippings`，這些不會發佈至網站
 - frontmatter 加 `draft: true` 的筆記會被 `RemoveDrafts` plugin 過濾，不發佈
 - 日期優先順序：frontmatter → git → filesystem（`CreatedModifiedDate` plugin）
 - Plugin pipeline：transformers（解析 Markdown）→ filters（篩選頁面）→ emitters（產生 HTML/靜態資源）
@@ -83,7 +83,7 @@ ln -sf "$PWD/.claude/commands/vault.md" ~/.claude/commands/vault.md
 ```
 
 觸發方式：
-- 對話中提到「ob」、「日記」、「daily」、「記一下」、「建立筆記」、「找筆記」→ 啟用 `obsidian` agent
+- 對話中提到「ob」、「建立筆記」、「找筆記」→ 啟用 `obsidian` agent
 - 技術/知識性問題 → 依 `.claude/CLAUDE.md` 協議自動並行呼叫 `vault-query` + WebSearch
 - `/vault <問題>` → 只查 vault，不做 WebSearch
 

@@ -13,7 +13,6 @@
 
 ```
 content/
-├── Inbox/      # 日記（Inbox/YYYY-MM-DD.md）
 ├── Cards/      # 單篇筆記
 ├── Topics/     # MOC 與主題資料夾
 ├── YouTube/    # YouTube 影片摘要
@@ -51,7 +50,7 @@ npm run format               # 自動格式化
 
 ### 觸發方式
 
-- **筆記操作**：對話中提到「ob」、「日記」、「daily」、「記一下」、「建立筆記」、「找筆記」→ 啟用 `obsidian` agent，或用 `/ob <需求>`
+- **筆記操作**：對話中提到「ob」、「建立筆記」、「找筆記」→ 啟用 `obsidian` agent，或用 `/ob <需求>`
 - **知識查詢（預設）**：技術/知識性提問會依 `.claude/CLAUDE.md` 協議自動並行呼叫 `vault-query` + WebSearch，綜合雙來源答覆
 - **只查 vault**：`/vault <問題>` → 不做 WebSearch
 - **稽核修正**：`/vault-check` → 用 `vault-evaluator` + `vault-fixer` 迴圈掃描並自動修正，修正在獨立 git branch 上進行

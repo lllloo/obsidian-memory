@@ -6,7 +6,7 @@
 
 - **位置**：查詢時先解析本機 vault 根目錄；常見位置是 `~/code/obsidian-memory/content/`
 - **入口**：`content/master-index.md`
-- **結構**：`Cards/`（快速筆記）、`Topics/`（MOC）、`YouTube/`（150+ 影片摘要）、`Inbox/`（日記）、`Clippings/`（剪貼）
+- **結構**：`Cards/`（快速筆記）、`Topics/`（MOC）、`YouTube/`（150+ 影片摘要）、`Clippings/`（剪貼）
 - **path 格式**：對外回傳一律正規化為 repo-relative 的 `content/...`
 - **特色**：繁中整理、含個人註解與踩坑、wikilink 串連
 

@@ -36,7 +36,7 @@ model: sonnet
   - `Topics/` — 主題 MOC，含子目錄 `Claude-Code/`、`Obsidian/`、`切版/`
   - `YouTube/` — 150+ 影片摘要，6 個頻道子目錄（AIJasonZ、AILABS-393、Chase-H-AI、EricWTech、daveebbelaar、indydevdan）
   - `Clippings/` — 網頁剪貼
-- **搜尋時排除**：`Templates/`、`Inbox/`（日記無主題性）、`.obsidian/`
+- **搜尋時排除**：`Templates/`、`.obsidian/`
 - 筆記規則（來自 `content/CLAUDE.md`）：
   - 檔名不含空格，用 `-` 連接（如 `Obsidian-CLI-整合指南.md`）
   - Frontmatter 必有 `title`、`created`、`updated`、`tags`（YAML 清單）
@@ -53,7 +53,7 @@ model: sonnet
 
 - 對 `<VAULT_ROOT>` 下的候選資料夾 Glob 列出 `.md` 檔
 - 對檔案集合 Grep frontmatter tags（例：`^\s*-\s+(claude-code|rag|memory)$`）
-- 排除匹配：`Templates/`、`Inbox/`、`.obsidian/`
+- 排除匹配：`Templates/`、`.obsidian/`
 
 ### L3：正文 Grep 與驗證
 
@@ -116,5 +116,5 @@ model: sonnet
 ## 與其他 agent 的分工
 
 - **此 agent（vault-query）**：純讀、回 JSON，供 Search-First 與 `/vault` 使用
-- **obsidian agent**：讀寫、CLI 操作，處理 `/ob` 建筆記/追加日記
+- **obsidian agent**：讀寫、CLI 操作，處理 `/ob` 建筆記
 - 若查詢後使用者想建筆記，由 orchestrator 再呼叫 `obsidian` agent，本 agent 不跨界
