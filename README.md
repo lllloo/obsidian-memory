@@ -45,7 +45,8 @@ npm run format               # 自動格式化
 | `.claude/commands/ob.md` | `~/.claude/commands/ob.md` | `/ob` 筆記操作 |
 | `.claude/commands/vault.md` | `~/.claude/commands/vault.md` | `/vault` 只查 vault（不做 WebSearch） |
 | `.claude/commands/vault-check.md` | — | `/vault-check` 稽核迴圈 |
-| `.claude/skills/youtube-channel-to-notes/` | `~/.claude/skills/youtube-channel-to-notes/` | YouTube 頻道影片轉 Obsidian 筆記 |
+| `.claude/skills/vault-youtube-sync/` | `~/.claude/skills/vault-youtube-sync/` | YouTube 頻道影片轉 Obsidian 筆記 |
+| `.claude/skills/vault-topic-moc/` | — | 多篇筆記整合為主題 MOC（含 generator/reviewer 迴圈） |
 
 ### 觸發方式
 

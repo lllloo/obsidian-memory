@@ -8,10 +8,13 @@ Obsidian 個人知識庫，以 [Quartz 4](https://quartz.jzhao.xyz/) 發佈至 `
 
 ## 常用指令
 
+需要 Node.js 22+、npm 10.9.2+（`package.json` engines）。
+
 ```bash
 npx quartz build --serve         # 本地預覽（localhost:8080）
 npm run check                    # TypeScript 型別檢查 + Prettier 格式驗證
 npm run format                   # 自動格式化
+npm test                         # tsx --test（Quartz 測試套件；修改 quartz/ 才會用到）
 ```
 
 ## 架構
@@ -42,6 +45,8 @@ npm run format                   # 自動格式化
 ## 文件同步規則
 
 **修改 `CLAUDE.md` 的 Claude Code 設定清單、symlink 指令、觸發方式、或 vault 協議時，必須同步更新 `README.md` 對應區塊**。兩者面向不同受眾（CLAUDE.md 給 Claude Code、README.md 給使用者），但資訊需一致。新增 agent / command / skill 時尤其要記得同步。
+
+repo 根目錄的 `AGENTS.md` 是 `CLAUDE.md` 的 symlink（給非 Claude Code 的其他 agent 工具讀），改動會自動同步，不需手動複製。
 
 ## Claude Code Agent 與指令
 
