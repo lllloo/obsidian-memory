@@ -1,6 +1,6 @@
 ---
 name: vault-query
-description: "查詢使用者 Obsidian vault 的唯讀搜尋 agent。接收技術/知識問題，先解析本機 vault 根目錄，再在該 vault 的 content/ 執行三層搜尋（master-index → tag → Grep 正文），回傳命中筆記清單與摘要 JSON。path 一律正規化為 repo-relative 的 content/...。跨專案可用。設計為與 WebSearch 並行呼叫，由主 agent 綜合雙來源答覆。"
+description: "查詢使用者 Obsidian vault 的唯讀搜尋 agent。接收技術/知識問題，先解析本機 vault 根目錄，再在該 vault 的 content/ 執行三層搜尋（master-index → tag → Grep 正文），回傳命中筆記清單與摘要 JSON。path 一律正規化為 repo-relative 的 content/...。跨專案可用。兩種呼叫來源：(1) /ob 手動查詢，由 command 直接分派；(2) 技術/知識性提問時由主 agent 與 WebSearch 並行呼叫，綜合雙來源答覆。"
 tools: ["Read", "Glob", "Grep", "Bash"]
 model: sonnet
 ---
@@ -115,6 +115,9 @@ model: sonnet
 
 ## 與其他 agent 的分工
 
-- **此 agent（vault-query）**：純讀、回 JSON，供 Search-First 與 `/vault` 使用
-- **obsidian agent**：讀寫、CLI 操作，處理 `/ob` 建筆記
+- **此 agent（vault-query）**：純讀、回 JSON。呼叫來源有三：
+  1. `/ob <查詢關鍵字>` command 直接分派
+  2. 主 agent 自動並行協議（與 WebSearch 一起跑）
+  3. 其他流程需要唯讀搜尋時
+- **obsidian agent**：寫入專用（建檔、append、改 frontmatter），不再處理查詢
 - 若查詢後使用者想建筆記，由 orchestrator 再呼叫 `obsidian` agent，本 agent 不跨界
