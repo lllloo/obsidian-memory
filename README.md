@@ -115,6 +115,20 @@ ln -sf "$PWD/.claude/agents/vault-query.md" ~/.claude/agents/vault-query.md
 ln -sf "$PWD/.claude/commands/ob.md" ~/.claude/commands/ob.md
 ```
 
+### Vault 路徑設定（跨機器）
+
+`vault-query` / `vault-writer` 從其他 repo 被呼叫時需要知道 vault 位置。建議在**每台機器**的 `~/.claude/settings.local.json` 注入 `OBSIDIAN_VAULT_ROOT`（此檔不同步，機器各自維護）：
+
+```json
+{
+  "env": {
+    "OBSIDIAN_VAULT_ROOT": "/absolute/path/to/obsidian-memory/content"
+  }
+}
+```
+
+未設定時 agent 會 fallback 到 `<cwd>/content` → Git 根 + `/content` → 舊候選清單。
+
 ## 發佈
 
 push 到 `main` 後透過 `.github/workflows/deploy.yml` 自動建置並部署至 GitHub Pages。此 vault 為**公開發佈**，commit 前請確認不含敏感資料（API key、密碼、個人隱私等）。

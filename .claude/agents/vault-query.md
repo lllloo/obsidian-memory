@@ -20,13 +20,16 @@ model: sonnet
 
 ## Vault 路徑解析（必先執行）
 
-1. 先用 Bash 的 `pwd` 取得目前工作目錄
-2. 依序檢查以下候選路徑是否存在 `master-index.md`：
-  - `<cwd>/content/master-index.md`（當前工作目錄就是 obsidian-memory repo 時）
-  - `~/code/obsidian-memory/content/master-index.md`
-  - `~/obsidian-memory/content/master-index.md`
-3. 取第一個存在的 `content/` 作為 `VAULT_ROOT`
-4. 若以上都不存在，直接輸出未命中的 JSON：`hits` 為空，`miss_reason` 清楚寫明找不到 vault 根目錄
+依序嘗試，取第一個 `master-index.md` 存在的路徑作為 `VAULT_ROOT`：
+
+1. **`$OBSIDIAN_VAULT_ROOT`**（環境變數，由 settings.local.json 注入，跨機器首選）
+2. `<cwd>/content/master-index.md`（當前工作目錄就是 obsidian-memory repo 時）
+3. Git 根 + `/content`：`git -C <cwd> rev-parse --show-toplevel` 後加 `/content`
+4. 舊候選（向下相容）：
+   - `~/code/obsidian-memory/content/master-index.md`
+   - `~/obsidian-memory/content/master-index.md`
+
+若以上都不存在，直接輸出未命中的 JSON：`hits` 為空，`miss_reason` 清楚寫明找不到 vault 根目錄並列出嘗試過的路徑。
 
 ## Vault 佈局
 

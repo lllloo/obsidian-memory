@@ -134,7 +134,7 @@ ln -sf "$PWD/.claude/commands/ob.md" ~/.claude/commands/ob.md
 Vault 同時作為 Claude Code 的優質參考資料來源，與 WebSearch 互補並行：
 
 - **協議**：自動並行查詢流程（觸發條件、綜合原則、引用格式）寫在全域 `~/.claude/CLAUDE.md` 的 `## Obsidian` 段，供主 agent 每次對話載入
-- **路徑解析**：`vault-query` 會先動態解析本機 vault 根目錄（常見為 `~/code/obsidian-memory/content/`），再進行查詢
+- **路徑解析**：`vault-query` 與 `vault-writer` 皆先動態解析本機 vault 根目錄。優先順序：`$OBSIDIAN_VAULT_ROOT`（建議在 `~/.claude/settings.local.json` 的 `env` 注入，跨機器獨立）→ `<cwd>/content` → Git 根 + `/content` → 舊候選清單
 - **查詢 agent**：`.claude/agents/vault-query.md`（Read/Glob/Grep + 僅限唯讀用途的 Bash），三層搜尋 master-index → tag → 正文 Grep
 - **path 契約**：`vault-query` 對外回傳的 `path` 一律正規化為 repo-relative 的 `content/...`
 - **手動查詢**：`/ob 找 <主題>` 由 command 直接分派 `vault-query`，不做 WebSearch

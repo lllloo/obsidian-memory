@@ -53,6 +53,19 @@ fi
 
 失敗降級後繼續完成任務，不要中止；但回報時要如實告知用戶走了 fallback 路徑。
 
+## Vault 路徑解析（Write fallback 必做）
+
+CLI 可用時 `obsidian create path="Cards/..."` 會自動定位 vault；但走 Write/Edit fallback 時，`Cards/<標題>.md` 會被當 cwd-relative，從其他專案呼叫會寫到錯地方。**fallback 路徑必須用絕對路徑**。
+
+依序嘗試，取第一個 `master-index.md` 存在的路徑作為 `VAULT_ROOT`：
+
+1. **`$OBSIDIAN_VAULT_ROOT`**（環境變數，settings.local.json 注入，跨機器首選）
+2. `<cwd>/content/master-index.md`（cwd 就是 obsidian-memory repo 時）
+3. Git 根 + `/content`：`git -C <cwd> rev-parse --show-toplevel` 後加 `/content`
+4. 舊候選：`~/code/obsidian-memory/content/master-index.md`、`~/obsidian-memory/content/master-index.md`
+
+找不到 → 告知用戶並停止，不要猜測寫到錯誤位置。
+
 ## 前置作業
 
 **為什麼要讀 CLAUDE.md：**
