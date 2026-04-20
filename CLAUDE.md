@@ -20,9 +20,11 @@ npm test                         # tsx --test（Quartz 測試套件；修改 qua
 ## 架構
 
 - `content/` — Obsidian vault（筆記、模板），Quartz 從此目錄讀取 Markdown 建站
+- `content/master-index.md` — Vault 入口索引，查詢知識時先讀這份確認資料夾與 tag 分布
 - `quartz/` — Quartz 框架原始碼（不需修改）
 - `quartz.config.ts` — 站台設定（外觀、plugins、ignorePatterns）
 - `quartz.layout.ts` — 版面配置
+- `AGENTS.md` — `CLAUDE.md` 的 symlink，給非 Claude Code 的 agent 工具讀（改 CLAUDE.md 自動同步）
 - `.github/workflows/deploy.yml` — push 到 `main` 自動建置並部署至 GitHub Pages
 
 ## Quartz 重要行為
@@ -52,18 +54,50 @@ repo 根目錄的 `AGENTS.md` 是 `CLAUDE.md` 的 symlink（給非 Claude Code �
 
 此 repo 統一管理 Obsidian 相關的 Claude Code 設定，透過 symlink 掛載至全域，讓這些設定在任何專案目錄都能生效。
 
+依類型分組。「全域路徑」有值 = 需 symlink 掛全域（跨專案可用），`—` = 僅本 repo 生效。
+
+**協議（Config）**
+
 | 檔案 | 全域路徑 | 用途 |
 |------|---------|------|
-| `.claude/CLAUDE.md` | `~/.claude/CLAUDE.md` | 全域協議：Vault + WebSearch 並行查詢 |
-| `.claude/agents/obsidian.md` | `~/.claude/agents/obsidian.md` | Obsidian 筆記操作 agent（讀寫） |
-| `.claude/agents/vault-query.md` | `~/.claude/agents/vault-query.md` | Vault 唯讀查詢 agent（動態解析 vault 路徑，搭配 WebSearch 並行） |
+| `.claude/CLAUDE.md` | `~/.claude/CLAUDE.md` | Vault + WebSearch 並行查詢協議 |
+
+**Agents**
+
+| 檔案 | 全域路徑 | 用途 |
+|------|---------|------|
+| `.claude/agents/obsidian.md` | `~/.claude/agents/obsidian.md` | Obsidian 筆記操作（讀寫） |
+| `.claude/agents/vault-query.md` | `~/.claude/agents/vault-query.md` | Vault 唯讀查詢（動態解析 vault 路徑，搭配 WebSearch 並行） |
 | `.claude/agents/vault-evaluator.md` | — | 稽核 vault 規則違規 |
 | `.claude/agents/vault-fixer.md` | — | 自動修正稽核結果 |
+
+**Slash Commands**
+
+| 檔案 | 全域路徑 | 用途 |
+|------|---------|------|
 | `.claude/commands/ob.md` | `~/.claude/commands/ob.md` | `/ob` 筆記操作 |
 | `.claude/commands/vault.md` | `~/.claude/commands/vault.md` | `/vault` 只查 vault（不做 WebSearch） |
 | `.claude/commands/vault-check.md` | — | `/vault-check` 稽核迴圈 |
+
+**Skills**
+
+| 檔案 | 全域路徑 | 用途 |
+|------|---------|------|
 | `.claude/skills/vault-youtube-sync/` | `~/.claude/skills/vault-youtube-sync/` | YouTube 頻道影片轉 Obsidian 筆記 |
 | `.claude/skills/vault-topic-moc/` | — | 多篇筆記整合為主題 MOC（含 generator/reviewer 迴圈）|
+
+**建議安裝的全域 Skills（非本 repo 管理，需另行安裝至 `~/.claude/skills/`）**
+
+以下 skill 與 vault 工作流深度整合，`/ob`、`vault-youtube-sync` 等流程會依賴它們，強烈建議安裝至全域：
+
+| Skill | 用途 |
+|-------|------|
+| `obsidian-cli` | 透過 Obsidian CLI 讀寫 vault、搜尋筆記、操作 properties/tasks |
+| `obsidian-markdown` | Obsidian Flavored Markdown 語法（wikilinks、callouts、frontmatter） |
+| `obsidian-bases` | `.base` 檔案（Obsidian Bases）讀寫、views、filters、formulas |
+| `defuddle` | 網頁轉 clean markdown，`vault-youtube-sync` 與 `Clippings/` 流程皆使用 |
+
+未安裝時 `/ob` 仍可退回用 Read/Write 操作，但缺少 CLI / Bases / 網頁抓取的最佳路徑。
 
 **建立 symlink（Windows，需開啟 Developer Mode 或以管理員執行）：**
 

@@ -35,18 +35,50 @@ npm run format               # 自動格式化
 
 ### 設定清單
 
+依類型分組。「全域路徑」有值 = 需 symlink 掛全域（跨專案可用），`—` = 僅本 repo 生效。
+
+**協議（Config）**
+
 | 檔案 | 全域路徑 | 用途 |
 |------|---------|------|
-| `.claude/CLAUDE.md` | `~/.claude/CLAUDE.md` | 全域協議：Vault + WebSearch 並行查詢 |
-| `.claude/agents/obsidian.md` | `~/.claude/agents/obsidian.md` | Obsidian 筆記操作 agent（讀寫） |
-| `.claude/agents/vault-query.md` | `~/.claude/agents/vault-query.md` | Vault 唯讀查詢 agent |
+| `.claude/CLAUDE.md` | `~/.claude/CLAUDE.md` | Vault + WebSearch 並行查詢協議 |
+
+**Agents**
+
+| 檔案 | 全域路徑 | 用途 |
+|------|---------|------|
+| `.claude/agents/obsidian.md` | `~/.claude/agents/obsidian.md` | Obsidian 筆記操作（讀寫） |
+| `.claude/agents/vault-query.md` | `~/.claude/agents/vault-query.md` | Vault 唯讀查詢 |
 | `.claude/agents/vault-evaluator.md` | — | 稽核 vault 規則違規 |
 | `.claude/agents/vault-fixer.md` | — | 自動修正稽核結果 |
+
+**Slash Commands**
+
+| 檔案 | 全域路徑 | 用途 |
+|------|---------|------|
 | `.claude/commands/ob.md` | `~/.claude/commands/ob.md` | `/ob` 筆記操作 |
 | `.claude/commands/vault.md` | `~/.claude/commands/vault.md` | `/vault` 只查 vault（不做 WebSearch） |
 | `.claude/commands/vault-check.md` | — | `/vault-check` 稽核迴圈 |
+
+**Skills**
+
+| 檔案 | 全域路徑 | 用途 |
+|------|---------|------|
 | `.claude/skills/vault-youtube-sync/` | `~/.claude/skills/vault-youtube-sync/` | YouTube 頻道影片轉 Obsidian 筆記 |
 | `.claude/skills/vault-topic-moc/` | — | 多篇筆記整合為主題 MOC（含 generator/reviewer 迴圈） |
+
+**建議安裝的全域 Skills（非本 repo 管理）**
+
+以下 skill 與 vault 工作流深度整合，`/ob`、`vault-youtube-sync` 等流程會依賴它們，建議另行安裝至 `~/.claude/skills/`：
+
+| Skill | 用途 |
+|-------|------|
+| `obsidian-cli` | 透過 Obsidian CLI 讀寫 vault、搜尋筆記、操作 properties/tasks |
+| `obsidian-markdown` | Obsidian Flavored Markdown 語法（wikilinks、callouts、frontmatter） |
+| `obsidian-bases` | `.base` 檔案（Obsidian Bases）讀寫、views、filters、formulas |
+| `defuddle` | 網頁轉 clean markdown，`vault-youtube-sync` 與 `Clippings/` 流程皆使用 |
+
+未安裝時 `/ob` 仍可退回用 Read/Write 操作，但缺少 CLI / Bases / 網頁抓取的最佳路徑。
 
 ### 觸發方式
 
@@ -56,6 +88,13 @@ npm run format               # 自動格式化
 - **稽核修正**：`/vault-check` → 用 `vault-evaluator` + `vault-fixer` 迴圈掃描並自動修正，修正在獨立 git branch 上進行
 
 ### 全域掛載
+
+這個 repo 的 `.claude/` 是**本體**，symlink 到 `~/.claude/` 後，Claude Code 在**任何專案目錄**都能叫到 `/ob`、`/vault` 等設定。改 repo 內的檔案會即時同步到全域，不需手動複製。
+
+- **不做 symlink**：仍可用，但 command / agent 只在本 repo 目錄內生效
+- **做了 symlink**：跨專案可用，`/ob`、`/vault` 到處能叫
+- **範圍差異**：上方表格「全域路徑」有值的才掛全域；`—` 的（如 `/vault-check`、`vault-evaluator`、`vault-fixer`）綁本 repo（需讀 `content/` 與 git 操作），不需掛
+- **前置條件**：Windows 需開啟 Developer Mode 或以管理員身分執行
 
 **Windows（需開啟 Developer Mode 或以管理員執行）：**
 
