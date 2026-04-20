@@ -36,8 +36,7 @@ v2.1.101（2026-04-11）官方已將 custom commands 與 skills 統一，長期�
 
 本 repo `obsidian-memory` 的現況：
 
-- `/ob`（短捷徑）→ 委派 obsidian agent
-- `/vault`（短捷徑）→ 委派 vault-query agent
+- `/ob`（短捷徑，使用者唯一入口）→ 依語意分派：建檔 → `vault-writer` agent、查詢 → `vault-query` agent
 - `/vault-check` → 稽核迴圈
 - `vault-topic-moc`（skill）→ MOC 整合
 - `vault-youtube-sync`（skill）→ YouTube 頻道同步

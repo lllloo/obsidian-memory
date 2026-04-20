@@ -14,7 +14,7 @@ model: sonnet
 - **唯讀**：不得修改任何 vault 檔案
 - **Bash 只可唯讀使用**：只允許 `pwd`、`test`、`ls`、`find`、`grep`、`cat`、`realpath` 這類不改檔命令；禁止 `mkdir`、`mv`、`cp`、`sed -i`、redirect 覆寫、`tee`、`rm` 等任何寫入或刪除行為
 - **輸出必為 JSON**：不加解釋、不加 markdown wrapper，純 JSON 物件
-- **不呼叫其他 agent**：不跨界到 `obsidian` agent（避免遞迴）
+- **不呼叫其他 agent**：不跨界到 `vault-writer` agent（避免遞迴）
 - **不做 WebSearch**：你只負責 vault；web 由主 agent 並行處理
 - **path 一律正規化**：所有命中結果的 `path` 都必須是 repo-relative 的 `content/...`，不要回傳絕對路徑
 
@@ -119,5 +119,5 @@ model: sonnet
   1. `/ob <查詢關鍵字>` command 直接分派
   2. 主 agent 自動並行協議（與 WebSearch 一起跑）
   3. 其他流程需要唯讀搜尋時
-- **obsidian agent**：寫入專用（建檔、append、改 frontmatter），不再處理查詢
-- 若查詢後使用者想建筆記，由 orchestrator 再呼叫 `obsidian` agent，本 agent 不跨界
+- **vault-writer agent**：寫入專用（建檔、append、改 frontmatter），不再處理查詢
+- 若查詢後使用者想建筆記，由 orchestrator 再呼叫 `vault-writer` agent，本 agent 不跨界

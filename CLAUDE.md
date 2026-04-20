@@ -63,7 +63,7 @@ repo 根目錄的 `AGENTS.md` 是 `CLAUDE.md` 的 symlink（給非 Claude Code �
 | 檔案 | 類型 | 全域路徑 | 用途 |
 |------|------|---------|------|
 | `.claude/commands/ob.md` | Command | `~/.claude/commands/ob.md` | `/ob` 入口，依語意分派 |
-| `.claude/agents/obsidian.md` | Agent | `~/.claude/agents/obsidian.md` | 寫入：建檔、append、改 frontmatter |
+| `.claude/agents/vault-writer.md` | Agent | `~/.claude/agents/vault-writer.md` | 寫入：建檔、append、改 frontmatter |
 | `.claude/agents/vault-query.md` | Agent | `~/.claude/agents/vault-query.md` | 唯讀查詢：三層搜尋回 JSON |
 
 ### 2. Vault 稽核修正（`/vault-check` 流程）
@@ -102,7 +102,7 @@ repo 根目錄的 `AGENTS.md` 是 `CLAUDE.md` 的 symlink（給非 Claude Code �
 
 ```powershell
 # 在 repo 根目錄執行
-New-Item -ItemType SymbolicLink -Path "$env:USERPROFILE\.claude\agents\obsidian.md" -Target "$PWD\.claude\agents\obsidian.md"
+New-Item -ItemType SymbolicLink -Path "$env:USERPROFILE\.claude\agents\vault-writer.md" -Target "$PWD\.claude\agents\vault-writer.md"
 New-Item -ItemType SymbolicLink -Path "$env:USERPROFILE\.claude\agents\vault-query.md" -Target "$PWD\.claude\agents\vault-query.md"
 New-Item -ItemType SymbolicLink -Path "$env:USERPROFILE\.claude\commands\ob.md" -Target "$PWD\.claude\commands\ob.md"
 ```
@@ -112,15 +112,15 @@ New-Item -ItemType SymbolicLink -Path "$env:USERPROFILE\.claude\commands\ob.md" 
 ```bash
 # 在 repo 根目錄執行
 mkdir -p ~/.claude/agents ~/.claude/commands
-ln -sf "$PWD/.claude/agents/obsidian.md" ~/.claude/agents/obsidian.md
+ln -sf "$PWD/.claude/agents/vault-writer.md" ~/.claude/agents/vault-writer.md
 ln -sf "$PWD/.claude/agents/vault-query.md" ~/.claude/agents/vault-query.md
 ln -sf "$PWD/.claude/commands/ob.md" ~/.claude/commands/ob.md
 ```
 
 觸發方式：
 - `/ob <需求>` → 使用者唯一入口。command 依語意分派：
-  - 建檔（「建立」、「記一下」、「寫一篇」）→ `obsidian` agent
-  - 查詢（「找」、「搜尋」、「有沒有」、「查」）→ `vault-query` agent（不經過 obsidian）
+  - 建檔（「建立」、「記一下」、「寫一篇」）→ `vault-writer` agent
+  - 查詢（「找」、「搜尋」、「有沒有」、「查」）→ `vault-query` agent
 - 對話中自然提到「建立筆記」、「找筆記」→ 主 agent 依上述規則分派（效果等同 `/ob`）
 - 技術/知識性問題 → 依全域 `~/.claude/CLAUDE.md` 的 Obsidian 段規則，自動並行呼叫 `vault-query` + WebSearch
 
@@ -158,6 +158,6 @@ Vault 同時作為 Claude Code 的優質參考資料來源，與 WebSearch 互�
 - **路徑解析**：`vault-query` 會先動態解析本機 vault 根目錄（常見為 `~/code/obsidian-memory/content/`），再進行查詢
 - **查詢 agent**：`.claude/agents/vault-query.md`（Read/Glob/Grep + 僅限唯讀用途的 Bash），三層搜尋 master-index → tag → 正文 Grep
 - **path 契約**：`vault-query` 對外回傳的 `path` 一律正規化為 repo-relative 的 `content/...`
-- **手動查詢**：`/ob 找 <主題>` 委派 `obsidian` agent → 再委派 `vault-query`，不做 WebSearch
+- **手動查詢**：`/ob 找 <主題>` 由 command 直接分派 `vault-query`，不做 WebSearch
 - **自動觸發**：技術/知識性提問時，依全域 CLAUDE.md 規則自動並行呼叫 vault-query + WebSearch，綜合雙來源答覆
 - **唯讀約束**：vault-query agent 不具 Write/Edit 工具；若需 Bash 也僅限 path discovery 與 grep/cat/find 等唯讀命令；建檔一律由使用者用 `/ob` 手動觸發

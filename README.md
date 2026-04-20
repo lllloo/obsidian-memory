@@ -46,7 +46,7 @@ npm run format               # 自動格式化
 | 檔案 | 類型 | 全域路徑 | 用途 |
 |------|------|---------|------|
 | `.claude/commands/ob.md` | Command | `~/.claude/commands/ob.md` | `/ob` 入口，依語意分派 |
-| `.claude/agents/obsidian.md` | Agent | `~/.claude/agents/obsidian.md` | 寫入：建檔、append、改 frontmatter |
+| `.claude/agents/vault-writer.md` | Agent | `~/.claude/agents/vault-writer.md` | 寫入：建檔、append、改 frontmatter |
 | `.claude/agents/vault-query.md` | Agent | `~/.claude/agents/vault-query.md` | 唯讀查詢：三層搜尋回 JSON |
 
 #### 2. Vault 稽核修正（`/vault-check` 流程）
@@ -83,7 +83,7 @@ npm run format               # 自動格式化
 
 ### 觸發方式
 
-- **筆記操作（唯一入口）**：`/ob <需求>` 依語意分派 — 建檔 → `obsidian` agent，查詢 → `vault-query` agent（不經過 obsidian）。對話中自然提到「建立筆記」、「找筆記」效果等同
+- **筆記操作（唯一入口）**：`/ob <需求>` 依語意分派 — 建檔 → `vault-writer` agent，查詢 → `vault-query` agent。對話中自然提到「建立筆記」、「找筆記」效果等同
 - **知識查詢（預設自動）**：技術/知識性提問會依全域 `~/.claude/CLAUDE.md` 的 Obsidian 段規則自動並行呼叫 `vault-query` + WebSearch，綜合雙來源答覆
 - **稽核修正**：`/vault-check` → 用 `vault-evaluator` + `vault-fixer` 迴圈掃描並自動修正，修正在獨立 git branch 上進行
 
@@ -100,7 +100,7 @@ npm run format               # 自動格式化
 
 ```powershell
 # 在 repo 根目錄執行
-New-Item -ItemType SymbolicLink -Path "$env:USERPROFILE\.claude\agents\obsidian.md" -Target "$PWD\.claude\agents\obsidian.md"
+New-Item -ItemType SymbolicLink -Path "$env:USERPROFILE\.claude\agents\vault-writer.md" -Target "$PWD\.claude\agents\vault-writer.md"
 New-Item -ItemType SymbolicLink -Path "$env:USERPROFILE\.claude\agents\vault-query.md" -Target "$PWD\.claude\agents\vault-query.md"
 New-Item -ItemType SymbolicLink -Path "$env:USERPROFILE\.claude\commands\ob.md" -Target "$PWD\.claude\commands\ob.md"
 ```
@@ -110,7 +110,7 @@ New-Item -ItemType SymbolicLink -Path "$env:USERPROFILE\.claude\commands\ob.md" 
 ```bash
 # 在 repo 根目錄執行
 mkdir -p ~/.claude/agents ~/.claude/commands
-ln -sf "$PWD/.claude/agents/obsidian.md" ~/.claude/agents/obsidian.md
+ln -sf "$PWD/.claude/agents/vault-writer.md" ~/.claude/agents/vault-writer.md
 ln -sf "$PWD/.claude/agents/vault-query.md" ~/.claude/agents/vault-query.md
 ln -sf "$PWD/.claude/commands/ob.md" ~/.claude/commands/ob.md
 ```

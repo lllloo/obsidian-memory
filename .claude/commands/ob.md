@@ -1,7 +1,7 @@
 依使用者需求判斷模式後分派：
 
 - **建檔**（「建立筆記」、「新增」、「記一下」、「寫一篇」、「筆記關於…」）
-  → Agent tool，`subagent_type: obsidian`，傳入原始需求
+  → Agent tool，`subagent_type: vault-writer`，傳入原始需求
 - **查詢**（「找」、「搜尋」、「有沒有」、「查」）
   → Agent tool，`subagent_type: vault-query`，傳入原始問題；拿到 JSON 後依下方格式呈現
 
