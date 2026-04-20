@@ -1,7 +1,7 @@
 ---
 title: Master Index
 created: 2026-04-15
-updated: 2026-04-17
+updated: 2026-04-19
 tags:
   - index
 ---
@@ -12,8 +12,6 @@ tags:
 content/
 ├── Cards/         — 快速筆記（CSS、Docker、設計工具等）
 ├── Clippings/     — 網頁剪貼
-├── Inbox/         — 日記（格式：YYYY-MM-DD.md）
-├── Templates/     — 模板（card.md、daily.md）
 ├── Topics/        — 主題 MOC，3 個子目錄
 │   ├── Claude-Code/   — Skills、Agent Packages、Hooks、GAN Harness
 │   ├── Obsidian/      — CLI 整合、Skills、Quartz 部署

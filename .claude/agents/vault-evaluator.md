@@ -16,7 +16,7 @@ model: sonnet
 1. 讀取 `content/CLAUDE.md` 取得 vault 規則（命名、frontmatter、安全規則等）
 2. 用 `Glob` 找出所有要掃描的 Markdown 檔案：
    - 掃描範圍：`content/**/*.md`
-   - 排除：`content/Templates/**`、`content/.obsidian/**`、`content/CLAUDE.md`
+   - 排除：`content/.obsidian/**`、`content/CLAUDE.md`
 
 ## 檢查類別
 
@@ -30,7 +30,7 @@ model: sonnet
 | **R4** | 筆記正文含 `# 標題` heading（Quartz 會重複） | 掃描第一個非 frontmatter 行是否為 `# ` |
 | **R5** | 斷掉的 wikilink（目標檔案不存在） | 解析 `[[...]]` 並比對檔案 |
 | **R6** | 疑似 secret／敏感資料 | regex：`sk-[A-Za-z0-9]{20,}`、`ghp_[A-Za-z0-9]{30,}`、`AKIA[0-9A-Z]{16}`、`password:\s*\S+`、`token:\s*["']?[A-Za-z0-9]{20,}`、私有 IP `10\.`/`192\.168\.`/`172\.(1[6-9]\|2[0-9]\|3[01])\.` |
-| **R7** | 新筆記位置錯誤（非 `Cards/`、`Topics/`、`Inbox/` 底下） | 檔案路徑 |
+| **R7** | 新筆記位置錯誤（非 `Cards/`、`Topics/` 底下） | 檔案路徑 |
 
 ### 內容類（A-H 系列）— 靠 LLM 判斷
 
