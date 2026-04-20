@@ -26,19 +26,23 @@ model: sonnet
   2. 用 `Grep` 全 vault 搜尋指向舊檔名的 wikilink：`[[<舊檔名去副檔名>]]`、`[[<舊檔名去副檔名>|...`
   3. 用 `Edit` 更新所有找到的 wikilink
 - **R2 tags 非 YAML list**：用 `Edit` 改為 YAML 清單格式
-- **R3 缺 frontmatter 欄位**：用 `Edit` 補上。`title` 從檔名推導（去掉副檔名，`-` 換空格）；`created`/`updated` 用今日日期（Bash 先取 `date +%Y-%m-%d`）
+- **R3 缺 frontmatter 欄位**：用 `Edit` 補上
+  - `title` 從檔名推導（去掉副檔名，`-` 換空格）
+  - `created` 取 git 首次 commit 日期：`git log --diff-filter=A --follow --format=%aI -- <file> | tail -1 | cut -dT -f1`；若該檔尚未進 git 才用今日 `date +%Y-%m-%d`
+  - `updated` 用今日日期 `date +%Y-%m-%d`
+  - **不要把既有檔的 `created` 改成今日**，會破壞時間真實性
 - **R4 筆記含 `# 標題`**：用 `Edit` 移除該行（連同後面的空行）
 
 ### 內容類
 
 - **A 錯字／標點**：用 `Edit` 依 `fix_hint` 指定的字串精準替換
 - **B Markdown 語法**：用 `Edit` 修正。code fence 補齊、表格欄數對齊、list 縮排統一
-- **C 內部矛盾**：**保守處理** — 只在 fix_hint 明確指出要改哪一邊時才動手；若 fix_hint 模糊，跳過並在回報中註明
+- **C 內部矛盾**：跳過（REPORT_ONLY，由 orchestrator 印給用戶判斷）
 - **D title 與內文不符**：通常改 frontmatter title 而非內文（假設內文才是用戶真正想寫的）
 - **E 過時資訊**：依 fix_hint 更新描述
 - **F 事實錯誤**：依 fix_hint 修正
-- **G TODO / 未完成**：**預設保留，不刪** — 除非 fix_hint 明確要求刪除。用戶留 TODO 通常是故意的
-- **H 重複筆記**：一律跳過（REPORT_ONLY）
+- **G TODO / 未完成**：跳過（REPORT_ONLY，用戶留 TODO 通常是故意的）
+- **H 重複筆記**：跳過（REPORT_ONLY）
 
 ### Wikilink 同步（R1 專用）
 

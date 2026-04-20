@@ -8,12 +8,44 @@ $ARGUMENTS
 
 ### 1. 前置檢查
 
-- 執行 `git status --porcelain`，若輸出非空 → 中止並告知用戶：「工作區有未 commit 變更，請先 commit 或 stash 再執行 /vault-check」
-- 執行 `git branch --show-current` 確認目前在 main（或用戶的主分支）。若不在，警告但繼續
-- 分兩步取得時間戳（遵守禁用 `$()` 的規則）：
-  1. Bash 執行 `date +%y%m%d-%H%M` 取得字面值，例如 `260408-1530`
-  2. 用該值組出 branch 名稱 `vault-check/260408-1530`
-- 建立並切換到該 branch：`git checkout -b vault-check/<timestamp>`
+**a. 工作區變更檢查**
+
+執行 `git status --porcelain` 並分類：
+
+- `^ M` / `^M ` / `^MM` / `^A ` / `^AM` / `^D ` → **已追蹤變更**（modified/staged/deleted）
+- `^\?\?` → **未追蹤**（untracked）
+
+依分類決策：
+
+1. **全空** → 直接往下
+2. **只有 untracked，且 untracked 不涉及 `content/`**（例：`.DS_Store`、repo 根的暫存檔）→ 列出後提示「將忽略以下 untracked 繼續」並往下
+3. **有已追蹤變更，或 untracked 涉及 `content/`** → 列出完整變更清單後詢問用戶：
+
+```
+偵測到工作區變更：
+<列出 git status --porcelain 的輸出>
+
+這會影響 /vault-check 的 diff 可讀性。要如何處理？
+  1. 自動 git stash（含 untracked），完成後 pop 回來
+  2. 繼續（變更會跟稽核修正混在一起，不建議）
+  3. 中止（自行處理後再重跑）
+```
+
+- 選 **1** → `git stash push -u -m "vault-check auto-stash <timestamp>"`，並記住結束時要 `git stash pop`
+- 選 **2** → 繼續（警告 user diff 會混雜）
+- 選 **3** → 中止
+
+**b. 分支確認**
+
+執行 `git branch --show-current` 確認目前在 main（或用戶的主分支）。若不在，警告但繼續。
+
+**c. 建立 branch**
+
+分兩步取得時間戳（遵守禁用 `$()` 的規則）：
+1. Bash 執行 `date +%y%m%d-%H%M` 取得字面值，例如 `260408-1530`
+2. 用該值組出 branch 名稱 `vault-check/260408-1530`
+
+建立並切換到該 branch：`git checkout -b vault-check/<timestamp>`
 
 ### 2. 迴圈（最多 3 輪）
 
@@ -32,8 +64,10 @@ prompt: "掃描 content/ 下所有 .md 檔案，依 agent 定義的規則與類�
 
 **b. 分類 issues**
 
-- 可自動修：`code` 為 R1, R2, R3, R4, A, B, C, D, E, F, G
-- 僅報告：`code` 為 R5, R6, R7, H，或 `fix_hint == "REPORT_ONLY"`
+- 可自動修：`code` 為 R1, R2, R3, R4, A, B, D, E, F
+- 僅報告：`code` 為 R5, R6, R7, C, G, H，或 `fix_hint == "REPORT_ONLY"`
+
+> C（跨筆記矛盾）、G（TODO/未完成）、H（重複筆記）皆需用戶判斷取捨，不交給 fixer 自動處理，避免誤改。
 
 將「僅報告」項目暫存到 orchestrator 記憶（最後要印出）。
 
@@ -65,7 +99,13 @@ prompt: "依 agent 定義處理以下 issues 清單並輸出修正報告 JSON：
 
 **f. `round += 1`**，回到 a
 
-### 3. 結果輸出
+### 3. 收尾
+
+若前置檢查選了「1. 自動 stash」：
+- 執行 `git stash pop`
+- 若 pop 出現 conflict（vault-check 修正的檔案與 stash 的變更重疊）→ **不要自動解決**，保留 conflict 狀態並告知用戶手動處理，附上 `git stash list` 輸出
+
+### 4. 結果輸出
 
 迴圈結束後，印出總結給用戶：
 
