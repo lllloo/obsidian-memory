@@ -14,7 +14,6 @@ Obsidian 個人知識庫，以 [Quartz 4](https://quartz.jzhao.xyz/) 發佈至 `
 npx quartz build --serve         # 本地預覽（localhost:8080）
 npm run check                    # TypeScript 型別檢查 + Prettier 格式驗證
 npm run format                   # 自動格式化
-npm test                         # tsx --test（Quartz 測試套件；修改 quartz/ 才會用到）
 ```
 
 ## 架構
@@ -43,12 +42,6 @@ npm test                         # tsx --test（Quartz 測試套件；修改 qua
 
 請遵循以下子模組的規範：
 - @content/CLAUDE.md
-
-## 文件同步規則
-
-**修改 `CLAUDE.md` 的 Claude Code 設定清單、symlink 指令、觸發方式、或 vault 協議時，必須同步更新 `README.md` 對應區塊**。兩者面向不同受眾（CLAUDE.md 給 Claude Code、README.md 給使用者），但資訊需一致。新增 agent / command / skill 時尤其要記得同步。
-
-repo 根目錄的 `AGENTS.md` 是 `CLAUDE.md` 的 symlink（給非 Claude Code 的其他 agent 工具讀），改動會自動同步，不需手動複製。
 
 ## Claude Code Agent 與指令
 
@@ -132,23 +125,9 @@ ln -sf "$PWD/.claude/commands/ob.md" ~/.claude/commands/ob.md
 - `vault-fixer` agent：接收違規清單對 `content/` 執行自動修正
 - 修正在獨立 git branch 上進行，最後交用戶審核
 
-## 評估中：搜尋方式比較（WIP）
+## Vault 搜尋方式
 
-比較兩種 vault 搜尋方式：**Read/Glob/Grep**（檔案系統）vs **Obsidian CLI**（`obsidian search:context`）。
-
-**測試結論（2026-04-20）：Read/Glob/Grep 組合 100% 覆蓋 Obsidian CLI 搜尋結果，還快約 9 倍。**
-
-量測數據（vault 122 篇 .md，Windows Git Bash）：
-
-| 關鍵字 | Obsidian CLI | Read/Glob/Grep | 備註 |
-|--------|-------------|----------------|------|
-| claude-code | 575ms / 61 檔 | 30ms / 33 檔 | Grep 漏檔名匹配 |
-| claude-code（Grep + Glob 檔名） | — | 66ms / 61 檔 | 與 Obsidian 完全一致 |
-| MCP | 581ms / 29 檔 | 33ms / 29 檔 | 覆蓋率相同 |
-| skill | 564ms / 44 檔 | 31ms / 44 檔 | 覆蓋率相同 |
-| 七層次 | 572ms / 0 檔 | 31ms / 0 檔 | 兩者皆字串比對，無語義搜尋 |
-
-Obsidian CLI 固定成本約 570ms（PowerShell 啟動 ~200ms + CLI 啟動 ~400ms），vault 再大差距不變。唯一實質優勢是檔名 case-insensitive 匹配，補一個 `Glob content/**/*<關鍵字>*.md` 即可等效。
+搜尋 vault 一律用 `Grep` + `Glob content/**/*<關鍵字>*.md`，不要呼叫 Obsidian CLI 的 `search:context`（慢約 9 倍且覆蓋率較低）。
 
 ## Vault 作為 Claude Code 資料來源
 
@@ -161,3 +140,9 @@ Vault 同時作為 Claude Code 的優質參考資料來源，與 WebSearch 互�
 - **手動查詢**：`/ob 找 <主題>` 由 command 直接分派 `vault-query`，不做 WebSearch
 - **自動觸發**：技術/知識性提問時，依全域 CLAUDE.md 規則自動並行呼叫 vault-query + WebSearch，綜合雙來源答覆
 - **唯讀約束**：vault-query agent 不具 Write/Edit 工具；若需 Bash 也僅限 path discovery 與 grep/cat/find 等唯讀命令；建檔一律由使用者用 `/ob` 手動觸發
+
+## 文件同步規則
+
+**修改 `CLAUDE.md` 的 Claude Code 設定清單、symlink 指令、觸發方式、或 vault 協議時，必須同步更新 `README.md` 對應區塊**。兩者面向不同受眾（CLAUDE.md 給 Claude Code、README.md 給使用者），但資訊需一致。新增 agent / command / skill 時尤其要記得同步。
+
+repo 根目錄的 `AGENTS.md` 是 `CLAUDE.md` 的 symlink（給非 Claude Code 的其他 agent 工具讀），改動會自動同步，不需手動複製。
