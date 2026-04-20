@@ -23,9 +23,9 @@ $ARGUMENTS
 
 用 Agent tool：
 ```
-subagent_type: general-purpose
+subagent_type: vault-evaluator
 description: "Vault 稽核第 N 輪"
-prompt: "讀取 .claude/agents/vault-evaluator.md 並嚴格依其指示執行。工作目錄：D:\\code\\obsidian-memory。輸出 JSON 給我。"
+prompt: "掃描 content/ 下所有 .md 檔案，依 agent 定義的規則與類別找出違規，輸出 JSON。"
 ```
 
 解析回傳的 JSON。若 `total_issues == 0` → 跳出迴圈。
@@ -43,9 +43,9 @@ prompt: "讀取 .claude/agents/vault-evaluator.md 並嚴格依其指示執行。
 
 用 Agent tool：
 ```
-subagent_type: general-purpose
+subagent_type: vault-fixer
 description: "Vault 修正第 N 輪"
-prompt: "讀取 .claude/agents/vault-fixer.md 並嚴格依其指示執行。工作目錄：D:\\code\\obsidian-memory。以下是要修的 issues 清單：<貼入可自動修的 JSON 陣列>。輸出修正報告 JSON 給我。"
+prompt: "依 agent 定義處理以下 issues 清單並輸出修正報告 JSON：<貼入可自動修的 JSON 陣列>"
 ```
 
 **e. Commit 本輪修正**
@@ -60,8 +60,6 @@ prompt: "讀取 .claude/agents/vault-fixer.md 並嚴格依其指示執行。工�
 
     類別：R1, R3, A, B
     應用：12 項 / 跳過：3 項 / 失敗：0 項
-
-    Co-Authored-By: Claude Opus 4.6 <noreply@anthropic.com>
     ```
   - 用 HEREDOC 傳入 commit message
 

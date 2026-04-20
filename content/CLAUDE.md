@@ -58,9 +58,9 @@ powershell.exe -Command "obsidian <指令>"
 - **檔案名稱不可含空格**，空格一律改為 `-`（例：`Obsidian-CLI-整合指南.md`）
 - Wikilink 需對應實際檔名（含 `-`）：`[[Obsidian-CLI-整合指南]]`
 
-### 自動更新 updated
+### `updated` 欄位（盡力而為）
 
-**每次修改任何 `.md` 檔案內容時，必須同步將 frontmatter 的 `updated` 欄位更新為今日日期（`YYYY-MM-DD`）。** 無論是追加內容、修改欄位、還是程式化批次更新，都適用此規則。
+修改 `.md` 內容時**盡量**同步 frontmatter 的 `updated` 為今日日期（`YYYY-MM-DD`），但不強制 — 偶爾漂移可接受，不需為此中斷流程或裝 hook。
 
 ### Frontmatter 屬性
 

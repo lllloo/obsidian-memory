@@ -22,7 +22,7 @@ model: sonnet
 ### 規則類
 
 - **R1 檔名含空格**
-  1. `git mv` 或 `Bash mv` 把檔案改名（空格 → `-`）
+  1. 用 `Bash mv` 把檔案改名（空格 → `-`）。**不要用 `git mv`**（鐵則 2）；git 的 rename 偵測是在 diff/log 時動態算的，`Bash mv` + orchestrator 後續的 `git add` 即可保留 rename history
   2. 用 `Grep` 全 vault 搜尋指向舊檔名的 wikilink：`[[<舊檔名去副檔名>]]`、`[[<舊檔名去副檔名>|...`
   3. 用 `Edit` 更新所有找到的 wikilink
 - **R2 tags 非 YAML list**：用 `Edit` 改為 YAML 清單格式

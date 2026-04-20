@@ -90,7 +90,7 @@ Read 全部候選筆記。記錄：
 
 - MOC 寫在 `content/Topics/<類別>/<主題>.md`（**不要**寫 `Cards/` 或 `YouTube/`）
 - frontmatter 遵守 `content/CLAUDE.md` 的 card.md 標準（title/created/updated/tags）
-- `updated` 欄位每次修改必同步為今日日期
+- `updated` 欄位盡量同步為今日日期（不強制）
 - wikilink 檔名需確實存在，否則改用外部 URL
 - 選項 B 執行前再次確認用戶是否真的要刪
 - 繁體中文為主，技術名詞保留英文

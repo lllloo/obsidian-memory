@@ -51,7 +51,7 @@
 任務：修改 <MOC 絕對路徑>，處理以下 N 項 review 問題。
 
 ## Obsidian vault 規則
-- 修改 .md 時，frontmatter `updated` 欄位必須同步為今日日期 <YYYY-MM-DD>
+- 修改 .md 時，frontmatter `updated` 欄位盡量同步為今日日期 <YYYY-MM-DD>（不強制）
 - 詳見 content/CLAUDE.md
 
 ## 要處理的問題

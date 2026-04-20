@@ -37,11 +37,7 @@ npm run format               # 自動格式化
 
 依類型分組。「全域路徑」有值 = 需 symlink 掛全域（跨專案可用），`—` = 僅本 repo 生效。
 
-**協議（Config）**
-
-| 檔案 | 全域路徑 | 用途 |
-|------|---------|------|
-| `.claude/CLAUDE.md` | `~/.claude/CLAUDE.md` | Vault + WebSearch 並行查詢協議 |
+> Vault + WebSearch 並行查詢協議寫在全域 `~/.claude/CLAUDE.md` 的 `## Obsidian` 段，不另存檔。
 
 **Agents**
 
@@ -82,7 +78,7 @@ npm run format               # 自動格式化
 ### 觸發方式
 
 - **筆記操作（唯一入口）**：`/ob <需求>` 或對話中提到「ob」、「建立筆記」、「找筆記」→ 啟用 `obsidian` agent。建檔自己處理；查詢時內部委派 `vault-query`（快速 Read/Glob/Grep，不做 WebSearch）
-- **知識查詢（預設自動）**：技術/知識性提問會依 `.claude/CLAUDE.md` 協議自動並行呼叫 `vault-query` + WebSearch，綜合雙來源答覆
+- **知識查詢（預設自動）**：技術/知識性提問會依全域 `~/.claude/CLAUDE.md` 的 Obsidian 段規則自動並行呼叫 `vault-query` + WebSearch，綜合雙來源答覆
 - **稽核修正**：`/vault-check` → 用 `vault-evaluator` + `vault-fixer` 迴圈掃描並自動修正，修正在獨立 git branch 上進行
 
 ### 全域掛載
@@ -98,7 +94,6 @@ npm run format               # 自動格式化
 
 ```powershell
 # 在 repo 根目錄執行
-New-Item -ItemType SymbolicLink -Path "$env:USERPROFILE\.claude\CLAUDE.md" -Target "$PWD\.claude\CLAUDE.md"
 New-Item -ItemType SymbolicLink -Path "$env:USERPROFILE\.claude\agents\obsidian.md" -Target "$PWD\.claude\agents\obsidian.md"
 New-Item -ItemType SymbolicLink -Path "$env:USERPROFILE\.claude\agents\vault-query.md" -Target "$PWD\.claude\agents\vault-query.md"
 New-Item -ItemType SymbolicLink -Path "$env:USERPROFILE\.claude\commands\ob.md" -Target "$PWD\.claude\commands\ob.md"
@@ -109,7 +104,6 @@ New-Item -ItemType SymbolicLink -Path "$env:USERPROFILE\.claude\commands\ob.md" 
 ```bash
 # 在 repo 根目錄執行
 mkdir -p ~/.claude/agents ~/.claude/commands
-ln -sf "$PWD/.claude/CLAUDE.md" ~/.claude/CLAUDE.md
 ln -sf "$PWD/.claude/agents/obsidian.md" ~/.claude/agents/obsidian.md
 ln -sf "$PWD/.claude/agents/vault-query.md" ~/.claude/agents/vault-query.md
 ln -sf "$PWD/.claude/commands/ob.md" ~/.claude/commands/ob.md
