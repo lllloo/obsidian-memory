@@ -56,8 +56,7 @@ npm run format               # 自動格式化
 
 | 檔案 | 全域路徑 | 用途 |
 |------|---------|------|
-| `.claude/commands/ob.md` | `~/.claude/commands/ob.md` | `/ob` 筆記操作 |
-| `.claude/commands/vault.md` | `~/.claude/commands/vault.md` | `/vault` 只查 vault（不做 WebSearch） |
+| `.claude/commands/ob.md` | `~/.claude/commands/ob.md` | `/ob` 筆記操作（建檔 + 查詢，唯一入口） |
 | `.claude/commands/vault-check.md` | — | `/vault-check` 稽核迴圈 |
 
 **Skills**
@@ -82,17 +81,16 @@ npm run format               # 自動格式化
 
 ### 觸發方式
 
-- **筆記操作**：對話中提到「ob」、「建立筆記」、「找筆記」→ 啟用 `obsidian` agent，或用 `/ob <需求>`
-- **知識查詢（預設）**：技術/知識性提問會依 `.claude/CLAUDE.md` 協議自動並行呼叫 `vault-query` + WebSearch，綜合雙來源答覆
-- **只查 vault**：`/vault <問題>` → 不做 WebSearch
+- **筆記操作（唯一入口）**：`/ob <需求>` 或對話中提到「ob」、「建立筆記」、「找筆記」→ 啟用 `obsidian` agent。建檔自己處理；查詢時內部委派 `vault-query`（快速 Read/Glob/Grep，不做 WebSearch）
+- **知識查詢（預設自動）**：技術/知識性提問會依 `.claude/CLAUDE.md` 協議自動並行呼叫 `vault-query` + WebSearch，綜合雙來源答覆
 - **稽核修正**：`/vault-check` → 用 `vault-evaluator` + `vault-fixer` 迴圈掃描並自動修正，修正在獨立 git branch 上進行
 
 ### 全域掛載
 
-這個 repo 的 `.claude/` 是**本體**，symlink 到 `~/.claude/` 後，Claude Code 在**任何專案目錄**都能叫到 `/ob`、`/vault` 等設定。改 repo 內的檔案會即時同步到全域，不需手動複製。
+這個 repo 的 `.claude/` 是**本體**，symlink 到 `~/.claude/` 後，Claude Code 在**任何專案目錄**都能叫到 `/ob`、vault-query agent 等設定。改 repo 內的檔案會即時同步到全域，不需手動複製。
 
 - **不做 symlink**：仍可用，但 command / agent 只在本 repo 目錄內生效
-- **做了 symlink**：跨專案可用，`/ob`、`/vault` 到處能叫
+- **做了 symlink**：跨專案可用，`/ob` 到處能叫
 - **範圍差異**：上方表格「全域路徑」有值的才掛全域；`—` 的（如 `/vault-check`、`vault-evaluator`、`vault-fixer`）綁本 repo（需讀 `content/` 與 git 操作），不需掛
 - **前置條件**：Windows 需開啟 Developer Mode 或以管理員身分執行
 
@@ -104,7 +102,6 @@ New-Item -ItemType SymbolicLink -Path "$env:USERPROFILE\.claude\CLAUDE.md" -Targ
 New-Item -ItemType SymbolicLink -Path "$env:USERPROFILE\.claude\agents\obsidian.md" -Target "$PWD\.claude\agents\obsidian.md"
 New-Item -ItemType SymbolicLink -Path "$env:USERPROFILE\.claude\agents\vault-query.md" -Target "$PWD\.claude\agents\vault-query.md"
 New-Item -ItemType SymbolicLink -Path "$env:USERPROFILE\.claude\commands\ob.md" -Target "$PWD\.claude\commands\ob.md"
-New-Item -ItemType SymbolicLink -Path "$env:USERPROFILE\.claude\commands\vault.md" -Target "$PWD\.claude\commands\vault.md"
 ```
 
 **macOS / Linux：**
@@ -116,7 +113,6 @@ ln -sf "$PWD/.claude/CLAUDE.md" ~/.claude/CLAUDE.md
 ln -sf "$PWD/.claude/agents/obsidian.md" ~/.claude/agents/obsidian.md
 ln -sf "$PWD/.claude/agents/vault-query.md" ~/.claude/agents/vault-query.md
 ln -sf "$PWD/.claude/commands/ob.md" ~/.claude/commands/ob.md
-ln -sf "$PWD/.claude/commands/vault.md" ~/.claude/commands/vault.md
 ```
 
 ## 發佈

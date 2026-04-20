@@ -62,8 +62,26 @@ obsidian read file="card"        # 讀取模板結構
 
 ## 搜尋 vault
 
-```bash
-obsidian search:context query="<關鍵字>"
+使用 Agent tool 委派給 `vault-query` agent（subagent_type: `vault-query`），傳入使用者原始問題。
+
+拿到 JSON 後依下列格式呈現：
+
+**命中：**
+
+```
+Vault 命中 N 筆：
+
+1. [[<title>]] — <path>
+   <summary>
 ```
 
-列出結果，最多 5 筆。
+（relevance 標註：`★` high、`·` medium、`-` low，列於 summary 前）
+
+**未命中：**
+
+```
+Vault 無相關筆記。
+原因：<miss_reason>
+```
+
+不做 WebSearch；使用者若需查 web，會由全域協議另外處理。

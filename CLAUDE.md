@@ -75,8 +75,7 @@ repo 根目錄的 `AGENTS.md` 是 `CLAUDE.md` 的 symlink（給非 Claude Code �
 
 | 檔案 | 全域路徑 | 用途 |
 |------|---------|------|
-| `.claude/commands/ob.md` | `~/.claude/commands/ob.md` | `/ob` 筆記操作 |
-| `.claude/commands/vault.md` | `~/.claude/commands/vault.md` | `/vault` 只查 vault（不做 WebSearch） |
+| `.claude/commands/ob.md` | `~/.claude/commands/ob.md` | `/ob` 筆記操作（建檔 + 查詢，使用者唯一入口） |
 | `.claude/commands/vault-check.md` | — | `/vault-check` 稽核迴圈 |
 
 **Skills**
@@ -107,7 +106,6 @@ New-Item -ItemType SymbolicLink -Path "$env:USERPROFILE\.claude\CLAUDE.md" -Targ
 New-Item -ItemType SymbolicLink -Path "$env:USERPROFILE\.claude\agents\obsidian.md" -Target "$PWD\.claude\agents\obsidian.md"
 New-Item -ItemType SymbolicLink -Path "$env:USERPROFILE\.claude\agents\vault-query.md" -Target "$PWD\.claude\agents\vault-query.md"
 New-Item -ItemType SymbolicLink -Path "$env:USERPROFILE\.claude\commands\ob.md" -Target "$PWD\.claude\commands\ob.md"
-New-Item -ItemType SymbolicLink -Path "$env:USERPROFILE\.claude\commands\vault.md" -Target "$PWD\.claude\commands\vault.md"
 ```
 
 **建立 symlink（Linux / macOS）：**
@@ -119,13 +117,12 @@ ln -sf "$PWD/.claude/CLAUDE.md" ~/.claude/CLAUDE.md
 ln -sf "$PWD/.claude/agents/obsidian.md" ~/.claude/agents/obsidian.md
 ln -sf "$PWD/.claude/agents/vault-query.md" ~/.claude/agents/vault-query.md
 ln -sf "$PWD/.claude/commands/ob.md" ~/.claude/commands/ob.md
-ln -sf "$PWD/.claude/commands/vault.md" ~/.claude/commands/vault.md
 ```
 
 觸發方式：
-- 對話中提到「ob」、「建立筆記」、「找筆記」→ 啟用 `obsidian` agent
+- 對話中提到「ob」、「建立筆記」、「找筆記」→ 啟用 `obsidian` agent（建檔自己處理、查詢委派 `vault-query`）
 - 技術/知識性問題 → 依 `.claude/CLAUDE.md` 協議自動並行呼叫 `vault-query` + WebSearch
-- `/vault <問題>` → 只查 vault，不做 WebSearch
+- `/ob <需求>` → 使用者唯一入口，涵蓋建檔與查詢
 
 ## Vault 稽核工作流
 
@@ -135,6 +132,24 @@ ln -sf "$PWD/.claude/commands/vault.md" ~/.claude/commands/vault.md
 - `vault-fixer` agent：接收違規清單對 `content/` 執行自動修正
 - 修正在獨立 git branch 上進行，最後交用戶審核
 
+## 評估中：搜尋方式比較（WIP）
+
+比較兩種 vault 搜尋方式：**Read/Glob/Grep**（檔案系統）vs **Obsidian CLI**（`obsidian search:context`）。
+
+**測試結論（2026-04-20）：Read/Glob/Grep 組合 100% 覆蓋 Obsidian CLI 搜尋結果，還快約 9 倍。**
+
+量測數據（vault 122 篇 .md，Windows Git Bash）：
+
+| 關鍵字 | Obsidian CLI | Read/Glob/Grep | 備註 |
+|--------|-------------|----------------|------|
+| claude-code | 575ms / 61 檔 | 30ms / 33 檔 | Grep 漏檔名匹配 |
+| claude-code（Grep + Glob 檔名） | — | 66ms / 61 檔 | 與 Obsidian 完全一致 |
+| MCP | 581ms / 29 檔 | 33ms / 29 檔 | 覆蓋率相同 |
+| skill | 564ms / 44 檔 | 31ms / 44 檔 | 覆蓋率相同 |
+| 七層次 | 572ms / 0 檔 | 31ms / 0 檔 | 兩者皆字串比對，無語義搜尋 |
+
+Obsidian CLI 固定成本約 570ms（PowerShell 啟動 ~200ms + CLI 啟動 ~400ms），vault 再大差距不變。唯一實質優勢是檔名 case-insensitive 匹配，補一個 `Glob content/**/*<關鍵字>*.md` 即可等效。
+
 ## Vault 作為 Claude Code 資料來源
 
 Vault 同時作為 Claude Code 的優質參考資料來源，與 WebSearch 互補並行：
@@ -143,6 +158,6 @@ Vault 同時作為 Claude Code 的優質參考資料來源，與 WebSearch 互�
 - **路徑解析**：`vault-query` 會先動態解析本機 vault 根目錄（常見為 `~/code/obsidian-memory/content/`），再進行查詢
 - **查詢 agent**：`.claude/agents/vault-query.md`（Read/Glob/Grep + 僅限唯讀用途的 Bash），三層搜尋 master-index → tag → 正文 Grep
 - **path 契約**：`vault-query` 對外回傳的 `path` 一律正規化為 repo-relative 的 `content/...`
-- **手動指令**：`/vault <問題>` 只查 vault，不做 WebSearch
+- **手動查詢**：`/ob 找 <主題>` 委派 `obsidian` agent → 再委派 `vault-query`，不做 WebSearch
 - **自動觸發**：技術/知識性提問時，依 CLAUDE.md 協議自動並行呼叫 vault-query + WebSearch，綜合雙來源答覆
 - **唯讀約束**：vault-query agent 不具 Write/Edit 工具；若需 Bash 也僅限 path discovery 與 grep/cat/find 等唯讀命令；建檔一律由使用者用 `/ob` 手動觸發
