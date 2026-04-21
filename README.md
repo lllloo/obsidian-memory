@@ -2,6 +2,14 @@
 
 個人知識庫，以 [Obsidian](https://obsidian.md/) 管理筆記，透過 [Quartz 4](https://quartz.jzhao.xyz/) 發佈至 [ob.bugloop.com](https://ob.bugloop.com)。
 
+這個 repo 由三層構成，職責分離：
+
+- **Obsidian vault**（`content/`）— 筆記本體，Obsidian 桌面版的編輯目標
+- **Quartz 4 發佈層**（`quartz/` + `quartz.config.ts`）— 將 `content/` 靜態化為 `ob.bugloop.com`
+- **Claude Code 工作流層**（`.claude/`）— agents、slash commands、skills，管理筆記建立、查詢、稽核；可 symlink 至 `~/.claude/` 跨專案使用
+
+三層各有 `CLAUDE.md`：全域（`~/.claude/`）、repo（本檔）、vault（`content/CLAUDE.md`），規則按作用域分層。
+
 ## 前置需求
 
 - [Obsidian](https://obsidian.md/) 桌面版

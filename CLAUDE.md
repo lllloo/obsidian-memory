@@ -6,6 +6,14 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Obsidian 個人知識庫，以 [Quartz 4](https://quartz.jzhao.xyz/) 發佈至 `ob.bugloop.com`。Vault 內容放在 `content/`，Quartz 框架程式碼在 `quartz/`。
 
+此 repo 由三層構成，修改時先判斷變更屬於哪一層再動：
+
+- **Vault 層**（`content/`）— 筆記本體。規則寫在 `content/CLAUDE.md`（命名、frontmatter、tag、敏感資料）
+- **發佈層**（`quartz/`、`quartz.config.ts`、`quartz.layout.ts`、`.github/workflows/`）— Quartz 建置與 GitHub Pages 部署
+- **工作流層**（`.claude/`）— agents（`vault-writer` / `vault-query` / `vault-evaluator` / `vault-fixer`）、commands（`/ob`、`/vault-check`）、skills（`vault-youtube-sync`、`vault-topic-moc`）。可 symlink 至 `~/.claude/` 跨專案使用
+
+CLAUDE.md 依作用域分三層：全域（`~/.claude/CLAUDE.md`）→ repo（本檔）→ vault（`content/CLAUDE.md`）。規則放到最窄的作用域即可。
+
 ## 常用指令
 
 需要 Node.js 22+、npm 10.9.2+（`package.json` engines）。
