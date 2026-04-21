@@ -15,7 +15,7 @@ content/
 ├── Topics/        — 主題 MOC，3 個子目錄
 │   ├── Claude-Code/   — Skills、Agent Packages、Hooks、GAN Harness
 │   ├── Obsidian/      — CLI 整合、Skills、Quartz 部署
-│   └── 切版/          — Pencil 讀取規則、Flexbox、Border 規則
+│   └── 前端設計/      — 工作流、Stitch、動效、設計系統、切版規則
 └── YouTube/       — 47 篇影片摘要，4 個頻道
     ├── AIJasonZ/              — Claude 設計工作流、Skills、Agent 記憶體管理
     ├── AILABS-393/            — Claude Code 進階技巧、OpenClaw、RAG

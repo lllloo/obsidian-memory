@@ -10,7 +10,7 @@ updated: 2026-03-29
 
 - **[[Topics/Claude-Code/index|Claude Code]]** — Claude Code 工具、設定與技巧
 - **[[Topics/Obsidian/index|Obsidian]]** — 用 Obsidian 搭配 Claude Code 打造個人知識庫
-- **[[Topics/切版/index|切版]]** — CSS 版面配置原則與常見陷阱
+- **[[Topics/前端設計/index|前端設計]]** — AI 時代前端設計工作流、靈感資源、CSS 切版原則
 
 ## 依標籤探索
 
