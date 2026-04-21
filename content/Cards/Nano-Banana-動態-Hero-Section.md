@@ -12,11 +12,9 @@ tags:
 
 在網頁 hero section 放**動態影片背景**，是對抗 AI slop 外觀最有效的單一武器——視覺效果遠超 99% 的 AI 生成網站，實作成本卻低。
 
-> Nano Banana 是 Google **Gemini 2.5 Flash Image** 的社群暱稱（並非獨立產品），擅長快速生成高品質靜態圖。
-
 ## 三個觀念
 
-- **Image → Video → Code**：先用 Nano Banana（Gemini 2.5 Flash Image）生靜態圖 → 用 Kling / VO 生影片 → Claude Code 組網頁。分階段生成比一次到位穩定。
+- **Image → Video → Code**：先用 Nano Banana 生靜態圖 → 用 Kling / Veo 生影片 → Claude Code 組網頁。分階段生成比一次到位穩定。
 - **極慢細膩的動態**：prompt 原則「keep it static and have extremely slow and subtle motion」，避免浮誇干擾閱讀。
 - **Mobile 用靜態圖替換影片**：不讓手機載完整影片，減流量、提載入速度。
 
@@ -28,8 +26,8 @@ tags:
 
 ## 相關工具
 
-- [Gemini 2.5 Flash Image（Nano Banana）](https://deepmind.google/technologies/gemini/) — 圖片生成
-- [Kling](https://klingai.com/) / [VO](https://deepmind.google/technologies/veo/) — 影片生成
+- [Nano Banana](https://ai.google.dev/gemini-api/docs/image-generation?hl=zh-tw) — 圖片生成
+- [Kling](https://kling.ai/) / [Veo](https://deepmind.google/models/veo/) — 影片生成
 - [21st.dev](https://21st.dev/) — 預建元件庫，搭配 Claude Code 加速組頁
 
 ## 靈感來源

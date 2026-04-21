@@ -30,10 +30,10 @@ Claude Code 在 agentic coding 表現卓越，但前端設計是普遍弱項。�
 
 最低成本的介入，安裝 Skill 讓 Claude Code 拿到「設計觀念」。
 
-- **Impeccable**：18 個子指令，用**反模式**（anti-patterns）直接列舉 AI slop
-- **UI/UX Pro Max**：官方 frontend-design skill 進化版，161 條產業別規則，生成前會問答確認方向
-- **Taste Skill**：提供「抽象程度」可調節，適合差異化
-- **awesome-design-md**：概念源自 Google Stitch 的 DESIGN.md，內建 ElevenLabs / Bugatti 等知名網站的設計系統拆解
+- **[Impeccable](https://impeccable.style)**（[repo](https://github.com/pbakaus/impeccable)）：18 個子指令，用**反模式**（anti-patterns）直接列舉 AI slop
+- **[UI/UX Pro Max](https://ui-ux-pro-max-skill.nextlevelbuilder.io/)**（[repo](https://github.com/nextlevelbuilder/ui-ux-pro-max-skill)）：官方 frontend-design skill 進化版，涵蓋 161 種產品類別的推理規則，生成前會問答確認方向
+- **[Taste Skill](https://www.tasteskill.dev)**（[repo](https://github.com/Leonxlnx/taste-skill)）：用 `DESIGN_VARIANCE`（1–10，從乾淨置中到非對稱現代）與 `MOTION_INTENSITY` 兩個參數調節風格強度，適合差異化
+- **[awesome-design-md](https://github.com/VoltAgent/awesome-design-md)**：概念源自 Google Stitch 的 DESIGN.md，內建 ElevenLabs / Bugatti 等知名網站的設計系統拆解
 
 **局限**：還是 AI 模板感，核心問題沒解——使用者仍無法描述真正想要的視覺。
 
@@ -52,11 +52,11 @@ Claude Code 在 agentic coding 表現卓越，但前端設計是普遍弱項。�
 
 突破截圖瓶頸：不只看外觀，拿 HTML/CSS/JS。
 
-- `Ctrl+U` 複製 HTML，讓 Claude Code 用 **Site Teardown skill** 抓完整 CSS/JS
-- **Skill UI**：把任意網站逆向工程成 Claude Code 可用的 skill
-  - 標準模式分析 HTML，Ultra 模式用 Playwright 抓滾動截圖與互動狀態
+- **手動 teardown**：`Ctrl+U` 複製 HTML 貼給 Claude Code，讓它分析並抓出 CSS/JS 結構。門檻低但要自己整理
+- **[Skill UI](https://skillui.vercel.app/)**：把任意網站逆向工程成 Claude Code 可用的 skill，自動化上一條的流程
+  - 標準模式靜態分析 HTML/CSS，Ultra 模式用 Playwright 抓滾動截圖、hover/focus 狀態、動畫 keyframe
 - 第一次嘗試可達 80–90% 相似度（影片作者示範估值）
-- **副產品**：讓 Claude Code 解釋「這個效果是怎麼做到的」，每複製一個網站就多一個技術認知
+- **額外收穫**：讓 Claude Code 解釋「這個效果是怎麼做到的」，每複製一個網站就多一個技術認知
 
 ### Layer 4：Flow Engineering（拆解設計思考）
 
@@ -69,7 +69,7 @@ Claude Code 在 agentic coding 表現卓越，但前端設計是普遍弱項。�
 3. **Animation**：讓模型列出需要動畫的元素 + keyframe + 觸發時機
 4. **實作**：有 layout + theme + animation 三層 context，一次生成品質大幅提升
 
-**SuperDesign**（superdesign.dev）：IDE 內 infinite canvas 並排多變體，內建此流程。
+**[SuperDesign](https://superdesign.dev)**（[repo](https://github.com/superdesigndev/superdesign)）：IDE 內 infinite canvas 並排多變體，內建此流程，支援 Cursor / Windsurf / Claude Code / VS Code。
 
 ### Layer 5：設計工具整合（視覺化 + MCP）
 
@@ -79,8 +79,8 @@ Claude Code 在 agentic coding 表現卓越，但前端設計是普遍弱項。�
   - 若 Figma 稿用 Shadcn 元件且 layer 名對應，Shadcn MCP 自動從 registry 抓元件
   - 第三方 Shadcn registry：Fancy Components、Animate UI、Magic UI、Plate UI
 - **Stitch**（[[Stitch]]）：視覺畫布生成 variants，可匯出程式碼或轉入 Claude Code
-- **Pencil.dev**：VS Code / Cursor 側邊即時編輯
-- **Figma / paper.design**
+- **[Pencil](https://www.pencil.dev/)**：VS Code / Cursor 側邊的 infinite vector canvas，邊畫邊生成 React/Tailwind，透過 MCP 與 Claude 溝通
+- **[Figma](https://www.figma.com/)** / **[paper.design](https://paper.design/)**：傳統與新興向量設計工具，截圖或匯出後給 Claude Code 實作
 
 流程：工具生成設計稿 → 截圖或匯出 → Claude Code 實作。
 
@@ -88,7 +88,7 @@ Claude Code 在 agentic coding 表現卓越，但前端設計是普遍弱項。�
 
 從複製轉向創作：
 
-- **元件**：21st.dev、Monaé、CodePen 找高品質元件，直接複製 prompt
+- **元件**：[21st.dev](https://21st.dev/)、[CodePen](https://codepen.io/) 找高品質元件，直接複製 prompt
 - **自製素材**：Midjourney / Nano Banana Pro 生成品牌藝術圖，配 Kling 3.0 / Veo 3.1 做細微動態背景影片（見 [[Nano-Banana-動態-Hero-Section]]）
 - **視覺說故事**：素材與應用主題連結（例：Argus 情報 App → 千眼神意象 → 「See what's next」）
 - **排版**：主動指定 Google Fonts（Claude Code 預設偏 Inter，不會主動換字體）
@@ -96,13 +96,13 @@ Claude Code 在 agentic coding 表現卓越，但前端設計是普遍弱項。�
 
 ### Layer 7：前端建築師（超出 AI 輔助範圍）
 
-客製 WebGL、shader、3D 互動，電玩等級視覺。目前 AI 還無法有效輔助這層，**WebGPU Skill** 是少數能嘗試的工具。
+客製 WebGL、shader、3D 互動，電玩等級視覺。目前 AI 還無法有效輔助這層，**[WebGPU Skill](https://github.com/dgreenheck/webgpu-claude-skill)**（給 Three.js + TSL 用的 Claude skill）是少數能嘗試的工具。
 
 ## 工具速查
 
 | 情境 | 推薦工具 | 所屬層級 |
 |------|---------|----------|
-| 直接複製參考網站風格 | Skill UI / Site Teardown | 3 |
+| 直接複製參考網站風格 | Skill UI / 手動 teardown | 3 |
 | 用知名網站設計系統 | awesome-design-md（[[Awesome-Design-MD]]） | 1 |
 | 從零比較多方案 | Stitch / SuperDesign | 4, 5 |
 | 從零問答式確認方向 | UI/UX Pro Max | 1 |
@@ -117,8 +117,6 @@ Claude Code 在 agentic coding 表現卓越，但前端設計是普遍弱項。�
 | 前端互動測試 | Playwright CLI | 通用 |
 
 「通用」表示不屬於 Layer 1–7 的設計層級分類，屬跨層級的測試輔助工具。
-
-設計系統文件格式規範另見 [[DESIGN.md-Google-Stitch-設計系統文件格式]]。
 
 ## 核心原則
 
@@ -148,6 +146,7 @@ Claude Code 在 agentic coding 表現卓越，但前端設計是普遍弱項。�
 ## 相關主題
 
 - [[Stitch]] — Google Stitch 主題 MOC（Layer 5 工具的深度細節）
+- [[DESIGN.md-Google-Stitch-設計系統文件格式]] — 設計系統文件格式規範
 - Claude Design（MOC 待建立）— Claude 官方視覺設計介面，留作後續獨立整理
 
 ## 來源
