@@ -253,8 +253,7 @@ Stitch 在以下筆記被當作前端設計工具鏈的一環被提及：
 
 - [[Claude-Design快速上手]]
 - [[Claude-Design-Masterclass指南]]
-- [[Claude-Code前端設計七層級]]
-- [[Claude-Code前端設計技巧與工具Top10]]
+- [[Claude-Code-前端設計工作流]]（已整合七層級與 Top 10 工具）
 
 ## 外部來源
 
