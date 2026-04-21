@@ -1,7 +1,7 @@
 ---
 title: Master Index
 created: 2026-04-15
-updated: 2026-04-20
+updated: 2026-04-21
 tags:
   - index
 ---
@@ -12,15 +12,16 @@ tags:
 content/
 ├── Cards/         — 快速筆記（CSS、Docker、設計工具等）
 ├── Clippings/     — 網頁剪貼
-├── Topics/        — 主題 MOC，3 個子目錄
+├── Topics/        — 主題 MOC，4 個子目錄
+│   ├── AI-Agent/      — 架構基石、交付方法論、實戰案例、術語入門
 │   ├── Claude-Code/   — Skills、Agent Packages、Hooks、GAN Harness
 │   ├── Obsidian/      — CLI 整合、Skills、Quartz 部署
 │   └── 前端設計/      — 工作流、Stitch、動效、設計系統、切版規則
-└── YouTube/       — 41 篇影片摘要，4 個頻道
+└── YouTube/       — 32 篇影片摘要，4 個頻道
     ├── AIJasonZ/              — Claude 設計工作流、Skills、Agent 記憶體管理
     ├── AILABS-393/            — Claude Code 進階技巧、OpenClaw、RAG
     ├── Chase-H-AI/            — Claude Code 實戰、RAG、Obsidian 整合
-    ├── daveebbelaar/          — Python、AI Agent 工程、LLM Evals
+    ├── daveebbelaar/          — Python、LLM Evals、API 整合
 ```
 
 ## Tag 查詢指南
@@ -28,7 +29,7 @@ content/
 | 主題 | Tags | 篇數 |
 |------|------|------|
 | Claude Code 實作 | `claude-code` | 29 |
-| AI Agent 架構 | `ai-agent` | 7 |
+| AI Agent 架構 | `ai-agent` | Topics/AI-Agent/ MOC |
 | RAG / 知識庫 | `rag` | 2 |
 | MCP | `mcp` | 1 |
 | 其他 | `memory` `design` | 1 / 3 |
