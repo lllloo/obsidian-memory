@@ -311,9 +311,7 @@ AI 系統：不只第 1 輪要通過，**第 10 輪、第 20 輪都要通過**�
 
 以下筆記與本主題相關但未整合進 MOC（屬於其他主題的子範圍）：
 
-- [[Harness-Engineer長期自主Agent設計]] — 長期 agent 的 harness 設計必涉 context 管理
-- [[Claude-Code-Agent-Teams協作]] — 多 agent 拆分 context
-- [[Claude-Tasks-Agent-Swarm升級]] — swarm 模式下的 context 分配
+- [[Agent-Harness]] — Harness 架構、多 Agent 協作拓撲、context 管理演進（已整合 Harness-Engineer / Agent-Teams / Agent-Swarm 等相關內容）
 - [[Claude-Code-Skills]] — Skills 避免佔 context 的機制
 
 ## 外部來源
