@@ -1,8 +1,8 @@
 ---
 title: Claude Code 命名規則
 created: 2026-04-20
-updated: 2026-04-20
-source: https://code.claude.com/docs/en/slash-commands
+updated: 2026-04-21
+source: https://docs.anthropic.com/en/docs/claude-code/slash-commands
 tags:
   - claude-code
   - naming-convention
@@ -18,8 +18,8 @@ tags:
 
 1. **同家族共用前綴**：相關 command / skill 用共同前綴分組。例如 vault 家族：`vault-check`、`vault-topic-moc`、`vault-youtube-sync`
 2. **極短捷徑可例外**：單一入口且高頻使用的保留純名，如 `ob`、`vault`
-3. **commands 與 skills 共用同一套命名規則**：兩邊不能撞名，否則會互相遮蔽（參考 anthropics/claude-code issue #15842）
-4. **不用子目錄 namespace**：Claude Code v2.1.88+ 對 `.claude/commands/<subdir>/*.md` → `/<subdir>:<cmd>` 的解析仍不穩定（issue #2422、#1504），扁平命名更穩
+3. **commands 與 skills 共用同一套命名規則**：兩邊不能撞名，否則會互相遮蔽（社群實測回報）
+4. **不用子目錄 namespace**：`.claude/commands/<subdir>/*.md` → `/<subdir>:<cmd>` 的解析在較新版本仍不穩定（社群實測回報），扁平命名更穩
 5. **description 要寫清楚觸發條件**：frontmatter description 中用「Use when...」「觸發詞...」明示，Claude 才會在對話中自動叫用
 
 ## 為什麼用 kebab-case
@@ -28,9 +28,9 @@ tags:
 - Plugin 使用 `plugin-name:skill-name` namespace，與 kebab-case 一致
 - 避免底線、camelCase 的視覺歧異
 
-## 2026 版本方向
+## 2026 版本方向（個人觀察，請以官方公告為準）
 
-v2.1.101（2026-04-11）官方已將 custom commands 與 skills 統一，長期建議新增的 command 改放在 `.claude/skills/<name>/SKILL.md`，同時支援 `/name` 叫喚與 autonomous trigger。現有 `.claude/commands/` 舊格式仍相容。
+近期版本將 custom commands 與 skills 趨於統一，長期傾向把新增的 command 改放在 `.claude/skills/<name>/SKILL.md`，同時支援 `/name` 叫喚與 autonomous trigger。現有 `.claude/commands/` 舊格式仍相容。
 
 ## 套用範例
 

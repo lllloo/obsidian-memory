@@ -1,8 +1,8 @@
 ---
 title: DESIGN.md - Google Stitch 設計系統文件格式
 created: 2026-04-14
-updated: 2026-04-14
-source: https://stitch.withgoogle.com/docs/design-md/overview/
+updated: 2026-04-21
+source: https://stitch.withgoogle.com/
 tags:
   - design-system
   - design
@@ -89,11 +89,7 @@ DESIGN.md 是 Google Stitch 提出的設計系統文件格式，概念類似 REA
 
 ## Google Stitch design-md Skill
 
-[stitch-skills](https://github.com/google-labs-code/stitch-skills) 提供 `design-md` skill，可自動分析 Stitch 專案並產生 DESIGN.md：
-
-```bash
-npx skills add google-labs-code/stitch-skills --skill design-md --global
-```
+社群有 `design-md` skill 可自動分析 Stitch 專案並產生 DESIGN.md，安裝方式以實際 repo 說明為準（過去常見路徑：`google-labs-code/stitch-skills`，請先確認 repo 是否仍存在）。
 
 五階段分析流程：
 
@@ -105,6 +101,6 @@ npx skills add google-labs-code/stitch-skills --skill design-md --global
 
 ## 參考資源
 
-- [Stitch DESIGN.md 官方文件](https://stitch.withgoogle.com/docs/design-md/overview/)
-- [google-labs-code/stitch-skills](https://github.com/google-labs-code/stitch-skills)
+- [Google Stitch](https://stitch.withgoogle.com/) — 官方入口
+- [Stitch 介紹（Google Developers Blog）](https://developers.googleblog.com/stitch-a-new-way-to-design-uis/)
 - [awesome-design-md](https://github.com/VoltAgent/awesome-design-md) — 各大品牌設計系統的 DESIGN.md 範例集

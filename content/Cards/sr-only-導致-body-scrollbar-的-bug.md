@@ -1,17 +1,15 @@
 ---
 title: sr-only 導致 body scrollbar 的 bug
+created: 2026-04-14
+updated: 2026-04-21
 tags:
   - css
   - bug
   - frontend
   - tailwind
-created: 2026-04-14
-updated: 2026-04-14
 ---
 
-## `sr-only` 導致 body scrollbar 的 bug
-
-### 根本原因：`position: absolute` 缺少 positioned 祖先
+## 根本原因：`position: absolute` 缺少 positioned 祖先
 
 `sr-only` 的 CSS 定義：
 ```css
@@ -36,7 +34,8 @@ border-width: 0;
 
 ### 解法（優先順序）
 
-1. **最推薦**：在 `sr-only` 元素的父層加 `position: relative`（建立 containing block）或 `overflow: hidden`
-2. 將 `margin: -1px` 改為 `margin: 0`（略微降低螢幕閱讀器相容性）
-3. 對 `body` 加 `overflow-x: hidden`（治標）
-4. **不需無障礙支援時**：直接改用 `hidden` 完全隱藏
+1. **最推薦（根治）**：在 `sr-only` 元素的父層加 `position: relative`，建立 containing block，讓 `position: absolute` 有正確的定位參考
+2. **治標**：在父層加 `overflow: hidden`，元素仍會溢出但被裁切。注意 `overflow: hidden` 並不會建立 positioned containing block（containing block 由 `position` 非 `static` 才能建立），它只是阻止溢出顯示
+3. 將 `margin: -1px` 改為 `margin: 0`（略微降低螢幕閱讀器相容性）
+4. 對 `body` 加 `overflow-x: hidden`（治標）
+5. **不需無障礙支援時**：直接改用 `hidden` 完全隱藏

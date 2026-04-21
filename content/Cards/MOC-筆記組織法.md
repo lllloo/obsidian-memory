@@ -1,7 +1,7 @@
 ---
 title: MOC 筆記組織法
 created: 2026-03-22
-updated: 2026-04-19
+updated: 2026-04-21
 tags:
   - obsidian
   - workflow
@@ -22,13 +22,15 @@ MOC（Map of Content）是用一篇筆記作為某個主題的索引，透過 wi
 ```
 Cards/                  ← 未分類筆記先放這
 ├── Quartz-部署筆記.md
-├── MOC-筆記組織法.md
-└── skill-creator-是什麼.md
+└── MOC-筆記組織法.md
 Topics/                 ← 主題區
 ├── Vue.md              ← MOC（初期，單檔索引）
-└── Obsidian/           ← 升級後的資料夾
-    ├── index.md        ← 原本的 MOC
-    ├── CLI 整合指南.md
+├── Claude-Code/        ← 升級後的資料夾
+│   ├── index.md        ← 原本的 MOC
+│   └── skill-creator-是什麼.md
+└── Obsidian/
+    ├── index.md
+    ├── Obsidian-CLI-整合指南.md
     └── ...
 ```
 

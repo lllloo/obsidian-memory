@@ -1,11 +1,11 @@
 ---
 title: Awwwards — 找前端設計靈感
 created: 2026-04-20
-updated: 2026-04-20
+updated: 2026-04-21
 source: https://www.youtube.com/watch?v=i-jawzwnjSA
 tags:
   - design
-  - front-end
+  - frontend
 ---
 
 ## 用途

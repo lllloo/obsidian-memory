@@ -1,10 +1,10 @@
 ---
 title: GSAP 與 Lenis — 捲動動畫的分工
 created: 2026-04-20
-updated: 2026-04-20
+updated: 2026-04-21
 source: https://www.youtube.com/watch?v=sdxJEd7nqiQ
 tags:
-  - front-end
+  - frontend
   - design
 ---
 
@@ -26,4 +26,4 @@ tags:
 ## 相關連結
 
 - [GSAP](https://gsap.com/) — 動畫引擎（ScrollTrigger 是其 plugin）
-- [Lenis](https://lenis.darkroom.engineering/) — Studio Freight 出品的 smooth scroll library
+- [Lenis](https://lenis.darkroomengineering.com/) — darkroomengineering 出品的 smooth scroll library
