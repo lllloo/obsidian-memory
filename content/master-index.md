@@ -1,7 +1,7 @@
 ---
 title: Master Index
 created: 2026-04-15
-updated: 2026-04-21
+updated: 2026-04-22
 tags:
   - index
 ---
@@ -16,7 +16,7 @@ content/
 │   ├── Claude-Code/   — Skills、Agent Packages、Hooks、GAN Harness
 │   ├── Obsidian/      — CLI 整合、Skills、Quartz 部署
 │   └── 前端設計/      — 工作流、Stitch、動效、設計系統、切版規則
-└── YouTube/       — 32 篇影片摘要，4 個頻道
+└── YouTube/       — 35 篇影片摘要，4 個頻道
     ├── AIJasonZ/              — Claude 設計工作流、Skills、Agent 記憶體管理
     ├── AILABS-393/            — Claude Code 進階技巧、OpenClaw、RAG
     ├── Chase-H-AI/            — Claude Code 實戰、RAG、Obsidian 整合
