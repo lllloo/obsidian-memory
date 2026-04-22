@@ -138,6 +138,17 @@ ln -sf "$PWD/.claude/commands/ob.md" ~/.claude/commands/ob.md
 
 未設定時 agent 會 fallback 到 `<cwd>/content` → Git 根 + `/content` → 舊候選清單。
 
+## Web Clipper 模板
+
+[Obsidian Web Clipper](https://obsidian.md/clipper) 是官方瀏覽器擴充套件，把網頁抓成 Markdown 存進 vault。`.clipper/vault-clipper.json` 是此 vault 使用的 template 匯入檔，定義抓取後的檔名、frontmatter（`title`、`source`、`published`、`created`、`description`、`tags`）與儲存路徑。
+
+- **抓取路徑**：`Inbox/Clippings/`（不發佈，待消化後依 `content/CLAUDE.md` 的吸收型卡片盒流程歸檔）
+- **預設 tag**：`clippings`
+
+**匯入方式**：開啟 Chrome / Firefox Web Clipper 擴充套件 → Settings → Templates → Import → 選 `.clipper/vault-clipper.json`。
+
+修改此檔後記得 commit，跨機器才能同步同一份抓取規則。
+
 ## 發佈
 
 push 到 `main` 後透過 `.github/workflows/deploy.yml` 自動建置並部署至 GitHub Pages。此 vault 為**公開發佈**，commit 前請確認不含敏感資料（API key、密碼、個人隱私等）。
