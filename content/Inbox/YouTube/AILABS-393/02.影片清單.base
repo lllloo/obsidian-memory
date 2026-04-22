@@ -1,6 +1,6 @@
 filters:
   and:
-    - file.inFolder("YouTube/daveebbelaar")
+    - file.inFolder("Inbox/YouTube/AILABS-393")
     - file.ext == "md"
     - file.name != "01.index"
 properties:

@@ -84,7 +84,7 @@ Read 全部候選筆記。記錄：
 - **B. 刪除**（**YouTube 來源筆記的預設**）：MOC 末尾保留外部 URL 清單，`git rm` 原筆記，更新 master-index
 - **C. 加 draft**：原筆記加 `draft: true`，Obsidian 可見、不發佈
 
-**Roy 的慣例**：當原筆記來源是 `content/YouTube/` 下的影片摘要，整理完成後預設會選 **B 刪除**（MOC 自足、vault 精簡）。仍必須在刪除前給清單讓用戶過目，不要跳過確認。
+**Roy 的慣例**：當原筆記來源是 `content/Inbox/YouTube/` 下的影片摘要，整理完成後預設會選 **B 刪除**（MOC 自足、vault 精簡）。仍必須在刪除前給清單讓用戶過目，不要跳過確認。
 
 執行細節見 [references/source-handling.md](references/source-handling.md)。
 

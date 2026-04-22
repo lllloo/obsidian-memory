@@ -21,10 +21,11 @@
 
 ```
 content/
-├── Cards/      # 單篇筆記
-├── Topics/     # MOC 與主題資料夾
-├── YouTube/    # YouTube 影片摘要
-└── Clippings/  # 網頁剪貼
+├── Inbox/          # 待消化暫存（不發佈）
+│   ├── YouTube/    # YouTube 影片摘要
+│   └── Clippings/  # 網頁剪貼
+├── Cards/          # 未歸屬的完整概念 Cards
+└── Topics/         # 已歸檔主題資料夾（含 MOC）
 ```
 
 詳細規則見 [content/CLAUDE.md](content/CLAUDE.md)。

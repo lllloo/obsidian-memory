@@ -73,6 +73,18 @@ CLI 可用時 `obsidian create path="Cards/..."` 會自動定位 vault；但走 
 
 1. 執行 `obsidian read file="CLAUDE.md"` 取得 vault 結構與所有規則
 
+## 建檔位置判斷
+
+依來源決定檔案位置：
+
+| 來源 | 位置 |
+|------|------|
+| 個人想法（「我想到」、「我認為」、「筆記一下」） | `Cards/<標題>.md` |
+| 外部來源抄錄（網頁剪貼、影片摘要） | `Inbox/<類別>/<標題>.md`（如 `Inbox/Clippings/`、`Inbox/YouTube/<頻道>/`） |
+| 已知歸屬主題（使用者明確指定主題） | `Topics/<主題>/<標題>.md` |
+
+優先採用使用者明示的位置；未明示時依上述判斷。
+
 ## 建立新筆記
 
 建立筆記前，先蒐集內容素材：
@@ -101,3 +113,14 @@ obsidian read file="card"        # 讀取模板結構
 規則：
 - 命名、tags、frontmatter 格式等規則依 CLAUDE.md 執行
 - 完成後回應：「已建立筆記《標題》✓」+ 路徑
+
+## 歸檔協助模式
+
+當使用者說「這張 Card 我想歸到 X 主題」、「幫我把這幾張搬到 Y 主題」等類似需求時：
+
+1. 確認或建立 `Topics/<主題>/` 資料夾（含 `index.md` 作為主題入口頁）
+2. 對每張指定 Card 執行 `git mv Cards/<標題>.md Topics/<主題>/<標題>.md`（保持內容不動）
+3. 提示使用者在 `Topics/<主題>/index.md` 補上對應的 wikilink 清單
+4. 若是批次搬多張（同主題累積或 Card 裂變），一次處理完再回報
+
+搬移後 `git status` 應顯示為 `R`（rename），不是 `D` + `A`。

@@ -36,7 +36,7 @@ npm run format                   # 自動格式化
 
 ## Quartz 重要行為
 
-- `ignorePatterns` 包含 `private`、`.obsidian`、`CLAUDE.md`、`YouTube`、`Clippings`，這些不會發佈至網站
+- `ignorePatterns` 包含 `private`、`.obsidian`、`CLAUDE.md`、`Inbox`（整個 `Inbox/` 含 YouTube 與 Clippings 都不發佈）
 - frontmatter 加 `draft: true` 的筆記會被 `RemoveDrafts` plugin 過濾，不發佈
 - 日期優先順序：frontmatter → git → filesystem（`CreatedModifiedDate` plugin）
 - Plugin pipeline：transformers（解析 Markdown）→ filters（篩選頁面）→ emitters（產生 HTML/靜態資源）

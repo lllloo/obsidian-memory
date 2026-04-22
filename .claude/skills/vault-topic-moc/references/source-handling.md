@@ -20,13 +20,13 @@ MOC 建好後，原筆記有三種處置選項。**執行前必須先問用戶**
 
 ## 選項 B：刪除（MOC 自足）— YouTube 來源的預設
 
-**Roy 的慣例**：當原筆記來源是 `content/YouTube/` 下的影片摘要，整理完成後預設選此選項。仍必須在 `git rm` 前列出檔案清單給用戶過目。
+**Roy 的慣例**：當原筆記來源是 `content/Inbox/YouTube/` 下的影片摘要，整理完成後預設選此選項。仍必須在 `git rm` 前列出檔案清單給用戶過目。
 
 **流程**：
 1. MOC 文內移除指向原筆記的 wikilink，改為外部 URL（YouTube、GitHub、官方 docs 等）
 2. MOC 末尾的「來源」章節列原始外部 URL
 3. `git rm <原筆記路徑>`（保留 git 歷史）
-4. 更新 `content/master-index.md` 的篇數統計（例：`YouTube/ — N 篇影片摘要`）
+4. 更新 `content/master-index.md` 的篇數統計（例：`Inbox/YouTube/ — N 篇影片摘要`）
 5. 若 Topics/ 有 index.md，更新子目錄清單
 
 **優點**：
@@ -64,7 +64,7 @@ MOC 建好後，原筆記有三種處置選項。**執行前必須先問用戶**
 
 | 情境 | 建議選項 |
 |------|---------|
-| **來源是 `content/YouTube/` 影片筆記**（Roy 慣例） | **B 刪除** |
+| **來源是 `content/Inbox/YouTube/` 影片筆記**（Roy 慣例） | **B 刪除** |
 | 原筆記有獨特細節、MOC 是摘要 | A 保留 |
 | 原筆記只是轉述，MOC 已完整覆蓋 | B 刪除 |
 | 不確定、想先觀察 | C draft |
@@ -85,12 +85,12 @@ MOC 建好後，原筆記有三種處置選項。**執行前必須先問用戶**
 
 刪除後對 `content/master-index.md` 的更新：
 
-統計剩餘篇數：用 `Glob "content/YouTube/*/*.md"` 取結果後扣除 `01.index.md`（每頻道 1 個），或用 Grep/Glob 結果算 count。
+統計剩餘篇數：用 `Glob "content/Inbox/YouTube/*/*.md"` 取結果後扣除 `01.index.md`（每頻道 1 個），或用 Grep/Glob 結果算 count。
 
 更新 line 範例：
 ```
-前：└── YouTube/       — 150 篇影片摘要，6 個頻道
-後：└── YouTube/       — 138 篇影片摘要，6 個頻道
+前：│   ├── YouTube/   — 35 篇影片摘要，4 個頻道
+後：│   ├── YouTube/   — 28 篇影片摘要，4 個頻道
 ```
 
 若為跨主題整理（從 `Cards/`、`Topics/` 等），依實際樹狀結構調整。

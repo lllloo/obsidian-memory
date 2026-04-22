@@ -35,10 +35,10 @@ model: sonnet
 
 - 入口：`<VAULT_ROOT>/master-index.md`（資料夾 + tag 指南）
 - 資料夾：
-  - `Cards/` — 快速筆記（CSS、Docker、設計工具等）
-  - `Topics/` — 主題 MOC，含子目錄 `Claude-Code/`、`Obsidian/`、`切版/`
-  - `YouTube/` — 150+ 影片摘要，6 個頻道子目錄（AIJasonZ、AILABS-393、Chase-H-AI、EricWTech、daveebbelaar、indydevdan）
-  - `Clippings/` — 網頁剪貼
+  - `Cards/` — 未歸屬的完整概念 Cards（工作區）
+  - `Topics/` — 已歸檔主題，含子目錄 `Claude-Code/`、`Obsidian/`、`前端設計/`
+  - `Inbox/YouTube/` — 影片摘要，4 個頻道子目錄（AIJasonZ、AILABS-393、Chase-H-AI、daveebbelaar）
+  - `Inbox/Clippings/` — 網頁剪貼
 - **搜尋時排除**：`.obsidian/`
 - 筆記規則（來自 `content/CLAUDE.md`）：
   - 檔名不含空格，用 `-` 連接（如 `Obsidian-CLI-整合指南.md`）
@@ -76,7 +76,7 @@ model: sonnet
 
 - Read 檔案數 ≤ 15（候選太多靠 frontmatter `title` 篩）
 - Grep 指定 `<VAULT_ROOT>/**/*.md` 或候選資料夾以加速
-- 不要對 150+ 影片摘要做全域正文 Grep；先靠 L1 縮範圍
+- 不要對 `Inbox/YouTube/` 影片摘要做全域正文 Grep；先靠 L1 縮範圍
 
 ## 輸出格式
 
@@ -87,7 +87,7 @@ model: sonnet
   "query": "<使用者原始問題>",
   "hits": [
     {
-      "path": "content/YouTube/Chase-H-AI/Claude-Code-RAG七層次.md",
+      "path": "content/Inbox/YouTube/Chase-H-AI/Claude-Code-RAG七層次.md",
       "title": "Claude Code 與 RAG 的七個層次",
       "summary": "將 Claude Code 記憶架構分為 7 層，從 AutoMemory 到 Agentic RAG",
       "relevance": "high"
@@ -103,7 +103,7 @@ model: sonnet
 {
   "query": "<使用者原始問題>",
   "hits": [],
-  "miss_reason": "已檢查：Topics/Claude-Code/、YouTube/Chase-H-AI/；嘗試關鍵字：dream, 記憶；皆無相關內容"
+  "miss_reason": "已檢查：Topics/Claude-Code/、Inbox/YouTube/Chase-H-AI/；嘗試關鍵字：dream, 記憶；皆無相關內容"
 }
 ```
 

@@ -7,9 +7,11 @@ description: 當使用者提供 YouTube **頻道** URL（含 @handle 的網址�
 
 將 YouTube 頻道影片批次轉換成 Obsidian vault 筆記。
 
+> 本 skill 產出進入 `Inbox/YouTube/`，代表「待消化暫存」。使用者讀完會內化成 Cards 並歸檔至 `Topics/<主題>/`，Inbox 原篇刪除。Skill 只負責抓取，不負責消化。
+
 ## 資料夾規則
 
-- 筆記存放：`content/YouTube/<頻道名>/`（例：`content/YouTube/Chase-H-AI/`）
+- 筆記存放：`content/Inbox/YouTube/<頻道名>/`（例：`content/Inbox/YouTube/Chase-H-AI/`）
 - 此資料夾已在 `quartz.config.ts` 的 `ignorePatterns` 中，**不會發佈到網站**
 - 每個頻道資料夾下建立 `01.index.md` 與 `02.影片清單.base` 作為索引（數字前綴確保固定排第一）
 - 影片筆記的 frontmatter 需加 `parent: "[[01.index]]"`，讓 Obsidian 圖譜能從影片連回頻道 index（`.base` 檔案不產生圖譜連結，只有 property link 有效）
@@ -42,11 +44,11 @@ python  .claude/skills/vault-youtube-sync/scripts/fetch_videos.py <handle>
 
 ```bash
 # 讀取上次同步的 checkpoint ID（從 01.index.md frontmatter）
-grep "^last_sync_id:" content/YouTube/<頻道名>/01.index.md 2>/dev/null | sed 's/last_sync_id: //'
+grep "^last_sync_id:" content/Inbox/YouTube/<頻道名>/01.index.md 2>/dev/null | sed 's/last_sync_id: //'
 ```
 
 **Checkpoint 過濾邏輯：**
-- 若資料夾**不存在**或 `01.index.md` **無 `last_sync_id`**：全部影片都處理，建立資料夾 `mkdir -p content/YouTube/<頻道名>`
+- 若資料夾**不存在**或 `01.index.md` **無 `last_sync_id`**：全部影片都處理，建立資料夾 `mkdir -p content/Inbox/YouTube/<頻道名>`
 - 若有 `last_sync_id`：在步驟 1 抓到的清單中找到該 ID 的位置，**只取它上方（更新）的影片**
   - 若 `last_sync_id` 不在清單中（距上次同步太久）：全部都算新的
   - 若 `last_sync_id` 是清單第一筆：無新影片，輸出「已是最新，無需更新」並結束
@@ -58,7 +60,7 @@ grep "^last_sync_id:" content/YouTube/<頻道名>/01.index.md 2>/dev/null | sed 
 
 ```bash
 # 取出資料夾內所有筆記已記錄的 video ID
-grep -rh "^source: https://www.youtube.com/watch" content/YouTube/<頻道名>/ 2>/dev/null \
+grep -rh "^source: https://www.youtube.com/watch" content/Inbox/YouTube/<頻道名>/ 2>/dev/null \
   | grep -oP "(?<=v=)[A-Za-z0-9_-]+"
 ```
 
@@ -114,7 +116,7 @@ last_sync_id: <步驟 1 清單中第一筆的 videoId>
 ```yaml
 filters:
   and:
-    - file.inFolder("YouTube/<頻道名>")
+    - file.inFolder("Inbox/YouTube/<頻道名>")
     - file.ext == "md"
     - file.name != "01.index"
 properties:
@@ -147,7 +149,7 @@ views:
 任務：用 defuddle 抓取 YouTube 影片內容，並在 Obsidian vault 建立筆記。
 詳細指示請先 Read `.claude/skills/vault-youtube-sync/references/subagent-note-creator.md`。
 
-筆記存放位置：content/YouTube/<頻道名>/
+筆記存放位置：content/Inbox/YouTube/<頻道名>/
 今日日期：<YYYY-MM-DD>
 語言要求：正文內容一律繁體中文，技術名詞/品牌名保留英文。
 
@@ -162,7 +164,7 @@ N. <標題> — <URL>
 
 | # | 影片標題 | 筆記路徑 | published | 狀態 |
 |---|---------|---------|-----------|------|
-| 1 | ... | content/YouTube/<頻道名>/... | YYYY-MM-DD | ✓ 完整 / ⚠ 內容不足 |
+| 1 | ... | content/Inbox/YouTube/<頻道名>/... | YYYY-MM-DD | ✓ 完整 / ⚠ 內容不足 |
 
 **更新 checkpoint**：所有筆記建立完成後，將 `01.index.md` 的 `last_sync_id` 更新為**步驟 1 清單中第一筆**的 video ID（即目前頻道最新的影片）：
 
@@ -170,7 +172,7 @@ N. <標題> — <URL>
 # 用 Python 更新（跨平台，避免 Windows sed -i 不穩定）
 python -c "
 import re
-path = 'content/YouTube/<頻道名>/01.index.md'
+path = 'content/Inbox/YouTube/<頻道名>/01.index.md'
 text = open(path, encoding='utf-8').read()
 text = re.sub(r'^last_sync_id: .*', 'last_sync_id: <NEW_ID>', text, flags=re.MULTILINE)
 text = re.sub(r'^updated: .*', 'updated: <TODAY>', text, flags=re.MULTILINE)
@@ -180,7 +182,7 @@ open(path, 'w', encoding='utf-8').write(text)
 
 > 若本次無新影片（早已是最新），不需更新 checkpoint。
 
-**更新 `master-index.md`**：同步更新 `content/master-index.md` 中的 YouTube 篇數（`YouTube/ — N 篇影片摘要`）；若為新頻道，加入頻道清單與描述。
+**更新 `master-index.md`**：同步更新 `content/master-index.md` 中的 YouTube 篇數（`Inbox/YouTube/ — N 篇影片摘要`）；若為新頻道，加入頻道清單與描述。
 
 ## 注意事項
 
@@ -194,4 +196,4 @@ open(path, 'w', encoding='utf-8').write(text)
 - **Windows Python subprocess 編碼**：若在 skill 外用 Python `subprocess` 抓 YouTube 頁面，必須用 bytes 模式（不加 `text=True`）再手動 `.decode('utf-8', errors='replace')`，否則 Windows 預設 cp950 會解碼失敗
 - **重複筆記**：Step 2 的 Source URL 去重是主要防線（以 video ID 為準，不依賴檔名）；subagent 寫檔前也會再做一次 grep 確認。兩道防線確保同一支影片不會產生兩份筆記
 - **影片已刪除**：defuddle 失敗時，subagent 依 subagent-note-creator.md 的流程確認後跳過
-- **不發佈**：`content/YouTube/` 已在 ignorePatterns，無需加 `draft: true`
+- **不發佈**：`content/Inbox/YouTube/` 已在 ignorePatterns，無需加 `draft: true`

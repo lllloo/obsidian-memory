@@ -8,7 +8,7 @@
 
 0. **重複偵測（先做）**：在抓取內容前，確認此影片尚未有對應筆記：
    ```bash
-   grep -rl "source: https://www.youtube.com/watch?v=<videoId>" content/YouTube/<頻道名>/
+   grep -rl "source: https://www.youtube.com/watch?v=<videoId>" content/Inbox/YouTube/<頻道名>/
    ```
    若有任何輸出（即已存在對應筆記），**跳過此影片**，回報「⏭ 已有筆記，跳過」。
 
@@ -66,7 +66,7 @@ print(m.group(1)[:10] if m else '')
 ## 筆記規則（必須嚴格遵守）
 
 - **語言**：正文內容一律以**繁體中文**撰寫；技術名詞、品牌名、工具名保留英文（例：Claude Code、OpenAI、defuddle）
-- 檔案路徑：`content/YouTube/<頻道名>/<繁體中文精簡標題>.md`
+- 檔案路徑：`content/Inbox/YouTube/<頻道名>/<繁體中文精簡標題>.md`
 - 檔案名稱命名規則：
   - 繁體中文為主，技術名詞與品牌名保留英文
   - 不可含空格；英文/數字與中文之間用 `-` 連接（例：`Claude-Code準確度提升技巧`）；中文詞之間不加符號

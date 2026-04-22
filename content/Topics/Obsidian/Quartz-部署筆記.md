@@ -13,8 +13,8 @@ tags:
 ## 架構
 
 - Quartz 直接整合在 vault 的 repo 中
-- `content/` 即 Obsidian vault 根目錄，內含 `Cards/`、`Topics/`、`YouTube/` 等資料夾，Quartz 直接讀取
-- `ignorePatterns` 排除 .obsidian、CLAUDE.md、YouTube、Clippings
+- `content/` 即 Obsidian vault 根目錄，內含 `Inbox/`、`Cards/`、`Topics/` 等資料夾，Quartz 直接讀取
+- `ignorePatterns` 排除 .obsidian、CLAUDE.md、Inbox（整個 Inbox 含 YouTube 與 Clippings 都不發佈）
 - 部署網址：[ob.bugloop.com](https://ob.bugloop.com)
 
 ## 部署流程
@@ -32,7 +32,7 @@ pageTitle: "Memory Pieces"
 baseUrl: "ob.bugloop.com"
 locale: "zh-TW"
 defaultDateType: "created"
-ignorePatterns: ["private", ".obsidian", "CLAUDE.md", "YouTube", "Clippings"]
+ignorePatterns: ["private", ".obsidian", "CLAUDE.md", "Inbox"]
 ```
 
 ## 筆記格式
