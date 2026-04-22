@@ -74,7 +74,7 @@ Read 全部候選筆記。記錄：
 
 **subagent 呼叫方式**：用 `Agent` tool，`subagent_type: "general-purpose"`，prompt 從 [references/review-loop.md](references/review-loop.md) 取用並填入該輪的 MOC 絕對路徑、官方來源 URL、review 輪次編號。
 
-**與 `vault-evaluator` / `vault-fixer` 的差別**：那兩個 agent 是對整個 vault 做規則稽核（見 `/vault-check` 指令），本 skill 的 reviewer/fixer 是對單篇 MOC 做深度 review + 事實校正，不共用。
+**與 `vault-check` agent 的差別**：那個 agent 是對整個 vault 做規則稽核（見 `/vault-check` 指令），本 skill 的 reviewer/fixer 是對單篇 MOC 做深度 review + 事實校正，不共用。
 
 ### 7. 原筆記處置（與用戶確認）
 

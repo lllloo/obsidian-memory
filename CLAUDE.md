@@ -10,7 +10,7 @@ Obsidian 個人知識庫，以 [Quartz 4](https://quartz.jzhao.xyz/) 發佈至 `
 
 - **Vault 層**（`content/`）— 筆記本體。規則寫在 `content/CLAUDE.md`（命名、frontmatter、tag、敏感資料）
 - **發佈層**（`quartz/`、`quartz.config.ts`、`quartz.layout.ts`、`.github/workflows/`）— Quartz 建置與 GitHub Pages 部署
-- **工作流層**（`.claude/`）— agents（`vault-writer` / `vault-query` / `vault-evaluator` / `vault-fixer`）、commands（`/ob`、`/vault-check`）、skills（`vault-youtube-sync`、`vault-topic-moc`）。可 symlink 至 `~/.claude/` 跨專案使用
+- **工作流層**（`.claude/` + `scripts/`）— agents（`vault-writer` / `vault-query`）、commands（`/ob`、`/vault-check`）、skills（`vault-youtube-sync`、`vault-topic-moc`）、Node 稽核腳本（`scripts/vault-check.mjs`）。`.claude/` 可 symlink 至 `~/.claude/` 跨專案使用
 
 CLAUDE.md 依作用域分三層：全域（`~/.claude/CLAUDE.md`）→ repo（本檔）→ vault（`content/CLAUDE.md`）。規則放到最窄的作用域即可。
 
@@ -22,6 +22,8 @@ CLAUDE.md 依作用域分三層：全域（`~/.claude/CLAUDE.md`）→ repo（�
 npx quartz build --serve         # 本地預覽（localhost:8080）
 npm run check                    # TypeScript 型別檢查 + Prettier 格式驗證
 npm run format                   # 自動格式化
+npm run vault:check              # 稽核 content/ 的 frontmatter 與檔名（只報告）
+npm run vault:fix                # 稽核並自動修正（/vault-check 內部呼叫這個）
 ```
 
 ## 架構
@@ -69,13 +71,13 @@ npm run format                   # 自動格式化
 
 ### 2. Vault 稽核修正（`/vault-check` 流程）
 
-稽核 `content/` 規則違規並自動修正，全程綁本 repo（需讀 `content/` 與 git 操作），不需掛全域。
+稽核 `content/` 規則違規並自動修正。硬規則（frontmatter schema、檔名）由 Node + Zod 執行；command 負責前置 git 檢查與總結。全程綁本 repo，不需掛全域。
 
 | 檔案 | 類型 | 全域路徑 | 用途 |
 |------|------|---------|------|
-| `.claude/commands/vault-check.md` | Command | — | `/vault-check` orchestrator |
-| `.claude/agents/vault-evaluator.md` | Agent | — | 掃描違規，輸出 JSON 清單 |
-| `.claude/agents/vault-fixer.md` | Agent | — | 接收清單自動修正 `content/` |
+| `.claude/commands/vault-check.md` | Command | — | `/vault-check` orchestrator：git 前置檢查、跑 Node script、印總結 |
+| `scripts/vault-check.mjs` | Node script | — | 掃描 + 自動修正（可獨立跑 `npm run vault:check` / `vault:fix`） |
+| `scripts/vault-schema.mjs` | Node module | — | Zod schema 與欄位順序／白名單定義，規則變更改這裡 |
 
 ### 3. 批次筆記工作流（Skills）
 
@@ -127,11 +129,22 @@ ln -sf "$PWD/.claude/commands/ob.md" ~/.claude/commands/ob.md
 
 ## Vault 稽核工作流
 
-`/vault-check` 指令會對 `content/` 執行 vault 規則稽核與自動修正迴圈：
+`/vault-check` 指令會對 `content/` 執行 vault 規則稽核與自動修正：
 
-- `vault-evaluator` agent：依 `content/CLAUDE.md` 規則掃描違規與內容錯誤
-- `vault-fixer` agent：接收違規清單對 `content/` 執行自動修正
-- 修正在獨立 git branch 上進行，最後交用戶審核
+- 由 `scripts/vault-check.mjs` 以 Zod schema（`scripts/vault-schema.mjs`）驗證 frontmatter 與檔名
+- 可自動修：
+  - `FILENAME_HAS_SPACE`（檔名含空格 → rename，壓縮連續 `-`、trim 頭尾 `-`）
+  - `MISSING_REQUIRED_FIELD`（僅 `updated` 缺失 → 補今日）
+  - `UNKNOWN_FIELD` / `EMPTY_OPTIONAL_FIELD`（白名單外欄位 / 選填空值 → 刪除）
+  - `FIELD_ORDER`（欄位順序 → 重排）
+- 無法自動修（需手動）：
+  - `INVALID_VALUE`（非 `YYYY-MM-DD` 日期、URL 格式錯、`parent` 非 wikilink 格式等）
+  - `MISSING_REQUIRED_FIELD`（`title` / `created` / `tags` 缺失）
+  - `FRONTMATTER_PARSE_ERROR`（YAML 解析失敗）
+- 尚未實作：`BROKEN_WIKILINK`（wikilink 斷鏈）、`SENSITIVE_DATA`（敏感資料）、`MISPLACED_NOTE`（新筆記位置錯誤）— 規則由用戶自審
+- command 不自動 commit，變更留 worktree 交用戶審核
+
+**規則變更請改 `scripts/vault-schema.mjs` 的 Zod schema**（`FIELD_ORDER` 常數 + `frontmatterSchema` 物件），不要另寫規則。
 
 ## Vault 搜尋方式
 

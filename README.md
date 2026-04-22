@@ -36,6 +36,8 @@ content/
 npx quartz build --serve     # 本地預覽（http://localhost:8080）
 npm run check                # TypeScript 型別檢查 + Prettier 格式驗證
 npm run format               # 自動格式化
+npm run vault:check          # 稽核 content/ frontmatter 與檔名（只報告）
+npm run vault:fix            # 稽核並自動修正（/vault-check 內部呼叫）
 ```
 
 ## Claude Code 整合
@@ -60,13 +62,15 @@ npm run format               # 自動格式化
 
 #### 2. Vault 稽核修正（`/vault-check` 流程）
 
-稽核 `content/` 規則違規並自動修正，全程綁本 repo（需讀 `content/` 與 git 操作），不需掛全域。
+稽核 `content/` 規則違規並自動修正。硬規則（frontmatter schema、檔名）由 Node + Zod 執行，command 負責 git 前置檢查與總結。全程綁本 repo，不需掛全域。
 
 | 檔案 | 類型 | 全域路徑 | 用途 |
 |------|------|---------|------|
 | `.claude/commands/vault-check.md` | Command | — | `/vault-check` orchestrator |
-| `.claude/agents/vault-evaluator.md` | Agent | — | 掃描違規，輸出 JSON 清單 |
-| `.claude/agents/vault-fixer.md` | Agent | — | 接收清單自動修正 `content/` |
+| `scripts/vault-check.mjs` | Node script | — | 掃描 + 自動修正（可獨立跑 `npm run vault:check` / `vault:fix`） |
+| `scripts/vault-schema.mjs` | Node module | — | Zod schema 定義（規則變更改這裡） |
+
+修正範圍：欄位順序、白名單外欄位／空值、缺 `updated`、檔名空格。日期格式錯、缺必填欄位需手動修；wikilink 斷鏈 / 敏感資料掃描尚未實作。
 
 #### 3. 批次筆記工作流（Skills）
 
@@ -94,7 +98,7 @@ npm run format               # 自動格式化
 
 - **筆記操作（唯一入口）**：`/ob <需求>` 依語意分派 — 建檔 → `vault-writer` agent，查詢 → `vault-query` agent。對話中自然提到「建立筆記」、「找筆記」效果等同
 - **知識查詢（預設自動）**：技術/知識性提問會依全域 `~/.claude/CLAUDE.md` 的 Obsidian 段規則自動並行呼叫 `vault-query` + WebSearch，綜合雙來源答覆
-- **稽核修正**：`/vault-check` → 用 `vault-evaluator` + `vault-fixer` 迴圈掃描並自動修正，修正在獨立 git branch 上進行
+- **稽核修正**：`/vault-check` → 跑 `scripts/vault-check.mjs`（Node + Zod）掃描並自動修正 frontmatter 與檔名，變更留 worktree 由用戶審核
 
 ### 全域掛載
 
@@ -102,7 +106,7 @@ npm run format               # 自動格式化
 
 - **不做 symlink**：仍可用，但 command / agent 只在本 repo 目錄內生效
 - **做了 symlink**：跨專案可用，`/ob` 到處能叫
-- **範圍差異**：上方表格「全域路徑」有值的才掛全域；`—` 的（如 `/vault-check`、`vault-evaluator`、`vault-fixer`）綁本 repo（需讀 `content/` 與 git 操作），不需掛
+- **範圍差異**：上方表格「全域路徑」有值的才掛全域；`—` 的（如 `/vault-check`、`scripts/vault-check.mjs`）綁本 repo（需讀 `content/` 與 git 操作），不需掛
 - **前置條件**：Windows 需開啟 Developer Mode 或以管理員身分執行
 
 **Windows（需開啟 Developer Mode 或以管理員執行）：**
@@ -140,7 +144,7 @@ ln -sf "$PWD/.claude/commands/ob.md" ~/.claude/commands/ob.md
 
 ## Web Clipper 模板
 
-[Obsidian Web Clipper](https://obsidian.md/clipper) 是官方瀏覽器擴充套件，把網頁抓成 Markdown 存進 vault。`.clipper/vault-clipper.json` 是此 vault 使用的 template 匯入檔，定義抓取後的檔名、frontmatter（`title`、`source`、`published`、`created`、`description`、`tags`）與儲存路徑。
+[Obsidian Web Clipper](https://obsidian.md/clipper) 是官方瀏覽器擴充套件，把網頁抓成 Markdown 存進 vault。`.clipper/vault-clipper.json` 是此 vault 使用的 template 匯入檔，定義抓取後的檔名、frontmatter（`title`、`source`、`published`、`created`、`tags`）與儲存路徑。抓下來後跑 `/vault-check` 會把非白名單欄位（例如 clipper 偶爾帶入的 `author`、`description`）自動清掉。
 
 - **抓取路徑**：`Inbox/Clippings/`（不發佈，待消化後依 `content/CLAUDE.md` 的吸收型卡片盒流程歸檔）
 - **預設 tag**：`clippings`

@@ -155,7 +155,7 @@ title → created → updated → source → published → parent → last_sync_
 **白名單制**：未列於上表的欄位一律移除。
 
 - Obsidian Web Clipper 若帶入 `author` / `description` / `cover` / `image` / `banner` 等未列欄位，一律清掉
-- `/vault-check` 會自動稽核（R8）並由 `vault-fixer` 刪除
+- `/vault-check` 會自動稽核（`UNKNOWN_FIELD`）並由 `scripts/vault-check.mjs` 刪除
 - 新增欄位前需先在本 schema 擴充，不可直接寫入未列欄位
 
 ### 筆記
