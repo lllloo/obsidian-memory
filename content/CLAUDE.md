@@ -114,6 +114,7 @@ updated: YYYY-MM-DD
 
 # ── 選填（依筆記類型出現） ──
 source: <URL>                  # 外部來源
+published: YYYY-MM-DD          # 外部來源發佈日（YouTube 影片日、文章發表日）
 parent: "[[01.index]]"         # 歸屬 index（圖譜用）
 last_sync_id: <video-id>       # 僅 YouTube 頻道 01.index.md
 draft: true                    # Quartz 不發佈（opt-out）
@@ -127,7 +128,7 @@ tags:
 **欄位順序（硬規則）：**
 
 ```
-title → created → updated → source → parent → last_sync_id → draft → tags
+title → created → updated → source → published → parent → last_sync_id → draft → tags
 ```
 
 **欄位說明：**
@@ -138,6 +139,7 @@ title → created → updated → source → parent → last_sync_id → draft �
 | `created` | ✓ | 全部 | 建立日 `YYYY-MM-DD` |
 | `updated` | ✓ | 全部 | 最後修改日（盡力而為，見下節） |
 | `source` | 條件 | 有外部來源時 | 外部資料必填，跨階段保留（Inbox → Cards → Topics 都不刪，供回查原文）；純原創 Card 可省略 |
+| `published` | — | 有外部來源發佈日時 | 原文／影片發佈日 `YYYY-MM-DD`（YouTube 影片由 `vault-youtube-sync` 帶入、Clipping 由 Web Clipper 帶入）；無法取得可省略 |
 | `parent` | — | Inbox/YouTube 影片 | `[[01.index]]`，讓筆記出現在頻道圖譜 |
 | `last_sync_id` | — | YouTube 頻道 `01.index.md` | `vault-youtube-sync` skill 的同步書籤 |
 | `draft` | — | 草稿 | `true` = 不發佈到 ob.bugloop.com；完成後移除 |
@@ -152,7 +154,7 @@ title → created → updated → source → parent → last_sync_id → draft �
 
 **白名單制**：未列於上表的欄位一律移除。
 
-- Obsidian Web Clipper 若帶入 `published` / `author` / `description` / `cover` / `image` / `banner` 等未列欄位，一律清掉
+- Obsidian Web Clipper 若帶入 `author` / `description` / `cover` / `image` / `banner` 等未列欄位，一律清掉
 - `/vault-check` 會自動稽核（R8）並由 `vault-fixer` 刪除
 - 新增欄位前需先在本 schema 擴充，不可直接寫入未列欄位
 

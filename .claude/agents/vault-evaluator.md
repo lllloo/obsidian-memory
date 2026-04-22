@@ -31,7 +31,7 @@ model: sonnet
 | **R5** | 斷掉的 wikilink（目標檔案不存在） | Quartz 用 `shortest` 解析：先建 basename 索引（全 vault `.md` 的 `stem → [paths]`），再抓 `[[target]]` 比對。規則：① 抽出 `target`（去掉 `#heading`、`^block`、`|alias`、`.md`、`.base` 副檔名）② 含 `/` → 當作 repo-relative 或 vault-relative 路徑，檢查檔案存在 ③ 不含 `/` → basename 命中任何一個 `.md`/`.base` 即算通過 ④ 特例：`[[#heading]]`（純錨點）、`[[target]]` 指向同檔 heading → 不報 |
 | **R6** | 疑似 secret／敏感資料 | regex：`sk-[A-Za-z0-9]{20,}`、`ghp_[A-Za-z0-9]{30,}`、`AKIA[0-9A-Z]{16}`、`password:\s*\S+`、`token:\s*["']?[A-Za-z0-9]{20,}`、私有 IP `10\.`/`192\.168\.`/`172\.(1[6-9]\|2[0-9]\|3[01])\.` |
 | **R7** | 新筆記位置錯誤（非 `Cards/`、`Topics/` 底下） | 檔案路徑 |
-| **R8** | frontmatter 含白名單外欄位 | 白名單：`title` / `created` / `updated` / `source` / `parent` / `last_sync_id` / `draft` / `tags`。出現其他欄位即違規（常見：`published` / `author` / `description` / `cover` / `image` / `banner`） |
+| **R8** | frontmatter 含白名單外欄位 | 白名單：`title` / `created` / `updated` / `source` / `published` / `parent` / `last_sync_id` / `draft` / `tags`。出現其他欄位即違規（常見：`author` / `description` / `cover` / `image` / `banner`） |
 
 ### 內容類（A-I 系列）— 靠 LLM 判斷
 
