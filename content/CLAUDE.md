@@ -101,15 +101,60 @@ powershell.exe -Command "obsidian <指令>"
 
 修改 `.md` 內容時**盡量**同步 frontmatter 的 `updated` 為今日日期（`YYYY-MM-DD`），但不強制 — 偶爾漂移可接受，不需為此中斷流程或裝 hook。
 
-### Frontmatter 屬性
+### Frontmatter Schema（固定）
 
-**card.md 標準屬性：**
-- `title`、`created`、`updated`、`source`、`tags`
+所有筆記統一使用以下 schema。欄位**必須依此順序**，缺漏選填欄位可直接省略，但不可自行新增未列出的欄位。
 
-**特殊屬性：**
-- `draft: true` — 草稿，Quartz 不發佈；完成後移除
-- `source` 無來源時可省略
-- `tags` 固定放最後，且使用 YAML 清單格式
+```yaml
+---
+# ── 核心（必填，所有筆記） ──
+title: <筆記標題>
+created: YYYY-MM-DD
+updated: YYYY-MM-DD
+
+# ── 選填（依筆記類型出現） ──
+source: <URL>                  # 外部來源
+parent: "[[01.index]]"         # 歸屬 index（圖譜用）
+last_sync_id: <video-id>       # 僅 YouTube 頻道 01.index.md
+draft: true                    # Quartz 不發佈（opt-out）
+
+# ── 必填，固定放最後 ──
+tags:
+  - tag-1
+---
+```
+
+**欄位順序（硬規則）：**
+
+```
+title → created → updated → source → parent → last_sync_id → draft → tags
+```
+
+**欄位說明：**
+
+| 欄位 | 必填 | 出現於 | 作用 |
+|------|------|-------|------|
+| `title` | ✓ | 全部 | Quartz 頁面標題來源（正文不用 `# Heading`） |
+| `created` | ✓ | 全部 | 建立日 `YYYY-MM-DD` |
+| `updated` | ✓ | 全部 | 最後修改日（盡力而為，見下節） |
+| `source` | 條件 | 有外部來源時 | 外部資料必填，跨階段保留（Inbox → Cards → Topics 都不刪，供回查原文）；純原創 Card 可省略 |
+| `parent` | — | Inbox/YouTube 影片 | `[[01.index]]`，讓筆記出現在頻道圖譜 |
+| `last_sync_id` | — | YouTube 頻道 `01.index.md` | `vault-youtube-sync` skill 的同步書籤 |
+| `draft` | — | 草稿 | `true` = 不發佈到 ob.bugloop.com；完成後移除 |
+| `tags` | ✓ | 全部 | YAML list 格式，**固定放最後** |
+
+**格式細節：**
+
+- 日期一律 `YYYY-MM-DD`（不含時分秒）
+- `tags` 必須 YAML list（不用 inline array `[a, b]`）
+- Wikilink 值用雙引號包：`parent: "[[01.index]]"`
+- URL 不需引號，除非含特殊字元
+
+**白名單制**：未列於上表的欄位一律移除。
+
+- Obsidian Web Clipper 若帶入 `published` / `author` / `description` / `cover` / `image` / `banner` 等未列欄位，一律清掉
+- `/vault-check` 會自動稽核（R8）並由 `vault-fixer` 刪除
+- 新增欄位前需先在本 schema 擴充，不可直接寫入未列欄位
 
 ### 筆記
 

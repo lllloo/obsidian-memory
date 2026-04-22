@@ -31,8 +31,9 @@ model: sonnet
 | **R5** | 斷掉的 wikilink（目標檔案不存在） | Quartz 用 `shortest` 解析：先建 basename 索引（全 vault `.md` 的 `stem → [paths]`），再抓 `[[target]]` 比對。規則：① 抽出 `target`（去掉 `#heading`、`^block`、`|alias`、`.md`、`.base` 副檔名）② 含 `/` → 當作 repo-relative 或 vault-relative 路徑，檢查檔案存在 ③ 不含 `/` → basename 命中任何一個 `.md`/`.base` 即算通過 ④ 特例：`[[#heading]]`（純錨點）、`[[target]]` 指向同檔 heading → 不報 |
 | **R6** | 疑似 secret／敏感資料 | regex：`sk-[A-Za-z0-9]{20,}`、`ghp_[A-Za-z0-9]{30,}`、`AKIA[0-9A-Z]{16}`、`password:\s*\S+`、`token:\s*["']?[A-Za-z0-9]{20,}`、私有 IP `10\.`/`192\.168\.`/`172\.(1[6-9]\|2[0-9]\|3[01])\.` |
 | **R7** | 新筆記位置錯誤（非 `Cards/`、`Topics/` 底下） | 檔案路徑 |
+| **R8** | frontmatter 含白名單外欄位 | 白名單：`title` / `created` / `updated` / `source` / `parent` / `last_sync_id` / `draft` / `tags`。出現其他欄位即違規（常見：`published` / `author` / `description` / `cover` / `image` / `banner`） |
 
-### 內容類（A-H 系列）— 靠 LLM 判斷
+### 內容類（A-I 系列）— 靠 LLM 判斷
 
 | 代碼 | 檢查項 | 說明 |
 |------|--------|------|
@@ -44,6 +45,7 @@ model: sonnet
 | **F** | 明確的事實錯誤 | 與官方文件不符的技術描述 |
 | **G** | 遺留 TODO / 未完成段落 | `TODO:`、`...`、空段落、`XXX` 等 |
 | **H** | 重複筆記 | 多篇在講同一件事，該合併 |
+| **I** | Card 原創性提示 | `Cards/` 或 `Topics/` 下的檔案，frontmatter 無 `source` 且正文無引用來源（URL / 「出自」 / 「參考」），標「原創？」供用戶確認；**不當違規報**，僅提示 |
 
 ## 掃描策略
 
@@ -95,6 +97,7 @@ model: sonnet
 
 **重要**：
 - `fix_hint` 要具體到 fixer 能直接動手（指出行號、要改的字串）
-- `R5`、`R6`、`R7`、`C`、`G`、`H` 的 `fix_hint` 一律寫 `REPORT_ONLY`（需用戶判斷或安全考量，不交給 fixer）
+- `R5`、`R6`、`R7`、`C`、`G`、`H`、`I` 的 `fix_hint` 一律寫 `REPORT_ONLY`（需用戶判斷或安全考量，不交給 fixer）
+- `R8` 的 `fix_hint` 要明列要刪除的欄位名稱（例：「刪除 frontmatter 欄位：published, description」）
 - `summary.total_issues` 和 `summary.by_category` **必須從最終的 `issues` 陣列實算**，不可憑印象填寫，以免統計與明細不一致
 - 若無任何違規，輸出 `{"summary": {"total_issues": 0}, "issues": []}`

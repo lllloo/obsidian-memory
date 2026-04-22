@@ -10,23 +10,18 @@
 			"type": "text"
 		},
 		{
-			"name": "source",
-			"value": "{{url}}",
-			"type": "text"
-		},
-		{
-			"name": "published",
-			"value": "{{published}}",
-			"type": "date"
-		},
-		{
 			"name": "created",
 			"value": "{{date}}",
 			"type": "date"
 		},
 		{
-			"name": "description",
-			"value": "{{description}}",
+			"name": "updated",
+			"value": "{{date}}",
+			"type": "date"
+		},
+		{
+			"name": "source",
+			"value": "{{url}}",
 			"type": "text"
 		},
 		{
