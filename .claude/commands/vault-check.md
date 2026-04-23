@@ -17,7 +17,7 @@ $ARGUMENTS
   3. 中止
 ```
 
-選 1 → `git stash push -u -m "vault-check auto-stash"`，結束後**不自動 pop**（避免與未審核修正衝突），在總結提示用戶手動 `git stash pop`。
+選 1 → `git stash push -u -m "vault-check auto-stash" -- content/`（僅 stash `content/` 範圍，避免牽動 `quartz/` / `scripts/` 的未追蹤檔），結束後**不自動 pop**（避免與未審核修正衝突），在總結提示用戶手動 `git stash pop`。
 
 ### 2. 稽核與修正
 
