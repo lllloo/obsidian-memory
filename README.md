@@ -62,15 +62,18 @@ npm run vault:fix            # 稽核並自動修正（/vault-check 內部呼叫
 
 #### 2. Vault 稽核修正（`/vault-check` 流程）
 
-稽核 `content/` 規則違規並自動修正。硬規則（frontmatter schema、檔名）由 Node + Zod 執行，command 負責 git 前置檢查與總結。全程綁本 repo，不需掛全域。
+兩段分工、零重疊：**Script 管格式（硬規則自動修），Subagent 管語意（建議不改檔）**。command 串接兩段。全程綁本 repo，不需掛全域。
 
 | 檔案 | 類型 | 全域路徑 | 用途 |
 |------|------|---------|------|
-| `.claude/commands/vault-check.md` | Command | — | `/vault-check` orchestrator |
-| `scripts/vault-check.mjs` | Node script | — | 掃描 + 自動修正（可獨立跑 `npm run vault:check` / `vault:fix`） |
-| `scripts/vault-schema.mjs` | Node module | — | Zod schema 定義（規則變更改這裡） |
+| `.claude/commands/vault-check.md` | Command | — | `/vault-check` orchestrator：git 前置檢查 → 跑 script → 呼叫 subagent → 合併總結 |
+| `scripts/vault-check.mjs` | Node script | — | 硬規則自動修（檔名、frontmatter 結構、日期 normalize） |
+| `scripts/vault-schema.mjs` | Node module | — | Zod schema 定義（**硬規則變更改這裡**） |
+| `.claude/agents/vault-auditor.md` | Agent | — | 語意層稽核（wikilink 斷鏈、敏感資料、misplaced、tag 一致性、缺 title/created/tags、parse error），唯讀只 flag 不改檔 |
 
-自動修：欄位順序、白名單外欄位／空值、缺 `updated`、檔名空格、可推斷的日期格式變體（`2026/04/01` → `2026-04-01`）。偵測但需手動處理：無法推斷的日期值、URL 格式錯、缺 `title` / `created` / `tags`、wikilink 斷鏈、敏感資料（API key / token / private key）。尚未實作：`MISPLACED_NOTE`（新筆記位置錯誤）。
+**Script 自動修**：欄位順序、白名單外欄位／空值、缺 `updated`、檔名空格、可推斷的日期格式變體（`2026/04/01` → `2026-04-01`）。
+
+**Subagent 給建議**（不改檔）：缺 `title` / `created` / `tags`（含建議值）、frontmatter parse error、wikilink 斷鏈（含建議目標）、敏感資料（regex + 自然語言密碼/個資）、`MISPLACED_NOTE`（依三層成熟度判斷）、tag 一致性（如 `claude-code` vs `claudeCode`）。
 
 #### 3. 批次筆記工作流（Skills）
 
@@ -98,7 +101,7 @@ npm run vault:fix            # 稽核並自動修正（/vault-check 內部呼叫
 
 - **筆記操作（唯一入口）**：`/ob <需求>` 依語意分派 — 建檔 → `vault-writer` agent，查詢 → `vault-query` agent。對話中自然提到「建立筆記」、「找筆記」效果等同
 - **知識查詢（預設自動）**：技術/知識性提問會依全域 `~/.claude/CLAUDE.md` 的 Obsidian 段規則自動並行呼叫 `vault-query` + WebSearch，綜合雙來源答覆
-- **稽核修正**：`/vault-check` → 跑 `scripts/vault-check.mjs`（Node + Zod）掃描並自動修正 frontmatter 與檔名，變更留 worktree 由用戶審核
+- **稽核修正**：`/vault-check` → 第一段跑 `scripts/vault-check.mjs`（Node + Zod）自動修硬規則 → 第二段呼叫 `vault-auditor` subagent 給語意層建議（wikilink 斷鏈、敏感資料、misplaced 等），全部變更留 worktree 由用戶審核
 
 ### 全域掛載
 

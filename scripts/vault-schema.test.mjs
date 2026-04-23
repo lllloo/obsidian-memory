@@ -4,13 +4,9 @@ import {
   DATE_FIELDS,
   FIELD_ORDER,
   REQUIRED_FIELDS,
-  SENSITIVE_PATTERNS,
-  WIKILINK_RE,
   codeLabel,
   frontmatterSchema,
   reorderFields,
-  scanSensitive,
-  stripCodeForLinkScan,
   stripUnknownFields,
   tryNormalizeDate,
   validateFieldOrder,
@@ -211,122 +207,9 @@ describe("codeLabel", () => {
   it("未知 code 回原字串", () => {
     assert.equal(codeLabel("NOT_A_CODE"), "NOT_A_CODE");
   });
-});
 
-describe("scanSensitive", () => {
-  it("偵測 OpenAI key（不漏 prefix）", () => {
-    const hits = scanSensitive("token is sk-abcdefghij1234567890ABCD done");
-    assert.equal(hits.length, 1);
-    assert.equal(hits[0].name, "OpenAI API key");
-    assert.equal(hits[0].line, 1);
-  });
-
-  it("偵測 Anthropic key", () => {
-    const hits = scanSensitive("sk-ant-api03-abcdefghij1234567890XYZ");
-    assert.ok(hits.some((h) => h.name === "Anthropic API key"));
-  });
-
-  it("偵測 GitHub token", () => {
-    const hits = scanSensitive("key=ghp_abcdefghij1234567890ABCDEFGHIJKLMNOP");
-    assert.ok(hits.some((h) => h.name === "GitHub token"));
-  });
-
-  it("偵測 AWS access key", () => {
-    const hits = scanSensitive("AKIAIOSFODNN7EXAMPLE");
-    assert.ok(hits.some((h) => h.name === "AWS access key"));
-  });
-
-  it("偵測 private key header", () => {
-    const hits = scanSensitive("-----BEGIN RSA PRIVATE KEY-----\n...");
-    assert.ok(hits.some((h) => h.name === "Private key header"));
-  });
-
-  it("不誤報一般文字", () => {
-    const hits = scanSensitive("這是正常的中文筆記，沒有任何敏感資料");
-    assert.equal(hits.length, 0);
-  });
-
-  it("多行正確回報行號", () => {
-    const text = "line1\nline2 sk-abcdefghij1234567890ABCD\nline3";
-    const hits = scanSensitive(text);
-    assert.equal(hits[0].line, 2);
-  });
-
-  it("多次呼叫結果一致（regex lastIndex 正確重置）", () => {
-    const text = "sk-abcdefghij1234567890ABCD";
-    const first = scanSensitive(text).length;
-    const second = scanSensitive(text).length;
-    assert.equal(first, second);
-    assert.equal(SENSITIVE_PATTERNS.length > 0, true);
-  });
-
-  it("code fence 內的範例不誤報", () => {
-    const text =
-      "API key 長這樣：\n```\nsk-abcdefghij1234567890ABCD\n```\n結束";
-    const hits = scanSensitive(text);
-    assert.equal(hits.length, 0);
-  });
-
-  it("inline code 內的範例不誤報", () => {
-    const hits = scanSensitive("範例 `sk-abcdefghij1234567890ABCD` 僅作教學");
-    assert.equal(hits.length, 0);
-  });
-
-  it("code block 外的真命中仍報，行號正確", () => {
-    const text = "```\nfake\n```\n真實洩漏 sk-abcdefghij1234567890ABCD";
-    const hits = scanSensitive(text);
-    assert.equal(hits.length, 1);
-    assert.equal(hits[0].line, 4);
-  });
-});
-
-describe("stripCodeForLinkScan", () => {
-  it("fenced code block 內容被空白化（保留換行）", () => {
-    const input = "before\n```\n[[InsideCode]]\n```\nafter";
-    const out = stripCodeForLinkScan(input);
-    assert.ok(!out.includes("[[InsideCode]]"));
-    assert.equal(out.split("\n").length, input.split("\n").length);
-  });
-
-  it("inline code 內容被空白化", () => {
-    const input = "see `[[X]]` here";
-    const out = stripCodeForLinkScan(input);
-    assert.ok(!out.includes("[[X]]"));
-  });
-
-  it("非 code 區塊的 wikilink 保留", () => {
-    const input = "這是 [[RealLink]] 不是程式";
-    const out = stripCodeForLinkScan(input);
-    assert.ok(out.includes("[[RealLink]]"));
-  });
-});
-
-describe("WIKILINK_RE", () => {
-  const extractAll = (text) => {
-    WIKILINK_RE.lastIndex = 0;
-    const out = [];
-    let m;
-    while ((m = WIKILINK_RE.exec(text)) !== null) {
-      out.push(m[1]);
-    }
-    return out;
-  };
-
-  it("擷取純 wikilink", () => {
-    assert.deepEqual(extractAll("see [[Foo]] and [[Bar]]"), ["Foo", "Bar"]);
-  });
-
-  it("擷取 wikilink 含 alias", () => {
-    assert.deepEqual(extractAll("[[Foo|顯示名]]"), ["Foo"]);
-  });
-
-  it("擷取 embed", () => {
-    assert.deepEqual(extractAll("![[image.png]]"), ["image.png"]);
-  });
-
-  it("純 anchor 無 target", () => {
-    WIKILINK_RE.lastIndex = 0;
-    const m = WIKILINK_RE.exec("[[#heading]]");
-    assert.equal(m[1], undefined);
+  it("語意層 code 不在 label 表（已交 vault-auditor）", () => {
+    assert.equal(codeLabel("BROKEN_WIKILINK"), "BROKEN_WIKILINK");
+    assert.equal(codeLabel("SENSITIVE_DATA"), "SENSITIVE_DATA");
   });
 });

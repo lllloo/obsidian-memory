@@ -22,12 +22,9 @@ import {
   DATE_FIELDS,
   FIELD_ORDER,
   REQUIRED_FIELDS,
-  WIKILINK_RE,
   codeLabel,
   frontmatterSchema,
   reorderFields,
-  scanSensitive,
-  stripCodeForLinkScan,
   stripUnknownFields,
   tryNormalizeDate,
   validateFieldOrder,
@@ -54,9 +51,11 @@ const { values: args } = parseArgs({
 if (args.help) {
   console.log(`Usage: node scripts/vault-check.mjs [--fix] [--json]
 
-掃描 content/ 下所有 .md 的 frontmatter 與檔名，依 Zod schema 驗證。
+掃描 content/ 下所有 .md，只處理硬規則（檔名、frontmatter 結構、日期 normalize）。
+語意層稽核（wikilink 斷鏈、敏感資料、misplaced、tag 一致性、缺 title/created/tags、parse error）
+由 vault-auditor subagent 處理，不在此 script。
 
-  --fix    自動修可修項目（欄位順序、白名單外欄位、補 updated、檔名空格）
+  --fix    自動修可修項目（欄位順序、白名單外欄位、補 updated、日期 normalize、檔名空格）
   --json   以 JSON 輸出（預設為人類可讀）`);
   process.exit(0);
 }
@@ -72,68 +71,6 @@ async function listMarkdown() {
   const patterns = ["content/**/*.md", "!content/.obsidian/**"];
   const files = await globby(patterns, { cwd: REPO_ROOT, absolute: true });
   return files.filter((f) => !EXCLUDED.has(rel(f)));
-}
-
-/**
- * 建立 wikilink 解析用的檔名索引。
- * Quartz 以 shortest 解析 → 只比對 basename（可含或不含副檔名）。
- * 同時收 .md 與 .base（Obsidian Bases），避免對存在的 `[[X.base]]` 誤報。
- */
-async function buildFileIndex() {
-  const patterns = ["content/**/*.{md,base}", "!content/.obsidian/**"];
-  const files = await globby(patterns, { cwd: REPO_ROOT, absolute: true });
-  const index = new Set();
-  for (const abs of files) {
-    const name = basename(abs);
-    const { name: stem } = parse(name);
-    index.add(name);
-    index.add(stem);
-  }
-  return index;
-}
-
-/** 以 Quartz shortest 語義比對：target 可含資料夾，只看最後一段 basename / stem */
-function wikilinkTargetExists(target, fileIndex) {
-  const last = target.split("/").pop();
-  const { name: stem } = parse(last);
-  return fileIndex.has(last) || fileIndex.has(stem);
-}
-
-/**
- * 檢查 frontmatter `parent: "[[X]]"` 目標是否存在。
- * 格式錯誤（不是 `[[...]]`）已由 schema 擋，這裡只處理「格式對但目標不存在」。
- */
-function checkParentWikilink(data, fileIndex) {
-  const parent = data?.parent;
-  if (typeof parent !== "string") return null;
-  const m = /^\[\[([^\]]+)\]\]$/.exec(parent);
-  if (!m) return null;
-  const target = m[1].trim();
-  if (!target) return null;
-  return wikilinkTargetExists(target, fileIndex) ? null : target;
-}
-
-/**
- * 掃描正文的 wikilink 斷鏈。排除 code fence / inline code 內的 `[[X]]`。
- * target 可能含資料夾（`Cards/foo`），只比對最後一段（Quartz shortest 語義）。
- */
-function findBrokenWikilinks(raw, fileIndex) {
-  const hits = [];
-  const scanText = stripCodeForLinkScan(raw);
-  const lines = scanText.split(/\r?\n/);
-  for (let i = 0; i < lines.length; i++) {
-    const line = lines[i];
-    WIKILINK_RE.lastIndex = 0;
-    let m;
-    while ((m = WIKILINK_RE.exec(line)) !== null) {
-      const target = m[1]?.trim();
-      if (!target) continue;
-      if (!wikilinkTargetExists(target, fileIndex)) {
-        hits.push({ target, line: i + 1 });
-      }
-    }
-  }
-  return hits;
 }
 
 /** 檢查檔名是否含空格；回傳建議的新檔名（若需要） */
@@ -152,8 +89,12 @@ function checkFilename(absPath) {
   return { dir, from: name, to: renamed, toAbs: join(dir, renamed) };
 }
 
-/** 對單一檔案做稽核，回傳 issues 陣列 */
-function auditFile(absPath, fileIndex) {
+/**
+ * 對單一檔案做稽核，回傳 issues 陣列。
+ * 只回 autofix=true 的硬規則；不能自動修的（parse error、缺 title/created/tags、
+ * 不可推斷的 INVALID_VALUE）一律跳過交 vault-auditor subagent 處理。
+ */
+function auditFile(absPath) {
   const issues = [];
   const relPath = rel(absPath);
   const raw = readFileSync(absPath, "utf8");
@@ -161,14 +102,7 @@ function auditFile(absPath, fileIndex) {
   let parsed;
   try {
     parsed = matter(raw, matterOptions);
-  } catch (e) {
-    issues.push({
-      code: "FRONTMATTER_PARSE_ERROR",
-      severity: "error",
-      file: relPath,
-      message: `frontmatter 解析失敗：${e.message}`,
-      autofix: false,
-    });
+  } catch {
     return { issues, parsed: null, raw };
   }
 
@@ -210,79 +144,44 @@ function auditFile(absPath, fileIndex) {
       const unknown = iss.code === "unrecognized_keys";
       const missing =
         iss.code === "invalid_type" && data[iss.path[0]] === undefined;
-      const code = unknown
-        ? "UNKNOWN_FIELD"
-        : missing
-          ? "MISSING_REQUIRED_FIELD"
-          : "INVALID_VALUE";
       const actualValue = !unknown && !missing ? data[iss.path[0]] : undefined;
       const normalizedDate =
-        code === "INVALID_VALUE" && DATE_FIELDS.has(field)
+        !unknown && !missing && DATE_FIELDS.has(field)
           ? tryNormalizeDate(actualValue)
           : null;
-      let autofix = false;
-      let fix;
-      let suffix = "";
+
       if (unknown) {
-        autofix = true;
-        fix = { kind: "strip", keys: iss.keys };
+        issues.push({
+          code: "UNKNOWN_FIELD",
+          severity: "error",
+          file: relPath,
+          field,
+          message: `白名單外欄位：${iss.keys.join(", ")}`,
+          autofix: true,
+          fix: { kind: "strip", keys: iss.keys },
+        });
       } else if (missing && field === "updated") {
-        autofix = true;
-        fix = { kind: "fill", field: "updated", value: today };
+        issues.push({
+          code: "MISSING_REQUIRED_FIELD",
+          severity: "error",
+          file: relPath,
+          field,
+          message: `缺必填欄位：updated`,
+          autofix: true,
+          fix: { kind: "fill", field: "updated", value: today },
+        });
       } else if (normalizedDate) {
-        autofix = true;
-        fix = { kind: "fill", field, value: normalizedDate };
-        suffix = ` → 自動 normalize 為 ${normalizedDate}`;
+        issues.push({
+          code: "INVALID_VALUE",
+          severity: "error",
+          file: relPath,
+          field,
+          message: `${field}: ${iss.message}（實際值：${JSON.stringify(actualValue)}）→ 自動 normalize 為 ${normalizedDate}`,
+          autofix: true,
+          fix: { kind: "fill", field, value: normalizedDate },
+        });
       }
-      const baseMessage = unknown
-        ? `白名單外欄位：${iss.keys.join(", ")}`
-        : missing
-          ? `缺必填欄位：${field}`
-          : `${field}: ${iss.message}（實際值：${JSON.stringify(actualValue)}）`;
-      issues.push({
-        code,
-        severity: "error",
-        file: relPath,
-        field,
-        message: baseMessage + suffix,
-        autofix,
-        fix,
-      });
     }
-  }
-
-  if (fileIndex) {
-    const broken = findBrokenWikilinks(raw, fileIndex);
-    for (const hit of broken) {
-      issues.push({
-        code: "BROKEN_WIKILINK",
-        severity: "error",
-        file: relPath,
-        message: `第 ${hit.line} 行 wikilink 目標不存在：[[${hit.target}]]`,
-        autofix: false,
-      });
-    }
-    const brokenParent = checkParentWikilink(data, fileIndex);
-    if (brokenParent) {
-      issues.push({
-        code: "BROKEN_WIKILINK",
-        severity: "error",
-        file: relPath,
-        message: `frontmatter parent 目標不存在：[[${brokenParent}]]`,
-        autofix: false,
-      });
-    }
-  }
-
-  const sensitiveHits = scanSensitive(raw);
-  for (const hit of sensitiveHits) {
-    issues.push({
-      code: "SENSITIVE_DATA",
-      severity: "error",
-      file: relPath,
-      message: `第 ${hit.line} 行疑似 ${hit.name}：'${hit.match.slice(0, 12)}…'（請確認並移除）`,
-      autofix: false,
-    });
   }
 
   const orderCheck = validateFieldOrder(data);
@@ -325,7 +224,6 @@ function applyFixes(absPath, issues, parsed, raw) {
         break;
       }
       case "reorder": {
-        // 稍後統一 reorder
         applied.push(issue);
         break;
       }
@@ -345,7 +243,6 @@ function applyFixes(absPath, issues, parsed, raw) {
     }
   }
 
-  // 統一最後 reorder（修過欄位後順序可能亂掉）
   data = reorderFields(data);
 
   const newRaw = matter.stringify(content, data, matterOptions);
@@ -360,24 +257,18 @@ function applyFixes(absPath, issues, parsed, raw) {
 }
 
 async function main() {
-  const [files, fileIndex] = await Promise.all([
-    listMarkdown(),
-    buildFileIndex(),
-  ]);
+  const files = await listMarkdown();
   const allIssues = [];
   const allApplied = [];
-  const skipped = [];
+  const blocked = [];
 
   for (const abs of files) {
-    const { issues, parsed, raw } = auditFile(abs, fileIndex);
+    const { issues, parsed, raw } = auditFile(abs);
     allIssues.push(...issues);
-    if (args.fix && issues.some((i) => i.autofix)) {
-      const { applied, blocked } = applyFixes(abs, issues, parsed, raw);
-      allApplied.push(...applied);
-      skipped.push(...blocked);
-    }
-    for (const iss of issues) {
-      if (!iss.autofix) skipped.push(iss);
+    if (args.fix && issues.length) {
+      const result = applyFixes(abs, issues, parsed, raw);
+      allApplied.push(...result.applied);
+      blocked.push(...result.blocked);
     }
   }
 
@@ -391,7 +282,7 @@ async function main() {
       by_category: byCode,
     },
     applied: args.fix ? allApplied : [],
-    skipped,
+    blocked,
     issues: args.fix ? [] : allIssues,
   };
 
@@ -399,7 +290,7 @@ async function main() {
     console.log(JSON.stringify(report, null, 2));
   } else {
     const mode = args.fix ? "修正" : "檢查";
-    console.log(`# Vault ${mode}報告`);
+    console.log(`# Vault ${mode}報告（硬規則）`);
     console.log(`- 掃描檔案：${files.length}`);
     console.log(`- 違規數：${allIssues.length}`);
     if (Object.keys(byCode).length) {
@@ -414,25 +305,28 @@ async function main() {
       for (const i of allApplied) {
         console.log(`- [${codeLabel(i.code)}] ${i.file} — ${i.message}`);
       }
-      if (skipped.length) {
-        console.log(`\n## 無法自動修（${skipped.length}，需手動處理）`);
-        for (const i of skipped) {
+      if (blocked.length) {
+        console.log(`\n## 修正被阻擋（${blocked.length}，需手動處理）`);
+        for (const i of blocked) {
           console.log(`- [${codeLabel(i.code)}] ${i.file} — ${i.message}`);
         }
       }
     } else if (allIssues.length) {
       console.log(`\n## 違規清單`);
       for (const i of allIssues) {
-        const tag = i.autofix ? "可自動修" : "手動";
-        console.log(`- [${codeLabel(i.code)}/${tag}] ${i.file} — ${i.message}`);
+        console.log(`- [${codeLabel(i.code)}] ${i.file} — ${i.message}`);
       }
       console.log(
         `\n執行 \`node scripts/vault-check.mjs --fix\` 自動修可修項。`,
       );
     }
+
+    console.log(
+      `\n備註：語意層稽核（wikilink 斷鏈、敏感資料、misplaced、tag 一致性、缺 title/created/tags、parse error）由 vault-auditor subagent 處理。`,
+    );
   }
 
-  const failed = args.fix ? skipped.length > 0 : allIssues.length > 0;
+  const failed = args.fix ? blocked.length > 0 : allIssues.length > 0;
   process.exit(failed ? 1 : 0);
 }
 

@@ -10,7 +10,7 @@ Obsidian 個人知識庫，以 [Quartz 4](https://quartz.jzhao.xyz/) 發佈至 `
 
 - **Vault 層**（`content/`）— 筆記本體。規則寫在 `content/CLAUDE.md`（命名、frontmatter、tag、敏感資料）
 - **發佈層**（`quartz/`、`quartz.config.ts`、`quartz.layout.ts`、`.github/workflows/`）— Quartz 建置與 GitHub Pages 部署
-- **工作流層**（`.claude/` + `scripts/`）— agents（`vault-writer` / `vault-query`）、commands（`/ob`、`/vault-check`）、skills（`vault-youtube-sync`、`vault-topic-moc`）、Node 稽核腳本（`scripts/vault-check.mjs`）。`.claude/` 可 symlink 至 `~/.claude/` 跨專案使用
+- **工作流層**（`.claude/` + `scripts/`）— agents（`vault-writer` / `vault-query` / `vault-auditor`）、commands（`/ob`、`/vault-check`）、skills（`vault-youtube-sync`、`vault-topic-moc`）、Node 稽核腳本（`scripts/vault-check.mjs`）。`.claude/` 可 symlink 至 `~/.claude/` 跨專案使用
 
 CLAUDE.md 依作用域分三層：全域（`~/.claude/CLAUDE.md`）→ repo（本檔）→ vault（`content/CLAUDE.md`）。規則放到最窄的作用域即可。
 
@@ -71,13 +71,14 @@ npm run vault:fix                # 稽核並自動修正（/vault-check 內部�
 
 ### 2. Vault 稽核修正（`/vault-check` 流程）
 
-稽核 `content/` 規則違規並自動修正。硬規則（frontmatter schema、檔名）由 Node + Zod 執行；command 負責前置 git 檢查與總結。全程綁本 repo，不需掛全域。
+兩段分工、零重疊：**Script 管格式（硬規則自動修），Subagent 管語意（建議不改檔）**。command 串接兩段。全程綁本 repo，不需掛全域。
 
 | 檔案 | 類型 | 全域路徑 | 用途 |
 |------|------|---------|------|
-| `.claude/commands/vault-check.md` | Command | — | `/vault-check` orchestrator：git 前置檢查、跑 Node script、印總結 |
-| `scripts/vault-check.mjs` | Node script | — | 掃描 + 自動修正（可獨立跑 `npm run vault:check` / `vault:fix`） |
-| `scripts/vault-schema.mjs` | Node module | — | Zod schema 與欄位順序／白名單定義，規則變更改這裡 |
+| `.claude/commands/vault-check.md` | Command | — | `/vault-check` orchestrator：git 前置檢查 → 跑 script → 呼叫 subagent → 合併總結 |
+| `scripts/vault-check.mjs` | Node script | — | 硬規則自動修（檔名、frontmatter 結構、日期 normalize） |
+| `scripts/vault-schema.mjs` | Node module | — | Zod schema 與欄位順序／白名單定義，**硬規則變更改這裡** |
+| `.claude/agents/vault-auditor.md` | Agent | — | 語意層稽核（wikilink 斷鏈、敏感資料、misplaced、tag 一致性、缺 title/created/tags、parse error），唯讀只 flag 不改檔 |
 
 ### 3. 批次筆記工作流（Skills）
 
@@ -129,25 +130,40 @@ ln -sf "$PWD/.claude/commands/ob.md" ~/.claude/commands/ob.md
 
 ## Vault 稽核工作流
 
-`/vault-check` 指令會對 `content/` 執行 vault 規則稽核與自動修正：
+`/vault-check` 分兩段，依「能不能 deterministic 自動修」劃分職責，兩邊**零重疊**。
 
-- 由 `scripts/vault-check.mjs` 以 Zod schema（`scripts/vault-schema.mjs`）驗證 frontmatter 與檔名
-- 可自動修：
-  - `FILENAME_HAS_SPACE`（檔名含空格 → rename，壓縮連續 `-`、trim 頭尾 `-`）
-  - `MISSING_REQUIRED_FIELD`（僅 `updated` 缺失 → 補今日）
-  - `UNKNOWN_FIELD` / `EMPTY_OPTIONAL_FIELD`（白名單外欄位 / 選填空值 → 刪除）
-  - `FIELD_ORDER`（欄位順序 → 重排）
-  - `INVALID_VALUE`（僅 `created` / `updated` / `published` 日期格式可推斷時 → normalize 為 `YYYY-MM-DD`，如 `2026/04/01`、`2026.04.01`、`2026-4-1`）
-- 偵測但不自動修（需手動）：
-  - `INVALID_VALUE`（非 `YYYY-MM-DD` 日期、URL 格式錯、`parent` 非 wikilink 格式等；訊息會帶上實際值方便定位）
-  - `MISSING_REQUIRED_FIELD`（`title` / `created` / `tags` 缺失）
-  - `FRONTMATTER_PARSE_ERROR`（YAML 解析失敗）
-  - `BROKEN_WIKILINK`（正文與 `parent` 的 wikilink 斷鏈；Quartz `shortest` 語義，code fence 內忽略）
-  - `SENSITIVE_DATA`（API key / token / private key 等 high-precision regex；code fence 內忽略）
-- 尚未實作：`MISPLACED_NOTE`（新筆記位置錯誤）— 規則由用戶自審
-- command 不自動 commit，變更留 worktree 交用戶審核
+### 第一段：Script 管格式（`scripts/vault-check.mjs`）
 
-**規則變更請改 `scripts/vault-schema.mjs` 的 Zod schema**（`FIELD_ORDER` 常數 + `frontmatterSchema` 物件），不要另寫規則。
+只處理 100% 可修、零誤判的硬規則：
+
+- `FILENAME_HAS_SPACE`（檔名含空格 → rename，壓縮連續 `-`、trim 頭尾 `-`）
+- `MISSING_REQUIRED_FIELD`（僅 `updated` 缺失 → 補今日）
+- `UNKNOWN_FIELD` / `EMPTY_OPTIONAL_FIELD`（白名單外欄位 / 選填空值 → 刪除）
+- `FIELD_ORDER`（欄位順序 → 重排）
+- `INVALID_VALUE`（僅 `created` / `updated` / `published` 日期格式可推斷時 → normalize 為 `YYYY-MM-DD`，如 `2026/04/01`、`2026.04.01`、`2026-4-1`）
+
+不在這層處理的，script 直接跳過，**不報 warning** — 由第二段接手。
+
+### 第二段：Subagent 管語意（`.claude/agents/vault-auditor.md`）
+
+唯讀，輸出結構化 JSON 給主 agent 整理，**只 flag 不改檔**：
+
+- 缺 `title` / `created` / `tags` → 讀內容建議合理值
+- frontmatter parse error（YAML 壞掉）→ 指出哪行、建議怎麼救
+- `BROKEN_WIKILINK`（正文與 `parent` 的 wikilink 斷鏈，Quartz `shortest` 語義）→ 找最相似的現有檔名做 suggestion
+- `SENSITIVE_DATA`（regex 已知 + 語意敏感資料）→ API key / token / private key + 自然語言密碼 / 個資 / 內部資訊
+- `MISPLACED_NOTE`（依三層成熟度 Inbox → Cards → Topics 判斷）→ 含搬移理由
+- tag 一致性（`claude-code` vs `claudeCode` vs `claude_code`）→ 建議標準化值
+
+### 串接
+
+command 流程：git 前置檢查 → `npm run vault:fix`（script）→ 呼叫 vault-auditor subagent → 合併總結。**不自動 commit**，變更留 worktree 交用戶審核。
+
+### 規則變更指引
+
+- **硬規則改 `scripts/vault-schema.mjs`** 的 Zod schema（`FIELD_ORDER` 常數 + `frontmatterSchema` 物件）
+- **語意規則改 `.claude/agents/vault-auditor.md`**（subagent prompt）
+- 不要在 command 或別處另寫規則
 
 ## Vault 搜尋方式
 
