@@ -1,5 +1,8 @@
 # Obsidian Memory Vault — 吸收型卡片盒
 
+**本檔涵蓋**：Vault 內容規則——卡片盒哲學、Inbox/Cards/Topics 工作流、寫入前 Checklist、frontmatter schema、tag/命名、敏感資料。
+**不涵蓋**：Quartz 部署、agent/command/skill 架構、symlink 配置 → 見 repo 根目錄 [`CLAUDE.md`](../CLAUDE.md)。
+
 ## 三條原則
 
 此 vault 採用「吸收型卡片盒」，核心如下：
@@ -55,17 +58,34 @@
 
 不靠紀律，靠流動。
 
-## 安全規則
+## 寫入前 Checklist（所有 agent 寫入 content/ 前必做）
 
-此 vault 的內容會透過 Quartz 發佈到公開網站（ob.bugloop.com）。**所有寫入或修改的內容在 commit 前必須檢查，確保不包含以下敏感資料：**
+此 vault 透過 Quartz 發佈到公開網站（ob.bugloop.com），寫入前必須自檢。這是 vault 健康的第一道防線——任何修改 `content/` 的流程（vault-writer、skills、手動編輯）在寫入前逐項檢查。`/vault-check` 只兜底跨檔案 emergent 問題（斷鏈、tag drift、非 writer 來源漏網），**不依賴它抓本清單能預防的錯**。
 
-- API key、secret、token
-- 密碼、帳號憑證
-- 私人 IP、內部網址
-- 個人隱私資訊（身分證、電話、地址等）
-- 任何不適合公開的內容
+### 1. 敏感資料（零容忍）
 
-若發現既有筆記含有敏感資料，應立即移除並通知用戶。
+寫入前掃正文與 frontmatter，確認不含：
+
+- **Token / Key**：`sk-`、`sk-ant-`、`ghp_`、`gho_`、`AKIA`、`AIza`、`xox[baprs]-`、`eyJ`（JWT）
+- **Private key header**：`-----BEGIN ... PRIVATE KEY-----`
+- **自然語言密碼**：「密碼是 …」、「password: …」後接明文
+- **客戶 / 公司內部資訊、個資**：身分證、私人電話、地址、內部 IP / 網址
+
+命中 → 移除或告知使用者中止，不寫入。若發現既有筆記含有敏感資料，立即移除並通知用戶。
+
+### 2. Frontmatter schema（寫入當下即合法）
+
+必含 `title` / `created` / `updated` / `tags`；欄位順序、白名單、型別以 [`scripts/vault-schema.mjs`](../scripts/vault-schema.mjs) 為準。**不要產出需要 auditor 事後補 title 或修 YAML 的筆記**——YAML 引號、縮排、wikilink 包雙引號（`parent: "[[01.index]]"`）等在寫入前就確保正確。
+
+細節見下文「Frontmatter Schema（固定）」。
+
+### 3. Tag 沿用既有
+
+寫入前先查現有 tags（`obsidian tags`，或 `rg -A5 '^tags:' content -g '*.md'`），優先沿用，避免製造同義異寫（`claude-code` vs `claudeCode` vs `claude_code`）。真無合適才建新 tag，小寫、`-` 連接。
+
+### 4. 命名
+
+檔名不含空格，空格一律改為 `-`（例：`Obsidian-CLI-整合指南.md`）；wikilink 對應實際檔名（含 `-`）。`title:` 用主題名，不加日期前綴。
 
 ## 規則
 
@@ -82,11 +102,6 @@
 ### 色碼與特殊符號
 
 - `#` 開頭的內容（如 hex 色碼 `#57F287`）在 Obsidian 會被解讀為 tag，**必須用反引號包住**：`` `#57F287` ``
-
-### 筆記命名
-
-- **檔案名稱不可含空格**，空格一律改為 `-`（例：`Obsidian-CLI-整合指南.md`）
-- Wikilink 需對應實際檔名（含 `-`）：`[[Obsidian-CLI-整合指南]]`
 
 ### `updated` 欄位（盡力而為）
 
@@ -140,11 +155,6 @@ tags:
 - Obsidian Web Clipper 若帶入 `author` / `description` / `cover` / `image` / `banner` 等未列欄位，一律清掉
 - `/vault-check` 會自動稽核（`UNKNOWN_FIELD`）並由 `scripts/vault-check.mjs` 刪除
 - 新增欄位前需先在 `scripts/vault-schema.mjs` 擴充，不可直接寫入未列欄位
-
-### 命名與 tags
-
-- `title:` 用用戶說的主題，不加日期前綴
-- Tags：優先沿用現有 tags（小寫、`-` 連接）；沒有才建新的
 
 ## YouTube 筆記語言規範
 

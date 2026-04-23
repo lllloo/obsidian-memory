@@ -1,6 +1,11 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+**本檔涵蓋**：repo 工程層——專案架構、Quartz 部署、agent/command/skill 清單、symlink 配置。
+**不涵蓋**：Vault 內容規則（卡片盒哲學、frontmatter schema、tag/命名、敏感資料）→ 見 [`content/CLAUDE.md`](content/CLAUDE.md)。
+
+**判斷規則寫哪份**：
+- 摸 `content/` 會爆炸的（筆記結構、寫入前檢查） → `content/CLAUDE.md`
+- 碰 Quartz / scripts / 部署 / agent 配置會爆炸的 → 本檔
 
 ## 專案概覽
 
@@ -8,11 +13,9 @@ Obsidian 個人知識庫，以 [Quartz 4](https://quartz.jzhao.xyz/) 發佈至 `
 
 此 repo 由三層構成，修改時先判斷變更屬於哪一層再動：
 
-- **Vault 層**（`content/`）— 筆記本體。規則寫在 `content/CLAUDE.md`（命名、frontmatter、tag、敏感資料）
+- **Vault 層**（`content/`）— 筆記本體，規則見 `content/CLAUDE.md`
 - **發佈層**（`quartz/`、`quartz.config.ts`、`quartz.layout.ts`、`.github/workflows/`）— Quartz 建置與 GitHub Pages 部署
-- **工作流層**（`.claude/` + `scripts/`）— agents（`vault-writer` / `vault-query` / `vault-auditor`）、commands（`/ob`、`/vault-check`）、skills（`vault-youtube-sync`、`vault-topic-moc`）、Node 稽核腳本（`scripts/vault-check.mjs`）。`.claude/` 可 symlink 至 `~/.claude/` 跨專案使用
-
-CLAUDE.md 依作用域分三層：全域（`~/.claude/CLAUDE.md`）→ repo（本檔）→ vault（`content/CLAUDE.md`）。規則放到最窄的作用域即可。
+- **工作流層**（`.claude/` + `scripts/`）— agents（`vault-writer` / `vault-query` / `vault-auditor`）、commands（`/ob`、`/vault-check`）、skills（`vault-youtube-sync`、`vault-topic-moc`）、Node 稽核腳本。`.claude/` 可 symlink 至 `~/.claude/` 跨專案使用
 
 ## 常用指令
 
@@ -28,8 +31,7 @@ npm run vault:fix                # 稽核並自動修正（/vault-check 內部�
 
 ## 架構
 
-- `content/` — Obsidian vault（筆記、模板），Quartz 從此目錄讀取 Markdown 建站
-- `content/master-index.md` — Vault 入口索引，查詢知識時先讀這份確認資料夾與 tag 分布
+- `content/` — Obsidian vault（筆記、模板），Quartz 從此目錄讀取 Markdown 建站；入口索引 `content/master-index.md`
 - `quartz/` — Quartz 框架原始碼（不需修改）
 - `quartz.config.ts` — 站台設定（外觀、plugins、ignorePatterns）
 - `quartz.layout.ts` — 版面配置
@@ -44,13 +46,9 @@ npm run vault:fix                # 稽核並自動修正（/vault-check 內部�
 - Plugin pipeline：transformers（解析 Markdown）→ filters（篩選頁面）→ emitters（產生 HTML/靜態資源）
 - Wikilink 以 `shortest` 解析（`CrawlLinks`），連結目標需在 `content/` 下存在對應檔案
 
-## Obsidian Vault 規則
+## Vault 規則載入
 
-筆記結構、命名規則、tag 格式、安全規範等詳見 [`content/CLAUDE.md`](content/CLAUDE.md)。
-
-查詢 vault 知識時，先讀 [`content/master-index.md`](content/master-index.md) 確認資料夾與 tag 分布，再導航到對應位置。
-
-請遵循以下子模組的規範：
+Vault 內容規則（寫入前 Checklist、frontmatter schema、tag/命名、敏感資料等）由子模組規範載入；查詢 vault 時先讀 [`content/master-index.md`](content/master-index.md)。
 
 - @content/CLAUDE.md
 
@@ -112,11 +110,8 @@ npm run vault:fix                # 稽核並自動修正（/vault-check 內部�
 
 ## Vault 作為 Claude Code 資料來源
 
-Vault 同時作為 Claude Code 的優質參考資料來源，與 WebSearch 互補並行：
+Vault 同時作為 Claude Code 的參考資料來源，與 WebSearch 互補並行：
 
-- **協議**：自動並行查詢流程（觸發條件、綜合原則、引用格式）寫在全域 `~/.claude/CLAUDE.md` 的 `## Obsidian` 段，供主 agent 每次對話載入
-- **觸發**：技術/知識性提問時，依全域 CLAUDE.md 規則自動並行呼叫 `vault-query` + WebSearch，綜合雙來源答覆
+- **協議**：觸發條件、綜合原則、引用格式寫在全域 `~/.claude/CLAUDE.md` 的 `## Obsidian` 段；技術/知識性提問會自動並行呼叫 `vault-query` + WebSearch
 - **搜尋工具**：搜 vault 一律用 `Grep` + `Glob content/**/*<關鍵字>*.md`，不要呼叫 Obsidian CLI 的 `search:context`（慢約 9 倍且覆蓋率較低）
-- **路徑解析**：`vault-query` 與 `vault-writer` 皆先動態解析本機 vault 根目錄。優先順序：`$OBSIDIAN_VAULT_ROOT`（建議在 `~/.claude/settings.local.json` 的 `env` 注入，跨機器獨立）→ `<cwd>/content` → Git 根 + `/content` → 舊候選清單
-- **path 契約**：`vault-query` 對外回傳的 `path` 一律正規化為 repo-relative 的 `content/...`
-- **唯讀約束**：`vault-query` agent 不具 Write/Edit 工具；若需 Bash 也僅限 path discovery 與 grep/cat/find 等唯讀命令；建檔一律由使用者用 `/ob` 手動觸發
+- **跨機器路徑**：各 agent 透過 `$OBSIDIAN_VAULT_ROOT` 或 git 根 + `/content` 動態解析 vault 根目錄；詳細 fallback 順序與 path 契約見各 agent 檔

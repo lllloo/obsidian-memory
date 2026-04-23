@@ -110,7 +110,7 @@ MOC 聚焦**概念與大方向**，經得起時間、可在不同模型世代重
 ## 硬性規則
 
 - MOC 寫在 `content/Topics/<類別>/<主題>.md`（**不要**寫 `Cards/` 或 `YouTube/`）
-- frontmatter 遵守 `content/CLAUDE.md` 的 card.md 標準（title/created/updated/tags）
+- frontmatter 遵守 `content/CLAUDE.md` 的「寫入前 Checklist」與「Frontmatter Schema」
 - `updated` 欄位盡量同步為今日日期（不強制）
 - wikilink 檔名需確實存在，否則改用外部 URL
 - 選項 B 執行前再次確認用戶是否真的要刪

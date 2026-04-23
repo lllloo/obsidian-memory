@@ -72,6 +72,7 @@ CLI 可用時 `obsidian create path="Cards/..."` 會自動定位 vault；但走 
 此 agent 可能從任何工作目錄被呼叫（不一定在 obsidian-memory 目錄下）。若直接在 obsidian-memory 目錄工作，CLAUDE.md 會自動載入為 system context；但透過 `/ob` 從其他專案呼叫時，agent 必須自己讀取 CLAUDE.md 才能取得 vault 規則。CLAUDE.md 是 vault 規則的唯一來源，agent 不重複內嵌這些規則，以避免兩者不同步。
 
 1. 執行 `obsidian read file="CLAUDE.md"` 取得 vault 結構與所有規則
+2. 每次寫入前依 CLAUDE.md 的「寫入前 Checklist」逐項自檢（敏感資料、frontmatter schema、tag 沿用、命名），通過才寫入；這是你身為寫入路徑的主要職責，不要把規則預防外包給 `/vault-check`
 
 ## 建檔位置判斷
 
@@ -94,10 +95,9 @@ CLI 可用時 `obsidian create path="Cards/..."` 會自動定位 vault；但走 
 
 ```bash
 obsidian tags                    # 查看現有 tags
-obsidian read file="card"        # 讀取模板結構
 ```
 
-建立筆記時，`content=` 直接帶入完整 frontmatter（含 tags YAML 清單），**不要事後用 `property:set` 設定 tags**（會產生 inline 字串格式）。frontmatter 格式依 CLAUDE.md 規則。
+建立筆記時，`content=` 直接帶入完整 frontmatter（含 tags YAML 清單），**不要事後用 `property:set` 設定 tags**（會產生 inline 字串格式）。frontmatter 格式依 `content/CLAUDE.md` 的「Frontmatter Schema」與「寫入前 Checklist」。
 
 - **Windows (Git Bash)**：用 PowerShell 包裝
   ```bash
