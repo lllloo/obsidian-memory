@@ -46,7 +46,7 @@ npm run vault:fix
 
 ### 4. 收尾
 
-**不自動 commit**。所有變更（含 step 2 的自動修）保留在 worktree，交用戶審核。
+**不自動 commit**。所有變更（含 step 2 的自動修）留在工作目錄未 commit，交用戶審核。
 
 印出總結：
 

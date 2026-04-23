@@ -51,13 +51,14 @@ env 未設或該路徑底下找不到 `master-index.md` → 直接輸出空結�
 - 排除 code fence 內的 `[[...]]`
 - 對每個斷鏈，找最相似的現有檔名做 suggestion；找不到就 `suggestion: null`
 
-### 3. sensitive_data — 敏感資料（regex + 語意）
+### 3. sensitive_data — 敏感資料
 
-- regex 層（high precision）：OpenAI `sk-...`、Anthropic `sk-ant-...`、GitHub token (`ghp_`/`gho_` etc)、AWS `AKIA...`、Google `AIza...`、Slack `xox[baprs]-...`、JWT `eyJ...`、Private key header `-----BEGIN ... PRIVATE KEY-----`
-- 語意層（regex 抓不到的）：自然語言寫的密碼（「我的密碼是 abc123」）、客戶/公司內部資訊、個資（身分證、私人電話、地址）、內部 IP/網址
+**清單以 `content/CLAUDE.md` 的「寫入前 Checklist §1」為準**（regex 白名單 + 自然語言密碼 + 個資 / 公司內部資訊）。開工前已 Read 該檔，依當下清單掃描，CLAUDE.md 更新時本 agent 自動跟上。
+
+稽核側專屬規則（不屬於清單本身）：
 - 排除 code fence 內的範例
-- 嚴重度：`high`（確定的 secret）/ `medium`（疑似但需人工確認）/ `low`（一般敏感詞）
-- match 欄位只取前 12 字 + `…` 避免日誌洩漏
+- 嚴重度分三級：`high`（確定的 secret，regex 命中）/ `medium`（疑似但需人工確認，語意命中）/ `low`（一般敏感詞）
+- `match` 欄位只取前 12 字 + `…` 避免日誌洩漏
 
 ### 4. tag_conflicts — tag 一致性
 
@@ -126,9 +127,4 @@ env 未設或該路徑底下找不到 `master-index.md` → 直接輸出空結�
 
 ## 與 vault-check.mjs 的分工
 
-| 範圍 | 誰處理 |
-|---|---|
-| FILENAME_HAS_SPACE / FIELD_ORDER / UNKNOWN_FIELD / EMPTY_OPTIONAL_FIELD / 補 updated / 日期 normalize | script |
-| 上述五類（broken_wikilinks / sensitive_data / tag_conflicts / 缺 title-created-tags / parse error） | 你 |
-
-兩邊不重疊，遇到不確定屬於哪邊的，從「能不能 deterministic 修」判斷——能修的歸 script，需要讀內容才能決定的歸你。
+範圍劃分見 `.claude/commands/vault-check.md`（orchestrator 視角最完整）。判斷原則：能 deterministic 修的歸 script，需要讀內容才能決定的歸你。

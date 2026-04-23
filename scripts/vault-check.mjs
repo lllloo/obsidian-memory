@@ -34,6 +34,9 @@ const REQUIRED_SET = new Set(REQUIRED_FIELDS);
 
 const REPO_ROOT = resolve(import.meta.dirname, "..");
 const CONTENT_DIR = join(REPO_ROOT, "content");
+// Site-level 索引頁（非筆記）與 vault 規則文件，豁免 schema 必填。
+// index.md 是 Quartz 首頁、master-index.md 是 vault 入口、CLAUDE.md 是規則本身，
+// 三者不受卡片盒 frontmatter 規範約束。
 const EXCLUDED = new Set([
   "content/index.md",
   "content/master-index.md",
