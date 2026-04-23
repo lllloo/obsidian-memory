@@ -38,7 +38,6 @@ npm run vault:fix
 - frontmatter parse error、缺 `title` / `created` / `tags`、其他 INVALID_VALUE
 - wikilink 斷鏈
 - 敏感資料（API key + 語意敏感資料）
-- 筆記位置錯誤
 - tag 一致性
 
 ### 3. 語意層稽核（Subagent）
@@ -68,9 +67,6 @@ npm run vault:fix
 
 #### 敏感資料
 <sensitive_data：含嚴重度與位置>
-
-#### 位置錯誤建議
-<misplaced_notes：含三層成熟度判斷理由>
 
 #### Tag 一致性
 <tag_conflicts：含建議標準化值>

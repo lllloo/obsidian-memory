@@ -182,8 +182,6 @@ open(path, 'w', encoding='utf-8').write(text)
 
 > 若本次無新影片（早已是最新），不需更新 checkpoint。
 
-**更新 `master-index.md`**：同步更新 `content/master-index.md` 中的 YouTube 篇數（`Inbox/YouTube/ — N 篇影片摘要`）；若為新頻道，加入頻道清單與描述。
-
 ## 注意事項
 
 - **defuddle 內容不足**：contentMarkdown 無時間戳格式（`**0:00**`）時走 subagent-note-creator.md 的情況 B，只寫重點摘要，不推測補充

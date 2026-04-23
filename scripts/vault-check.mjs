@@ -52,7 +52,7 @@ if (args.help) {
   console.log(`Usage: node scripts/vault-check.mjs [--fix] [--json]
 
 掃描 content/ 下所有 .md，只處理硬規則（檔名、frontmatter 結構、日期 normalize）。
-語意層稽核（wikilink 斷鏈、敏感資料、misplaced、tag 一致性、缺 title/created/tags、parse error）
+語意層稽核（wikilink 斷鏈、敏感資料、tag 一致性、缺 title/created/tags、parse error）
 由 vault-auditor subagent 處理，不在此 script。
 
   --fix    自動修可修項目（欄位順序、白名單外欄位、補 updated、日期 normalize、檔名空格）
@@ -322,7 +322,7 @@ async function main() {
     }
 
     console.log(
-      `\n備註：語意層稽核（wikilink 斷鏈、敏感資料、misplaced、tag 一致性、缺 title/created/tags、parse error）由 vault-auditor subagent 處理。`,
+      `\n備註：語意層稽核（wikilink 斷鏈、敏感資料、tag 一致性、缺 title/created/tags、parse error）由 vault-auditor subagent 處理。`,
     );
   }
 

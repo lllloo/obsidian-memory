@@ -81,7 +81,7 @@ Read 全部候選筆記。記錄：
 **不要自動刪除原筆記**。先問用戶選 A/B/C：
 
 - **A. 保留**：原筆記不動，MOC 用 `[[筆記檔名]]` wikilink
-- **B. 刪除**（**YouTube 來源筆記的預設**）：MOC 末尾保留外部 URL 清單，`git rm` 原筆記，更新 master-index
+- **B. 刪除**（**YouTube 來源筆記的預設**）：MOC 末尾保留外部 URL 清單，`git rm` 原筆記
 - **C. 加 draft**：原筆記加 `draft: true`，Obsidian 可見、不發佈
 
 **Roy 的慣例**：當原筆記來源是 `content/Inbox/YouTube/` 下的影片摘要，整理完成後預設會選 **B 刪除**（MOC 自足、vault 精簡）。仍必須在刪除前給清單讓用戶過目，不要跳過確認。
@@ -133,5 +133,4 @@ MOC 聚焦**概念與大方向**，經得起時間、可在不同模型世代重
 - [ ] 5. 用戶 Checkpoint：看 v0，決定是否迭代 / 手動改 / 直接停
 - [ ] 6. Reviewer/Fixer 迴圈（每輪 review 都給用戶過目）
 - [ ] 7. 與用戶確認原筆記處置方式（A/B/C）
-- [ ] 8. 若選 B，更新 master-index
 ```

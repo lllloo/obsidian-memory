@@ -1,7 +1,7 @@
 ---
 title: Master Index
 created: 2026-04-15
-updated: 2026-04-22
+updated: 2026-04-23
 tags:
   - index
 ---
@@ -12,12 +12,12 @@ tags:
 ```
 content/
 ├── Inbox/         — 待消化暫存（理想為空，消化完刪除）
-│   ├── YouTube/   — 35 篇影片摘要，4 個頻道
+│   ├── YouTube/   — 影片摘要，依頻道分組
 │   │   ├── AIJasonZ/              — Claude 設計工作流、Skills、Agent 記憶體管理
 │   │   ├── AILABS-393/            — Claude Code 進階技巧、OpenClaw、RAG
 │   │   ├── Chase-H-AI/            — Claude Code 實戰、RAG、Obsidian 整合
 │   │   └── daveebbelaar/          — Python、LLM Evals、API 整合
-│   └── Clippings/ — 網頁剪貼（2 篇）
+│   └── Clippings/ — 網頁剪貼
 ├── Cards/         — 未歸屬的完整概念 Cards（工作區）
 └── Topics/        — 已歸檔主題，3 個子目錄
     ├── Claude-Code/   — Skills、Agent Packages、Hooks、GAN Harness
@@ -27,14 +27,14 @@ content/
 
 ## Tag 查詢指南
 
-| 主題 | Tags | 篇數 |
+| 主題 | Tags | 位置 |
 |------|------|------|
-| Claude Code 實作 | `claude-code` | 29 |
-| RAG / 知識庫 | `rag` | 2 |
-| MCP | `mcp` | 1 |
-| 其他 | `memory` `design` | 1 / 3 |
-| Obsidian 操作 | `obsidian` `cli` | Topics/ + Cards/ |
-| 前端 / CSS | `css` `flexbox` | Cards/ |
+| Claude Code 實作 | `claude-code` | `Topics/Claude-Code/` + `Inbox/YouTube/` |
+| RAG / 知識庫 | `rag` | `Inbox/YouTube/daveebbelaar/` |
+| MCP | `mcp` | `Topics/前端設計/` |
+| Obsidian 操作 | `obsidian` `cli` | `Topics/Obsidian/` + `Cards/` |
+| 前端 / 設計 | `design` `css` `flexbox` | `Topics/前端設計/` + `Cards/` |
+| 記憶系統 | `memory` | `Cards/` |
 
 ## 查詢策略
 

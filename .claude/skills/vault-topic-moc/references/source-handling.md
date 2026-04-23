@@ -26,8 +26,7 @@ MOC 建好後，原筆記有三種處置選項。**執行前必須先問用戶**
 1. MOC 文內移除指向原筆記的 wikilink，改為外部 URL（YouTube、GitHub、官方 docs 等）
 2. MOC 末尾的「來源」章節列原始外部 URL
 3. `git rm <原筆記路徑>`（保留 git 歷史）
-4. 更新 `content/master-index.md` 的篇數統計（例：`Inbox/YouTube/ — N 篇影片摘要`）
-5. 若 Topics/ 有 index.md，更新子目錄清單
+4. 若 Topics/ 有 index.md，更新子目錄清單
 
 **優點**：
 - MOC 自足，vault 精簡
@@ -81,24 +80,9 @@ MOC 建好後，原筆記有三種處置選項。**執行前必須先問用戶**
 - [ ] 列出要刪的檔案給用戶過目
 - [ ] 用 `git rm`（非 `rm`）保留歷史
 
-## master-index 更新範本
-
-刪除後對 `content/master-index.md` 的更新：
-
-統計剩餘篇數：用 `Glob "content/Inbox/YouTube/*/*.md"` 取結果後扣除 `01.index.md`（每頻道 1 個），或用 Grep/Glob 結果算 count。
-
-更新 line 範例：
-```
-前：│   ├── YouTube/   — 35 篇影片摘要，4 個頻道
-後：│   ├── YouTube/   — 28 篇影片摘要，4 個頻道
-```
-
-若為跨主題整理（從 `Cards/`、`Topics/` 等），依實際樹狀結構調整。
-
 ## 常見錯誤
 
 - 自動幫用戶決定選項（必問）
 - 用 `rm` 而不是 `git rm`（失去歷史）
-- 刪了原筆記忘記更新 master-index
 - wikilink 沒先移除就刪原筆記（造成 dead link）
 - 沒確認 MOC 定稿就開始刪（發現 MOC 有漏需要回填時，原筆記已消失）

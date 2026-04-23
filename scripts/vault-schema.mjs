@@ -1,3 +1,15 @@
+/**
+ * Vault Frontmatter Schema — 真實來源
+ *
+ * 此檔為 vault 筆記 frontmatter 的機器驗證真實來源。
+ * 新增／修改欄位、改順序、改必填、改型別皆在此修改。
+ *
+ * content/CLAUDE.md 的「欄位說明」表格只記人類語意（作用、出現情境），
+ * 不複述欄位清單或順序。兩者分工：schema 管機械，CLAUDE.md 管語意。
+ *
+ * /vault-check 的兩段（scripts/vault-check.mjs 硬規則自動修 + vault-auditor
+ * 語意稽核）皆讀取此檔。
+ */
 import { z } from "zod";
 
 export const FIELD_ORDER = [
@@ -17,7 +29,7 @@ export const REQUIRED_FIELDS = ["title", "created", "updated", "tags"];
 /** 規則 code → 中文標籤（人類報告用；JSON 輸出仍保留原 code）
  *
  * 只列 script 會自動修的硬規則。語意層（BROKEN_WIKILINK / SENSITIVE_DATA /
- * MISPLACED_NOTE / parse error / 缺 title-created-tags / tag 一致性）由
+ * parse error / 缺 title-created-tags / tag 一致性）由
  * vault-auditor subagent 處理，不在此 schema。
  */
 export const CODE_LABELS = {

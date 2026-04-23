@@ -51,138 +51,72 @@ npm run vault:fix                # 稽核並自動修正（/vault-check 內部�
 查詢 vault 知識時，先讀 [`content/master-index.md`](content/master-index.md) 確認資料夾與 tag 分布，再導航到對應位置。
 
 請遵循以下子模組的規範：
+
 - @content/CLAUDE.md
 
 ## Claude Code Agent 與指令
 
-此 repo 統一管理 Obsidian 相關的 Claude Code 設定，透過 symlink 掛載至全域，讓這些設定在任何專案目錄都能生效。
+此 repo 統一管理 Obsidian 相關的 Claude Code 設定。部分透過 symlink 掛載至全域（僅 `/ob` 相關），讓跨專案可用；其餘綁本 repo。
 
 依作用分組。「全域路徑」有值 = 需 symlink 掛全域（跨專案可用），`—` = 僅本 repo 生效。
 
 ### 1. 筆記操作（`/ob` 流程）
 
-使用者唯一入口。command 依語意把需求分派給寫入 agent 或唯讀查詢 agent。
+使用者唯一入口。`/ob <需求>` 或對話中自然提到「建立筆記」、「找筆記」，主 agent 依語意分派：
 
-| 檔案 | 類型 | 全域路徑 | 用途 |
-|------|------|---------|------|
-| `.claude/commands/ob.md` | Command | `~/.claude/commands/ob.md` | `/ob` 入口，依語意分派 |
-| `.claude/agents/vault-writer.md` | Agent | `~/.claude/agents/vault-writer.md` | 寫入：建檔、append、改 frontmatter |
-| `.claude/agents/vault-query.md` | Agent | `~/.claude/agents/vault-query.md` | 唯讀查詢：三層搜尋回 JSON |
+- 建檔（「建立」、「記一下」、「寫一篇」）→ `vault-writer`
+- 查詢（「找」、「搜尋」、「有沒有」、「查」）→ `vault-query`
+
+| 檔案                             | 類型    | 全域路徑                           | 用途                               |
+| -------------------------------- | ------- | ---------------------------------- | ---------------------------------- |
+| `.claude/commands/ob.md`         | Command | `~/.claude/commands/ob.md`         | `/ob` 入口，依語意分派             |
+| `.claude/agents/vault-writer.md` | Agent   | `~/.claude/agents/vault-writer.md` | 寫入：建檔、append、改 frontmatter |
+| `.claude/agents/vault-query.md`  | Agent   | `~/.claude/agents/vault-query.md`  | 唯讀查詢：三層搜尋回 JSON          |
 
 ### 2. Vault 稽核修正（`/vault-check` 流程）
 
 兩段分工、零重疊：**Script 管格式（硬規則自動修），Subagent 管語意（建議不改檔）**。command 串接兩段。全程綁本 repo，不需掛全域。
 
-| 檔案 | 類型 | 全域路徑 | 用途 |
-|------|------|---------|------|
-| `.claude/commands/vault-check.md` | Command | — | `/vault-check` orchestrator：git 前置檢查 → 跑 script → 呼叫 subagent → 合併總結 |
-| `scripts/vault-check.mjs` | Node script | — | 硬規則自動修（檔名、frontmatter 結構、日期 normalize） |
-| `scripts/vault-schema.mjs` | Node module | — | Zod schema 與欄位順序／白名單定義，**硬規則變更改這裡** |
-| `.claude/agents/vault-auditor.md` | Agent | — | 語意層稽核（wikilink 斷鏈、敏感資料、misplaced、tag 一致性、缺 title/created/tags、parse error），唯讀只 flag 不改檔 |
+| 檔案                              | 類型        | 全域路徑 | 用途                                                                                                      |
+| --------------------------------- | ----------- | -------- | --------------------------------------------------------------------------------------------------------- |
+| `.claude/commands/vault-check.md` | Command     | —        | `/vault-check` orchestrator：git 前置檢查 → 跑 script → 呼叫 subagent → 合併總結                          |
+| `scripts/vault-check.mjs`         | Node script | —        | 硬規則自動修（檔名、frontmatter 結構、日期 normalize）                                                    |
+| `scripts/vault-schema.mjs`        | Node module | —        | Zod schema 與欄位順序／白名單定義，**硬規則變更改這裡**                                                   |
+| `.claude/agents/vault-auditor.md` | Agent       | —        | 語意層稽核（wikilink 斷鏈、敏感資料、tag 一致性、缺 title/created/tags、parse error），唯讀只 flag 不改檔 |
 
 ### 3. 批次筆記工作流（Skills）
 
 整批處理特定來源的筆記。手動在本 repo 內觸發，不掛全域。
 
-| 檔案 | 類型 | 全域路徑 | 用途 |
-|------|------|---------|------|
-| `.claude/skills/vault-youtube-sync/` | Skill | — | YouTube 頻道影片轉 Obsidian 筆記 |
-| `.claude/skills/vault-topic-moc/` | Skill | — | 多篇筆記整合為主題 MOC（generator/reviewer 迴圈） |
+| 檔案                                 | 類型  | 全域路徑 | 用途                                              |
+| ------------------------------------ | ----- | -------- | ------------------------------------------------- |
+| `.claude/skills/vault-youtube-sync/` | Skill | —        | YouTube 頻道影片轉 Obsidian 筆記                  |
+| `.claude/skills/vault-topic-moc/`    | Skill | —        | 多篇筆記整合為主題 MOC（generator/reviewer 迴圈） |
 
 ### 4. 建議安裝的第三方 Skills（非本 repo 管理，需另行安裝至 `~/.claude/skills/`）
 
 以下 skill 與 vault 工作流深度整合，`/ob` 等流程會依賴它們，強烈建議安裝至全域：
 
-| Skill | 服務於 | 用途 |
-|-------|-------|------|
-| `obsidian-cli` | 筆記操作 | 透過 Obsidian CLI 讀寫 vault、搜尋筆記、操作 properties/tasks |
-| `obsidian-markdown` | 筆記操作 | Obsidian Flavored Markdown 語法（wikilinks、callouts、frontmatter） |
-| `obsidian-bases` | 筆記操作 | `.base` 檔案（Obsidian Bases）讀寫、views、filters、formulas |
-| `defuddle` | 批次工作流 | 網頁轉 clean markdown，`vault-youtube-sync` 與 `Clippings/` 流程皆使用 |
+| Skill               | 服務於     | 用途                                                                   |
+| ------------------- | ---------- | ---------------------------------------------------------------------- |
+| `obsidian-cli`      | 筆記操作   | 透過 Obsidian CLI 讀寫 vault、搜尋筆記、操作 properties/tasks          |
+| `obsidian-markdown` | 筆記操作   | Obsidian Flavored Markdown 語法（wikilinks、callouts、frontmatter）    |
+| `obsidian-bases`    | 筆記操作   | `.base` 檔案（Obsidian Bases）讀寫、views、filters、formulas           |
+| `defuddle`          | 批次工作流 | 網頁轉 clean markdown，`vault-youtube-sync` 與 `Clippings/` 流程皆使用 |
 
 未安裝時 `/ob` 仍可退回用 Read/Write 操作，但缺少 CLI / Bases / 網頁抓取的最佳路徑。
 
-**建立 symlink（Windows，需開啟 Developer Mode 或以管理員執行）：**
+### Symlink 安裝
 
-```powershell
-# 在 repo 根目錄執行
-New-Item -ItemType SymbolicLink -Path "$env:USERPROFILE\.claude\agents\vault-writer.md" -Target "$PWD\.claude\agents\vault-writer.md"
-New-Item -ItemType SymbolicLink -Path "$env:USERPROFILE\.claude\agents\vault-query.md" -Target "$PWD\.claude\agents\vault-query.md"
-New-Item -ItemType SymbolicLink -Path "$env:USERPROFILE\.claude\commands\ob.md" -Target "$PWD\.claude\commands\ob.md"
-```
-
-**建立 symlink（Linux / macOS）：**
-
-```bash
-# 在 repo 根目錄執行
-mkdir -p ~/.claude/agents ~/.claude/commands
-ln -sf "$PWD/.claude/agents/vault-writer.md" ~/.claude/agents/vault-writer.md
-ln -sf "$PWD/.claude/agents/vault-query.md" ~/.claude/agents/vault-query.md
-ln -sf "$PWD/.claude/commands/ob.md" ~/.claude/commands/ob.md
-```
-
-觸發方式：
-- `/ob <需求>` → 使用者唯一入口。command 依語意分派：
-  - 建檔（「建立」、「記一下」、「寫一篇」）→ `vault-writer` agent
-  - 查詢（「找」、「搜尋」、「有沒有」、「查」）→ `vault-query` agent
-- 對話中自然提到「建立筆記」、「找筆記」→ 主 agent 依上述規則分派（效果等同 `/ob`）
-- 技術/知識性問題 → 依全域 `~/.claude/CLAUDE.md` 的 Obsidian 段規則，自動並行呼叫 `vault-query` + WebSearch
-
-## Vault 稽核工作流
-
-`/vault-check` 分兩段，依「能不能 deterministic 自動修」劃分職責，兩邊**零重疊**。
-
-### 第一段：Script 管格式（`scripts/vault-check.mjs`）
-
-只處理 100% 可修、零誤判的硬規則：
-
-- `FILENAME_HAS_SPACE`（檔名含空格 → rename，壓縮連續 `-`、trim 頭尾 `-`）
-- `MISSING_REQUIRED_FIELD`（僅 `updated` 缺失 → 補今日）
-- `UNKNOWN_FIELD` / `EMPTY_OPTIONAL_FIELD`（白名單外欄位 / 選填空值 → 刪除）
-- `FIELD_ORDER`（欄位順序 → 重排）
-- `INVALID_VALUE`（僅 `created` / `updated` / `published` 日期格式可推斷時 → normalize 為 `YYYY-MM-DD`，如 `2026/04/01`、`2026.04.01`、`2026-4-1`）
-
-不在這層處理的，script 直接跳過，**不報 warning** — 由第二段接手。
-
-### 第二段：Subagent 管語意（`.claude/agents/vault-auditor.md`）
-
-唯讀，輸出結構化 JSON 給主 agent 整理，**只 flag 不改檔**：
-
-- 缺 `title` / `created` / `tags` → 讀內容建議合理值
-- frontmatter parse error（YAML 壞掉）→ 指出哪行、建議怎麼救
-- `BROKEN_WIKILINK`（正文與 `parent` 的 wikilink 斷鏈，Quartz `shortest` 語義）→ 找最相似的現有檔名做 suggestion
-- `SENSITIVE_DATA`（regex 已知 + 語意敏感資料）→ API key / token / private key + 自然語言密碼 / 個資 / 內部資訊
-- `MISPLACED_NOTE`（依三層成熟度 Inbox → Cards → Topics 判斷）→ 含搬移理由
-- tag 一致性（`claude-code` vs `claudeCode` vs `claude_code`）→ 建議標準化值
-
-### 串接
-
-command 流程：git 前置檢查 → `npm run vault:fix`（script）→ 呼叫 vault-auditor subagent → 合併總結。**不自動 commit**，變更留 worktree 交用戶審核。
-
-### 規則變更指引
-
-- **硬規則改 `scripts/vault-schema.mjs`** 的 Zod schema（`FIELD_ORDER` 常數 + `frontmatterSchema` 物件）
-- **語意規則改 `.claude/agents/vault-auditor.md`**（subagent prompt）
-- 不要在 command 或別處另寫規則
-
-## Vault 搜尋方式
-
-搜尋 vault 一律用 `Grep` + `Glob content/**/*<關鍵字>*.md`，不要呼叫 Obsidian CLI 的 `search:context`（慢約 9 倍且覆蓋率較低）。
+把 `/ob` 相關設定掛到 `~/.claude/` 讓跨專案可用。Windows / macOS / Linux 指令見 [README.md](README.md) 的「全域掛載」段。
 
 ## Vault 作為 Claude Code 資料來源
 
 Vault 同時作為 Claude Code 的優質參考資料來源，與 WebSearch 互補並行：
 
 - **協議**：自動並行查詢流程（觸發條件、綜合原則、引用格式）寫在全域 `~/.claude/CLAUDE.md` 的 `## Obsidian` 段，供主 agent 每次對話載入
+- **觸發**：技術/知識性提問時，依全域 CLAUDE.md 規則自動並行呼叫 `vault-query` + WebSearch，綜合雙來源答覆
+- **搜尋工具**：搜 vault 一律用 `Grep` + `Glob content/**/*<關鍵字>*.md`，不要呼叫 Obsidian CLI 的 `search:context`（慢約 9 倍且覆蓋率較低）
 - **路徑解析**：`vault-query` 與 `vault-writer` 皆先動態解析本機 vault 根目錄。優先順序：`$OBSIDIAN_VAULT_ROOT`（建議在 `~/.claude/settings.local.json` 的 `env` 注入，跨機器獨立）→ `<cwd>/content` → Git 根 + `/content` → 舊候選清單
-- **查詢 agent**：`.claude/agents/vault-query.md`（Read/Glob/Grep + 僅限唯讀用途的 Bash），三層搜尋 master-index → tag → 正文 Grep
 - **path 契約**：`vault-query` 對外回傳的 `path` 一律正規化為 repo-relative 的 `content/...`
-- **手動查詢**：`/ob 找 <主題>` 由 command 直接分派 `vault-query`，不做 WebSearch
-- **自動觸發**：技術/知識性提問時，依全域 CLAUDE.md 規則自動並行呼叫 vault-query + WebSearch，綜合雙來源答覆
-- **唯讀約束**：vault-query agent 不具 Write/Edit 工具；若需 Bash 也僅限 path discovery 與 grep/cat/find 等唯讀命令；建檔一律由使用者用 `/ob` 手動觸發
-
-## 文件同步規則
-
-**修改 `CLAUDE.md` 的 Claude Code 設定清單、symlink 指令、觸發方式、或 vault 協議時，必須同步更新 `README.md` 對應區塊**。兩者面向不同受眾（CLAUDE.md 給 Claude Code、README.md 給使用者），但資訊需一致。新增 agent / command / skill 時尤其要記得同步。
-
-repo 根目錄的 `AGENTS.md` 是 `CLAUDE.md` 的 symlink（給非 Claude Code 的其他 agent 工具讀），改動會自動同步，不需手動複製。
+- **唯讀約束**：`vault-query` agent 不具 Write/Edit 工具；若需 Bash 也僅限 path discovery 與 grep/cat/find 等唯讀命令；建檔一律由使用者用 `/ob` 手動觸發
