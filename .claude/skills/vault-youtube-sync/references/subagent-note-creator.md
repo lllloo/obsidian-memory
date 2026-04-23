@@ -74,17 +74,17 @@ print(m.group(1)[:10] if m else '')
   - 去掉日期（`-2026年4月` 等）
   - 不超過 30 字元
   - 不可含 `?:;"'` 等特殊字元
-- frontmatter 格式：
+- frontmatter 格式（欄位順序須與 `scripts/vault-schema.mjs` 的 `FIELD_ORDER` 一致）：
   ```
   ---
   title: <影片標題的繁體中文翻譯>（技術名詞與品牌名保留英文）
-  tags:
-    - youtube
   created: <今日 YYYY-MM-DD>
   updated: <今日 YYYY-MM-DD>
-  published: <影片上傳日期 YYYY-MM-DD>
   source: <youtube url>
+  published: <影片上傳日期 YYYY-MM-DD>
   parent: "[[01.index]]"
+  tags:
+    - youtube
   ---
   ```
 - 不使用 `#` 標題 heading（Quartz 從 frontmatter 自動產生）
