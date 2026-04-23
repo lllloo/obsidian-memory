@@ -1,12 +1,12 @@
 ---
 title: 五個強化 Claude Code 的開源專案（2026 年 3 月）
-tags:
-  - youtube
 created: 2026-04-15
 updated: 2026-04-15
-published: 2026-03-28
 source: https://www.youtube.com/watch?v=6SnFH43qPAw
+published: 2026-03-28
 parent: "[[01.index]]"
+tags:
+  - youtube
 ---
 
 ## AutoResearch（Karpathy）

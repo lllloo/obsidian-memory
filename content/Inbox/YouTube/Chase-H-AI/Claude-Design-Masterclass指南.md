@@ -1,12 +1,12 @@
 ---
 title: Claude Design Masterclass 深度指南
-tags:
-  - youtube
 created: 2026-04-20
 updated: 2026-04-20
-published: 2026-04-19
 source: https://www.youtube.com/watch?v=iJRq1kLLRmY
+published: 2026-04-19
 parent: "[[01.index]]"
+tags:
+  - youtube
 ---
 
 ## 核心定位

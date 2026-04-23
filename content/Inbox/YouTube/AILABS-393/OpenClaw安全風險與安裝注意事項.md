@@ -1,12 +1,12 @@
 ---
 title: 安裝 OpenClaw 前必須了解的安全風險
-tags:
-  - youtube
 created: 2026-04-15
 updated: 2026-04-15
-published: 2026-02-04
 source: https://www.youtube.com/watch?v=M3P0hQMQtq0
+published: 2026-02-04
 parent: "[[01.index]]"
+tags:
+  - youtube
 ---
 
 ## OpenClaw 是什麼

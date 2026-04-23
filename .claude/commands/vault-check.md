@@ -6,18 +6,16 @@ $ARGUMENTS
 
 ### 1. 前置檢查
 
-執行 `git status --porcelain`。若有任何涉及 `content/` 的變更（含 untracked），詢問用戶：
+執行 `git status --porcelain`。若有任何涉及 `content/` 的變更（含 untracked），**直接中止**並印出：
 
 ```
-偵測到 content/ 變更：
-<git status --porcelain 輸出>
+偵測到 content/ 變更，已中止以避免 diff 混雜：
+<git status --porcelain 內 content/ 相關行>
 
-  1. 自動 git stash（含 untracked），結束後提示手動 pop
-  2. 繼續（diff 會混雜，不建議）
-  3. 中止
+請先 commit 或 stash 後再跑 /vault-check。
 ```
 
-選 1 → `git stash push -u -m "vault-check auto-stash" -- content/`（僅 stash `content/` 範圍，避免牽動 `quartz/` / `scripts/` 的未追蹤檔），結束後**不自動 pop**（避免與未審核修正衝突），在總結提示用戶手動 `git stash pop`。
+工作區乾淨（無 `content/` 變更）才進入下一步。
 
 ### 2. 稽核與修正
 
@@ -32,6 +30,7 @@ npm run vault:fix
 - 掃描 `content/**/*.md`（排除 `.obsidian/`、`CLAUDE.md`、`index.md`、`master-index.md`）
 - 用 Zod schema 驗證 frontmatter（欄位、順序、必填、白名單、空值）
 - 檢查檔名空格
+- 掃 wikilink 斷鏈（正文與 `parent`）與敏感資料（API key / token / private key，code fence 內忽略）
 - 對可自動修項目直接修正（rename、補 `updated`、重排欄位、刪白名單外欄位、刪選填空值）
 - 無法自動修的印在 "無法自動修" 區塊
 
@@ -66,4 +65,5 @@ npm run vault:fix
 - 不 push、不 merge（除非用戶明確要求）
 - 全程繁體中文、禁用 `$()`
 - **規則變更請改 `scripts/vault-schema.mjs` 的 Zod schema**，不要在此 command 或別處另寫規則
-- **`BROKEN_WIKILINK`（wikilink 斷鏈）、`SENSITIVE_DATA`（敏感資料）目前未實作**。若 `content/` 有此類問題，需手動處理或擴充 `scripts/vault-check.mjs`
+- `BROKEN_WIKILINK`（wikilink 斷鏈）、`SENSITIVE_DATA`（敏感資料）**會偵測但不會自動修**，命中時印在「無法自動修」區塊需手動處理
+- `MISPLACED_NOTE`（新筆記位置錯誤）**尚未實作**

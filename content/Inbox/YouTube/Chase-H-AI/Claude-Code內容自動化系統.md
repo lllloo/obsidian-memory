@@ -1,12 +1,12 @@
 ---
 title: Claude Code 內容自動化系統：一人團隊創造千萬次觀看
-tags:
-  - youtube
 created: 2026-04-15
 updated: 2026-04-15
-published: 2026-03-30
 source: https://www.youtube.com/watch?v=7q_rbT1a9dE
+published: 2026-03-30
 parent: "[[01.index]]"
+tags:
+  - youtube
 ---
 
 ## 內容創作四大階段

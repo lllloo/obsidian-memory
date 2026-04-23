@@ -1,12 +1,12 @@
 ---
 title: 用斷言式單元測試建構更好的 LLM 應用
-tags:
-  - youtube
 created: 2026-04-15
 updated: 2026-04-15
-published: 2024-11-27
 source: https://www.youtube.com/watch?v=bnvOk1fm0tw
+published: 2024-11-27
 parent: "[[01.index]]"
+tags:
+  - youtube
 ---
 
 Dave 分享了一個實用的 LLM 應用評估技巧：在程式碼中用 assertion 進行單元測試，快速驗證 LLM 的 structured output 是否符合預期。這個方法在 Black Friday 生產上線中實際救了他們一次。

@@ -1,13 +1,12 @@
 ---
 title: Claude Code 12 個你應該立即啟用的隱藏設定
+created: 2026-04-14
+updated: 2026-04-14
+source: https://www.youtube.com/watch?v=pDoBe4qbFPE
+parent: "[[01.index]]"
 tags:
   - youtube
   - claude-code
-created: 2026-04-14
-updated: 2026-04-14
-published: ""
-source: https://www.youtube.com/watch?v=pDoBe4qbFPE
-parent: "[[01.index]]"
 ---
 
 ## 對話保留期設定

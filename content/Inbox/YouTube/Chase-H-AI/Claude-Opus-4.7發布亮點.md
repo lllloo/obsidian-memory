@@ -1,12 +1,12 @@
 ---
 title: Claude 推出 Opus 4.7 差距拉開
-tags:
-  - youtube
 created: 2026-04-17
 updated: 2026-04-17
-published: 2026-04-16
 source: https://www.youtube.com/watch?v=gc297hx4F7o
+published: 2026-04-16
 parent: "[[01.index]]"
+tags:
+  - youtube
 ---
 
 ## 整體評價

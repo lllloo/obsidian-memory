@@ -70,7 +70,7 @@ npm run vault:fix            # 稽核並自動修正（/vault-check 內部呼叫
 | `scripts/vault-check.mjs` | Node script | — | 掃描 + 自動修正（可獨立跑 `npm run vault:check` / `vault:fix`） |
 | `scripts/vault-schema.mjs` | Node module | — | Zod schema 定義（規則變更改這裡） |
 
-修正範圍：欄位順序、白名單外欄位／空值、缺 `updated`、檔名空格。日期格式錯、缺必填欄位需手動修；wikilink 斷鏈 / 敏感資料掃描尚未實作。
+自動修：欄位順序、白名單外欄位／空值、缺 `updated`、檔名空格、可推斷的日期格式變體（`2026/04/01` → `2026-04-01`）。偵測但需手動處理：無法推斷的日期值、URL 格式錯、缺 `title` / `created` / `tags`、wikilink 斷鏈、敏感資料（API key / token / private key）。尚未實作：`MISPLACED_NOTE`（新筆記位置錯誤）。
 
 #### 3. 批次筆記工作流（Skills）
 

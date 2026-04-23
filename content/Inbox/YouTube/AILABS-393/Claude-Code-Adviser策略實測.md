@@ -1,12 +1,12 @@
 ---
 title: 這個重大更新改變了我使用 Claude Code 的方式
-tags:
-  - youtube
 created: 2026-04-15
 updated: 2026-04-15
-published: 2026-04-14
 source: https://www.youtube.com/watch?v=sncxStbRSwI
+published: 2026-04-14
 parent: "[[01.index]]"
+tags:
+  - youtube
 ---
 
 ## Adviser 策略概念

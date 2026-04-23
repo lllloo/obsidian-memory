@@ -137,11 +137,14 @@ ln -sf "$PWD/.claude/commands/ob.md" ~/.claude/commands/ob.md
   - `MISSING_REQUIRED_FIELD`（僅 `updated` 缺失 → 補今日）
   - `UNKNOWN_FIELD` / `EMPTY_OPTIONAL_FIELD`（白名單外欄位 / 選填空值 → 刪除）
   - `FIELD_ORDER`（欄位順序 → 重排）
-- 無法自動修（需手動）：
-  - `INVALID_VALUE`（非 `YYYY-MM-DD` 日期、URL 格式錯、`parent` 非 wikilink 格式等）
+  - `INVALID_VALUE`（僅 `created` / `updated` / `published` 日期格式可推斷時 → normalize 為 `YYYY-MM-DD`，如 `2026/04/01`、`2026.04.01`、`2026-4-1`）
+- 偵測但不自動修（需手動）：
+  - `INVALID_VALUE`（非 `YYYY-MM-DD` 日期、URL 格式錯、`parent` 非 wikilink 格式等；訊息會帶上實際值方便定位）
   - `MISSING_REQUIRED_FIELD`（`title` / `created` / `tags` 缺失）
   - `FRONTMATTER_PARSE_ERROR`（YAML 解析失敗）
-- 尚未實作：`BROKEN_WIKILINK`（wikilink 斷鏈）、`SENSITIVE_DATA`（敏感資料）、`MISPLACED_NOTE`（新筆記位置錯誤）— 規則由用戶自審
+  - `BROKEN_WIKILINK`（正文與 `parent` 的 wikilink 斷鏈；Quartz `shortest` 語義，code fence 內忽略）
+  - `SENSITIVE_DATA`（API key / token / private key 等 high-precision regex；code fence 內忽略）
+- 尚未實作：`MISPLACED_NOTE`（新筆記位置錯誤）— 規則由用戶自審
 - command 不自動 commit，變更留 worktree 交用戶審核
 
 **規則變更請改 `scripts/vault-schema.mjs` 的 Zod schema**（`FIELD_ORDER` 常數 + `frontmatterSchema` 物件），不要另寫規則。

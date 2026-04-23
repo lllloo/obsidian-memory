@@ -1,12 +1,12 @@
 ---
 title: OpenAI 剛改變了一切：Responses API 完整介紹
-tags:
-  - youtube
 created: 2026-04-15
 updated: 2026-04-15
-published: 2025-03-13
 source: https://www.youtube.com/watch?v=0pGxoubWI6s
+published: 2025-03-13
 parent: "[[01.index]]"
+tags:
+  - youtube
 ---
 
 ## 開發者必知的 7 個重點

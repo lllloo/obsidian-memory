@@ -1,8 +1,8 @@
 ---
 title: Claude Code Best Practice — Threads Carousel Cards
-source: https://mukiwu.github.io/claude-code-tips/claude-code-best-practice-cards.html
 created: 2026-04-20
 updated: 2026-04-21
+source: https://mukiwu.github.io/claude-code-tips/claude-code-best-practice-cards.html
 tags:
   - clippings
   - claude-code

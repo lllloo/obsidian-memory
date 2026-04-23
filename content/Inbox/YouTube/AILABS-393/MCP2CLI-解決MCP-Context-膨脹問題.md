@@ -1,13 +1,12 @@
 ---
 title: MCP2CLI — 用 CLI 工具解決 MCP Context 膨脹問題
+created: 2026-04-14
+updated: 2026-04-14
+source: https://www.youtube.com/watch?v=LqN_ItMqovA
+parent: "[[01.index]]"
 tags:
   - youtube
   - claude-code
-created: 2026-04-14
-updated: 2026-04-14
-published: ""
-source: https://www.youtube.com/watch?v=LqN_ItMqovA
-parent: "[[01.index]]"
 ---
 
 ## MCP 的核心問題

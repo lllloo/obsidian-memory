@@ -1,12 +1,12 @@
 ---
 title: 九個 Claude Code 效率技巧
-tags:
-  - youtube
 created: 2026-04-15
 updated: 2026-04-15
-published: 2026-03-27
 source: https://www.youtube.com/watch?v=XkSBO-CZDFs
+published: 2026-03-27
 parent: "[[01.index]]"
+tags:
+  - youtube
 ---
 
 ## 技巧一：CLI 取代 MCP

@@ -1,12 +1,12 @@
 ---
 title: Claude Design 結合 Seedance 2.0 打造動畫網站
-tags:
-  - youtube
 created: 2026-04-22
 updated: 2026-04-22
-published: 2026-04-20
 source: https://www.youtube.com/watch?v=7uW1SKmx-Ic
+published: 2026-04-20
 parent: "[[01.index]]"
+tags:
+  - youtube
 ---
 
 ## 整體工作流

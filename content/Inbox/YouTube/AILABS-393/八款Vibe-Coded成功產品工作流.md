@@ -1,16 +1,16 @@
 ---
 title: 八款 Vibe Coded 成功產品的共通工作流
+created: 2026-04-22
+updated: 2026-04-22
+source: https://www.youtube.com/watch?v=zNOunnM1jTs
+published: 2026-04-20
+parent: "[[01.index]]"
 tags:
   - youtube
   - ai-coding
   - vibe-coding
   - indie-hacker
   - product-building
-created: 2026-04-22
-updated: 2026-04-22
-published: 2026-04-20
-source: https://www.youtube.com/watch?v=zNOunnM1jTs
-parent: "[[01.index]]"
 ---
 
 ## 影片核心觀點

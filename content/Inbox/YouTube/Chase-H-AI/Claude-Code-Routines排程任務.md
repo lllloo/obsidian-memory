@@ -1,12 +1,12 @@
 ---
 title: /routines 徹底改變 Claude Code 排程任務的方式
-tags:
-  - youtube
 created: 2026-04-15
 updated: 2026-04-15
-published: 2026-04-14
 source: https://www.youtube.com/watch?v=Hd4Ck1BS4Kw
+published: 2026-04-14
 parent: "[[01.index]]"
+tags:
+  - youtube
 ---
 
 ## 什麼是 Routines

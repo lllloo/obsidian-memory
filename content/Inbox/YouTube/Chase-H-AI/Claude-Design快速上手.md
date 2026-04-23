@@ -1,12 +1,12 @@
 ---
 title: Claude Design 快速上手導覽
-tags:
-  - youtube
 created: 2026-04-20
 updated: 2026-04-20
-published: 2026-04-17
 source: https://www.youtube.com/watch?v=-tGH2tLwCEw
+published: 2026-04-17
 parent: "[[01.index]]"
+tags:
+  - youtube
 ---
 
 ## 核心定位

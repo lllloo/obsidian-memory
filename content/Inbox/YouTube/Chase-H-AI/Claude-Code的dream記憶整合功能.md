@@ -1,12 +1,12 @@
 ---
 title: Claude Code 隱藏的 /dream 功能大幅提升記憶管理
-tags:
-  - youtube
 created: 2026-04-15
 updated: 2026-04-15
-published: 2026-03-24
 source: https://www.youtube.com/watch?v=E-1Lmyv6Cjo
+published: 2026-03-24
 parent: "[[01.index]]"
+tags:
+  - youtube
 ---
 
 ## Claude Code 的記憶系統

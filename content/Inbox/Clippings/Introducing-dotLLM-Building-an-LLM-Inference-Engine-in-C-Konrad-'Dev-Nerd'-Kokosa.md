@@ -1,13 +1,11 @@
 ---
-title: "Introducing dotLLM - Building an LLM Inference Engine in C# | Konrad 'Dev Nerd' Kokosa"
-source: "https://kokosa.dev/blog/2026/dotllm/?fbclid=IwY2xjawRLLvdleHRuA2FlbQIxMQBzcnRjBmFwcF9pZBAyMjIwMzkxNzg4MjAwODkyAAEeXCuZQBxcUU_wur9DtqEMStHUx-nBlz8IrTn8Q6deHI7gVtHG_h8_mLnCEbg_aem_SKphMi8AQQUVaYE82NEURg"
-author:
-  - "[[Konrad Kokosa]]"
-published: 2026-04-14
+title: Introducing dotLLM - Building an LLM Inference Engine in C# | Konrad 'Dev Nerd' Kokosa
 created: 2026-04-14
-description: "How I built a ground-up LLM inference engine in .NET 10, and what I learned about AI-assisted (not vibe-coded) development along the way."
+updated: 2026-04-23
+source: https://kokosa.dev/blog/2026/dotllm/?fbclid=IwY2xjawRLLvdleHRuA2FlbQIxMQBzcnRjBmFwcF9pZBAyMjIwMzkxNzg4MjAwODkyAAEeXCuZQBxcUU_wur9DtqEMStHUx-nBlz8IrTn8Q6deHI7gVtHG_h8_mLnCEbg_aem_SKphMi8AQQUVaYE82NEURg
+published: 2026-04-14
 tags:
-  - "clippings"
+  - clippings
 ---
 ![](https://kokosa.dev/assets/img/dotllm-hero.gif)
 

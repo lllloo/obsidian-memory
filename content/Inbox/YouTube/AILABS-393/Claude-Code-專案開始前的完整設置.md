@@ -1,13 +1,13 @@
 ---
 title: Claude Code 專案開始前的完整設置指南
+created: 2026-04-14
+updated: 2026-04-14
+source: https://www.youtube.com/watch?v=ywIhw15za9Y
+published: 2026-04-10
+parent: "[[01.index]]"
 tags:
   - youtube
   - claude-code
-created: 2026-04-14
-updated: 2026-04-14
-published: 2026-04-10
-source: https://www.youtube.com/watch?v=ywIhw15za9Y
-parent: "[[01.index]]"
 ---
 
 ## 規劃需求（Plan Requirements）

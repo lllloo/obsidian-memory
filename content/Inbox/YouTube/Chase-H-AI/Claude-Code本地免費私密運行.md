@@ -1,12 +1,12 @@
 ---
 title: Claude Code 本地免費私密運行
-tags:
-  - youtube
 created: 2026-04-15
 updated: 2026-04-15
-published: 2026-03-18
 source: https://www.youtube.com/watch?v=GHGGkIMYDxo
+published: 2026-03-18
 parent: "[[01.index]]"
+tags:
+  - youtube
 ---
 
 ## 概念

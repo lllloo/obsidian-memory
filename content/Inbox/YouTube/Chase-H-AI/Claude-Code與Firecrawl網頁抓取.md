@@ -1,12 +1,12 @@
 ---
 title: Claude Code 結合 Firecrawl 實現無限制網頁抓取
-tags:
-  - youtube
 created: 2026-04-15
 updated: 2026-04-15
-published: 2026-03-29
 source: https://www.youtube.com/watch?v=phuyYL0L7AA
+published: 2026-03-29
 parent: "[[01.index]]"
+tags:
+  - youtube
 ---
 
 ## 為何原生 web fetch 不夠用

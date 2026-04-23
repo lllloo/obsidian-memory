@@ -1,12 +1,12 @@
 ---
 title: OpenClaw 開發者實戰應用
-tags:
-  - youtube
 created: 2026-04-15
 updated: 2026-04-15
-published: 2026-02-22
 source: https://www.youtube.com/watch?v=hp7n45JqvIw
+published: 2026-02-22
 parent: "[[01.index]]"
+tags:
+  - youtube
 ---
 
 ## 依賴管理自動化

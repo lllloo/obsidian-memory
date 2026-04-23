@@ -1,16 +1,16 @@
 ---
 title: Self-Evolving Agent 完全解析
+created: 2026-04-22
+updated: 2026-04-22
+source: https://www.youtube.com/watch?v=2zhchG0r6iI
+published: 2026-04-21
+parent: "[[01.index]]"
 tags:
   - youtube
   - ai-agent
   - claude-code
   - memory-system
   - self-learning
-created: 2026-04-22
-updated: 2026-04-22
-published: 2026-04-21
-source: https://www.youtube.com/watch?v=2zhchG0r6iI
-parent: "[[01.index]]"
 ---
 
 ## 自我進化 Agent 的兩大分支

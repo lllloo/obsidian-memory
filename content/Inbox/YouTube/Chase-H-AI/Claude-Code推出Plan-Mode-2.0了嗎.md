@@ -1,13 +1,13 @@
 ---
 title: Claude Code 推出 Plan Mode 2.0 了嗎
+created: 2026-04-13
+updated: 2026-04-13
+source: https://www.youtube.com/watch?v=eEYbwJWVQtQ
+published: 2026-04-06
+parent: "[[01.index]]"
 tags:
   - youtube
   - claude-code
-created: 2026-04-13
-updated: 2026-04-13
-published: 2026-04-06
-source: https://www.youtube.com/watch?v=eEYbwJWVQtQ
-parent: "[[01.index]]"
 ---
 
 ## Ultra Plan 是什麼

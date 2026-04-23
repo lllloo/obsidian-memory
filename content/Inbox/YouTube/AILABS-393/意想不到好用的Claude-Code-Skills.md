@@ -1,15 +1,15 @@
 ---
 title: 意想不到好用的 Claude Code Skills 合集
+created: 2026-04-20
+updated: 2026-04-20
+source: https://www.youtube.com/watch?v=qQ5uObNKBOU
+published: 2026-04-17
+parent: "[[01.index]]"
 tags:
   - youtube
   - claude-code
   - claude-code-skills
   - agent-workflow
-created: 2026-04-20
-updated: 2026-04-20
-published: 2026-04-17
-source: https://www.youtube.com/watch?v=qQ5uObNKBOU
-parent: "[[01.index]]"
 ---
 
 影片介紹社群釋出的多個 Claude Code skill / plugin，它們第一眼看起來怪怪的，但實際用在多 session 並行、token 節省、品質評估等日常工作流中都意外有效。

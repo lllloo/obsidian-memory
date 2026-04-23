@@ -1,6 +1,7 @@
 import { describe, it } from "node:test";
 import assert from "node:assert/strict";
 import {
+  DATE_FIELDS,
   FIELD_ORDER,
   REQUIRED_FIELDS,
   SENSITIVE_PATTERNS,
@@ -11,6 +12,7 @@ import {
   scanSensitive,
   stripCodeForLinkScan,
   stripUnknownFields,
+  tryNormalizeDate,
   validateFieldOrder,
 } from "./vault-schema.mjs";
 
@@ -157,6 +159,50 @@ describe("REQUIRED_FIELDS / FIELD_ORDER 一致性", () => {
   });
 });
 
+describe("tryNormalizeDate", () => {
+  it("slash 分隔轉 dash", () => {
+    assert.equal(tryNormalizeDate("2026/04/01"), "2026-04-01");
+  });
+
+  it("dot 分隔轉 dash", () => {
+    assert.equal(tryNormalizeDate("2026.04.01"), "2026-04-01");
+  });
+
+  it("月/日未零填充也能 normalize", () => {
+    assert.equal(tryNormalizeDate("2026/4/1"), "2026-04-01");
+    assert.equal(tryNormalizeDate("2026-4-1"), "2026-04-01");
+  });
+
+  it("已是合法 YYYY-MM-DD 回 null（不需修）", () => {
+    assert.equal(tryNormalizeDate("2026-04-01"), null);
+  });
+
+  it("非字串回 null", () => {
+    assert.equal(tryNormalizeDate(null), null);
+    assert.equal(tryNormalizeDate(undefined), null);
+    assert.equal(tryNormalizeDate(20260401), null);
+    assert.equal(tryNormalizeDate(new Date()), null);
+  });
+
+  it("非法日期（月份超出、日期超出）回 null", () => {
+    assert.equal(tryNormalizeDate("2026/13/01"), null);
+    assert.equal(tryNormalizeDate("2026/02/30"), null);
+    assert.equal(tryNormalizeDate("2026/00/01"), null);
+  });
+
+  it("英文月份、`YYYY年M月D日`、`MM/DD/YYYY` 不支援", () => {
+    assert.equal(tryNormalizeDate("Apr 1, 2026"), null);
+    assert.equal(tryNormalizeDate("2026年4月1日"), null);
+    assert.equal(tryNormalizeDate("04/01/2026"), null);
+  });
+
+  it("DATE_FIELDS 涵蓋所有 date 欄位", () => {
+    assert.ok(DATE_FIELDS.has("created"));
+    assert.ok(DATE_FIELDS.has("updated"));
+    assert.ok(DATE_FIELDS.has("published"));
+  });
+});
+
 describe("codeLabel", () => {
   it("已知 code 回中文", () => {
     assert.equal(codeLabel("FIELD_ORDER"), "欄位順序錯誤");
@@ -212,6 +258,25 @@ describe("scanSensitive", () => {
     const second = scanSensitive(text).length;
     assert.equal(first, second);
     assert.equal(SENSITIVE_PATTERNS.length > 0, true);
+  });
+
+  it("code fence 內的範例不誤報", () => {
+    const text =
+      "API key 長這樣：\n```\nsk-abcdefghij1234567890ABCD\n```\n結束";
+    const hits = scanSensitive(text);
+    assert.equal(hits.length, 0);
+  });
+
+  it("inline code 內的範例不誤報", () => {
+    const hits = scanSensitive("範例 `sk-abcdefghij1234567890ABCD` 僅作教學");
+    assert.equal(hits.length, 0);
+  });
+
+  it("code block 外的真命中仍報，行號正確", () => {
+    const text = "```\nfake\n```\n真實洩漏 sk-abcdefghij1234567890ABCD";
+    const hits = scanSensitive(text);
+    assert.equal(hits.length, 1);
+    assert.equal(hits[0].line, 4);
   });
 });
 

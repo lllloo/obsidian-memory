@@ -1,12 +1,12 @@
 ---
 title: Sora 2 API 使用指南
-tags:
-  - youtube
 created: 2026-04-15
 updated: 2026-04-15
-published: 2025-10-07
 source: https://www.youtube.com/watch?v=YWvN7EvVQQU
+published: 2025-10-07
 parent: "[[01.index]]"
+tags:
+  - youtube
 ---
 
 ## 基本影片生成

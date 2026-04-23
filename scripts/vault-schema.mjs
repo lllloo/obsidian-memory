@@ -25,7 +25,6 @@ export const CODE_LABELS = {
   FIELD_ORDER: "欄位順序錯誤",
   BROKEN_WIKILINK: "Wikilink 斷鏈",
   SENSITIVE_DATA: "敏感資料",
-  // 尚未實作
   MISPLACED_NOTE: "位置錯誤",
 };
 
@@ -33,6 +32,41 @@ export const codeLabel = (code) => CODE_LABELS[code] ?? code;
 
 const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
 const WIKILINK_VALUE_RE = /^\[\[[^\]]+\]\]$/;
+
+/** YYYY[/.-]M[/.-]D（月/日可 1-2 位）— 接受 `/`、`.`、`-` 分隔 */
+const DATE_NORMALIZE_RE = /^(\d{4})[\/.\-](\d{1,2})[\/.\-](\d{1,2})$/;
+
+/**
+ * 嘗試把常見變體日期 normalize 為 `YYYY-MM-DD`。
+ * 支援：`YYYY/MM/DD`、`YYYY.MM.DD`、`YYYY-M-D` 等分隔/零填充變體。
+ * 不支援：英文月份、`DD/MM/YYYY` 類（兩端無法判別）、非字串。
+ * 回 null 表示無法安全推斷。
+ */
+export function tryNormalizeDate(value) {
+  if (typeof value !== "string") return null;
+  const m = DATE_NORMALIZE_RE.exec(value.trim());
+  if (!m) return null;
+  const [, y, mo, d] = m;
+  const monthNum = Number(mo);
+  const dayNum = Number(d);
+  const mm = String(monthNum).padStart(2, "0");
+  const dd = String(dayNum).padStart(2, "0");
+  const norm = `${y}-${mm}-${dd}`;
+  const date = new Date(`${norm}T00:00:00Z`);
+  if (
+    Number.isNaN(date.getTime()) ||
+    date.getUTCFullYear() !== Number(y) ||
+    date.getUTCMonth() !== monthNum - 1 ||
+    date.getUTCDate() !== dayNum
+  ) {
+    return null;
+  }
+  if (norm === value) return null;
+  return norm;
+}
+
+/** 接受 date normalize 的欄位白名單 */
+export const DATE_FIELDS = new Set(["created", "updated", "published"]);
 
 const dateString = z
   .string()
@@ -149,10 +183,12 @@ export const SENSITIVE_PATTERNS = [
 /**
  * 掃描文字內所有敏感資料命中。
  * 回傳 [{ name, match, line }]，line 從 1 起算。
+ * code fence 與 inline code 內容會先被空白化，避免講解範例誤報。
  */
 export function scanSensitive(text) {
   const hits = [];
-  const lines = text.split(/\r?\n/);
+  const scanText = stripCodeForLinkScan(text);
+  const lines = scanText.split(/\r?\n/);
   for (const { name, re } of SENSITIVE_PATTERNS) {
     for (let i = 0; i < lines.length; i++) {
       const line = lines[i];

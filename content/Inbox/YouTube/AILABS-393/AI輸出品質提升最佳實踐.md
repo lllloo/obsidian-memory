@@ -1,12 +1,12 @@
 ---
 title: AI 輸出品質提升最佳實踐
-tags:
-  - youtube
 created: 2026-04-15
 updated: 2026-04-15
-published: 2026-03-03
 source: https://www.youtube.com/watch?v=cop_G65D7PA
+published: 2026-03-03
 parent: "[[01.index]]"
+tags:
+  - youtube
 ---
 
 ## manifest.md 作為資料夾導航基礎

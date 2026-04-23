@@ -1,12 +1,12 @@
 ---
 title: OpenClaw Agents 強化工具集
-tags:
-  - youtube
 created: 2026-04-15
 updated: 2026-04-15
-published: 2026-03-07
 source: https://www.youtube.com/watch?v=JC53AcoFh-Q
+published: 2026-03-07
 parent: "[[01.index]]"
+tags:
+  - youtube
 ---
 
 ## 安全問題與 Clawsk 工具

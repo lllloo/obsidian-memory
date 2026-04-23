@@ -1,14 +1,14 @@
 ---
 title: 如何將 RAG 與即時 Web 搜尋結合（單頁、搜尋、允許網域）
+created: 2026-04-13
+updated: 2026-04-13
+source: https://www.youtube.com/watch?v=jqd6_bbjhS8
+published: 2026-04-13
+parent: "[[01.index]]"
 tags:
   - youtube
   - rag
   - ai-agent
-created: 2026-04-13
-updated: 2026-04-13
-published: 2026-04-13
-source: https://www.youtube.com/watch?v=jqd6_bbjhS8
-parent: "[[01.index]]"
 ---
 
 ## 使用情境

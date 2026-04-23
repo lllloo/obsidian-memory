@@ -19,6 +19,7 @@ const yamlEngine = {
 };
 const matterOptions = { engines: { yaml: yamlEngine } };
 import {
+  DATE_FIELDS,
   FIELD_ORDER,
   REQUIRED_FIELDS,
   WIKILINK_RE,
@@ -28,6 +29,7 @@ import {
   scanSensitive,
   stripCodeForLinkScan,
   stripUnknownFields,
+  tryNormalizeDate,
   validateFieldOrder,
 } from "./vault-schema.mjs";
 
@@ -90,6 +92,27 @@ async function buildFileIndex() {
   return index;
 }
 
+/** 以 Quartz shortest 語義比對：target 可含資料夾，只看最後一段 basename / stem */
+function wikilinkTargetExists(target, fileIndex) {
+  const last = target.split("/").pop();
+  const { name: stem } = parse(last);
+  return fileIndex.has(last) || fileIndex.has(stem);
+}
+
+/**
+ * 檢查 frontmatter `parent: "[[X]]"` 目標是否存在。
+ * 格式錯誤（不是 `[[...]]`）已由 schema 擋，這裡只處理「格式對但目標不存在」。
+ */
+function checkParentWikilink(data, fileIndex) {
+  const parent = data?.parent;
+  if (typeof parent !== "string") return null;
+  const m = /^\[\[([^\]]+)\]\]$/.exec(parent);
+  if (!m) return null;
+  const target = m[1].trim();
+  if (!target) return null;
+  return wikilinkTargetExists(target, fileIndex) ? null : target;
+}
+
 /**
  * 掃描正文的 wikilink 斷鏈。排除 code fence / inline code 內的 `[[X]]`。
  * target 可能含資料夾（`Cards/foo`），只比對最後一段（Quartz shortest 語義）。
@@ -105,9 +128,7 @@ function findBrokenWikilinks(raw, fileIndex) {
     while ((m = WIKILINK_RE.exec(line)) !== null) {
       const target = m[1]?.trim();
       if (!target) continue;
-      const last = target.split("/").pop();
-      const { name: stem } = parse(last);
-      if (!fileIndex.has(last) && !fileIndex.has(stem)) {
+      if (!wikilinkTargetExists(target, fileIndex)) {
         hits.push({ target, line: i + 1 });
       }
     }
@@ -194,22 +215,38 @@ function auditFile(absPath, fileIndex) {
         : missing
           ? "MISSING_REQUIRED_FIELD"
           : "INVALID_VALUE";
+      const actualValue = !unknown && !missing ? data[iss.path[0]] : undefined;
+      const normalizedDate =
+        code === "INVALID_VALUE" && DATE_FIELDS.has(field)
+          ? tryNormalizeDate(actualValue)
+          : null;
+      let autofix = false;
+      let fix;
+      let suffix = "";
+      if (unknown) {
+        autofix = true;
+        fix = { kind: "strip", keys: iss.keys };
+      } else if (missing && field === "updated") {
+        autofix = true;
+        fix = { kind: "fill", field: "updated", value: today };
+      } else if (normalizedDate) {
+        autofix = true;
+        fix = { kind: "fill", field, value: normalizedDate };
+        suffix = ` → 自動 normalize 為 ${normalizedDate}`;
+      }
+      const baseMessage = unknown
+        ? `白名單外欄位：${iss.keys.join(", ")}`
+        : missing
+          ? `缺必填欄位：${field}`
+          : `${field}: ${iss.message}（實際值：${JSON.stringify(actualValue)}）`;
       issues.push({
         code,
         severity: "error",
         file: relPath,
         field,
-        message: unknown
-          ? `白名單外欄位：${iss.keys.join(", ")}`
-          : missing
-            ? `缺必填欄位：${field}`
-            : `${field}: ${iss.message}`,
-        autofix: unknown || (missing && field === "updated"),
-        fix: unknown
-          ? { kind: "strip", keys: iss.keys }
-          : missing && field === "updated"
-            ? { kind: "fill", field: "updated", value: today }
-            : undefined,
+        message: baseMessage + suffix,
+        autofix,
+        fix,
       });
     }
   }
@@ -222,6 +259,16 @@ function auditFile(absPath, fileIndex) {
         severity: "error",
         file: relPath,
         message: `第 ${hit.line} 行 wikilink 目標不存在：[[${hit.target}]]`,
+        autofix: false,
+      });
+    }
+    const brokenParent = checkParentWikilink(data, fileIndex);
+    if (brokenParent) {
+      issues.push({
+        code: "BROKEN_WIKILINK",
+        severity: "error",
+        file: relPath,
+        message: `frontmatter parent 目標不存在：[[${brokenParent}]]`,
         autofix: false,
       });
     }

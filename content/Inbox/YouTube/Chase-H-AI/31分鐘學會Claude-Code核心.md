@@ -1,12 +1,12 @@
 ---
 title: 31 分鐘學會 Claude Code 核心概念
-tags:
-  - youtube
 created: 2026-04-15
 updated: 2026-04-15
-published: 2026-03-22
 source: https://www.youtube.com/watch?v=TwkdDcO4vWQ
+published: 2026-03-22
 parent: "[[01.index]]"
+tags:
+  - youtube
 ---
 
 ## 安裝與使用方式

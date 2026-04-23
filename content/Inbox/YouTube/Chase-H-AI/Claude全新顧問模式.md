@@ -1,13 +1,13 @@
 ---
 title: Claude 全新顧問模式：效果更好還更便宜
+created: 2026-04-13
+updated: 2026-04-13
+source: https://www.youtube.com/watch?v=hGYfsvlQ5Ok
+published: 2026-04-09
+parent: "[[01.index]]"
 tags:
   - youtube
   - claude-code
-created: 2026-04-13
-updated: 2026-04-13
-published: 2026-04-09
-source: https://www.youtube.com/watch?v=hGYfsvlQ5Ok
-parent: "[[01.index]]"
 ---
 
 ## 核心概念

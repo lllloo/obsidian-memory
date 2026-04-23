@@ -1,12 +1,12 @@
 ---
 title: CAG 取代 RAG：快速準確的知識庫方案
-tags:
-  - youtube
 created: 2026-04-15
 updated: 2026-04-15
-published: 2025-03-26
 source: https://www.youtube.com/watch?v=KHDMoQ2Sp2s
+published: 2025-03-26
 parent: "[[01.index]]"
+tags:
+  - youtube
 ---
 
 ## RAG vs CAG 比較

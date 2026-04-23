@@ -1,12 +1,12 @@
 ---
 title: Claude Code 終極工作流
-tags:
-  - youtube
 created: 2026-04-15
 updated: 2026-04-15
-published: 2025-07-24
 source: https://www.youtube.com/watch?v=UZb0if-7wGE
+published: 2025-07-24
 parent: "[[01.index]]"
+tags:
+  - youtube
 ---
 
 ## 初始設定

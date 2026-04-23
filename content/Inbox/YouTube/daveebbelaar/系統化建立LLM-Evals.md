@@ -1,12 +1,12 @@
 ---
 title: 系統化建立 LLM Evals
-tags:
-  - youtube
 created: 2026-04-15
 updated: 2026-04-15
-published: 2025-09-04
 source: https://www.youtube.com/watch?v=a3SMraZWNNs
+published: 2025-09-04
 parent: "[[01.index]]"
+tags:
+  - youtube
 ---
 
 ## 為什麼需要 Evals

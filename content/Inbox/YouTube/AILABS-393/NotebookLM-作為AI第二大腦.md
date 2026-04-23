@@ -1,12 +1,12 @@
 ---
 title: NotebookLM 作為 AI 第二大腦
-tags:
-  - youtube
 created: 2026-04-15
 updated: 2026-04-15
-published: 2026-02-13
 source: https://www.youtube.com/watch?v=eFCHwtufjJc
+published: 2026-02-13
 parent: "[[01.index]]"
+tags:
+  - youtube
 ---
 
 ## NotebookLM CLI 工具
