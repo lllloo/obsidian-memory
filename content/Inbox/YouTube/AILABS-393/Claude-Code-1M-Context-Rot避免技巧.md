@@ -1,12 +1,12 @@
 ---
 title: Anthropic 修復 1M Context Window 的問題
-tags:
-  - youtube
 created: 2026-04-23
 updated: 2026-04-23
-published: 2026-04-22
 source: https://www.youtube.com/watch?v=O1XLCh-uA_E
+published: 2026-04-22
 parent: "[[01.index]]"
+tags:
+  - youtube
 ---
 
 ## 核心觀念
