@@ -95,13 +95,13 @@ grep -rh "^source: https://www.youtube.com/watch" content/Inbox/YouTube/<頻道�
 ```markdown
 ---
 title: <頻道名>
-tags:
-  - youtube
-  - channel
 created: <今日 YYYY-MM-DD>
 updated: <今日 YYYY-MM-DD>
 source: <頻道 URL>
 last_sync_id: <步驟 1 清單中第一筆的 videoId>
+tags:
+  - youtube
+  - channel
 ---
 
 <頻道簡介（若有）>
