@@ -114,4 +114,4 @@ Vault 同時作為 Claude Code 的參考資料來源，與 WebSearch 互補並�
 
 - **協議**：觸發條件、綜合原則、引用格式寫在全域 `~/.claude/CLAUDE.md` 的 `## Obsidian` 段；技術/知識性提問會自動並行呼叫 `vault-query` + WebSearch
 - **搜尋工具**：搜 vault 一律用 `Grep` + `Glob content/**/*<關鍵字>*.md`，不要呼叫 Obsidian CLI 的 `search:context`（慢約 9 倍且覆蓋率較低）
-- **跨機器路徑**：各 agent 透過 `$OBSIDIAN_VAULT_ROOT` 或 git 根 + `/content` 動態解析 vault 根目錄；詳細 fallback 順序與 path 契約見各 agent 檔
+- **跨機器路徑**：各 agent 一律讀 `$OBSIDIAN_VAULT_ROOT`（建議在 `~/.claude/settings.local.json` 的 `env` 段注入絕對路徑）；未設或無效直接中止，不做猜測 fallback。path 契約詳見各 agent 檔

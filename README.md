@@ -15,7 +15,7 @@
 - [Obsidian](https://obsidian.md/) 桌面版
 - Obsidian CLI plugin（在 Obsidian 內安裝）
 - Node.js 22+（本地預覽用）
-- [Claude Code](https://claude.ai/code)（AI 筆記助手，選用）
+- [Claude Code](https://claude.ai/code)（AI 筆記助手，選用；啟用時必須設 `OBSIDIAN_VAULT_ROOT`，見下方 [Vault 路徑設定](#vault-路徑設定跨機器)）
 
 ## Vault 結構
 
@@ -80,7 +80,7 @@ ln -sf "$PWD/.claude/commands/ob.md" ~/.claude/commands/ob.md
 
 ### Vault 路徑設定（跨機器）
 
-`vault-query` / `vault-writer` 從其他 repo 被呼叫時需要知道 vault 位置。建議在**每台機器**的 `~/.claude/settings.local.json` 注入 `OBSIDIAN_VAULT_ROOT`（此檔不同步，機器各自維護）：
+`vault-writer` / `vault-query` / `vault-auditor` 一律從 `$OBSIDIAN_VAULT_ROOT` 解析 vault 位置。**必須**在每台機器的 `~/.claude/settings.local.json` 注入絕對路徑（此檔不同步，機器各自維護）：
 
 ```json
 {
@@ -90,7 +90,7 @@ ln -sf "$PWD/.claude/commands/ob.md" ~/.claude/commands/ob.md
 }
 ```
 
-未設定時 agent 會 fallback 到 `<cwd>/content` → Git 根 + `/content` → 舊候選清單。
+未設定或路徑無效時，agent 會直接中止並回報錯誤，不做猜測 fallback——避免寫到錯誤位置或回傳錯誤搜尋結果。設定後需重啟 Claude Code session 才會載入。
 
 ## Web Clipper 模板
 
