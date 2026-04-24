@@ -28,9 +28,10 @@ export const REQUIRED_FIELDS = ["title", "created", "updated", "tags"];
 
 /** 規則 code → 中文標籤（人類報告用；JSON 輸出仍保留原 code）
  *
- * 只列 script 會自動修的硬規則。語意層（BROKEN_WIKILINK / SENSITIVE_DATA /
- * parse error / 缺 title-created-tags / tag 一致性）由
- * vault-auditor subagent 處理，不在此 schema。
+ * 列 script 會自動修的硬規則，外加 SENSITIVE_DATA（script 做 high-precision
+ * 硬掃 + flag 不修，作為 CI 最後一道防線；完整語意層稽核仍由 vault-auditor
+ * subagent 處理）。其餘語意層問題（BROKEN_WIKILINK / parse error /
+ * 缺 title-created-tags / tag 一致性）仍全由 vault-auditor 處理。
  */
 export const CODE_LABELS = {
   FILENAME_HAS_SPACE: "檔名含空格",
@@ -39,6 +40,7 @@ export const CODE_LABELS = {
   UNKNOWN_FIELD: "白名單外欄位",
   EMPTY_OPTIONAL_FIELD: "選填欄位為空",
   FIELD_ORDER: "欄位順序錯誤",
+  SENSITIVE_DATA: "敏感資料（硬掃）",
 };
 
 export const codeLabel = (code) => CODE_LABELS[code] ?? code;

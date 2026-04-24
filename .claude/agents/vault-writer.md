@@ -70,7 +70,9 @@ env 未設或該路徑底下找不到 `master-index.md` → 告知用戶並停�
 **為什麼要讀 CLAUDE.md：**
 此 agent 可能從任何工作目錄被呼叫（不一定在 obsidian-memory 目錄下）。若直接在 obsidian-memory 目錄工作，CLAUDE.md 會自動載入為 system context；但透過 `/ob` 從其他專案呼叫時，agent 必須自己讀取 CLAUDE.md 才能取得 vault 規則。CLAUDE.md 是 vault 規則的唯一來源，agent 不重複內嵌這些規則，以避免兩者不同步。
 
-1. 執行 `obsidian read file="CLAUDE.md"` 取得 vault 結構與所有規則
+1. 取得 vault 規則：
+   - CLI 可用 → `obsidian read file="CLAUDE.md"`
+   - CLI 不可用（偵測失敗）→ `Read <VAULT_ROOT>/CLAUDE.md`（即 `$OBSIDIAN_VAULT_ROOT/CLAUDE.md`）
 2. 每次寫入前依 CLAUDE.md 的「寫入前 Checklist」逐項自檢（敏感資料、frontmatter schema、tag 沿用、命名），通過才寫入；這是你身為寫入路徑的主要職責，不要把規則預防外包給 `/vault-check`
 
 ## 建檔位置判斷
@@ -98,14 +100,19 @@ obsidian tags                    # 查看現有 tags
 
 建立筆記時，`content=` 直接帶入完整 frontmatter（含 tags YAML 清單），**不要事後用 `property:set` 設定 tags**（會產生 inline 字串格式）。frontmatter 格式依 `content/CLAUDE.md` 的「Frontmatter Schema」與「寫入前 Checklist」。
 
-- **Windows (Git Bash)**：用 PowerShell 包裝
-  ```bash
-  powershell.exe -Command "obsidian create path='Cards/<標題>.md' content='---\ntitle: <標題>\ntags:\n  - <tag1>\ncreated: <今日日期>\nupdated: <今日日期>\n---' open"
-  ```
+建檔一律優先從 **stdin 傳入內容**，不要把多行 frontmatter 塞進 `content='...'` 參數——字面 `\n` 是否被 CLI 解成換行是未定義行為（依 obsidian CLI 版本而異），stdin 方式行為穩定：
+
 - **macOS/Linux**：
   ```bash
-  obsidian create path="Cards/<標題>.md" content="---\ntitle: <標題>\ntags:\n  - <tag1>\ncreated: <今日日期>\nupdated: <今日日期>\n---" open
+  printf '%s\n' "---" "title: <標題>" "created: <今日>" "updated: <今日>" "tags:" "  - <tag1>" "---" \
+    | obsidian create path="Cards/<標題>.md" --stdin open
   ```
+- **Windows (Git Bash)**：Git Bash 的 `printf` + pipe 可直接用，不需走 PowerShell：
+  ```bash
+  printf '%s\n' "---" "title: <標題>" "created: <今日>" "updated: <今日>" "tags:" "  - <tag1>" "---" \
+    | obsidian create path="Cards/<標題>.md" --stdin open
+  ```
+  若 obsidian CLI 該版不支援 `--stdin`，退而走 `content=` 行內版本，但需記住：PowerShell/Bash 單引號內的字面 `\n` 在不同 shell 與 CLI 版本的解碼行為不同，會讓 frontmatter 壞成單行字串。退到 `content=` 方案時，**呼叫後必須 `obsidian read file=...` 驗證 frontmatter 真的是多行**。
 
 建立後若需追加正文內容，再用 `append`。
 

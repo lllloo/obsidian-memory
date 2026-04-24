@@ -73,14 +73,14 @@ Vault 內容規則（寫入前 Checklist、frontmatter schema、tag/命名、敏
 
 ### 2. Vault 稽核修正（`/vault-check` 流程）
 
-兩段分工、零重疊：**Script 管格式（硬規則自動修），Subagent 管語意（建議不改檔）**。command 串接兩段。全程綁本 repo，不需掛全域。
+兩段分工、零重疊：**Script 管格式與敏感資料硬掃（硬規則自動修 + high-precision 敏感資料 flag），Subagent 管語意（建議不改檔）**。command 串接兩段。全程綁本 repo，不需掛全域。
 
-| 檔案                              | 類型        | 全域路徑 | 用途                                                                                                      |
-| --------------------------------- | ----------- | -------- | --------------------------------------------------------------------------------------------------------- |
-| `.claude/commands/vault-check.md` | Command     | —        | `/vault-check` orchestrator：git 前置檢查 → 跑 script → 呼叫 subagent → 合併總結                          |
-| `scripts/vault-check.mjs`         | Node script | —        | 硬規則自動修（檔名、frontmatter 結構、日期 normalize）                                                    |
-| `scripts/vault-schema.mjs`        | Node module | —        | Zod schema 與欄位順序／白名單定義，**硬規則變更改這裡**                                                   |
-| `.claude/agents/vault-auditor.md` | Agent       | —        | 語意層稽核（wikilink 斷鏈、敏感資料、tag 一致性、缺 title/created/tags、parse error），唯讀只 flag 不改檔 |
+| 檔案                              | 類型        | 全域路徑 | 用途                                                                                                                                          |
+| --------------------------------- | ----------- | -------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| `.claude/commands/vault-check.md` | Command     | —        | `/vault-check` orchestrator：git 前置檢查 → 跑 script → 呼叫 subagent → 合併總結                                                              |
+| `scripts/vault-check.mjs`         | Node script | —        | 硬規則自動修（檔名、frontmatter 結構、日期 normalize）＋ high-precision 敏感資料硬掃（只 flag 不修，命中 exit non-zero，作為 CI 最後一道防線） |
+| `scripts/vault-schema.mjs`        | Node module | —        | Zod schema 與欄位順序／白名單定義，**硬規則變更改這裡**                                                                                       |
+| `.claude/agents/vault-auditor.md` | Agent       | —        | 語意層稽核（wikilink 斷鏈、完整敏感資料、tag 一致性、缺 title/created/tags、parse error），唯讀只 flag 不改檔                                 |
 
 ### 3. 批次筆記工作流（Skills）
 
@@ -114,4 +114,4 @@ Vault 同時作為 Claude Code 的參考資料來源，與 WebSearch 互補並�
 
 - **協議**：觸發條件、綜合原則、引用格式寫在全域 `~/.claude/CLAUDE.md` 的 `## Obsidian` 段；技術/知識性提問會自動並行呼叫 `vault-query` + WebSearch
 - **搜尋工具**：搜 vault 一律用 `Grep` + `Glob content/**/*<關鍵字>*.md`，不要呼叫 Obsidian CLI 的 `search:context`（慢約 9 倍且覆蓋率較低）
-- **跨機器路徑**：各 agent 一律讀 `$OBSIDIAN_VAULT_ROOT`（建議在 `~/.claude/settings.local.json` 的 `env` 段注入絕對路徑）；未設或無效直接中止，不做猜測 fallback。path 契約詳見各 agent 檔
+- **跨機器路徑**：各 agent 一律讀 `$OBSIDIAN_VAULT_ROOT`，**必須**在**全域** `~/.claude/settings.local.json` 的 `env` 段注入絕對路徑（不是 repo 內的 local settings）——因為 `/ob` 相關設定已 symlink 到全域供跨專案使用，env 放 repo 內的 settings 只在本 repo 工作時可見，從其他專案呼叫 `/ob` 會讀不到。未設或無效直接中止，不做猜測 fallback。path 契約詳見各 agent 檔

@@ -1,0 +1,77 @@
+{
+  "skill_name": "vault-topic-moc",
+  "evals": [
+    {
+      "id": 0,
+      "prompt": "把 content/Inbox/YouTube/Chase-H-AI 裡跟 Claude Code 相關的影片整理成一個主題 MOC",
+      "expected_output": "盤點同主題影片筆記 → 讀取 → 產出 v0 於 content/Topics/Claude-Code/<主題>.md → 事實校正 → 停在 checkpoint 等用戶指示；不自動進 reviewer/fixer、不自動刪原筆記",
+      "files": [],
+      "assertions": [
+        {
+          "name": "盤點候選筆記並請用戶確認",
+          "description": "Step 1 先用 Grep/Glob 找出候選筆記並以表格列出（路徑 + 標題 + 日期 + 主旨），向用戶確認納入範圍，而非直接開始整合"
+        },
+        {
+          "name": "MOC 寫入 Topics/ 而非 Cards/ 或 Inbox/",
+          "description": "產出的 MOC 路徑必須是 content/Topics/<類別>/<主題>.md"
+        },
+        {
+          "name": "Frontmatter 符合 vault 規則",
+          "description": "MOC 的 frontmatter 含 title/created/updated/tags，欄位順序符合 scripts/vault-schema.mjs 的 FIELD_ORDER，不含 `# 標題` heading"
+        },
+        {
+          "name": "Step 5 Checkpoint 停點",
+          "description": "事實校正後明確停下詢問『要繼續 reviewer/fixer 迭代嗎？』，不自動開 Round 1"
+        },
+        {
+          "name": "不自動刪原筆記",
+          "description": "Step 7 顯式詢問用戶選 A/B/C，不自動 git rm"
+        }
+      ]
+    },
+    {
+      "id": 1,
+      "prompt": "幫我把 Cards/ 裡跟 RAG 有關的筆記合併成一個主題頁",
+      "expected_output": "辨識『合併筆記 / 主題頁』觸發詞，啟動 vault-topic-moc skill；候選筆記少於 3 篇時建議用 wikilink 手動串連",
+      "files": [],
+      "assertions": [
+        {
+          "name": "觸發詞辨識",
+          "description": "從『合併』『主題頁』正確觸發 vault-topic-moc，不誤觸發 vault-youtube-sync（因為沒有 YouTube 頻道 URL）"
+        },
+        {
+          "name": "少於 3 篇的處理",
+          "description": "若候選筆記不足 3 篇，告知用戶建議改用 wikilink 手動串連，而非強行產出 MOC"
+        },
+        {
+          "name": "跨來源處理（Cards 來源）",
+          "description": "Cards 來源的原筆記預設不建議選 B 刪除；Step 7 需給 A/C 為主的建議（B 是 YouTube 來源的慣例）"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "用這次的方法把 Agent Harness 相關筆記整理成 MOC，然後跑 reviewer/fixer 迭代到定稿",
+      "expected_output": "完整跑 7 步：盤點 → 讀取 → v0 → 事實校正 → checkpoint → reviewer/fixer 迴圈 → 原筆記處置。每輪 reviewer 結果呈現給用戶確認後才進 fixer",
+      "files": [],
+      "assertions": [
+        {
+          "name": "每輪 reviewer 都呈現給用戶",
+          "description": "reviewer 回報不直接套用，完整貼出讓用戶決定是否進 fixer"
+        },
+        {
+          "name": "迴圈終止條件",
+          "description": "正常定稿（reviewer 回『無問題』）/ 連續 2 輪只剩風格微調 / 超過 5 輪不收斂 其中一個條件觸發就停"
+        },
+        {
+          "name": "不跨界到 vault-check",
+          "description": "不呼叫 /vault-check 或 vault-auditor；reviewer/fixer 是對單篇 MOC 做深度 review，與 vault 稽核分工不同"
+        },
+        {
+          "name": "Workflow Checklist 追蹤",
+          "description": "回應中複製 SKILL.md 的 Workflow Checklist 追蹤 7 步進度"
+        }
+      ]
+    }
+  ]
+}

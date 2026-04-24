@@ -32,6 +32,26 @@ import {
 
 const REQUIRED_SET = new Set(REQUIRED_FIELDS);
 
+/**
+ * 敏感資料 high-precision regex（CI 最後一道防線）。
+ *
+ * 原則：只收進「幾乎不可能誤判」的 token shape，寧可漏也不要誤報。
+ * 完整語意層檢查（自然語言密碼、個資、內部資訊）仍由 vault-auditor subagent 處理。
+ */
+const SENSITIVE_PATTERNS = [
+  { name: "Anthropic key", regex: /sk-ant-[A-Za-z0-9_-]{20,}/ },
+  { name: "OpenAI key", regex: /sk-(?:proj-)?[A-Za-z0-9_-]{32,}/ },
+  { name: "GitHub token", regex: /gh[pousr]_[A-Za-z0-9]{36,}/ },
+  { name: "Google API key", regex: /AIza[0-9A-Za-z_-]{35}/ },
+  { name: "AWS access key", regex: /\bAKIA[0-9A-Z]{16}\b/ },
+  { name: "Slack token", regex: /xox[baprs]-[A-Za-z0-9-]{10,}/ },
+  { name: "Private key header", regex: /-----BEGIN[ A-Z]*PRIVATE KEY-----/ },
+  {
+    name: "JWT",
+    regex: /\beyJ[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}/,
+  },
+];
+
 const REPO_ROOT = resolve(import.meta.dirname, "..");
 const CONTENT_DIR = join(REPO_ROOT, "content");
 // Site-level 索引頁（非筆記）與 vault 規則文件，豁免 schema 必填。
@@ -202,6 +222,42 @@ function auditFile(absPath) {
   return { issues, parsed, raw };
 }
 
+/**
+ * 敏感資料硬掃。以行為單位掃描，code fence 內行（``` 開頭的區塊）自動跳過
+ * 以避免 Clippings / CLAUDE.md 範例誤報。命中一律 autofix=false，只 flag。
+ */
+function scanSensitive(absPath) {
+  const relPath = rel(absPath);
+  const raw = readFileSync(absPath, "utf8");
+  const lines = raw.split(/\r?\n/);
+  const hits = [];
+  let inFence = false;
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+    if (/^\s*```/.test(line)) {
+      inFence = !inFence;
+      continue;
+    }
+    if (inFence) continue;
+    for (const { name, regex } of SENSITIVE_PATTERNS) {
+      const m = line.match(regex);
+      if (m) {
+        hits.push({
+          code: "SENSITIVE_DATA",
+          severity: "error",
+          file: relPath,
+          line: i + 1,
+          kind: name,
+          match: m[0].slice(0, 12) + "…",
+          message: `疑似 ${name}（line ${i + 1}）：${m[0].slice(0, 12)}…`,
+          autofix: false,
+        });
+      }
+    }
+  }
+  return hits;
+}
+
 /** 套用自動修正到單一檔案，回傳 { applied, blocked } */
 function applyFixes(absPath, issues, parsed, raw) {
   const applied = [];
@@ -265,6 +321,7 @@ async function main() {
   const allApplied = [];
   const blocked = [];
 
+  const sensitive = [];
   for (const abs of files) {
     const { issues, parsed, raw } = auditFile(abs);
     allIssues.push(...issues);
@@ -272,6 +329,11 @@ async function main() {
       const result = applyFixes(abs, issues, parsed, raw);
       allApplied.push(...result.applied);
       blocked.push(...result.blocked);
+    }
+    const sHits = scanSensitive(abs);
+    if (sHits.length) {
+      sensitive.push(...sHits);
+      allIssues.push(...sHits);
     }
   }
 
@@ -324,13 +386,26 @@ async function main() {
       );
     }
 
+    if (sensitive.length) {
+      console.log(
+        `\n## ⚠ 疑似敏感資料（${sensitive.length}，high-precision 硬掃）`,
+      );
+      for (const i of sensitive) {
+        console.log(`- ${i.file}:${i.line} [${i.kind}] ${i.match}`);
+      }
+      console.log(
+        `\n請立即檢查並移除；此項不會自動修改，但會讓 exit code 為非零。`,
+      );
+    }
+
     console.log(
-      `\n備註：語意層稽核（wikilink 斷鏈、敏感資料、tag 一致性、缺 title/created/tags、parse error）由 vault-auditor subagent 處理。`,
+      `\n備註：完整語意層稽核（wikilink 斷鏈、tag 一致性、自然語言密碼 / 個資、缺 title/created/tags、parse error）由 vault-auditor subagent 處理。`,
     );
   }
 
-  const failed = args.fix ? blocked.length > 0 : allIssues.length > 0;
-  process.exit(failed ? 1 : 0);
+  const hardFail = sensitive.length > 0;
+  const softFail = args.fix ? blocked.length > 0 : allIssues.length > 0;
+  process.exit(hardFail || softFail ? 1 : 0);
 }
 
 main().catch((e) => {

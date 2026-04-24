@@ -21,8 +21,12 @@ description: 當使用者提供 YouTube **頻道** URL（含 @handle 的網址�
 用 `scripts/fetch_videos.py` 一次抓取頻道頁面，同時取出影片清單與頻道簡介：
 
 ```bash
-python3 .claude/skills/vault-youtube-sync/scripts/fetch_videos.py <handle> 2>/dev/null || \
-python  .claude/skills/vault-youtube-sync/scripts/fetch_videos.py <handle>
+# 只在 python3 指令不存在時退到 python；避免 `2>/dev/null ||` 把 python3 的真實 runtime error 吞掉。
+if command -v python3 >/dev/null 2>&1; then
+  python3 .claude/skills/vault-youtube-sync/scripts/fetch_videos.py <handle>
+else
+  python  .claude/skills/vault-youtube-sync/scripts/fetch_videos.py <handle>
+fi
 ```
 
 解析輸出：
@@ -169,10 +173,16 @@ N. <標題> — <URL>
 **更新 checkpoint**：所有筆記建立完成後，將 `01.index.md` 的 `last_sync_id` 更新為**步驟 1 清單中第一筆**的 video ID（即目前頻道最新的影片）：
 
 ```bash
-# 用 Python 更新（跨平台，避免 Windows sed -i 不穩定）
+# 用 Python 更新（跨平台，避免 Windows sed -i 不穩定）。
+# 路徑一律由 $OBSIDIAN_VAULT_ROOT 拼絕對路徑，避免 cwd-relative 誤寫到別處。
 python -c "
-import re
-path = 'content/Inbox/YouTube/<頻道名>/01.index.md'
+import os, re, sys
+vault = os.environ.get('OBSIDIAN_VAULT_ROOT')
+if not vault or not os.path.isfile(os.path.join(vault, 'master-index.md')):
+    sys.exit('ERROR: \$OBSIDIAN_VAULT_ROOT 未設或無效，中止 checkpoint 更新')
+path = os.path.join(vault, 'Inbox', 'YouTube', '<頻道名>', '01.index.md')
+if not os.path.isfile(path):
+    sys.exit(f'ERROR: 找不到 index 檔：{path}')
 text = open(path, encoding='utf-8').read()
 text = re.sub(r'^last_sync_id: .*', 'last_sync_id: <NEW_ID>', text, flags=re.MULTILINE)
 text = re.sub(r'^updated: .*', 'updated: <TODAY>', text, flags=re.MULTILINE)
