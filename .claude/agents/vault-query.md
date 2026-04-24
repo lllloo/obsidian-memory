@@ -24,7 +24,7 @@ model: sonnet
 VAULT_ROOT = $OBSIDIAN_VAULT_ROOT
 ```
 
-env 未設或該路徑底下找不到 `master-index.md`，直接輸出未命中 JSON：`hits` 為空，`miss_reason` 寫「`$OBSIDIAN_VAULT_ROOT` 未設或無效，請在 `~/.claude/settings.local.json` 的 `env` 段加 `OBSIDIAN_VAULT_ROOT`（絕對路徑到 vault `content/` 目錄）」。
+env 未設或該路徑底下找不到 `master-index.md`，直接輸出未命中 JSON：`hits` 為空，`miss_reason` 寫「`$OBSIDIAN_VAULT_ROOT` 未設或無效，設定方式見 README」。
 
 ## Vault 佈局
 

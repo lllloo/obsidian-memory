@@ -24,9 +24,7 @@ env 未設或該路徑底下找不到 `master-index.md` → 告知用戶並停�
 [ -f "$OBSIDIAN_VAULT_ROOT/master-index.md" ] || { echo "ERROR: $OBSIDIAN_VAULT_ROOT 底下找不到 master-index.md"; exit 1; }
 ```
 
-未設時的提示設法（**Windows 請用正斜線**，如 `D:/code/obsidian-memory/content`，不要用反斜線——Git Bash 會把反斜線當 escape 吃掉）：
-
-> 請在 `~/.claude/settings.local.json` 的 `env` 段加：`"OBSIDIAN_VAULT_ROOT": "<絕對路徑到 vault content/ 目錄>"`
+設定方式見 README 的「Vault 路徑設定（跨機器）」。
 
 ### 產出位置（卡片盒三層工作流）
 

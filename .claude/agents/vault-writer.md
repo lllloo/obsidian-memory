@@ -61,9 +61,7 @@ CLI 可用時 `obsidian create path="Cards/..."` 會自動定位 vault；但走 
 VAULT_ROOT = $OBSIDIAN_VAULT_ROOT
 ```
 
-env 未設或該路徑底下找不到 `master-index.md` → 告知用戶並停止，不要猜測寫到錯誤位置。提示設法：
-
-> 請在 `~/.claude/settings.local.json` 的 `env` 段加：`"OBSIDIAN_VAULT_ROOT": "<絕對路徑到 vault content/ 目錄>"`
+env 未設或該路徑底下找不到 `master-index.md` → 告知用戶「`$OBSIDIAN_VAULT_ROOT` 未設或無效，設定方式見 README」並停止，不要猜測寫到錯誤位置。
 
 ## 前置作業
 

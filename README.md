@@ -80,7 +80,7 @@ ln -sf "$PWD/.claude/commands/ob.md" ~/.claude/commands/ob.md
 
 ### Vault 路徑設定（跨機器）
 
-`vault-writer` / `vault-query` / `vault-auditor` 一律從 `$OBSIDIAN_VAULT_ROOT` 解析 vault 位置。**必須**在每台機器的 `~/.claude/settings.local.json` 注入絕對路徑（此檔不同步，機器各自維護）：
+`vault-writer` / `vault-query` / `vault-auditor` 一律從 `$OBSIDIAN_VAULT_ROOT` 解析 vault 位置。**必須**在每台機器的 `~/.claude/settings.json` 注入絕對路徑：
 
 ```json
 {
@@ -89,6 +89,8 @@ ln -sf "$PWD/.claude/commands/ob.md" ~/.claude/commands/ob.md
   }
 }
 ```
+
+**Windows 用正斜線**（例 `C:/path/to/obsidian-memory/content`），不要用反斜線——Git Bash 會把反斜線當 escape 吃掉。
 
 未設定或路徑無效時，agent 會直接中止並回報錯誤，不做猜測 fallback——避免寫到錯誤位置或回傳錯誤搜尋結果。設定後需重啟 Claude Code session 才會載入。
 
