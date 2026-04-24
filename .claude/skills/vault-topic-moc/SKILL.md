@@ -7,14 +7,60 @@ description: Consolidates multiple related notes in an Obsidian vault into a sin
 
 把 Obsidian vault 中多篇相關筆記（典型情境：YouTube 影片筆記、Cards 的同主題筆記）整合為單一主題 MOC，並與用戶確認原筆記的處置方式。
 
+## 前置作業（寫入前必做）
+
+### Vault 路徑解析
+
+所有讀寫與 Grep/Glob 路徑以 `$OBSIDIAN_VAULT_ROOT` 為 base，避免從非 repo cwd 呼叫時讀寫到錯地方。
+
+```
+VAULT_ROOT = $OBSIDIAN_VAULT_ROOT
+```
+
+env 未設或該路徑底下找不到 `master-index.md` → 告知用戶並停止，不要猜測 fallback。開工前先跑一次可執行 guard：
+
+```bash
+[ -z "$OBSIDIAN_VAULT_ROOT" ] && { echo "ERROR: OBSIDIAN_VAULT_ROOT 未設"; exit 1; }
+[ -f "$OBSIDIAN_VAULT_ROOT/master-index.md" ] || { echo "ERROR: $OBSIDIAN_VAULT_ROOT 底下找不到 master-index.md"; exit 1; }
+```
+
+未設時的提示設法（**Windows 請用正斜線**，如 `D:/code/obsidian-memory/content`，不要用反斜線——Git Bash 會把反斜線當 escape 吃掉）：
+
+> 請在 `~/.claude/settings.local.json` 的 `env` 段加：`"OBSIDIAN_VAULT_ROOT": "<絕對路徑到 vault content/ 目錄>"`
+
+### 術語對照（Topics 兩層意義）
+
+vault 的 `Topics/` 實際有兩層意義，兩份規則用詞不同，先對齊避免誤解：
+
+| 層級 | content/CLAUDE.md 稱呼 | 本 skill 稱呼 | 範例 |
+|---|---|---|---|
+| 第一層資料夾 | 「主題」 | **類別** | `Topics/Claude-Code/` |
+| 第二層 MOC 檔 | —（視為 cards 之一） | **主題 MOC** | `Topics/Claude-Code/Agent-Harness.md` |
+
+content/CLAUDE.md 說「Topics/ 第一層不跨主題巢套」指的是不要建 `Topics/AI-工具/Claude-Code/`（兩層類別）；本 skill 產出 `Topics/<類別>/<主題>.md` 只有單層類別，並未違反。
+
+後續 Step 3 路徑中的 `<類別>` = 第一層資料夾名（如 `Claude-Code`），`<主題>` = MOC 檔名（如 `Agent-Harness`）。
+
+### 寫入前 Checklist
+
+此 skill 是 `content/` 的寫入路徑（寫 MOC、改 index.md、刪原筆記）。寫入前依 `$OBSIDIAN_VAULT_ROOT/CLAUDE.md` 的「寫入前 Checklist」自檢：
+
+- **敏感資料零容忍**：事實校正從 WebFetch 抓的官方內容若帶 token / API key / 私人資訊，移除再寫入
+- **Tag 沿用既有**：`<類別>` 先用 Grep tool（`pattern="^tags:"`, `path="$OBSIDIAN_VAULT_ROOT"`, `-A 5`）查既有 tags 再決定，避免 `claude-code` vs `claudeCode` drift；`moc` tag 視該類別既有 MOC 習慣決定是否加（既有都沒加就先不加，既有都加就跟上）
+- **Frontmatter schema**：欄位、順序、白名單以 `scripts/vault-schema.mjs` 為真實來源；寫入當下即合法，schema 以外欄位不允許
+- **命名**：檔名不含空格，中英文間用 `-`，不含 `?:;"'`
+
+`/vault-check` 只兜底跨檔案 emergent 問題，不負責抓本清單能預防的錯。
+
 ## 核心流程（7 步）
 
 ### 1. 盤點相關筆記
 
-先讀 `content/master-index.md` 了解 vault 結構，再用 Grep / Glob 找出候選筆記：
-- 檔名含關鍵字：`Glob "content/**/*<keyword>*.md"`
-- 內容含關鍵字：`Grep "<keyword>" content/`
-- Frontmatter tags 或 source URL 過濾
+先讀 `$OBSIDIAN_VAULT_ROOT/master-index.md` 了解 vault 結構，再用 Glob / Grep tool 找出候選筆記（pattern / path 為獨立參數，非單一 shell 字串）：
+
+- 檔名含關鍵字：**Glob** `pattern="**/*<keyword>*.md"`, `path="$OBSIDIAN_VAULT_ROOT"`
+- 內容含關鍵字：**Grep** `pattern="<keyword>"`, `path="$OBSIDIAN_VAULT_ROOT"`
+- Frontmatter tags 或 source URL 過濾：同上，`pattern` 改為 `^tags:` 或 URL regex
 
 輸出表格供用戶確認：路徑 + 標題 + 發布/建立日期 + 每篇一句主旨。
 
@@ -31,7 +77,7 @@ Read 全部候選筆記。記錄：
 
 ### 3. 產出 MOC v0
 
-寫進 `content/Topics/<類別>/<主題>.md`。骨架範本見 [references/moc-structure.md](references/moc-structure.md)。
+寫進 `$OBSIDIAN_VAULT_ROOT/Topics/<類別>/<主題>.md`。骨架範本見 [references/moc-structure.md](references/moc-structure.md)。
 
 若該主題 MOC 已存在，先問用戶：擴充既有的？重寫？還是建新的子主題？
 
@@ -74,7 +120,7 @@ Read 全部候選筆記。記錄：
 
 **subagent 呼叫方式**：用 `Agent` tool，`subagent_type: "general-purpose"`，prompt 從 [references/review-loop.md](references/review-loop.md) 取用並填入該輪的 MOC 絕對路徑、官方來源 URL、review 輪次編號。
 
-**與 `vault-check` agent 的差別**：那個 agent 是對整個 vault 做規則稽核（見 `/vault-check` 指令），本 skill 的 reviewer/fixer 是對單篇 MOC 做深度 review + 事實校正，不共用。
+**與 `/vault-check` 的分工**：`/vault-check` 是 repo-wide 兩段稽核（`scripts/vault-check.mjs` 硬規則自動修 + `vault-auditor` subagent 語意層），對象是整個 vault、判準是 schema 與跨檔一致性；本 skill 的 reviewer/fixer 是對單篇 MOC 做深度 review + 事實校正，判準是主題內部一致與官方事實對齊。兩邊不共用流程。
 
 ### 7. 原筆記處置（與用戶確認）
 
@@ -109,8 +155,8 @@ MOC 聚焦**概念與大方向**，經得起時間、可在不同模型世代重
 
 ## 硬性規則
 
-- MOC 寫在 `content/Topics/<類別>/<主題>.md`（**不要**寫 `Cards/` 或 `YouTube/`）
-- frontmatter 遵守 `content/CLAUDE.md` 的「寫入前 Checklist」與「Frontmatter Schema」
+- MOC 寫在 `$OBSIDIAN_VAULT_ROOT/Topics/<類別>/<主題>.md`（**不要**寫 `Cards/` 或 `YouTube/`）
+- frontmatter 遵守前置作業段「寫入前 Checklist」與 `scripts/vault-schema.mjs`（schema 真實來源）
 - `updated` 欄位盡量同步為今日日期（不強制）
 - wikilink 檔名需確實存在，否則改用外部 URL
 - 選項 B 執行前再次確認用戶是否真的要刪
@@ -126,6 +172,7 @@ MOC 聚焦**概念與大方向**，經得起時間、可在不同模型世代重
 ## Workflow Checklist（複製到回應中追蹤進度）
 
 ```
+- [ ] 0. 前置作業：env guard + 術語對照 + 寫入前 Checklist 四項自檢
 - [ ] 1. 盤點候選筆記，用戶確認範圍
 - [ ] 2. Read 全部筆記內容
 - [ ] 3. 產出 MOC v0

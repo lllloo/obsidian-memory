@@ -12,12 +12,14 @@ updated: <今日 YYYY-MM-DD>
 tags:
   - <類別>          # 如 claude-code / obsidian / ai-tools
   - <子主題>        # 可選
+  - moc             # 視該類別既有 MOC 習慣：既有都有 `moc` 就跟上，既有都沒有就先不加（避免製造 tag drift）
 ---
 ```
 
 - 不加 `# 標題` heading（Quartz 會從 `title` 自動產生）
 - 若尚未完成可加 `draft: true`，定稿後移除
-- `source` 欄位不需要（MOC 自己就是來源彙整）
+- `source` 欄位通常不需要（MOC 自己就是來源彙整）；若 MOC 主要根據單一官方來源，可加
+- **欄位順序 / 白名單**：若要加 `source`, `parent`, `draft` 等可選欄位，順序以 `scripts/vault-schema.mjs` 的 `FIELD_ORDER` 為準；schema 白名單以外的欄位（如 Web Clipper 的 `author`, `description`）一律不可寫入
 
 ## 骨架章節（依主題調整順序與取捨）
 

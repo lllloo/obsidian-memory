@@ -15,8 +15,8 @@
    - <官方 docs URL 2>
    檢查：數字、規則、語法、API 介面是否正確
 3. **wikilink 有效性**：用 Glob 或 Read 確認目標檔案存在
-4. **Obsidian vault 規則**（參考 content/CLAUDE.md）：
-   - frontmatter 格式、updated 為今日
+4. **Obsidian vault 規則**（真實來源 content/CLAUDE.md 的「寫入前 Checklist」＋ `scripts/vault-schema.mjs`）：
+   - frontmatter 欄位、順序、白名單符合 schema；`updated` 盡量同步今日（不強制）
    - 檔名無空格、用連字號
    - `#` 開頭色碼需反引號包住
    - tags 用 YAML 清單
