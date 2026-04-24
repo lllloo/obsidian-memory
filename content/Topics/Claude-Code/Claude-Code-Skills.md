@@ -1,7 +1,7 @@
 ---
 title: Claude Code Skills
 created: 2026-03-29
-updated: 2026-04-17
+updated: 2026-04-24
 tags:
   - claude-code
   - ai-tools
@@ -133,6 +133,24 @@ MCP 的工具 schema 則是另一種成本模型；**實際 token 開銷會依 c
 - **原因**：只寫「做什麼」，沒寫「何時該用」；或關鍵詞太少
 - **解法**：把使用情境寫進 `description` / `when_to_use`，並把常見 phrasing 放前面
 
+## 社群精選 Skills 實例
+
+以下是社群釋出的 skill / plugin，展示 skill 概念的實用範圍——從通知、token 壓縮到設計規範、對抗式審查。具體名稱與 repo 可能變化，此處記錄**問題與 pattern**供參考。
+
+| Skill | 問題 | 做法 |
+|---|---|---|
+| Peon Ping | 多 session 並行時忘記某個 session 跑完或卡在 permission prompt | 完成或需權限時主動通知；可改用遊戲角色語音 |
+| Dogfood | Agent 生出的 web app 缺真人視角審查 | 以 adversarial review 風格走查頁面，產 critical/medium/low 分級 bug 報告（仰賴 agent browser） |
+| Caveman | Claude 過度解釋、回覆塞贅詞 | 強制穴居人語氣回話砍 filler，多種強度等級可調；內建 Wyan 中文模式每 token 承載語意更多，但非英文準確度較低 |
+| Git Time Travel | Agent 判斷「為何某段歷史出錯」困難 | 讀全 git 歷史 + references 內建地雷 pattern（force push、沒備份就 rebase 等），產問題報告 |
+| Pre-mortem | 上線後才發現架構弱點 | 掃 codebase 挑脆弱區塊，預測尚未發生但可能發生的 bug |
+| Mutation Testing | 測試套件是否真能抓 bug 無從驗證 | 注入 mutation bug 看測試是否抓到，產 mutation score 與漏網清單；**執行前必須 commit 所有改動**（會 git revert） |
+| The Fool | 想法 / decision / plan 缺批判性壓力測試 | 多種挑戰模式逐一套用，輸出 failure mode 報告與連鎖後果 |
+| Reddit Fetch | Reddit 封鎖 bot 讓市場研究難抓內容 | Gemini CLI + Tmux 當 primary，curl Reddit JSON API 當 fallback |
+| Color Expert | Agent 常收斂到千篇一律紫+白 UI | 帶 100+ references（WCAG、palette、色彩科學），agent 讀完再實作 |
+
+> 這些是共通 pattern 的實例化，不必全裝；依痛點挑選。
+
 ## 來源
 
 **官方文件（本文主要依據）**
@@ -150,3 +168,4 @@ MCP 的工具 schema 則是另一種成本模型；**實際 token 開銷會依 c
 - 工程師視角的 Skills 完整解析（indydevdan）— https://www.youtube.com/watch?v=kFpLzCVLA20
 - 用 Skill 包 workflow 與 MCP 的討論（AIJasonZ）— https://www.youtube.com/watch?v=fG95XsBO5U4
 - Library Meta-Skill 跨裝置分發（indydevdan）— https://www.youtube.com/watch?v=_vpNQ6IwP9w
+- 意想不到好用的 Claude Code Skills 合集（AILABS-393）— https://www.youtube.com/watch?v=qQ5uObNKBOU（本文「社群精選 Skills 實例」章節來源）
