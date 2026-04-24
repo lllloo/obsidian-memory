@@ -11,10 +11,42 @@ description: 當使用者提供 YouTube **頻道** URL（含 @handle 的網址�
 
 ## 資料夾規則
 
-- 筆記存放：`content/Inbox/YouTube/<頻道名>/`（例：`content/Inbox/YouTube/Chase-H-AI/`）
+- 筆記存放：`$OBSIDIAN_VAULT_ROOT/Inbox/YouTube/<頻道名>/`（例：`$OBSIDIAN_VAULT_ROOT/Inbox/YouTube/Chase-H-AI/`）
 - 此資料夾已在 `quartz.config.ts` 的 `ignorePatterns` 中，**不會發佈到網站**
 - 每個頻道資料夾下建立 `01.index.md` 與 `02.影片清單.base` 作為索引（數字前綴確保固定排第一）
 - 影片筆記的 frontmatter 需加 `parent: "[[01.index]]"`，讓 Obsidian 圖譜能從影片連回頻道 index（`.base` 檔案不產生圖譜連結，只有 property link 有效）
+
+## 前置作業（寫入前必做）
+
+### Vault 路徑解析
+
+所有讀寫操作**一律用絕對路徑**（以 `$OBSIDIAN_VAULT_ROOT` 為 base），避免從非 repo cwd 呼叫時誤寫到別處。
+
+```
+VAULT_ROOT = $OBSIDIAN_VAULT_ROOT
+```
+
+env 未設或該路徑底下找不到 `master-index.md` → 告知用戶並停止，不要猜測 fallback。開工前先跑一次可執行 guard，別只靠自律：
+
+```bash
+[ -z "$OBSIDIAN_VAULT_ROOT" ] && { echo "ERROR: OBSIDIAN_VAULT_ROOT 未設"; exit 1; }
+[ -f "$OBSIDIAN_VAULT_ROOT/master-index.md" ] || { echo "ERROR: $OBSIDIAN_VAULT_ROOT 底下找不到 master-index.md"; exit 1; }
+```
+
+未設的提示設法（**Windows 請用正斜線**，如 `D:/code/obsidian-memory/content`，不要用反斜線——Git Bash 會把反斜線當 escape 吃掉）：
+
+> 請在 `~/.claude/settings.local.json` 的 `env` 段加：`"OBSIDIAN_VAULT_ROOT": "<絕對路徑到 vault content/ 目錄>"`
+
+### 寫入前 Checklist
+
+此 skill 是 `content/` 的寫入路徑。寫入前依 `$OBSIDIAN_VAULT_ROOT/CLAUDE.md` 的「寫入前 Checklist」自檢：
+
+- **敏感資料零容忍**：defuddle transcript 含 token / 私鑰 / 個資 → 移除或跳過該筆，不寫入
+- **Tag 沿用既有**：`youtube` 以外的頻道主題 tag 先 grep 既有 vault tags，避免 `claude-code` vs `claudeCode` 之類 drift
+- **Frontmatter schema**：欄位、順序、白名單以 `scripts/vault-schema.mjs` 為真實來源；寫入當下即合法，不要產出需 auditor 事後補欄位的筆記
+- **命名**：檔名不含空格，中英文間用 `-`，不含 `?:;"'` 等特殊字元
+
+`/vault-check` 只兜底跨檔案 emergent 問題，不負責抓本清單能預防的錯。
 
 ## 步驟 1：抓取影片清單與頻道簡介
 
@@ -48,11 +80,11 @@ fi
 
 ```bash
 # 讀取上次同步的 checkpoint ID（從 01.index.md frontmatter）
-grep "^last_sync_id:" content/Inbox/YouTube/<頻道名>/01.index.md 2>/dev/null | sed 's/last_sync_id: //'
+grep "^last_sync_id:" "$OBSIDIAN_VAULT_ROOT/Inbox/YouTube/<頻道名>/01.index.md" 2>/dev/null | sed 's/last_sync_id: //'
 ```
 
 **Checkpoint 過濾邏輯：**
-- 若資料夾**不存在**或 `01.index.md` **無 `last_sync_id`**：全部影片都處理，建立資料夾 `mkdir -p content/Inbox/YouTube/<頻道名>`
+- 若資料夾**不存在**或 `01.index.md` **無 `last_sync_id`**：全部影片都處理，建立資料夾 `mkdir -p "$OBSIDIAN_VAULT_ROOT/Inbox/YouTube/<頻道名>"`
 - 若有 `last_sync_id`：在步驟 1 抓到的清單中找到該 ID 的位置，**只取它上方（更新）的影片**
   - 若 `last_sync_id` 不在清單中（距上次同步太久）：全部都算新的
   - 若 `last_sync_id` 是清單第一筆：無新影片，輸出「已是最新，無需更新」並結束
@@ -64,7 +96,7 @@ grep "^last_sync_id:" content/Inbox/YouTube/<頻道名>/01.index.md 2>/dev/null 
 
 ```bash
 # 取出資料夾內所有筆記已記錄的 video ID
-grep -rh "^source: https://www.youtube.com/watch" content/Inbox/YouTube/<頻道名>/ 2>/dev/null \
+grep -rh "^source: https://www.youtube.com/watch" "$OBSIDIAN_VAULT_ROOT/Inbox/YouTube/<頻道名>/" 2>/dev/null \
   | grep -oP "(?<=v=)[A-Za-z0-9_-]+"
 ```
 
@@ -92,7 +124,7 @@ grep -rh "^source: https://www.youtube.com/watch" content/Inbox/YouTube/<頻道�
 
 ## 步驟 3：建立 01.index.md
 
-**在啟動文章生成前**，先在頻道資料夾建立 `01.index.md`（若已存在則跳過）。
+**在啟動文章生成前**，先在頻道資料夾建立 `$OBSIDIAN_VAULT_ROOT/Inbox/YouTube/<頻道名>/01.index.md`（若已存在則跳過）。
 
 頻道簡介已在步驟 1 的 `DESC:` 行取得（可能為空）。寫入 index 前，**將簡介翻譯為繁體中文**（技術名詞/品牌名保留英文）；若為空則省略。
 
@@ -115,7 +147,7 @@ tags:
 
 ## 步驟 4：建立 02.影片清單.base
 
-**在啟動文章生成前**，先在頻道資料夾建立 `02.影片清單.base`（若已存在則跳過）：
+**在啟動文章生成前**，先在頻道資料夾建立 `$OBSIDIAN_VAULT_ROOT/Inbox/YouTube/<頻道名>/02.影片清單.base`（若已存在則跳過）：
 
 ```yaml
 filters:
@@ -147,14 +179,14 @@ views:
 
 01.index.md 與 02.影片清單.base 建立完成後，將影片清單分成每批 5-6 部，在**同一個 response** 中用 Agent tool 平行啟動所有 subagents。
 
-每個 subagent 的任務 prompt 格式：
+每個 subagent 的任務 prompt 格式如下。**下列所有 `<...>` 占位符，主 skill 端必須在送出前全部替換為實際值**（`$OBSIDIAN_VAULT_ROOT` 展開、頻道名帶入、日期填上），不要把字面 `$OBSIDIAN_VAULT_ROOT` 或未替換的 `<…>` 傳給 subagent：
 
 ```
 任務：用 defuddle 抓取 YouTube 影片內容，並在 Obsidian vault 建立筆記。
 詳細指示請先 Read `.claude/skills/vault-youtube-sync/references/subagent-note-creator.md`。
 
-筆記存放位置：content/Inbox/YouTube/<頻道名>/
-今日日期：<YYYY-MM-DD>
+NOTES_DIR：<vault 絕對路徑>/Inbox/YouTube/<頻道名>/    # 例：/vault/content/Inbox/YouTube/Chase-H-AI/
+今日日期：<YYYY-MM-DD>                                # 例：2026-04-24
 語言要求：正文內容一律繁體中文，技術名詞/品牌名保留英文。
 
 **影片清單（處理第 N-M 部）：**
