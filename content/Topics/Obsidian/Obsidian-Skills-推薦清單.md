@@ -23,7 +23,6 @@ tags:
 
 ## 不推薦
 
-- OpenClaw 官方倉庫的 obsidian skill（實際用的是 2023 年舊專案，非官方 CLI）
 - Steph 的 `json-canvas` skill（排版有瑕疵，Axton 版本更佳）
 
 ## 推薦的 Obsidian 智能體插件

@@ -14,7 +14,7 @@ content/
 ├── Inbox/         — 待消化暫存（理想為空，消化完刪除）
 │   ├── YouTube/   — 影片摘要，依頻道分組
 │   │   ├── AIJasonZ/              — Claude 設計工作流、Skills、Agent 記憶體管理
-│   │   ├── AILABS-393/            — Claude Code 進階技巧、OpenClaw、RAG
+│   │   ├── AILABS-393/            — Claude Code 進階技巧、RAG
 │   │   ├── Chase-H-AI/            — Claude Code 實戰、RAG、Obsidian 整合
 │   │   └── daveebbelaar/          — Python、LLM Evals、API 整合
 │   └── Clippings/ — 網頁剪貼
