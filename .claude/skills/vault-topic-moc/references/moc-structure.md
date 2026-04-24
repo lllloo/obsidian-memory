@@ -10,9 +10,9 @@ title: <主題名稱>
 created: <首次建立日期 YYYY-MM-DD>
 updated: <今日 YYYY-MM-DD>
 tags:
-  - <類別>          # 如 claude-code / obsidian / ai-tools
+  - <主題類別>      # 如 claude-code / obsidian / ai-tools（即使 MOC 寫在 Cards/，仍用主題 tag 串連，後續升 Topics/ 不需動 tag）
   - <子主題>        # 可選
-  - moc             # 視該類別既有 MOC 習慣：既有都有 `moc` 就跟上，既有都沒有就先不加（避免製造 tag drift）
+  - moc             # 視同主題既有 MOC 習慣：既有都有 `moc` 就跟上，既有都沒有就先不加（避免製造 tag drift）
 ---
 ```
 

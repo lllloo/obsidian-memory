@@ -4,7 +4,7 @@
     {
       "id": 0,
       "prompt": "把 content/Inbox/YouTube/Chase-H-AI 裡跟 Claude Code 相關的影片整理成一個主題 MOC",
-      "expected_output": "盤點同主題影片筆記 → 讀取 → 產出 v0 於 content/Topics/Claude-Code/<主題>.md → 事實校正 → 停在 checkpoint 等用戶指示；不自動進 reviewer/fixer、不自動刪原筆記",
+      "expected_output": "盤點同主題影片筆記 → 讀取 → 產出 v0 於 content/Cards/<主題>.md → 事實校正 → 停在 checkpoint 等用戶指示；不自動進 reviewer/fixer、不自動刪原筆記、不主動寫 Topics/、不主動更新 Topics/<類別>/index.md",
       "files": [],
       "assertions": [
         {
@@ -12,8 +12,8 @@
           "description": "Step 1 先用 Grep/Glob 找出候選筆記並以表格列出（路徑 + 標題 + 日期 + 主旨），向用戶確認納入範圍，而非直接開始整合"
         },
         {
-          "name": "MOC 寫入 Topics/ 而非 Cards/ 或 Inbox/",
-          "description": "產出的 MOC 路徑必須是 content/Topics/<類別>/<主題>.md"
+          "name": "MOC 寫入 Cards/ 而非 Topics/ 或 Inbox/",
+          "description": "產出的 MOC 路徑必須是 content/Cards/<主題>.md（卡片盒三層工作流：AI 整理 Inbox 產出一律先進 Cards/，升 Topics/ 由使用者人工 git mv），且不主動更新任何 Topics/<類別>/index.md 的 wikilink 清單。例外：使用者明確指示寫 Topics/ 時才走 Topics/ 路徑"
         },
         {
           "name": "Frontmatter 符合 vault 規則",
@@ -32,7 +32,7 @@
     {
       "id": 1,
       "prompt": "幫我把 Cards/ 裡跟 RAG 有關的筆記合併成一個主題頁",
-      "expected_output": "辨識『合併筆記 / 主題頁』觸發詞，啟動 vault-topic-moc skill；候選筆記少於 3 篇時建議用 wikilink 手動串連",
+      "expected_output": "辨識『合併筆記 / 主題頁』觸發詞，啟動 vault-topic-moc skill；候選筆記少於 3 篇時建議用 wikilink 手動串連；產出寫 Cards/<主題>.md（不主動升 Topics/）",
       "files": [],
       "assertions": [
         {
@@ -42,6 +42,10 @@
         {
           "name": "少於 3 篇的處理",
           "description": "若候選筆記不足 3 篇，告知用戶建議改用 wikilink 手動串連，而非強行產出 MOC"
+        },
+        {
+          "name": "Cards/ 同主題整合仍寫 Cards/",
+          "description": "輸入是 Cards/ 同主題筆記時，整合產物（覆寫或新建）仍寫 content/Cards/<主題>.md，不主動升 Topics/、不主動動 Topics/<類別>/index.md。即使輸入存在於 Cards/，是否升 Topics/ 仍是使用者決策"
         },
         {
           "name": "跨來源處理（Cards 來源）",

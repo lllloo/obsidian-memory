@@ -28,25 +28,35 @@ env 未設或該路徑底下找不到 `master-index.md` → 告知用戶並停�
 
 > 請在 `~/.claude/settings.local.json` 的 `env` 段加：`"OBSIDIAN_VAULT_ROOT": "<絕對路徑到 vault content/ 目錄>"`
 
-### 術語對照（Topics 兩層意義）
+### 產出位置（卡片盒三層工作流）
 
-vault 的 `Topics/` 實際有兩層意義，兩份規則用詞不同，先對齊避免誤解：
+依 `content/CLAUDE.md`，AI 整理 Inbox/ 或合併既有筆記的產出**一律先進 `Cards/`**，由使用者主觀判斷成熟度後再批次 `git mv` 進 `Topics/<類別>/`。
 
-| 層級 | content/CLAUDE.md 稱呼 | 本 skill 稱呼 | 範例 |
+| 來源 → 產出 | 預設目的地 | 由誰決定 |
+|---|---|---|
+| Inbox/* 整理 → MOC | `Cards/<主題>.md` | 本 skill |
+| Cards/* 同主題整合 → MOC | `Cards/<主題>.md`（覆寫或新建） | 本 skill |
+| Cards/ → Topics/ 升級 | `Topics/<類別>/<主題>.md` | **使用者** 人工 `git mv` |
+
+本 skill 預設**不寫 `Topics/`、不更新 `Topics/<類別>/index.md`**。若使用者明確指示寫 Topics/（罕見），才走 `Topics/<類別>/<主題>.md` 並補 index.md wikilink。
+
+### 術語對照（升 Topics/ 才需要）
+
+下列名詞僅在使用者明確指示寫 Topics/ 時用得到。`Topics/` 實際結構：
+
+| 層級 | content/CLAUDE.md 稱呼 | 本文件稱呼 | 範例 |
 |---|---|---|---|
 | 第一層資料夾 | 「主題」 | **類別** | `Topics/Claude-Code/` |
 | 第二層 MOC 檔 | —（視為 cards 之一） | **主題 MOC** | `Topics/Claude-Code/Agent-Harness.md` |
 
-content/CLAUDE.md 說「Topics/ 第一層不跨主題巢套」指的是不要建 `Topics/AI-工具/Claude-Code/`（兩層類別）；本 skill 產出 `Topics/<類別>/<主題>.md` 只有單層類別，並未違反。
-
-後續 Step 3 路徑中的 `<類別>` = 第一層資料夾名（如 `Claude-Code`），`<主題>` = MOC 檔名（如 `Agent-Harness`）。
+content/CLAUDE.md「Topics/ 第一層不跨主題巢套」指的是不要建 `Topics/AI-工具/Claude-Code/`（兩層類別）；單層類別 `Topics/<類別>/<主題>.md` 不違反此規則。
 
 ### 寫入前 Checklist
 
 此 skill 是 `content/` 的寫入路徑（寫 MOC、改 index.md、刪原筆記）。寫入前依 `$OBSIDIAN_VAULT_ROOT/CLAUDE.md` 的「寫入前 Checklist」自檢：
 
 - **敏感資料零容忍**：事實校正從 WebFetch 抓的官方內容若帶 token / API key / 私人資訊，移除再寫入
-- **Tag 沿用既有**：`<類別>` 先用 Grep tool（`pattern="^tags:"`, `path="$OBSIDIAN_VAULT_ROOT"`, `-A 5`）查既有 tags 再決定，避免 `claude-code` vs `claudeCode` drift；`moc` tag 視該類別既有 MOC 習慣決定是否加（既有都沒加就先不加，既有都加就跟上）
+- **Tag 沿用既有**：寫入前用 Grep tool（`pattern="^tags:"`, `path="$OBSIDIAN_VAULT_ROOT"`, `-A 5`）查既有同主題 tags 再決定，避免 `claude-code` vs `claudeCode` drift；`moc` tag 視同主題既有 MOC 習慣決定是否加（既有都沒加就先不加，既有都加就跟上）
 - **Frontmatter schema**：欄位、順序、白名單以 `scripts/vault-schema.mjs` 為真實來源；寫入當下即合法，schema 以外欄位不允許
 - **命名**：檔名不含空格，中英文間用 `-`，不含 `?:;"'`
 
@@ -77,9 +87,11 @@ Read 全部候選筆記。記錄：
 
 ### 3. 產出 MOC v0
 
-寫進 `$OBSIDIAN_VAULT_ROOT/Topics/<類別>/<主題>.md`。骨架範本見 [references/moc-structure.md](references/moc-structure.md)。
+寫進 `$OBSIDIAN_VAULT_ROOT/Cards/<主題>.md`（依「產出位置」段預設規則）。骨架範本見 [references/moc-structure.md](references/moc-structure.md)。
 
-若該主題 MOC 已存在，先問用戶：擴充既有的？重寫？還是建新的子主題？
+若 `Cards/<主題>.md` 已存在，先問用戶：擴充既有的？重寫？還是另建子主題（如 `<主題>-進階.md`）？
+
+若該主題在 `Topics/<類別>/` 已有 MOC（表示之前已升 Topics），同樣先問用戶要動 Cards/ 新版還是覆寫 Topics/ 既有版——後者需用戶明確同意。
 
 ### 4. 事實校正（若有官方來源）
 
@@ -155,7 +167,8 @@ MOC 聚焦**概念與大方向**，經得起時間、可在不同模型世代重
 
 ## 硬性規則
 
-- MOC 寫在 `$OBSIDIAN_VAULT_ROOT/Topics/<類別>/<主題>.md`（**不要**寫 `Cards/` 或 `YouTube/`）
+- MOC 預設寫在 `$OBSIDIAN_VAULT_ROOT/Cards/<主題>.md`（**不要**主動寫 `Topics/<類別>/`，**也不主動更新任何 `Topics/<類別>/index.md` 的 wikilink 清單**——升 Topics 與 index 維護由使用者決定）
+- 唯一例外：使用者**明確指示**「直接寫 Topics/<類別>/」時才走 Topics/ 路徑並補 index.md wikilink
 - frontmatter 遵守前置作業段「寫入前 Checklist」與 `scripts/vault-schema.mjs`（schema 真實來源）
 - `updated` 欄位盡量同步為今日日期（不強制）
 - wikilink 檔名需確實存在，否則改用外部 URL

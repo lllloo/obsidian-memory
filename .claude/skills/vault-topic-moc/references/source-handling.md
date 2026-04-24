@@ -26,7 +26,7 @@ MOC 建好後，原筆記有三種處置選項。**執行前必須先問用戶**
 1. MOC 文內移除指向原筆記的 wikilink，改為外部 URL（YouTube、GitHub、官方 docs 等）
 2. MOC 末尾的「來源」章節列原始外部 URL
 3. `git rm <原筆記路徑>`（保留 git 歷史）
-4. 若 `Topics/<類別>/` 有 `index.md`（類別入口頁），新增一條指向本 MOC 的 wikilink；若被刪除的原筆記本身也出現在 index.md 清單（僅適用 Cards 歸檔後再整併的情境；Inbox/YouTube 來源通常不會被 index.md 列出），一併移除
+4. **不主動更新 `Topics/<類別>/index.md`**——本 skill 預設把 MOC 寫進 `Cards/`，Topics/ 的 index.md wikilink 由使用者升 Topics/ 時人工維護。例外：若使用者**明確指示**寫 Topics/、或被刪除的原筆記本身已出現在某個 index.md 清單，才一併處理 index.md（前者新增、後者移除）
 
 **優點**：
 - MOC 自足，vault 精簡
