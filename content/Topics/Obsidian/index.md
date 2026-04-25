@@ -9,6 +9,10 @@ tags:
 
 用 Obsidian 搭配 Claude Code 打造個人知識庫的筆記集合。
 
+## 組織方法
+
+- [[MOC-筆記組織法]] — 用 MOC + 資料夾的混合策略組織筆記
+
 ## 工具與設定
 
 - [[Obsidian-CLI-整合指南]] — CLI 常用指令速查

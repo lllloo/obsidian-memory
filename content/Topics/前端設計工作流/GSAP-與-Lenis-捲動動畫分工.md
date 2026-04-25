@@ -1,7 +1,7 @@
 ---
 title: GSAP 與 Lenis — 捲動動畫的分工
 created: 2026-04-20
-updated: 2026-04-21
+updated: 2026-04-25
 source: https://www.youtube.com/watch?v=sdxJEd7nqiQ
 tags:
   - frontend
@@ -17,7 +17,7 @@ tags:
 
 ## 為什麼要搭配使用
 
-兩者**互補**：Lenis 讓底層捲動慣性變順暢後，GSAP 的動畫觸發時機也更自然；單用 GSAP 在原生 scroll 上會覺得動畫生硬。
+兩者**互補**：Lenis 讓底層捲動慣性變順暢後，GSAP 的動畫觸發時機通常也更自然；如果專案很重視整體 scroll feel，常會把兩者搭配使用。
 
 ## 記憶要點
 

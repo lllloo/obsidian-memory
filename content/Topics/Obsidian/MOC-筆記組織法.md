@@ -1,7 +1,7 @@
 ---
 title: MOC 筆記組織法
 created: 2026-03-22
-updated: 2026-04-21
+updated: 2026-04-25
 tags:
   - obsidian
   - workflow
@@ -27,7 +27,10 @@ Topics/                 ← 主題區
 ├── Vue.md              ← MOC（初期，單檔索引）
 ├── Claude-Code/        ← 升級後的資料夾
 │   ├── index.md        ← 原本的 MOC
-│   └── skill-creator-是什麼.md
+│   └── Claude-Code-Skills.md
+├── AI-Agent-工作流/
+│   ├── index.md
+│   └── Agent-Harness.md
 └── Obsidian/
     ├── index.md
     ├── Obsidian-CLI-整合指南.md

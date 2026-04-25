@@ -1,7 +1,7 @@
 ---
 title: Awesome Design MD
 created: 2026-04-12
-updated: 2026-04-12
+updated: 2026-04-25
 tags:
   - design
   - design-system
@@ -9,11 +9,11 @@ tags:
   - resources
 ---
 
-[AWESOMEDESIGN.md](https://getdesign.md/) 是 [awesome-design-md](https://github.com/VoltAgent/awesome-design-md) GitHub 收藏的瀏覽前端，收集熱門網站設計系統靈感的資源。提供各大品牌的 DESIGN.md 文件，可直接丟給 coding agents 來建立對應風格的 UI。
+[AWESOMEDESIGN.md](https://getdesign.md/) 是 [awesome-design-md](https://github.com/VoltAgent/awesome-design-md) 的瀏覽前端，收集熱門網站設計系統靈感。它提供的是**從公開網站抽出的 DESIGN.md 參考文件**，適合拿來做風格研究與 prompt / agent context 起點。
 
 ## 關於 DESIGN.md
 
-DESIGN.md 是由 **Google Stitch** 提出的概念：一個結構化的 Markdown 文件，記錄從公開網站觀察到的設計模式，包含顏色、字型、間距、層次感、響應式行為等。將 DESIGN.md 放在專案根目錄，指引 coding agent 來建立參考同款設計語彙的 UI。
+`DESIGN.md` 是 Google Stitch 提出的 agent-friendly 設計系統文件格式；`awesome-design-md` 則是把許多公開網站的視覺語彙整理成可重用的 DESIGN.md 範例集合。
 
 > 注意：這些不是官方設計系統，而是從公開可見設計模式整理的靈感來源，與各品牌無關聯也未獲授權。
 
@@ -23,7 +23,7 @@ GitHub 來源：[VoltAgent/awesome-design-md](https://github.com/VoltAgent/aweso
 
 ## DESIGN.md 結構
 
-每個品牌的 DESIGN.md 包含 9 個標準節：
+這個 collection 採用的是 **extended 9-section format**，不是 Google 官方 base spec 的唯一寫法：
 
 | # | 節名 | 內容 |
 |---|------|------|
@@ -37,9 +37,11 @@ GitHub 來源：[VoltAgent/awesome-design-md](https://github.com/VoltAgent/aweso
 | 8 | Responsive Behavior | 斷點、觸控目標、收合策略 |
 | 9 | Agent Prompt Guide | 快速色彩參考、即用提示詞 |
 
-每個品牌還附有 `preview.html`（淺色）和 `preview-dark.html`（深色）視覺預覽。
+每個品牌另外附有 `preview.html`（淺色）與 `preview-dark.html`（深色）視覺預覽；這是 collection 的附加產物，不是官方 spec requirement。
 
-## 已收錄品牌（66+）
+## 已收錄品牌（持續增加）
+
+目前 repo badge 顯示約 69 份 DESIGN.md；數量仍會持續增加。
 
 ### AI & LLM 平台
 

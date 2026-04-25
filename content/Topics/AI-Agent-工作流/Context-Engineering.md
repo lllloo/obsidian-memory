@@ -1,7 +1,7 @@
 ---
 title: Context Engineering 與成本優化
 created: 2026-04-20
-updated: 2026-04-20
+updated: 2026-04-25
 tags:
   - claude-code
   - ai-agent
@@ -9,7 +9,7 @@ tags:
   - memory
 ---
 
-> AI Agent 在 demo 表現優異但在生產環境失敗，大多數情況不是模型能力不足，而是 **context engineering 做得不夠好**。本 MOC 整合六篇影片摘要，涵蓋 Context Rot 現象、架構層與 session 層的優化策略、以及用量管理的實戰技巧。
+> AI Agent 在 demo 表現優異但在生產環境失敗，大多數情況不是模型能力不足，而是 **context engineering 做得不夠好**。本 MOC 整合官方文件、研究與多篇影片摘要；閱讀時要分清楚：哪些是 **Claude Code 官方能力**、哪些是 **社群 workflow**、哪些只是 **經驗法則而非保證**。
 
 ## 為什麼 Context 是 Agent 的核心
 
@@ -45,10 +45,10 @@ LLM 世代更迭下，長 context 效能呈現兩階段變化：
 
 ### 操作準則
 
-- 每堆積一段 context 就有小幅效能損耗（經驗法則：每 100K tokens 約 2%，因模型而異）
-- **如果可以清，就清**（從 0 開始永遠優於從 700K 開始）
-- **如果需要延續**，新世代模型下可放心維持長對話，不必做 hacky 的 context 管理
-- 留意自家 plan 是否啟用長 context 支援，以及是否有 long-context surcharge
+- 長 context 仍有成本，但**不存在單一萬用門檻**；退化速度取決於模型、任務型態、工具輸出與工作方式
+- 對 Claude Code 來說，`/clear`、`/compact`、`/resume`、auto-compaction 都是官方提供的 session 管理手段，不必自己發明一堆 hack
+- **如果是新任務，就偏向新 session**；如果是同一任務的連續工作，再考慮延續當前脈絡
+- 把「何時清 context」視為 workflow 決策，而不是迷信某個固定 token 數
 
 ## 策略一：架構層 — 檔案系統取代 Context
 
@@ -75,7 +75,7 @@ Vercel 工程師提出：**最佳架構不是複雜 pipeline，而是 Unix 哲�
 - **檔案系統**：資料高度結構化、查詢意圖明確
 - **RAG**：需要比對詞語含義、查詢較模糊或非結構化
 
-### `.agent/` 文件系統架構
+### `.agent/` 文件系統架構（社群 pattern，不是 Claude Code 內建）
 
 AIJasonZ 的實務作法，宣稱效能提升 10 倍：
 
@@ -100,7 +100,7 @@ AIJasonZ 的實務作法，宣稱效能提升 10 倍：
 
 ## 策略二：記憶體管理 — Git Context Controller
 
-針對長時間任務中 agent 「越來越笨」、重複犯錯、Claude Code MEMORY.md 僅單 session 有效的問題。
+針對長時間任務中 agent 「越來越笨」、重複犯錯、而單靠 session transcript 或單一記憶檔不夠好導覽的問題。
 
 ### GCC 方法（學術論文 + 社群實作）
 
@@ -133,14 +133,16 @@ project/
 - Resolution rate 48%，在所測 26 個系統中最高
 - 讓較小型模型達到 frontier model 等級
 
-### 與 Claude Code 自有記憶的差異
+### 與 Claude Code 內建能力的差異
 
-| | Claude Code MEMORY.md | Git Context Controller |
+這裡最容易混淆。**Git Context Controller 不是 Claude Code 內建功能**；Claude Code 官方目前提供的是 `CLAUDE.md`、session resume、auto memory（可由環境變數控制）等能力。兩者解的是不同層次的問題：
+
+| | Claude Code 內建記憶 / session 能力 | Git Context Controller |
 |---|---|---|
-| 跨 session | 有限 | 是 |
-| 跨 agent | 否 | 是 |
-| 可分享 | 否 | 可產生分享 URL |
-| 複雜度 | 單一檔案易膨脹 | 分層結構 |
+| 主要用途 | 指令、session continuity、auto memory | git-style 的可導航外部記憶工作區 |
+| 跨 session | 有，但以 resume / auto memory 為主 | 是，且把記憶顯式外部化 |
+| 分支 / 合併 | 不是核心模型 | 是核心概念 |
+| 是否官方內建 | 是 | 否，外部研究 / 工具 |
 
 **實作變體**：
 
@@ -230,7 +232,7 @@ project/
 
 **Effort 設定**：預設 `auto`；非複雜任務手動設為 `low`。
 
-**停用思考模式（disable thinking）**：與 effort 不同，完全關閉內部推理步驟，適合不需深度推理的任務。
+**停用思考模式（disable thinking）**：與 effort 不同，屬於更強的關閉方式。官方可透過 `/config`、快捷鍵切換，或用 `MAX_THINKING_TOKENS=0` / `CLAUDE_CODE_DISABLE_THINKING=1` 關閉。
 
 ### CLAUDE.md 精簡原則
 
@@ -240,15 +242,25 @@ project/
 
 **文件拆分策略**：特定區域（DB schema、API 規範）拆獨立文件，在 CLAUDE.md 連結，Claude 用到才載入。
 
-**Path-specific rules**：不同路徑設不同規則，只載入當前任務相關。
+**Path-specific rules / 分檔規則**：把不同領域規範拆到獨立文件，避免所有規則都塞進一份長文件。這可以透過 repo 自己的規範檔結構實作；若你使用 Claude Code 的 rules / skill / 文件分檔機制，也要遵守同一原則：**只讓當前任務載入真正相關的規則**。
 
 ### `.claude` 資料夾設定
 
 ```
-disablePromptCaching: false   # 啟用快取，減少重複 prefix 費用
-autoMemory: false             # 停用背景記憶分析
-disableBackgroundTask: true   # 停用 dream、memory refactor、indexing
+// .claude/settings.json
+{
+  "alwaysThinkingEnabled": true,
+  "showThinkingSummaries": false,
+  "env": {
+    "CLAUDE_CODE_DISABLE_AUTO_MEMORY": "1",
+    "CLAUDE_CODE_DISABLE_BACKGROUND_TASKS": "1"
+  }
+}
 ```
+
+- `alwaysThinkingEnabled`、`showThinkingSummaries` 是官方 `settings.json` keys
+- **prompt caching 不是 `disablePromptCaching: false` 這種設定鍵**；若要全域停用，官方是用環境變數 `DISABLE_PROMPT_CACHING=1`
+- 停用 auto memory / background tasks 也是透過 `env` 內的官方環境變數，而不是 `autoMemory: false`、`disableBackgroundTask: true` 這類舊寫法
 
 ### Hooks 與 skills
 
@@ -258,7 +270,7 @@ disableBackgroundTask: true   # 停用 dream、memory refactor、indexing
 ### 其他旗標
 
 - **`--append-system-prompt`**：一次性指令用此帶入，session 結束後消失，不永久佔 context
-- **max output tokens**：無預設值，可手動設上限；不需長輸出的任務設低一點
+- **max output tokens**：可透過 `CLAUDE_CODE_MAX_OUTPUT_TOKENS` 控制；不需長輸出的任務可適度壓低
 
 ### Claude 用量限制機制
 
@@ -273,13 +285,14 @@ disableBackgroundTask: true   # 停用 dream、memory refactor、indexing
 - 高峰時段 Anthropic 會額外加速限制到期
 - Claude.ai 與 Claude Code 共用同一 usage bucket
 
-### Claude Code 已知隱性浪費
+### Claude Code 常見的 context 浪費來源（實務觀察）
 
-從洩漏的原始碼中發現：
+- 手動 attach 整個大檔，明明只需要其中一段
+- MCP / tools / docs 一次載太多，但當前任務根本用不到
+- 把通過的測試、冗長 log、完整 build output 全部留在對話裡
+- 明明是新任務，卻沿用已經很長的舊 session
 
-- 截斷的回應（如 rate limit 錯誤）會保留在 context 繼續累積
-- Skills 清單在啟動時自動注入，即使不需要也佔空間
-- Claude Code 的 autocompact buffer 為 33K tokens
+比起追逐神祕數字，更有用的是：**持續檢查哪些資訊真的幫助當前任務，哪些只是噪音。**
 
 ## 測試思維的轉變
 
@@ -299,7 +312,7 @@ AI 系統：不只第 1 輪要通過，**第 10 輪、第 20 輪都要通過**�
 | 旁支問題 | `/btw` |
 | 大量結構化資料查詢 | 檔案系統 + `grep`，非 RAG |
 | 跨 session 記憶需求 | Git Context Controller |
-| MCP 工具太多佔 context | 停用不用的 MCP、使用 `--no-mcp-upfront`、或將常用工具獨立成 skill |
+| MCP 工具太多佔 context | 停用不用的 MCP、減少 upfront 載入的工具描述，或將常用流程獨立成 skill |
 | 多階段 agent | 動態 system prompt + state machine |
 | 連鎖規則越堆越多 | 加 router 拆問題，不要堆 if/else |
 | 重複性確定任務 | 封裝為 skill，不要佔 Claude token |

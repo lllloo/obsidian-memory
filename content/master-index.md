@@ -1,7 +1,7 @@
 ---
 title: Master Index
 created: 2026-04-15
-updated: 2026-04-24
+updated: 2026-04-25
 tags:
   - index
 ---
@@ -18,27 +18,31 @@ content/
 │   │   ├── Chase-H-AI/            — Claude Code 實戰、RAG、Obsidian 整合
 │   │   └── daveebbelaar/          — Python、LLM Evals、API 整合
 │   └── Clippings/ — 網頁剪貼
-├── Cards/         — 未歸屬的完整概念 Cards（工作區）
-└── Topics/        — 已歸檔主題，3 個子目錄
-    ├── Claude-Code/   — Skills、Agent Packages、Hooks、GAN Harness
-    ├── Obsidian/      — CLI 整合、Skills、Quartz 部署
-    └── 前端設計/      — 工作流、Stitch、動效、設計系統、切版規則
+├── Cards/         — 未歸屬或待補事實審查的完整概念 Cards
+└── Topics/        — 已歸檔主題，4 個子目錄
+  ├── AI-Agent-工作流/ — Harness、frameworks、multi-agent workflow
+  ├── Claude-Code/    — Skills、permissions、agent packages、日常操作
+  ├── 前端設計工作流/  — 靈感、設計系統、視覺工具、動效落地
+  └── Obsidian/       — CLI 整合、Skills、Quartz 部署
 ```
 
 ## Tag 查詢指南
 
 | 主題 | Tags | 位置 |
 |------|------|------|
-| Claude Code 實作 | `claude-code` | `Topics/Claude-Code/` + `Inbox/YouTube/` |
+| Claude Code 實作 | `claude-code` | `Topics/Claude-Code/` + `Cards/` + `Inbox/YouTube/` |
+| AI Agent 工作流 | `ai-agent` `agent-framework` `harness` | `Topics/AI-Agent-工作流/` + `Cards/` |
 | RAG / 知識庫 | `rag` | `Inbox/YouTube/daveebbelaar/` |
-| MCP | `mcp` | `Topics/前端設計/` |
+| MCP | `mcp` | `Cards/` |
 | Obsidian 操作 | `obsidian` `cli` | `Topics/Obsidian/` + `Cards/` |
-| 前端 / 設計 | `design` `css` `flexbox` | `Topics/前端設計/` + `Cards/` |
+| 前端設計工作流 | `frontend` `design` `animation` `design-system` | `Topics/前端設計工作流/` + `Cards/` |
+| 前端 / CSS 實作 | `css` `flexbox` | `Cards/` |
 | 記憶系統 | `memory` | `Cards/` |
 | Docker / Laradock / CI3 | `docker` `laradock` `codeigniter` `本機環境` `sop` | `Cards/` |
 
 ## 查詢策略
 
 - **主題明確** → 先查 `Topics/` 對應子目錄
+- **Agent / workflow 問題** → 先查 `Topics/AI-Agent-工作流/`
 - **找影片摘要** → 依頻道特性選 `Inbox/YouTube/<頻道>/`
 - **跨主題** → Grep 搜尋 tag（`tags:.*<tag名稱>`）

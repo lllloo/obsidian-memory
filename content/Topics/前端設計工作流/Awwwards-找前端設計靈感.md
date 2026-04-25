@@ -1,7 +1,7 @@
 ---
 title: Awwwards — 找前端設計靈感
 created: 2026-04-20
-updated: 2026-04-21
+updated: 2026-04-25
 source: https://www.youtube.com/watch?v=i-jawzwnjSA
 tags:
   - design
@@ -14,7 +14,7 @@ tags:
 
 ## 網站
 
-[awwwards.com](https://www.awwwards.com/) — 業界最高水準的前端設計作品集，取代無聊的 AI 模板做為參考來源。
+[awwwards.com](https://www.awwwards.com/) — 常用的高品質網站靈感與獎項平台，也是整理得相對完整的 collections / nominees / winners 參考來源。
 
 ## 使用情境
 

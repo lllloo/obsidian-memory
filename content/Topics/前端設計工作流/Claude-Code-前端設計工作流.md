@@ -1,7 +1,7 @@
 ---
 title: Claude Code 前端設計工作流
 created: 2026-04-20
-updated: 2026-04-21
+updated: 2026-04-25
 tags:
   - claude-code
   - design
@@ -30,9 +30,9 @@ Claude Code 在 agentic coding 表現卓越，但前端設計是普遍弱項。�
 
 最低成本的介入，安裝 Skill 讓 Claude Code 拿到「設計觀念」。
 
-- **[Impeccable](https://impeccable.style)**（[repo](https://github.com/pbakaus/impeccable)）：18 個子指令，用**反模式**（anti-patterns）直接列舉 AI slop
-- **[UI/UX Pro Max](https://ui-ux-pro-max-skill.nextlevelbuilder.io/)**（[repo](https://github.com/nextlevelbuilder/ui-ux-pro-max-skill)）：官方 frontend-design skill 進化版，涵蓋 161 種產品類別的推理規則，生成前會問答確認方向
-- **[Taste Skill](https://www.tasteskill.dev)**（[repo](https://github.com/Leonxlnx/taste-skill)）：用 `DESIGN_VARIANCE`（1–10，從乾淨置中到非對稱現代）與 `MOTION_INTENSITY` 兩個參數調節風格強度，適合差異化
+- **[Impeccable](https://impeccable.style)**（[repo](https://github.com/pbakaus/impeccable)）：1 個 skill + 23 個設計命令，用**反模式**（anti-patterns）直接列舉 AI slop
+- **[UI UX Pro Max](https://www.uupm.cc/)**（[repo](https://github.com/nextlevelbuilder/ui-ux-pro-max-skill)）：提供 style / color / typography / landing pattern 的設計資料庫與 design-system generation；官網與 README 的數字會隨版本更新，適合看方向，不適合背固定統計
+- **[Taste Skill](https://www.tasteskill.dev)**（[repo](https://github.com/Leonxlnx/taste-skill)）：用 `DESIGN_VARIANCE`、`MOTION_INTENSITY`、`VISUAL_DENSITY` 三個參數調節風格強度，適合差異化
 - **[awesome-design-md](https://github.com/VoltAgent/awesome-design-md)**：概念源自 Google Stitch 的 DESIGN.md，內建 ElevenLabs / Bugatti 等知名網站的設計系統拆解
 
 **局限**：還是 AI 模板感，核心問題沒解——使用者仍無法描述真正想要的視覺。
@@ -55,7 +55,7 @@ Claude Code 在 agentic coding 表現卓越，但前端設計是普遍弱項。�
 - **手動 teardown**：`Ctrl+U` 複製 HTML 貼給 Claude Code，讓它分析並抓出 CSS/JS 結構。門檻低但要自己整理
 - **[Skill UI](https://skillui.vercel.app/)**：把任意網站逆向工程成 Claude Code 可用的 skill，自動化上一條的流程
   - 標準模式靜態分析 HTML/CSS，Ultra 模式用 Playwright 抓滾動截圖、hover/focus 狀態、動畫 keyframe
-- 第一次嘗試可達 80–90% 相似度（影片作者示範估值）
+- 第一次嘗試常能快速做出可用的第一版，但相似度仍取決於網站結構、互動密度與素材品質
 - **額外收穫**：讓 Claude Code 解釋「這個效果是怎麼做到的」，每複製一個網站就多一個技術認知
 
 ### Layer 4：Flow Engineering（拆解設計思考）
@@ -75,7 +75,7 @@ Claude Code 在 agentic coding 表現卓越，但前端設計是普遍弱項。�
 
 文字不夠高效時，引入視覺工具。
 
-- **Figma MCP + Shadcn MCP**（Vibe Design）：Figma 選 frame 複製 link → Claude Code「implement 100% pixel perfect」→ 兩個 prompt 內達像素級還原
+- **Figma MCP + Shadcn MCP**（Vibe Design）：把 Figma frame、元件資訊與 registry 線索交給 agent 落地；若設計稿命名乾淨、元件選型一致，還原會更穩，但不應把它寫成保證式的像素級還原
   - 若 Figma 稿用 Shadcn 元件且 layer 名對應，Shadcn MCP 自動從 registry 抓元件
   - 第三方 Shadcn registry：Fancy Components、Animate UI、Magic UI、Plate UI
 - **Stitch**（[[Stitch]]）：視覺畫布生成 variants，可匯出程式碼或轉入 Claude Code
@@ -89,7 +89,7 @@ Claude Code 在 agentic coding 表現卓越，但前端設計是普遍弱項。�
 從複製轉向創作：
 
 - **元件**：[21st.dev](https://21st.dev/)、[CodePen](https://codepen.io/) 找高品質元件，直接複製 prompt
-- **自製素材**：Midjourney / Nano Banana Pro 生成品牌藝術圖，配 Kling 3.0 / Veo 3.1 做細微動態背景影片（見 [[Nano-Banana-動態-Hero-Section]]）
+- **自製素材**：Midjourney / Nano Banana Pro 生成品牌藝術圖，配 Kling / Veo 做細微動態背景影片（見 [[Nano-Banana-動態-Hero-Section]])
 - **視覺說故事**：素材與應用主題連結（例：Argus 情報 App → 千眼神意象 → 「See what's next」）
 - **排版**：主動指定 Google Fonts（Claude Code 預設偏 Inter，不會主動換字體）
 - **質感細節**：頁面載入動畫、計數器跳升、高光掃過、捲動進度條、GSAP + Lenis 捲動動畫（見 [[GSAP-與-Lenis-捲動動畫分工]]）
@@ -109,10 +109,10 @@ Claude Code 在 agentic coding 表現卓越，但前端設計是普遍弱項。�
 | 需要精緻小元件 | 21st.dev | 6 |
 | 整體品質提升 | Impeccable | 1 |
 | 差異化視覺 | Taste Skill | 1 |
-| 像素級還原 Figma | Figma MCP + Shadcn MCP | 5 |
+| 把 Figma 設計稿更穩地落地 | Figma MCP + Shadcn MCP | 5 |
 | 主題（色彩/字型/陰影） | Tweakcn | 4 |
 | 字體選擇 | Google Fonts | 6 |
-| Hero 動態背景 | Nano Banana Pro + Kling 3.0 | 6 |
+| Hero 動態背景 | Nano Banana Pro + Veo / Kling | 6 |
 | 進階動態效果 | WebGPU Skill | 7 |
 | 前端互動測試 | Playwright CLI | 通用 |
 
@@ -135,9 +135,9 @@ Claude Code 在 agentic coding 表現卓越，但前端設計是普遍弱項。�
 - 原因：純視覺還原有損失，反覆對齊成本高
 - 解法：往 Layer 3 拿原始碼，或用 Layer 5 的 Figma MCP 做像素級整合
 
-**徵兆：生成品質在 60% 天花板**
-- 原因：沒做 theme，色彩/字型/陰影靠模型隨機
-- 解法：Layer 4 用 Tweakcn 產 CSS，主題品質可拉到 90%+
+**徵兆：版面有了，但主題質感仍停在範本感**
+- 原因：沒做 theme，色彩 / 字型 / 陰影都靠模型臨場亂猜
+- 解法：Layer 4 用 Tweakcn 先把主題變數定下來，能明顯降低模型漂移
 
 **徵兆：用 Inter 字體、版面對但不耐看**
 - 原因：沒有質感細節
@@ -146,8 +146,7 @@ Claude Code 在 agentic coding 表現卓越，但前端設計是普遍弱項。�
 ## 相關主題
 
 - [[Stitch]] — Google Stitch 主題 MOC（Layer 5 工具的深度細節）
-- [[DESIGN.md-Google-Stitch-設計系統文件格式]] — 設計系統文件格式規範
-- Claude Design（MOC 待建立）— Claude 官方視覺設計介面，留作後續獨立整理
+- [[DESIGN.md-規格]] — 設計系統文件格式規範
 
 ## 來源
 

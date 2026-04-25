@@ -1,7 +1,7 @@
 ---
 title: Claude Code Skills
 created: 2026-03-29
-updated: 2026-04-24
+updated: 2026-04-25
 tags:
   - claude-code
   - ai-tools
@@ -84,7 +84,7 @@ MCP 的工具 schema 則是另一種成本模型；**實際 token 開銷會依 c
 
 ## 建立 Skill
 
-自己手寫 `SKILL.md` 當然可以，但最省力的方式通常是用 **skill-creator**（Anthropic 在 `anthropics/skills` 開源的 skill）：
+自己手寫 `SKILL.md` 當然可以；若想半自動建立與優化 skill，可直接參考 Anthropic 在 `anthropics/skills` repo 提供的 **`skill-creator`**：
 
 - 先釐清需求與觸發情境
 - 主動追問 edge cases、輸入輸出格式、成功條件
@@ -92,8 +92,6 @@ MCP 的工具 schema 則是另一種成本模型；**實際 token 開銷會依 c
 - 產生測試 prompts
 - 視情況跑 with-skill vs baseline benchmark
 - 最後再優化 description 的觸發率
-
-詳見 [[skill-creator-是什麼]]。
 
 寫完後可以用這個清單自檢：
 

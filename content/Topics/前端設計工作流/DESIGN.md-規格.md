@@ -1,7 +1,7 @@
 ---
 title: DESIGN.md 設計系統規格
 created: 2026-04-21
-updated: 2026-04-21
+updated: 2026-04-25
 tags:
   - design
   - design-system
@@ -10,7 +10,7 @@ tags:
   - moc
 ---
 
-涵蓋 DESIGN.md 是什麼、標準 9 區段、撰寫原則、品牌範例庫、與 Claude Code 整合。
+涵蓋 DESIGN.md 是什麼、官方 canonical 區段、常見 extended sections、品牌範例庫，以及與 Claude Code 整合的常見工作流。
 
 ## 是什麼
 
@@ -22,21 +22,29 @@ tags:
 - 想讓設計系統納入 Git 版控、取代 Figma handoff
 - 團隊要確保多個 agent（或多人）產出視覺一致
 
-## 標準 9 大區段
+## 官方 canonical 8 大區段（alpha spec）
 
 | # | 區段 | 內容 |
 |---|------|------|
-| 1 | Visual Theme & Atmosphere | 氛圍、密度、設計哲學 |
-| 2 | Color Palette & Roles | 語義色名 + hex + 功能角色 |
-| 3 | Typography Rules | 字型家族、完整字級階層 |
-| 4 | Component Stylings | 按鈕、卡片、輸入框、導覽與互動狀態 |
-| 5 | Layout Principles | 間距比例、網格、留白哲學 |
-| 6 | Depth & Elevation | 陰影系統、表面層級 |
-| 7 | Do's and Don'ts | 設計護欄與反模式 |
-| 8 | Responsive Behavior | 斷點、觸控目標、收合策略 |
-| 9 | Agent Prompt Guide | 快速色彩參考、即用提示詞 |
+| 1 | Overview | 品牌與整體風格說明 |
+| 2 | Colors | 色彩 token 與語義用途 |
+| 3 | Typography | 字型 token 與階層 |
+| 4 | Layout | 版面與間距原則 |
+| 5 | Elevation & Depth | 表面層級與陰影 |
+| 6 | Shapes | 圓角 / shape 規則 |
+| 7 | Components | 元件 token 與狀態 |
+| 8 | Do's and Don'ts | 設計護欄與反模式 |
 
-配套檔案：`preview.html`（淺色）、`preview-dark.html`（深色）視覺預覽。
+> 官方 spec 目前是 `alpha`，而且 sections 可以省略；重點是**有寫的區段要遵守 canonical order**。
+
+## 常見 extended sections（不是官方必填）
+
+像 `awesome-design-md` 這類 collection，常會在官方 8 段之外，再額外加入：
+
+- `Responsive Behavior`
+- `Agent Prompt Guide`
+
+這些延伸段落對實務很有幫助，但應明確標成 **extended format**，不要誤寫成官方 base spec 的必填要求。
 
 ## 撰寫原則
 
@@ -47,7 +55,7 @@ tags:
 
 ## 品牌範例庫：awesome-design-md
 
-[getdesign.md](https://getdesign.md/)（GitHub: [VoltAgent/awesome-design-md](https://github.com/VoltAgent/awesome-design-md)）收集 66+ 知名品牌的 DESIGN.md，按產業分類：
+[getdesign.md](https://getdesign.md/)（GitHub: [VoltAgent/awesome-design-md](https://github.com/VoltAgent/awesome-design-md)）收集數十個知名品牌的 DESIGN.md，按產業分類；它採用的是 **Stitch format + extended sections** 的整理版本，而不是 Google 官方 spec 本身：
 
 - **AI 平台**：Claude、Cohere、ElevenLabs、Mistral、xAI 等
 - **開發工具**：Cursor、Vercel、Raycast、Warp、Superhuman
@@ -61,7 +69,9 @@ tags:
 
 > **注意**：這些不是官方設計系統，而是從公開可見設計模式整理的靈感來源，未獲授權，僅適合用於學習或風格參考。
 
-## 與 Claude Code 整合
+## 與 Claude Code 整合（常見工作流）
+
+這一段屬於實務工作流建議，不是 DESIGN.md spec 本身。
 
 1. 完成設計後把 `DESIGN.md` 放專案根目錄
 2. 在 `CLAUDE.md` 加指示：「生成或修改任何 UI 元件時，請參照 DESIGN.md」
@@ -90,17 +100,17 @@ tags:
 - Card border radius: 12px, shadow: 0 2px 8px rgba(0,0,0,0.1)
 ```
 
-## 配套工具：design-md skill
+## 官方工具與相關 skill
 
-社群有 `design-md` skill 可自動分析 Stitch 專案並產生 DESIGN.md，五階段分析流程：
+- 官方現在有 `@google/design.md` CLI，可用來 `lint`、`diff`、`export`、`spec`
+- 若要驗證檔案是否符合目前 spec，可直接跑：`npx @google/design.md lint DESIGN.md`
+- `google-labs-code/stitch-skills` 裡也有 `design-md` skill，可把 Stitch 專案分析為較自然語言、偏 agent-friendly 的 DESIGN.md 說明
 
-1. **Retrieval**：抓取畫面、HTML、設計 metadata
-2. **Extraction**：識別 design token
-3. **Translation**：CSS/Tailwind 轉語義化設計語言
-4. **Synthesis**：產生完整 DESIGN.md
-5. **Alignment**：確保輸出符合 Stitch Effective Prompting Guide
+這三者的角色不同：
 
-安裝方式以實際 repo 說明為準，過去常見路徑 `google-labs-code/stitch-skills`，使用前確認 repo 存在。
+- **spec / CLI**：定義格式與驗證規則
+- **Stitch**：產生 / 套用設計系統
+- **skills**：把設計流程串進 agent 工作流
 
 ## 常見陷阱
 
@@ -132,4 +142,5 @@ tags:
 - [getdesign.md](https://getdesign.md/) — 品牌範例瀏覽入口
 - [VoltAgent/awesome-design-md](https://github.com/VoltAgent/awesome-design-md) — GitHub 源
 - [Google Stitch](https://stitch.withgoogle.com/) — 官方入口
-- [Stitch 介紹（Google Developers Blog）](https://developers.googleblog.com/stitch-a-new-way-to-design-uis/)
+- [google-labs-code/design.md](https://github.com/google-labs-code/design.md) — 官方 spec 與 CLI
+- [Stitch’s DESIGN.md format is now open-source](https://blog.google/innovation-and-ai/models-and-research/google-labs/stitch-design-md/) — 開源公告

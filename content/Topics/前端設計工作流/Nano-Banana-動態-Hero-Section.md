@@ -1,7 +1,7 @@
 ---
 title: Nano Banana 動態 Hero Section 概念
 created: 2026-04-20
-updated: 2026-04-21
+updated: 2026-04-25
 source: https://www.youtube.com/watch?v=jQxHo9PC19Q
 tags:
   - design
@@ -10,7 +10,7 @@ tags:
 
 ## 核心概念
 
-在網頁 hero section 放**動態影片背景**，是對抗 AI slop 外觀最有效的單一武器——視覺效果遠超 99% 的 AI 生成網站，實作成本卻低。
+在網頁 hero section 放**動態影片背景**，通常是很有效的差異化手段：能快速拉開與常見 AI 模板的距離，而且不一定要先做超複雜的互動工程。
 
 ## 三個觀念
 
@@ -22,7 +22,7 @@ tags:
 
 - 多次迭代，不期望一次成功
 - 目標是 **wow factor，不是壓倒觀看者**——less is more
-- 生成工具關閉 enhance，保持對 prompt 的控制
+- 若生成工具的 enhancement 類選項讓結果太花，可先關掉或調低，保留對 prompt 的控制
 
 ## 相關工具
 
@@ -32,4 +32,4 @@ tags:
 
 ## 靈感來源
 
-Pinterest、Dribbble、MidJourney、[[Awwwards-找前端設計靈感|Awwwards]]
+Pinterest、Dribbble、Midjourney、[[Awwwards-找前端設計靈感|Awwwards]]
