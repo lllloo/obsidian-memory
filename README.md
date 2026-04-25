@@ -92,6 +92,8 @@ ln -sf "$PWD/.claude/commands/ob.md" ~/.claude/commands/ob.md
 
 **Windows 用正斜線**（例 `C:/path/to/obsidian-memory/content`），不要用反斜線——Git Bash 會把反斜線當 escape 吃掉。
 
+> **Tip**：在 Claude Code 內可直接請它用 `update-config` skill 設定（例：「用 update-config 加 `OBSIDIAN_VAULT_ROOT=/絕對路徑/content` 到全域 settings」），它會自動 merge 既有 `env` 欄位，不會覆蓋其他設定。
+
 未設定或路徑無效時，agent 會直接中止並回報錯誤，不做猜測 fallback——避免寫到錯誤位置或回傳錯誤搜尋結果。設定後需重啟 Claude Code session 才會載入。
 
 ## Web Clipper 模板
