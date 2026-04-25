@@ -34,4 +34,4 @@ tags:
 - 「幫我測試 commit skill 的品質，跑幾個測試案例看看輸出對不對」
 
 ## 相關
-- [[Obsidian-Skills-總覽]]
+- [[Obsidian-Skills]]

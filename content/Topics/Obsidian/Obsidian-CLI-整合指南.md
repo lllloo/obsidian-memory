@@ -1,7 +1,7 @@
 ---
 title: Obsidian CLI 整合指南
 created: 2026-03-17
-updated: 2026-03-22
+updated: 2026-04-25
 tags:
   - obsidian
   - claude-code
@@ -10,7 +10,7 @@ tags:
 
 透過 [Obsidian CLI](https://obsidian.md/help/cli) 讓 Claude Code 操作 Obsidian vault。
 
-Claude Code 使用 `obsidian:obsidian-cli` skill 呼叫 CLI 指令，直接讀寫 vault 內的筆記。
+Claude Code 使用 `obsidian-cli` skill（出自 Obsidian 共同創辦人維護的 [obsidian-skills](https://github.com/kepano/obsidian-skills) 集）呼叫 CLI 指令，直接讀寫 vault 內的筆記。
 
 ## 語法
 
@@ -76,5 +76,5 @@ obsidian <指令> [參數]
 | `obsidian dev:errors` | 查看錯誤 |
 
 ## 相關
-- [[Obsidian-Skills-總覽]]
+- [[Obsidian-Skills]]
 - [[daily-append-bug]]

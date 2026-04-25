@@ -1,7 +1,7 @@
 ---
 title: Obsidian
 created: 2026-03-22
-updated: 2026-03-22
+updated: 2026-04-25
 tags:
   - obsidian
   - moc
@@ -12,15 +12,11 @@ tags:
 ## 工具與設定
 
 - [[Obsidian-CLI-整合指南]] — CLI 常用指令速查
-- [[Obsidian-Skills-總覽]] — Claude Code 可用的 Obsidian 技能一覽
-- [[Obsidian-Skills-推薦清單]] — 精選推薦的 Obsidian Skills 清單
+- [[Obsidian-Skills]] — 目前安裝、日常使用的 skills（Obsidian 共同創辦人維護的集合）
+- [[Obsidian-Skills-候選]] — YouTube 影片整理的候選清單（含視覺化、教學、研究等待評估項目）
+- [[defuddle]] — 網頁剪藏 skill 介紹與適用範圍
 - [[Quartz-部署筆記]] — 把 vault 發佈成靜態網站
-
-## 方法論
-
-- [[MOC-筆記組織法]] — 混合式筆記組織策略
 
 ## 踩坑紀錄
 
 - [[daily-append-bug]] — `daily:append` 在特定環境失效的解法
-- [[defuddle-副作用]] — `obsidian:defuddle` 被意外觸發的處理方式

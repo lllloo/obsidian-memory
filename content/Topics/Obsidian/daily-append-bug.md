@@ -1,14 +1,14 @@
 ---
 title: daily:append 失效
 created: 2026-03-17
-updated: 2026-03-21
+updated: 2026-04-25
 tags:
   - obsidian
   - cli
   - bug
 ---
 
-`daily:append` 在特定環境下回傳 exit code 127 導致失敗。
+`daily:append` 在 Windows（Git Bash）回傳 exit code 127 導致失敗，macOS 未觀察到此問題。
 
 ## 根本原因
 
