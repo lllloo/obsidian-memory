@@ -2,7 +2,6 @@
 title: DESIGN.md - Google Stitch 設計系統文件格式
 created: 2026-04-14
 updated: 2026-04-21
-source: https://stitch.withgoogle.com/
 tags:
   - design-system
   - design
@@ -25,7 +24,7 @@ DESIGN.md 是 Google Stitch 提出的設計系統文件格式，概念類似 REA
 - 取代傳統 Figma handoff 流程
 - 納入 Git 版控，追蹤設計系統的變更歷程
 
-## 標準 9 大區段
+## 標準 9 大區段（註：1-8 為官方 alpha spec，9 為社群擴展）
 
 1. **Visual Theme & Atmosphere** — 風格調性、設計哲學、密度感
 2. **Color Palette & Roles** — 語義化色彩命名、hex 值與功能說明
@@ -35,7 +34,7 @@ DESIGN.md 是 Google Stitch 提出的設計系統文件格式，概念類似 REA
 6. **Depth & Elevation** — 陰影系統與介面層次
 7. **Do's and Don'ts** — 設計護欄與反模式
 8. **Responsive Behavior** — 斷點、觸控目標、收合策略
-9. **Agent Prompt Guide** — 快速色彩參考與預設 prompt 範例
+9. **Agent Prompt Guide（社群擴展）** — 快速色彩參考與預設 prompt 範例
 
 ## 格式範例
 

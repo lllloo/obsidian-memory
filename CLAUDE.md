@@ -25,6 +25,8 @@ Obsidian 個人知識庫，以 [Quartz 4](https://quartz.jzhao.xyz/) 發佈至 `
 npx quartz build --serve         # 本地預覽（localhost:8080）
 npm run check                    # TypeScript 型別檢查 + Prettier 格式驗證
 npm run format                   # 自動格式化
+npm run test                     # 執行所有測試（tsx --test，使用 Node.js 內建 test runner）
+tsx --test scripts/vault-schema.test.mjs  # 執行單一測試檔
 npm run vault:check              # 稽核 content/ 的 frontmatter 與檔名（只報告）
 npm run vault:fix                # 稽核並自動修正（/vault-check 內部呼叫這個）
 ```

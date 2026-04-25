@@ -92,7 +92,7 @@ claude -p "重構所有測試檔案" --dangerously-skip-permissions
 
 ## 相關
 
-- [[Claude-Code-效率技巧與設定]] — 權限模式 cycle、`Shift+Tab` 與日常操作
+- [[Claude-Code-Session-指令]] — session 指令速查（/insights、/btw、/statusline 等）
 
 ## 來源
 

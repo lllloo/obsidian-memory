@@ -1,7 +1,7 @@
 ---
 title: 記憶拼圖
 created: 2026-03-29
-updated: 2026-03-29
+updated: 2026-04-25
 ---
 
 開發路上的筆記與發現，挑有興趣的看就好。
@@ -10,7 +10,7 @@ updated: 2026-03-29
 
 - **[[Topics/Claude-Code/index|Claude Code]]** — Claude Code 工具、設定與技巧
 - **[[Topics/Obsidian/index|Obsidian]]** — 用 Obsidian 搭配 Claude Code 打造個人知識庫
-- **[[Topics/前端設計/index|前端設計]]** — AI 時代前端設計工作流、靈感資源、CSS 切版原則
+- **[[Topics/前端設計工作流/index|前端設計工作流]]** — AI 時代前端設計工作流、靈感資源、CSS 切版原則
 
 ## 依標籤探索
 
