@@ -1,7 +1,7 @@
 ---
 title: Claude Code
 created: 2026-04-25
-updated: 2026-04-25
+updated: 2026-04-26
 tags:
   - claude-code
   - moc
@@ -16,6 +16,7 @@ tags:
 - [[Claude-Code-CLI-優先]] — CLI 優於 MCP 的原因與工具速查表
 - [[Claude-Code-多-Agent-協作]] — Subagent / Teams / Fork / worktree
 - [[Claude-Code-指令速查]] — 依頻率分三梯隊的完整指令速查（`/compact`、`/rewind`、`/batch`、`/autofix-pr` 等）
+- [[Claude-Code-Review-工作流]] — `/review`、`/simplify`、`/security-review`、`/ultrareview` 分層策略
 
 ## Skills / Agents / 命名
 
