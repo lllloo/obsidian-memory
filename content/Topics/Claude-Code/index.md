@@ -15,6 +15,7 @@ tags:
 - [[Claude-Code-雙帳號設定]] — 用 `CLAUDE_CONFIG_DIR` 在同機切換多帳號
 - [[Claude-Code-CLI-優先]] — CLI 優於 MCP 的原因與工具速查表
 - [[Claude-Code-多-Agent-協作]] — Subagent / Teams / Fork / worktree
+- [[Claude-Code-指令速查]] — 依頻率分三梯隊的完整指令速查（`/compact`、`/rewind`、`/batch`、`/autofix-pr` 等）
 
 ## Skills / Agents / 命名
 

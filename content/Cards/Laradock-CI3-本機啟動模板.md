@@ -1,5 +1,5 @@
 ---
-title: Laradock-CI3-本機啟動模板
+title: Laradock + CodeIgniter 3.x 本機啟動模板
 created: 2026-04-24
 updated: 2026-04-24
 draft: true
