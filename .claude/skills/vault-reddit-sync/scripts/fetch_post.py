@@ -142,7 +142,9 @@ def main():
         sys.exit(1)
 
     subreddit = sys.argv[1].strip()
-    post_id = sys.argv[2].strip().lstrip("t3_")
+    post_id = sys.argv[2].strip()
+    if post_id.startswith("t3_"):
+        post_id = post_id[3:]
     if not subreddit or not post_id:
         print("ERROR:subreddit / post_id 不可為空")
         sys.exit(1)
