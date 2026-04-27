@@ -21,6 +21,13 @@ import re
 import urllib.request
 import html as html_module
 
+# Windows 預設 stdout 是 cp950，遇到 emoji（如 🚀）print 會炸 UnicodeEncodeError
+# 強制 UTF-8 輸出，主 skill bash heredoc 才不會收到 partial output。
+try:
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+except AttributeError:
+    pass  # Python <3.7 沒有 reconfigure，但本 repo 要求 3.7+
+
 def main():
     if len(sys.argv) < 2:
         print("ERROR:usage: fetch_videos.py <handle>")
