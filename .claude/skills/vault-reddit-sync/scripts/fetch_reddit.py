@@ -18,6 +18,7 @@
 （訂閱的 sub 本身就是 AI 廣域或工具直接相關，全收 top week）。
 """
 
+import re
 import sys
 import json
 import shutil
@@ -26,25 +27,55 @@ import time
 import urllib.request
 import urllib.error
 
+# Windows 預設 stdout 是 cp950，遇到 emoji 或非 BMP 字元 print 會炸 UnicodeEncodeError
+# 強制 UTF-8 輸出，主 skill bash 才不會收到 partial output。
+try:
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+except AttributeError:
+    pass  # Python <3.7 沒有 reconfigure，但本 repo 要求 3.7+
+
 HEADERS = {
     "User-Agent": "Mozilla/5.0 (compatible; ObsidianVaultBot/1.0)",
     "Accept": "application/json",
     "Accept-Language": "en-US,en;q=0.9",
 }
 
-MAX_RETRIES = 2
-RETRY_DELAY_SECONDS = 3
+# Reddit unauthenticated UA 限流頻繁；命中 429 應讀 Retry-After，
+# 其餘錯誤走 exponential backoff（3s → 8s → 20s）。
+RETRY_BACKOFF_SECONDS = [3, 8, 20]
+MAX_RETRY_AFTER_SECONDS = 60  # 上限保護，避免 server 回過大值卡死
 
 
 def build_url(subreddit):
     return f"https://www.reddit.com/r/{subreddit}/top.json?t=week&limit=50&raw_json=1"
 
 
+def _parse_retry_after(value):
+    """Retry-After 可能是秒數或 HTTP-date；只解析秒數，HTTP-date 直接視為無效。"""
+    if value is None:
+        return None
+    s = str(value).strip()
+    if s.isdigit():
+        return min(int(s), MAX_RETRY_AFTER_SECONDS)
+    return None
+
+
+def _retry_after_from_curl_stderr(stderr):
+    """curl --include 會把 header 寫到 stdout；--fail 模式下 header 不會回來。
+    這裡退而求其次：從 stderr 找 'HTTP/1.1 429' 後續的 Retry-After，通常沒有，回 None。
+    """
+    if not stderr:
+        return None
+    m = re.search(r"[Rr]etry-[Aa]fter:\s*(\d+)", stderr)
+    return _parse_retry_after(m.group(1)) if m else None
+
+
 def fetch_json(url):
     curl = shutil.which("curl")
     last_error = None
 
-    for attempt in range(MAX_RETRIES + 1):
+    for attempt in range(len(RETRY_BACKOFF_SECONDS) + 1):
+        retry_after = None
         try:
             if curl:
                 proc = subprocess.run(
@@ -74,13 +105,18 @@ def fetch_json(url):
         except subprocess.CalledProcessError as e:
             stderr = (e.stderr or "").strip()
             last_error = RuntimeError(stderr or f"curl exit {e.returncode}")
+            retry_after = _retry_after_from_curl_stderr(stderr)
         except urllib.error.HTTPError as e:
             last_error = RuntimeError(f"HTTP {e.code}")
+            if e.code == 429:
+                retry_after = _parse_retry_after(e.headers.get("Retry-After"))
         except Exception as e:
             last_error = RuntimeError(str(e))
 
-        if attempt < MAX_RETRIES:
-            time.sleep(RETRY_DELAY_SECONDS)
+        if attempt >= len(RETRY_BACKOFF_SECONDS):
+            break
+        delay = retry_after if retry_after else RETRY_BACKOFF_SECONDS[attempt]
+        time.sleep(delay)
 
     raise last_error or RuntimeError("unknown error")
 

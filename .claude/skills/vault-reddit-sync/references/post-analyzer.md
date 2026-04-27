@@ -20,36 +20,35 @@ grep -rl "comments/<post_id>/" "<NOTES_DIR>" 2>/dev/null
 
 ### 步驟 1：抓取貼文完整內容
 
-用 curl 抓取 Reddit JSON API 取得貼文正文與熱門留言：
+呼叫 `fetch_post.py`（已處理 UTF-8 / retry / selftext truncate / control char escape，**不要**自行 inline curl + heredoc python，與 SKILL.md 步驟 5 的禁令一致）：
 
 ```bash
-curl -s \
-  -H "User-Agent: Mozilla/5.0 (compatible; ObsidianVaultBot/1.0)" \
-  -H "Accept: application/json" \
-  "https://www.reddit.com/r/<subreddit>/comments/<post_id>.json?limit=25&sort=top" \
-  | python3 -c "
-import sys, json, datetime
-data = json.load(sys.stdin)
-post = data[0]['data']['children'][0]['data']
-print('TITLE:' + post.get('title',''))
-print('SCORE:' + str(post.get('score',0)))
-print('NUMCOMMENTS:' + str(post.get('num_comments',0)))
-print('SELFTEXT:' + post.get('selftext','').replace(chr(10),'\\\\n'))
-print('URL:' + post.get('url',''))
-print('PERMALINK:' + post.get('permalink',''))
-ts = post.get('created_utc',0)
-print('CREATED:' + datetime.datetime.fromtimestamp(ts, tz=datetime.timezone.utc).strftime('%Y-%m-%d'))
-comments = data[1]['data']['children']
-count = 0
-for c in comments:
-    if c.get('kind') == 't1' and count < 5:
-        cd = c['data']
-        body = cd.get('body','').replace(chr(10),' ')[:500]
-        score = cd.get('score',0)
-        print(f'COMMENT:{score}|||{body}')
-        count += 1
-"
+if command -v python3 >/dev/null 2>&1; then
+  python3 .claude/skills/vault-reddit-sync/scripts/fetch_post.py <subreddit> <post_id>
+else
+  python  .claude/skills/vault-reddit-sync/scripts/fetch_post.py <subreddit> <post_id>
+fi
 ```
+
+輸出格式（每行 `KEY:value`，selftext 用 BEGIN/END 包多行）：
+
+```
+TITLE:<標題>
+SCORE:<分數>
+NUMCOMMENTS:<留言數>
+URL:<外部連結，selftext post 為 reddit 連結>
+PERMALINK:</r/...>
+CREATED:<YYYY-MM-DD>
+SELFTEXT_LINES:<行數>
+SELFTEXT_TRUNCATED:<true|false>
+SELFTEXT_BEGIN
+<原文，可多行>
+SELFTEXT_END
+COMMENT:<score>|||<已 collapse 為單行的留言；上限 500 字>
+...（最多 5 條）
+```
+
+`SELFTEXT_TRUNCATED:true` 代表原文超過 4000 字已截斷；做筆記時優先抓出方法論／可重現步驟，不要試圖逐行翻譯。失敗會輸出 `ERROR:<msg>` 且 exit 1，此貼文跳過進入下一篇。
 
 ### 步驟 2：價值判斷
 

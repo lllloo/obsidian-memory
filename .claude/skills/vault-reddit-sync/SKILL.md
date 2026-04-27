@@ -103,7 +103,7 @@ env 未設或路徑無效 → 告知用戶並停止，不猜測 fallback。
 
 此 skill 是 `content/` 的寫入路徑。寫入前依 `$OBSIDIAN_VAULT_ROOT/CLAUDE.md` 的「寫入前 Checklist」自檢：
 
-- **敏感資料零容忍**：貼文正文若含 token / 私鑰 / API key → 移除該段，不寫入
+- **敏感資料零容忍**：貼文正文（含 code block）若含 token / 私鑰 / API key → 移除該段，不寫入。Reddit selftext 常把 token 貼在 ``` fence 裡，**fence 內也要掃**，subagent 自掃為主、`scripts/vault-check.mjs` 作為兜底（已對 `content/Inbox/**` 啟用 fence 內掃描）
 - **Tag 沿用既有**：`reddit` 以外的主題 tag 先 grep 既有 vault tags，避免同義異寫
 - **Frontmatter schema**：欄位、順序、白名單以 `scripts/vault-schema.mjs` 為真實來源
 - **命名**：檔名不含空格，不含 `?:;"'` 等特殊字元
