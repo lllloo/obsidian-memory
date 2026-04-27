@@ -5,3 +5,4 @@ public/
 .quartz-cache/
 .DS_Store
 .claude/skills/*-workspace/
+.claude/worktrees/
