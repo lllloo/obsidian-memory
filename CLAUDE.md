@@ -4,6 +4,7 @@
 **不涵蓋**：Vault 內容規則（卡片盒哲學、frontmatter schema、tag/命名、敏感資料）→ 見 [`content/CLAUDE.md`](content/CLAUDE.md)。
 
 **判斷規則寫哪份**：
+
 - 摸 `content/` 會爆炸的（筆記結構、寫入前檢查） → `content/CLAUDE.md`
 - 碰 Quartz / scripts / 部署 / agent 配置會爆炸的 → 本檔
 
@@ -15,7 +16,7 @@ Obsidian 個人知識庫，以 [Quartz 4](https://quartz.jzhao.xyz/) 發佈至 `
 
 - **Vault 層**（`content/`）— 筆記本體，規則見 `content/CLAUDE.md`
 - **發佈層**（`quartz/`、`quartz.config.ts`、`quartz.layout.ts`、`.github/workflows/`）— Quartz 建置與 GitHub Pages 部署
-- **工作流層**（`.claude/` + `scripts/`）— agents（`vault-writer` / `vault-query` / `vault-auditor`）、commands（`/ob`、`/vault-check`）、skills（`vault-youtube-sync`、`vault-topic-moc`）、Node 稽核腳本。`.claude/` 可 symlink 至 `~/.claude/` 跨專案使用
+- **工作流層**（`.claude/` + `scripts/`）— agents（`vault-writer` / `vault-query` / `vault-auditor`）、commands（`/ob`、`/vault-check`）、skills（`vault-youtube-sync`、`vault-topic-moc`、`vault-reddit-sync`）、Node 稽核腳本。`.claude/` 可 symlink 至 `~/.claude/` 跨專案使用
 
 ## 常用指令
 
@@ -77,21 +78,22 @@ Vault 內容規則（寫入前 Checklist、frontmatter schema、tag/命名、敏
 
 兩段分工、零重疊：**Script 管格式與敏感資料硬掃（硬規則自動修 + high-precision 敏感資料 flag），Subagent 管語意（建議不改檔）**。command 串接兩段。全程綁本 repo，不需掛全域。
 
-| 檔案                              | 類型        | 全域路徑 | 用途                                                                                                                                          |
-| --------------------------------- | ----------- | -------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
-| `.claude/commands/vault-check.md` | Command     | —        | `/vault-check` orchestrator：git 前置檢查 → 跑 script → 呼叫 subagent → 合併總結                                                              |
+| 檔案                              | 類型        | 全域路徑 | 用途                                                                                                                                           |
+| --------------------------------- | ----------- | -------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
+| `.claude/commands/vault-check.md` | Command     | —        | `/vault-check` orchestrator：git 前置檢查 → 跑 script → 呼叫 subagent → 合併總結                                                               |
 | `scripts/vault-check.mjs`         | Node script | —        | 硬規則自動修（檔名、frontmatter 結構、日期 normalize）＋ high-precision 敏感資料硬掃（只 flag 不修，命中 exit non-zero，作為 CI 最後一道防線） |
-| `scripts/vault-schema.mjs`        | Node module | —        | Zod schema 與欄位順序／白名單定義，**硬規則變更改這裡**                                                                                       |
-| `.claude/agents/vault-auditor.md` | Agent       | —        | 語意層稽核（wikilink 斷鏈、完整敏感資料、tag 一致性、缺 title/created/tags、parse error），唯讀只 flag 不改檔                                 |
+| `scripts/vault-schema.mjs`        | Node module | —        | Zod schema 與欄位順序／白名單定義，**硬規則變更改這裡**                                                                                        |
+| `.claude/agents/vault-auditor.md` | Agent       | —        | 語意層稽核（wikilink 斷鏈、完整敏感資料、tag 一致性、缺 title/created/tags、parse error），唯讀只 flag 不改檔                                  |
 
 ### 3. 批次筆記工作流（Skills）
 
 整批處理特定來源的筆記。手動在本 repo 內觸發，不掛全域。
 
-| 檔案                                 | 類型  | 全域路徑 | 用途                                              |
-| ------------------------------------ | ----- | -------- | ------------------------------------------------- |
-| `.claude/skills/vault-youtube-sync/` | Skill | —        | YouTube 頻道影片轉 Obsidian 筆記                  |
-| `.claude/skills/vault-topic-moc/`    | Skill | —        | 多篇筆記整合為主題 MOC（generator/reviewer 迴圈） |
+| 檔案                                 | 類型  | 全域路徑 | 用途                                                 |
+| ------------------------------------ | ----- | -------- | ---------------------------------------------------- |
+| `.claude/skills/vault-youtube-sync/` | Skill | —        | YouTube 頻道影片轉 Obsidian 筆記                     |
+| `.claude/skills/vault-topic-moc/`    | Skill | —        | 多篇筆記整合為主題 MOC（generator/reviewer 迴圈）    |
+| `.claude/skills/vault-reddit-sync/`  | Skill | —        | Reddit Claude 相關討論抓取分析、同步為 Obsidian 筆記 |
 
 ### 4. 建議安裝的第三方 Skills（非本 repo 管理，需另行安裝至 `~/.claude/skills/`）
 
