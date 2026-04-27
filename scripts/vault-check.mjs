@@ -223,11 +223,18 @@ function auditFile(absPath) {
 }
 
 /**
- * 敏感資料硬掃。以行為單位掃描，code fence 內行（``` 開頭的區塊）自動跳過
- * 以避免 Clippings / CLAUDE.md 範例誤報。命中一律 autofix=false，只 flag。
+ * 敏感資料硬掃。以行為單位掃描。
+ *
+ * Fence 行為（path-aware）：
+ * - `content/Inbox/**`（外部不可信原料：Reddit / Clippings / YouTube 等）→ **連 fence 內也掃**。
+ *   這類目錄的 code block 正是別人會貼 token 的地方，跳過就完全失守。
+ * - 其餘路徑 → 跳過 fence 內，避免 Cards/Topics/CLAUDE.md 中的範例 / 文件誤報。
+ *
+ * 命中一律 autofix=false，只 flag。
  */
 function scanSensitive(absPath) {
   const relPath = rel(absPath);
+  const isUntrustedSource = relPath.startsWith("content/Inbox/");
   const raw = readFileSync(absPath, "utf8");
   const lines = raw.split(/\r?\n/);
   const hits = [];
@@ -238,7 +245,7 @@ function scanSensitive(absPath) {
       inFence = !inFence;
       continue;
     }
-    if (inFence) continue;
+    if (inFence && !isUntrustedSource) continue;
     for (const { name, regex } of SENSITIVE_PATTERNS) {
       const m = line.match(regex);
       if (m) {

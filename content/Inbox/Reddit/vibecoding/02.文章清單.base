@@ -1,0 +1,22 @@
+filters:
+  and:
+    - file.inFolder("Inbox/Reddit/vibecoding")
+    - file.ext == "md"
+    - file.name != "01.index"
+properties:
+  published:
+    displayName: 發文日期
+  source:
+    displayName: 連結
+  file.name:
+    displayName: 筆記
+views:
+  - type: table
+    name: 文章清單
+    order:
+      - file.name
+      - published
+      - source
+    sort:
+      - property: published
+        direction: DESC
