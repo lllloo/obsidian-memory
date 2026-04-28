@@ -40,18 +40,28 @@ obsidian vault 2>&1; echo "EXIT=$?"
 
 ## 每次寫入後驗證
 
-CLI 呼叫後**一律檢查 exit code 與檔案是否真的存在**，不要信任「沒 error 訊息 = 成功」：
+CLI 呼叫後**一律檢查 exit code、檔案存在、且檔案非空**，不要信任「沒 error 訊息 = 成功」。
+
+**重點：CLI 把「建檔」與「寫內容」當兩個獨立步驟。** Windows / 沙箱等環境下 `--stdin` 管道可能斷掉但建檔成功，留下 0 bytes 空檔。只檢查 `-f` 會漏掉這種 silent failure，**必須加 size 檢查**：
 
 ```bash
-obsidian create path="Cards/<標題>.md" content="..." open
+FILE="<vault_root>/Cards/<標題>.md"
+printf '%s\n' "---" "title: ..." "---" "正文" | obsidian create path="Cards/<標題>.md" --stdin open
 EXIT=$?
-if [ $EXIT -ne 0 ] || [ ! -f "<vault_root>/Cards/<標題>.md" ]; then
-  echo "CLI 建檔失敗（exit=$EXIT），降級為 Write"
+SIZE=$(wc -c < "$FILE" 2>/dev/null || echo 0)
+if [ $EXIT -ne 0 ] || [ ! -f "$FILE" ] || [ "$SIZE" -lt 10 ]; then
+  echo "CLI 建檔失敗或檔案空（exit=$EXIT, size=$SIZE），降級為 Write"
   # 用 Write 直寫，並提示用戶 reload
 fi
 ```
 
-失敗降級後繼續完成任務，不要中止；但回報時要如實告知用戶走了 fallback 路徑。
+驗證三項缺一不可：
+
+1. `EXIT == 0`
+2. 檔案存在（`-f`）
+3. **檔案大小 > 10 bytes**（純 frontmatter 都會超過 10 bytes，0 bytes 一定是 stdin 沒灌進去）
+
+失敗降級後繼續完成任務，不要中止；但回報時要如實告知用戶走了 fallback 路徑，並附上實際 byte 數作為證據。
 
 ## Vault 路徑解析（Write fallback 必做）
 
@@ -111,6 +121,8 @@ obsidian tags                    # 查看現有 tags
     | obsidian create path="Cards/<標題>.md" --stdin open
   ```
   若 obsidian CLI 該版不支援 `--stdin`，退而走 `content=` 行內版本，但需記住：PowerShell/Bash 單引號內的字面 `\n` 在不同 shell 與 CLI 版本的解碼行為不同，會讓 frontmatter 壞成單行字串。退到 `content=` 方案時，**呼叫後必須 `obsidian read file=...` 驗證 frontmatter 真的是多行**。
+
+> ⚠ 不論走 `--stdin` 或 `content=`，呼叫完都要跑「每次寫入後驗證」段的 size 檢查（≥ 10 bytes），不可只看 exit code。Windows 環境 `--stdin` 已知會 silent fail 留 0 bytes 空檔。
 
 建立後若需追加正文內容，再用 `append`。
 
