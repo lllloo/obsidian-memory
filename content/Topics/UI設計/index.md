@@ -1,7 +1,7 @@
 ---
 title: UI設計
 created: 2026-04-25
-updated: 2026-04-25
+updated: 2026-04-28
 tags:
   - design
   - moc
@@ -11,10 +11,12 @@ tags:
 
 ## 設計系統
 
-- [[DESIGN.md-規格]] — DESIGN.md 的角色、canonical 區段與 Claude Code 整合
+### DESIGN.md（子分類 → `DESIGN.md/`）
+
+- [[DESIGN.md-規格]] — DESIGN.md 的角色、canonical 區段與 Claude Code 整合（子分類 MOC）
+- [[DESIGN.md-Google-Stitch-設計系統文件格式]] — Google Stitch 設計系統文件格式規範
 - [[Awesome-Design-MD]] — 可直接參考的品牌 DESIGN.md 資源庫
 - [[Stitch]] — Google Stitch、DESIGN.md 與 Stitch MCP 的實務工作流
-- [[DESIGN.md-Google-Stitch-設計系統文件格式]] — Google Stitch 設計系統文件格式規範
 
 ## 設計工具與工作流
 
