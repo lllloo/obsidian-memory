@@ -152,3 +152,9 @@ GitHub 來源：[VoltAgent/awesome-design-md](https://github.com/VoltAgent/aweso
 | Lamborghini | 純黑大教堂，金色點綴，LamboType Neo-Grotesk |
 | Renault     | 鮮豔極光漸層，NouvelR 自訂字型，零圓角按鈕        |
 | Tesla       | 激進減法，全視窗攝影，近零 UI                 |
+
+## 相關主題
+
+- [[DESIGN.md-官方規格]] — 官方 8 大 canonical 區段、alpha spec 狀態、官方 CLI
+- [[DESIGN.md-使用指南]] — 撰寫原則、Claude Code 整合工作流、design-md skill 五階段
+- [[Stitch]] — Google Stitch（DESIGN.md 提出者，生成範例的主要工具）

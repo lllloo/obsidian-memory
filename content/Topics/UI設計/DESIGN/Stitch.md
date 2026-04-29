@@ -4,6 +4,7 @@ created: 2026-04-20
 updated: 2026-04-25
 tags:
   - design
+  - design-system
   - claude-code
   - mcp
 ---
@@ -131,7 +132,8 @@ npx skills add google-labs-code/stitch-skills --skill shadcn-ui --global
 
 ## 相關主題
 
-- [[DESIGN.md-規格]] — 官方 base spec 與常見 extended format 的差異
+- [[DESIGN.md-官方規格]] — 官方 base spec 與 canonical 區段
+- [[DESIGN.md-使用指南]] — 撰寫原則、品牌範例庫與 extended format
 - [[Awesome-Design-MD]] — 各大品牌的 DESIGN.md 範例庫
 - [[Claude-Code-前端設計工作流]] — 把 Stitch 放進整體前端設計流程裡看
 

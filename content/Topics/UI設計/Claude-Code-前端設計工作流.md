@@ -146,7 +146,8 @@ Claude Code 在 agentic coding 表現卓越，但前端設計是普遍弱項。�
 ## 相關主題
 
 - [[Stitch]] — Google Stitch 主題 MOC（Layer 5 工具的深度細節）
-- [[DESIGN.md-規格]] — 設計系統文件格式規範
+- [[DESIGN.md-官方規格]] — 設計系統文件格式規範
+- [[DESIGN.md-使用指南]] — 撰寫原則與 Claude Code 整合工作流
 
 ## 來源
 

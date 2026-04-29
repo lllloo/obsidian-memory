@@ -11,10 +11,10 @@ tags:
 
 ## 設計系統
 
-### DESIGN.md（子分類 → `DESIGN.md/`）
+### DESIGN.md（子分類 → `DESIGN/`）
 
-- [[DESIGN.md-規格]] — DESIGN.md 的角色、canonical 區段與 Claude Code 整合（子分類 MOC）
-- [[DESIGN.md-Google-Stitch-設計系統文件格式]] — Google Stitch 設計系統文件格式規範
+- [[DESIGN.md-官方規格]] — 官方 8 大 canonical 區段、alpha spec 狀態、官方 CLI
+- [[DESIGN.md-使用指南]] — 撰寫原則、Claude Code 整合工作流、品牌範例庫、design-md skill
 - [[Awesome-Design-MD]] — 可直接參考的品牌 DESIGN.md 資源庫
 - [[Stitch]] — Google Stitch、DESIGN.md 與 Stitch MCP 的實務工作流
 
