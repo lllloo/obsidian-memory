@@ -2,8 +2,16 @@ name: Deploy to GitHub Pages
 
 on:
   push:
-    branches:
-      - main
+    branches: [main]
+    paths:
+      - 'content/**'
+      - 'quartz/**'
+      - 'quartz.config.ts'
+      - 'quartz.layout.ts'
+      - 'package.json'
+      - 'package-lock.json'
+      - '.github/workflows/deploy.yml'
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -24,6 +32,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
+          cache: npm
       - name: Install dependencies
         run: npm ci
       - name: Vault check (frontmatter + sensitive data)
@@ -37,11 +46,31 @@ jobs:
 
   deploy:
     needs: build
+    if: ${{ !cancelled() }}
     runs-on: ubuntu-latest
     environment:
       name: github-pages
-      url: ${{ github.event.repository.html_url }}
+      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
+        if: needs.build.result == 'success'
         uses: actions/deploy-pages@v4
+
+      - name: Discord 打包失敗通知
+        if: needs.build.result != 'success'
+        uses: sarisia/actions-status-discord@v1
+        with:
+          webhook: ${{ secrets.DISCORD_WEBHOOK }}
+          status: failure
+          title: '❌ Vault 打包失敗'
+          description: 'Obsidian Memory 打包失敗（vault:check 或 build）'
+
+      - name: Discord 部署通知
+        if: needs.build.result == 'success'
+        uses: sarisia/actions-status-discord@v1
+        with:
+          webhook: ${{ secrets.DISCORD_WEBHOOK }}
+          status: ${{ job.status }}
+          title: ${{ job.status == 'success' && '✅ Vault 部署成功' || '❌ Vault 部署失敗' }}
+          description: ${{ job.status == 'success' && 'ob.bugloop.com 已更新' || 'GitHub Pages 部署失敗' }}
