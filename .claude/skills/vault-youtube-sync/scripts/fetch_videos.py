@@ -64,18 +64,39 @@ def main():
     try:
         decoder = json.JSONDecoder()
         data, _ = decoder.raw_decode(html[m.end():])
-        tabs = data["contents"]["twoColumnBrowseResultsRenderer"]["tabs"]
-        count = 0
-        for tab in tabs:
-            grid = tab.get("tabRenderer", {}).get("content", {}).get("richGridRenderer")
-            if not grid:
-                continue
-            for item in grid.get("contents", []):
-                r = item.get("richItemRenderer", {}).get("content", {}).get("videoRenderer")
-                if r:
-                    title = r["title"]["runs"][0]["text"]
-                    print(f"VIDEO:{r['videoId']}|||{title}")
-                    count += 1
+        # YouTube 同一頁面會在不同 A/B 變體間切換兩種 renderer：
+        # 1) 舊版 richGridRenderer > richItemRenderer > videoRenderer
+        # 2) 新版 lockupViewModel（contentType=LOCKUP_CONTENT_TYPE_VIDEO）
+        # 全 JSON 廣度搜尋兩種，dedup by videoId 後輸出。
+        seen = set()
+
+        def emit(vid, title):
+            if vid and title and vid not in seen:
+                seen.add(vid)
+                print(f"VIDEO:{vid}|||{title}")
+
+        def walk(obj):
+            if isinstance(obj, dict):
+                if "videoId" in obj and isinstance(obj.get("title"), dict):
+                    t = obj["title"]
+                    title = ""
+                    if "runs" in t and t["runs"]:
+                        title = t["runs"][0].get("text", "")
+                    elif "simpleText" in t:
+                        title = t["simpleText"]
+                    emit(obj["videoId"], title)
+                if obj.get("contentType") == "LOCKUP_CONTENT_TYPE_VIDEO" and "contentId" in obj:
+                    md = obj.get("metadata", {}).get("lockupMetadataViewModel", {})
+                    tt = md.get("title", {})
+                    title = tt.get("content", "") if isinstance(tt, dict) else ""
+                    emit(obj["contentId"], title)
+                for v in obj.values():
+                    walk(v)
+            elif isinstance(obj, list):
+                for x in obj:
+                    walk(x)
+
+        walk(data)
     except Exception as e:
         print(f"ERROR:{e}")
         sys.exit(1)
