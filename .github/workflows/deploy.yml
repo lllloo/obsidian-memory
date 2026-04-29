@@ -26,6 +26,8 @@ jobs:
           node-version: 22
       - name: Install dependencies
         run: npm ci
+      - name: Vault check (frontmatter + sensitive data)
+        run: npm run vault:check
       - name: Build
         run: npx quartz build
       - name: Upload artifact

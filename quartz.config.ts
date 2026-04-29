@@ -15,7 +15,14 @@ const config: QuartzConfig = {
     analytics: null,
     locale: "zh-TW",
     baseUrl: "ob.bugloop.com",
-    ignorePatterns: ["private", ".obsidian", "CLAUDE.md", "Inbox"],
+    ignorePatterns: [
+      // Obsidian 本地 / vault 內部
+      "private", ".obsidian", "CLAUDE.md", "Inbox",
+      // 敏感資料保險（content/ 下若被誤拖入即攔截）
+      ".env*", "*.local", "secrets*", "credentials*", "*.key", "*.pem",
+      // 系統雜檔
+      ".DS_Store",
+    ],
     defaultDateType: "created",
     theme: {
       fontOrigin: "googleFonts",
