@@ -11,7 +11,7 @@ tags:
 
 設計工具、設計系統文件與視覺靈感蒐集。
 
-## 設計系統文件（DESIGN.md，子分類 → `DESIGN/`）
+## 設計系統文件（DESIGN.md，子分類 → `DESIGN-md/`）
 
 - [[DESIGN.md-官方規格]] — 官方 8 大 canonical 區段、alpha spec 狀態、官方 CLI
 - [[DESIGN.md-使用指南]] — 撰寫原則、Claude Code 整合工作流、品牌範例庫、design-md skill
