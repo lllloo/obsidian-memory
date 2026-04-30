@@ -8,7 +8,7 @@
 此 vault 採用「吸收型卡片盒」，核心如下：
 
 1. **吸收並內化** — 筆記是「我理解的版本」，不是別人說法的保存
-2. **不留原料，留參考資料** — Inbox 抄錄整篇消化完刪除；Card 保留參考資料（來源網址等），用於回查原文，不作為證據
+2. **不留原料，留參考資料** — Inbox 抄錄整篇消化完刪除（多主題筆記允許保留未消化段落，加 `extracted_to` 標記指回 MOC）；Card 保留參考資料（來源網址等），用於回查原文，不作為證據
 3. **正確 + 不斷更新** — Card 可覆寫、永不定稿（持續修改）
 
 **一句話：Vault 是腦的延伸，不是倉庫。**
@@ -34,6 +34,8 @@
 三條都以「刪除 Inbox/ 原篇」作結。Inbox 空 = 無積欠。
 
 路徑 A、B 寫 Card 時，按既有慣例附上來源連結（回查用）。
+
+**多主題例外**：若 Inbox 筆記同時涵蓋多個主題、本次整理只內化其中一個切角，允許從原筆記移除已內化段落、保留剩餘段落，並在 frontmatter 加 `extracted_to: "[[<MOC 名>]]"` 指回 MOC。半消化筆記仍是 Inbox 的「待消化」狀態，鼓勵下次同主題整理時再消化剩餘。
 
 ### Cards → Topics/<主題>/（歸檔）
 
@@ -122,6 +124,7 @@ updated: YYYY-MM-DD
 source: <URL> # 外部來源
 published: YYYY-MM-DD # 外部來源發佈日
 parent: "[[01.index]]" # 歸屬 index（圖譜用）
+extracted_to: "[[<MOC 名>]]" # 半消化筆記：部分內容已被整合到 MOC
 last_sync_id: <video-id> # 僅 YouTube 頻道 01.index.md
 draft: true # Quartz 不發佈（opt-out）
 
@@ -141,6 +144,7 @@ tags:
 | `source`       | 條件 | 有外部來源時               | 外部資料必填，跨階段保留（Inbox → Cards → Topics 都不刪，供回查原文）；純原創 Card 可省略                  |
 | `published`    | —    | 有外部來源發佈日時         | 原文／影片發佈日（YouTube 影片由 `vault-youtube-sync` 帶入、Clipping 由 Web Clipper 帶入）；無法取得可省略 |
 | `parent`       | —    | Inbox/YouTube 影片         | `[[01.index]]`，讓筆記出現在頻道圖譜                                                                       |
+| `extracted_to` | —    | 半消化 Inbox 筆記          | `[[<MOC 名>]]`，指回部分內容已被整合到的 MOC，避免遺忘                                                     |
 | `last_sync_id` | —    | YouTube 頻道 `01.index.md` | `vault-youtube-sync` skill 的同步書籤                                                                      |
 | `draft`        | —    | 草稿                       | `true` = 不發佈到 ob.bugloop.com；完成後移除                                                               |
 | `tags`         | ✓    | 全部                       | 固定放最後                                                                                                 |

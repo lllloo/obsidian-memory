@@ -83,6 +83,19 @@ describe("frontmatterSchema", () => {
     assert.equal(ok.success, true);
     assert.equal(bad.success, false);
   });
+
+  it("extracted_to 必須為 [[wikilink]] 格式", () => {
+    const ok = frontmatterSchema.safeParse({
+      ...minimal,
+      extracted_to: "[[Claude-Design-全景評估]]",
+    });
+    const bad = frontmatterSchema.safeParse({
+      ...minimal,
+      extracted_to: "Claude-Design-全景評估",
+    });
+    assert.equal(ok.success, true);
+    assert.equal(bad.success, false);
+  });
 });
 
 describe("validateFieldOrder / reorderFields", () => {

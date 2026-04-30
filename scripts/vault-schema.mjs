@@ -19,6 +19,7 @@ export const FIELD_ORDER = [
   "source",
   "published",
   "parent",
+  "extracted_to",
   "last_sync_id",
   "draft",
   "tags",
@@ -101,6 +102,11 @@ export const frontmatterSchema = z
     parent: optional(
       z.string().regex(WIKILINK_VALUE_RE, {
         message: "parent 必須為 wikilink 格式 [[...]]",
+      }),
+    ),
+    extracted_to: optional(
+      z.string().regex(WIKILINK_VALUE_RE, {
+        message: "extracted_to 必須為 wikilink 格式 [[...]]",
       }),
     ),
     last_sync_id: optional(z.string()),

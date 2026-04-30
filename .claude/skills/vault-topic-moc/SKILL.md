@@ -1,6 +1,6 @@
 ---
 name: vault-topic-moc
-description: Consolidates multiple related notes in an Obsidian vault into a single topic MOC (Map of Content). Identifies overlapping notes, extracts consensus and differences, verifies facts against official sources, and iterates via reviewer/fixer subagents until the MOC is finalized. Use when the user asks to synthesize notes, merge overlapping notes into a topic, create a topic index, organize notes by theme, or mentions "整理成一個主題", "合併筆記", "MOC", "主題整合", "topic synthesis". Do not use for single-note edits, daily journal additions, or channel-level YouTube sync (that is handled by vault-youtube-sync).
+description: Consolidates multiple related notes in an Obsidian vault into a single topic MOC (Map of Content). Identifies overlapping notes, extracts consensus and differences, verifies facts against official sources, and iterates via reviewer/fixer subagents until the MOC is finalized. Use when the user asks to synthesize notes, merge overlapping notes into a topic, create a topic index, organize notes by theme, or mentions "整理成一個主題", "合併筆記", "MOC", "主題整合", "topic synthesis". Also triggers when the user asks for topic recommendations across the vault — phrases like "給我主題", "給我新主題", "推薦主題", "有什麼主題可以整合", "有什麼建議的主題", "有什麼可以做" — invoke the skill's "推薦主題模式" (1d) which scans for cohesive note clusters and proposes candidates. Do not use for single-note edits, daily journal additions, or channel-level YouTube sync (that is handled by vault-youtube-sync).
 ---
 
 # Synthesizing Notes to MOC
@@ -177,13 +177,14 @@ Read 全部候選筆記。記錄：
 
 ### 7. 原筆記處置（與用戶確認）
 
-**不要自動刪除原筆記**。先問用戶選 A/B/C：
+**不要自動刪除原筆記**。先問用戶選 A/B/B-partial/C：
 
 - **A. 保留**：原筆記不動，MOC 用 `[[筆記檔名]]` wikilink
-- **B. 刪除**（**YouTube 來源筆記的預設**）：MOC 末尾保留外部 URL 清單，`git rm` 原筆記
+- **B. 整篇刪除**（**單主題 YouTube 來源的預設**）：MOC 末尾保留外部 URL 清單，`git rm` 原筆記
+- **B-partial. 部分內化**（**多主題影片專用**）：列「已進 MOC 章節」對照表，per 段落決定刪/留，剩餘段落留 Inbox + frontmatter 加 `extracted_to: "[[<MOC 名>]]"`
 - **C. 加 draft**：原筆記加 `draft: true`，Obsidian 可見、不發佈
 
-**Roy 的慣例**：當原筆記來源是 `content/Inbox/YouTube/` 下的影片摘要，整理完成後預設會選 **B 刪除**（MOC 自足、vault 精簡）。仍必須在刪除前給清單讓用戶過目，不要跳過確認。
+**Roy 的慣例**：YouTube 影片摘要預設選 **B 整篇刪除**（MOC 自足、vault 精簡）。若整理時發現原筆記涵蓋多個主題、本次 MOC 只覆蓋其中一個切角，改選 **B-partial** 保留剩餘段落。兩者都必須在執行前給清單讓用戶過目，不要跳過確認。
 
 執行細節見 [references/source-handling.md](references/source-handling.md)。
 
@@ -213,7 +214,7 @@ MOC 聚焦**概念與大方向**，經得起時間、可在不同模型世代重
 - frontmatter 遵守前置作業段「寫入前 Checklist」與 `scripts/vault-schema.mjs`（schema 真實來源）
 - `updated` 欄位盡量同步為今日日期（不強制）
 - wikilink 檔名需確實存在，否則改用外部 URL
-- 選項 B 執行前再次確認用戶是否真的要刪
+- 選項 B 與 B-partial 執行前都要列檔案／段落清單給用戶過目並確認
 - 繁體中文為主，技術名詞保留英文
 
 ## 觸發範例
