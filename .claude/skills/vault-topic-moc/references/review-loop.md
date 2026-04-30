@@ -14,6 +14,7 @@
    - <官方 docs URL 1>
    - <官方 docs URL 2>
    檢查：數字、規則、語法、API 介面是否正確
+   **若呼叫者填 N/A 或整段省略**：跳過此維度，不要硬找來源比對（事實校正是 SKILL.md Step 5 的選擇性步驟，沒做就沒有來源）
 3. **wikilink 有效性**：用 Glob 或 Read 確認目標檔案存在
 4. **Obsidian vault 規則**（真實來源 content/CLAUDE.md 的「寫入前 Checklist」＋ `scripts/vault-schema.mjs`）：
    - frontmatter 欄位、順序、白名單符合 schema；`updated` 盡量同步今日（不強制）

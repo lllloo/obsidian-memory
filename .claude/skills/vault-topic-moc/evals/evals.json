@@ -56,7 +56,7 @@
     {
       "id": 2,
       "prompt": "用這次的方法把 Agent Harness 相關筆記整理成 MOC，然後跑 reviewer/fixer 迭代到定稿",
-      "expected_output": "完整跑 7 步：盤點 → 讀取 → v0 → 事實校正 → checkpoint → reviewer/fixer 迴圈 → 原筆記處置。每輪 reviewer 結果呈現給用戶確認後才進 fixer",
+      "expected_output": "完整跑 7 步：盤點 → 讀取 → v0 → checkpoint → 事實校正 → reviewer/fixer 迴圈 → 原筆記處置。每輪 reviewer 結果呈現給用戶確認後才進 fixer",
       "files": [],
       "assertions": [
         {
@@ -74,6 +74,82 @@
         {
           "name": "Workflow Checklist 追蹤",
           "description": "回應中複製 SKILL.md 的 Workflow Checklist 追蹤 7 步進度"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "把 Inbox/YouTube/AI-Engineer 裡面講 RAG / CAG / NotebookLM / Skill 主副檔的四篇影片整理成一個 MOC",
+      "expected_output": "Step 1b 內聚度檢驗判定為弱內聚（四篇分屬獨立核心問題：context window vs RAG / 多工具編排 / NotebookLM CLI / Skill 按需載入），主動提議縮範圍或換主題，不硬寫 MOC。決策不推給用戶。",
+      "files": [],
+      "assertions": [
+        {
+          "name": "1b 內聚度檢驗主動執行",
+          "description": "讀完每篇 frontmatter + 前 1-2 章節後，提煉每篇核心問題（一句話），不只是檔名/關鍵字比對"
+        },
+        {
+          "name": "判定為弱內聚並說明原因",
+          "description": "明確指出『共同 umbrella term（給 LLM 知識）不算內聚』，並列出每篇實際解的不同核心問題"
+        },
+        {
+          "name": "主動建議縮範圍或換主題",
+          "description": "不直接問『要做嗎？』把決策推給用戶，而是給具體建議：例如挑出可同問題的子集、或建議分別做多個 MOC"
+        },
+        {
+          "name": "不寫 MOC v0",
+          "description": "弱內聚情境下不應產出 Cards/<主題>.md；流程在 Step 1b 停下"
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "把 Inbox/YouTube/Chase-H-AI/2025-XX-多主題影片.md 裡跟 Claude Code Hooks 有關的內容整理成 MOC，影片本身還同時討論了 MCP 與 Obsidian 整合",
+      "expected_output": "Step 7 識別為多主題影片、本次 MOC 只覆蓋 Hooks 切角，主動推薦 B-partial（部分內化）；列『已進 MOC 章節』對照表給用戶 per 段落確認；剩餘段落保留 + frontmatter 加 extracted_to。",
+      "files": [],
+      "assertions": [
+        {
+          "name": "識別為多主題影片",
+          "description": "Step 7 不直接套用 Roy 慣例的 B 整篇刪，而是先識別原筆記涵蓋多主題（MCP / Obsidian 整合等未進本次 MOC）"
+        },
+        {
+          "name": "推薦 B-partial 並說明原因",
+          "description": "明確選 B-partial 而非 B；理由是只覆蓋一個切角，剩餘段落還沒消化"
+        },
+        {
+          "name": "提供已進 MOC 章節對照表",
+          "description": "執行前列出『原筆記哪些段落已進入 MOC』vs『剩下哪些』供用戶 per 段落決定刪/留，不批次處理"
+        },
+        {
+          "name": "frontmatter 加 extracted_to",
+          "description": "保留剩餘段落的原筆記 frontmatter 中加入 `extracted_to: \"[[<MOC 名>]]\"`，標記為半消化狀態"
+        },
+        {
+          "name": "剩餘段落仍能獨立成段",
+          "description": "若刪到原筆記不成段（< 30% 或讀起來殘缺），主動建議改走 B 整篇刪，而非硬留殘骸"
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "把 Cards/ 裡關於 Prompt Caching 的筆記整合成一個 MOC（Cards/Prompt-Caching.md 已經存在）",
+      "expected_output": "Step 3 偵測到 Cards/Prompt-Caching.md 已存在，先停下問用戶：擴充既有的？重寫？另建子主題（如 Prompt-Caching-進階.md）？三選一確認後才動筆。",
+      "files": [],
+      "assertions": [
+        {
+          "name": "Step 3 偵測既有檔案",
+          "description": "寫 v0 前用 Glob/Read 確認 Cards/<主題>.md 是否已存在，不直接覆寫"
+        },
+        {
+          "name": "三選項詢問",
+          "description": "明確列出三選項：擴充既有 / 重寫 / 另建子主題（如 <主題>-進階.md），不擅自決定"
+        },
+        {
+          "name": "用戶確認前不寫檔",
+          "description": "在用戶回覆前不對 Cards/Prompt-Caching.md 做任何 Write/Edit；只用 Read 觀察既有內容"
+        },
+        {
+          "name": "若主題在 Topics/ 也存在，額外確認",
+          "description": "若 Topics/<類別>/Prompt-Caching.md 也存在（已升 Topics），額外問用戶要動 Cards/ 新版還是覆寫 Topics/ 既有版（後者需明確同意）"
         }
       ]
     }
