@@ -1,6 +1,11 @@
-對 `content/` 執行 vault 稽核與自動修正，分兩段：硬規則由 `scripts/vault-check.mjs` 自動修；語意層由 `vault-auditor` subagent 給建議。
+---
+name: vault-check
+description: 對 Obsidian vault 的 content/ 執行稽核與自動修正，分兩段：硬規則由 scripts/vault-check.mjs 自動修（檔名、frontmatter 結構、日期 normalize、敏感資料 high-precision regex）；語意層由 vault-auditor subagent 給建議（wikilink 斷鏈、自然語言敏感資料、tag 一致性、缺欄位）。觸發詞：「vault check」、「/vault-check」、「稽核 vault」、「檢查 vault」、「跑 vault-check」、「vault 健檢」。不應觸發：單篇筆記建檔/查詢（用 /ob）、跨筆記主題整合（用 vault-topic-moc）、批次同步（用 vault-youtube-sync / vault-reddit-sync）。
+---
 
-$ARGUMENTS
+# /vault-check — Vault 稽核與自動修正
+
+對 `content/` 執行 vault 稽核與自動修正，分兩段：硬規則由 `scripts/vault-check.mjs` 自動修；語意層由 `vault-auditor` subagent 給建議。
 
 ## 執行流程
 
@@ -92,6 +97,6 @@ npm run vault:fix
 - 只能修 `content/` 底下（script 已限制範圍）
 - 不 push、不 merge（除非用戶明確要求）
 - 全程繁體中文、禁用 `$()`
-- **硬規則變更請改 `scripts/vault-schema.mjs` 的 Zod schema**，不要在此 command 或別處另寫
+- **硬規則變更請改 `scripts/vault-schema.mjs` 的 Zod schema**，不要在此 skill 或別處另寫
 - **語意規則變更請改 `.claude/agents/vault-auditor.md`**，不要塞進 script
 - subagent 給的所有建議都「只 flag 不改檔」，最終是否套用由用戶決定

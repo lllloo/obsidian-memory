@@ -1,6 +1,6 @@
 # CLAUDE.md
 
-**本檔涵蓋**：repo 工程層——專案架構、Quartz 部署、agent/command/skill 清單、symlink 配置。
+**本檔涵蓋**：repo 工程層——專案架構、Quartz 部署、agent/skill 清單、symlink 配置。
 **不涵蓋**：Vault 內容規則（卡片盒哲學、frontmatter schema、tag/命名、敏感資料）→ 見 [`content/CLAUDE.md`](content/CLAUDE.md)。
 
 **判斷規則寫哪份**：
@@ -16,7 +16,7 @@ Obsidian 個人知識庫，以 [Quartz 4](https://quartz.jzhao.xyz/) 發佈至 `
 
 - **Vault 層**（`content/`）— 筆記本體，規則見 `content/CLAUDE.md`
 - **發佈層**（`quartz/`、`quartz.config.ts`、`quartz.layout.ts`、`.github/workflows/`）— Quartz 建置與 GitHub Pages 部署
-- **工作流層**（`.claude/` + `scripts/`）— agents（`vault-writer` / `vault-query` / `vault-auditor`）、commands（`/ob`、`/vault-check`）、skills（`vault-youtube-sync`、`vault-topic-moc`、`vault-reddit-sync`）、Node 稽核腳本。`.claude/` 可 symlink 至 `~/.claude/` 跨專案使用
+- **工作流層**（`.claude/` + `scripts/`）— agents（`vault-writer` / `vault-query` / `vault-auditor`）、skills（`ob`、`vault-check`、`vault-youtube-sync`、`vault-topic-moc`、`vault-reddit-sync`）、Node 稽核腳本。`.claude/` 可 symlink 至 `~/.claude/` 跨專案使用
 
 ## 常用指令
 
@@ -55,32 +55,32 @@ Vault 內容規則（寫入前 Checklist、frontmatter schema、tag/命名、敏
 
 - @content/CLAUDE.md
 
-## Claude Code Agent 與指令
+## Claude Code Agent 與 Skills
 
-此 repo 統一管理 Obsidian 相關的 Claude Code 設定。部分透過 symlink 掛載至全域（僅 `/ob` 相關），讓跨專案可用；其餘綁本 repo。
+此 repo 統一管理 Obsidian 相關的 Claude Code 設定。部分透過 symlink 掛載至全域（僅 `/ob` 相關），讓跨專案可用；其餘綁本 repo。全 skill 化（不再有 command）。
 
 依作用分組。「全域路徑」有值 = 需 symlink 掛全域（跨專案可用），`—` = 僅本 repo 生效。
 
 ### 1. 筆記操作（`/ob` 流程）
 
-使用者唯一入口。`/ob <需求>` 或對話中自然提到「建立筆記」、「找筆記」，主 agent 依語意分派：
+使用者唯一入口。`/ob <需求>` 或對話中自然提到「建立筆記」、「找筆記」，`ob` skill 依語意分派：
 
 - 建檔（「建立」、「記一下」、「寫一篇」）→ `vault-writer`
 - 查詢（「找」、「搜尋」、「有沒有」、「查」）→ `vault-query`
 
-| 檔案                             | 類型    | 全域路徑                           | 用途                               |
-| -------------------------------- | ------- | ---------------------------------- | ---------------------------------- |
-| `.claude/commands/ob.md`         | Command | `~/.claude/commands/ob.md`         | `/ob` 入口，依語意分派             |
-| `.claude/agents/vault-writer.md` | Agent   | `~/.claude/agents/vault-writer.md` | 寫入：建檔、append、改 frontmatter |
-| `.claude/agents/vault-query.md`  | Agent   | `~/.claude/agents/vault-query.md`  | 唯讀查詢：三層搜尋回 JSON          |
+| 檔案                             | 類型  | 全域路徑                           | 用途                               |
+| -------------------------------- | ----- | ---------------------------------- | ---------------------------------- |
+| `.claude/skills/ob/`             | Skill | `~/.claude/skills/ob/`             | `/ob` 入口，依語意分派             |
+| `.claude/agents/vault-writer.md` | Agent | `~/.claude/agents/vault-writer.md` | 寫入：建檔、append、改 frontmatter |
+| `.claude/agents/vault-query.md`  | Agent | `~/.claude/agents/vault-query.md`  | 唯讀查詢：三層搜尋回 JSON          |
 
 ### 2. Vault 稽核修正（`/vault-check` 流程）
 
-兩段分工、零重疊：**Script 管格式與敏感資料硬掃（硬規則自動修 + high-precision 敏感資料 flag），Subagent 管語意（建議不改檔）**。command 串接兩段。全程綁本 repo，不需掛全域。
+兩段分工、零重疊：**Script 管格式與敏感資料硬掃（硬規則自動修 + high-precision 敏感資料 flag），Subagent 管語意（建議不改檔）**。skill 串接兩段。全程綁本 repo，不需掛全域。
 
 | 檔案                              | 類型        | 全域路徑 | 用途                                                                                                                                           |
 | --------------------------------- | ----------- | -------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
-| `.claude/commands/vault-check.md` | Command     | —        | `/vault-check` orchestrator：git 前置檢查 → 跑 script → 呼叫 subagent → 合併總結                                                               |
+| `.claude/skills/vault-check/`     | Skill       | —        | `/vault-check` orchestrator：git 前置檢查 → 跑 script → 呼叫 subagent → 合併總結                                                               |
 | `scripts/vault-check.mjs`         | Node script | —        | 硬規則自動修（檔名、frontmatter 結構、日期 normalize）＋ high-precision 敏感資料硬掃（只 flag 不修，命中 exit non-zero，作為 CI 最後一道防線） |
 | `scripts/vault-schema.mjs`        | Node module | —        | Zod schema 與欄位順序／白名單定義，**硬規則變更改這裡**                                                                                        |
 | `.claude/agents/vault-auditor.md` | Agent       | —        | 語意層稽核（wikilink 斷鏈、完整敏感資料、tag 一致性、缺 title/created/tags、parse error），唯讀只 flag 不改檔                                  |
