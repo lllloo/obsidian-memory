@@ -1,11 +1,11 @@
 ---
-title: "AI 做的設計，你能看出哪裡有問題嗎？"
+title: AI 做的設計，你能看出哪裡有問題嗎？
 created: 2026-04-30
 updated: 2026-04-30
-source: "https://www.youtube.com/watch?v=ER4PjxlvVCM"
+source: https://www.youtube.com/watch?v=ER4PjxlvVCM
 published: 2026-04-29
 tags:
-  - "clippings"
+  - clippings
 ---
 ![](https://www.youtube.com/watch?v=ER4PjxlvVCM)
 
