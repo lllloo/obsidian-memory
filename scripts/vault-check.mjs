@@ -125,7 +125,14 @@ function auditFile(absPath) {
   let parsed;
   try {
     parsed = matter(raw, matterOptions);
-  } catch {
+  } catch (e) {
+    issues.push({
+      code: "PARSE_ERROR",
+      severity: "error",
+      file: relPath,
+      message: `frontmatter 解析失敗：${e?.message ?? String(e)}`,
+      autofix: false,
+    });
     return { issues, parsed: null, raw };
   }
 
@@ -314,9 +321,34 @@ function applyFixes(absPath, issues, parsed, raw) {
   const newRaw = matter.stringify(content, data, matterOptions);
 
   if (newRaw !== raw || renamedTo) {
-    writeFileSync(absPath, newRaw, "utf8");
+    try {
+      writeFileSync(absPath, newRaw, "utf8");
+    } catch (e) {
+      const reason = e?.message ?? String(e);
+      const moved = applied.splice(0).map((i) => ({
+        ...i,
+        autofix: false,
+        message: `${i.message}（寫入失敗：${reason}）`,
+      }));
+      blocked.push(...moved);
+      return { applied, blocked, renamedTo: null };
+    }
     if (renamedTo) {
-      renameSync(absPath, renamedTo);
+      try {
+        renameSync(absPath, renamedTo);
+      } catch (e) {
+        const reason = e?.message ?? String(e);
+        const idx = applied.findIndex((i) => i.fix?.kind === "rename");
+        if (idx >= 0) {
+          const [renameIssue] = applied.splice(idx, 1);
+          blocked.push({
+            ...renameIssue,
+            autofix: false,
+            message: `${renameIssue.message}（重新命名失敗：${reason}）`,
+          });
+        }
+        return { applied, blocked, renamedTo: null };
+      }
     }
   }
   return { applied, blocked, renamedTo };
@@ -331,13 +363,16 @@ async function main() {
   const sensitive = [];
   for (const abs of files) {
     const { issues, parsed, raw } = auditFile(abs);
-    allIssues.push(...issues);
     let currentAbs = abs;
     if (args.fix && issues.length) {
       const result = applyFixes(abs, issues, parsed, raw);
       allApplied.push(...result.applied);
       blocked.push(...result.blocked);
       if (result.renamedTo) currentAbs = result.renamedTo;
+      // applyFixes 只處理 autofix=true 的 issue；剩下的（PARSE_ERROR 等）才推進 allIssues
+      for (const i of issues) if (!i.autofix || !i.fix) allIssues.push(i);
+    } else {
+      allIssues.push(...issues);
     }
     const sHits = scanSensitive(currentAbs);
     if (sHits.length) {
@@ -385,6 +420,13 @@ async function main() {
           console.log(`- [${codeLabel(i.code)}] ${i.file} — ${i.message}`);
         }
       }
+      const unhandled = allIssues.filter((i) => !sensitive.includes(i));
+      if (unhandled.length) {
+        console.log(`\n## 未自動處理（${unhandled.length}，需手動處理）`);
+        for (const i of unhandled) {
+          console.log(`- [${codeLabel(i.code)}] ${i.file} — ${i.message}`);
+        }
+      }
     } else if (allIssues.length) {
       console.log(`\n## 違規清單`);
       for (const i of allIssues) {
@@ -408,12 +450,12 @@ async function main() {
     }
 
     console.log(
-      `\n備註：完整語意層稽核（wikilink 斷鏈、tag 一致性、自然語言密碼 / 個資、缺 title/created/tags、parse error）由 vault-auditor subagent 處理。`,
+      `\n備註：完整語意層稽核（wikilink 斷鏈、tag 一致性、自然語言密碼 / 個資、缺 title/created/tags）由 vault-auditor subagent 處理。`,
     );
   }
 
   const hardFail = sensitive.length > 0;
-  const softFail = args.fix ? blocked.length > 0 : allIssues.length > 0;
+  const softFail = blocked.length > 0 || allIssues.length > 0;
   process.exit(hardFail || softFail ? 1 : 0);
 }
 

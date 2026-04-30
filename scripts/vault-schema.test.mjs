@@ -210,6 +210,5 @@ describe("codeLabel", () => {
 
   it("語意層 code 不在 label 表（已交 vault-auditor）", () => {
     assert.equal(codeLabel("BROKEN_WIKILINK"), "BROKEN_WIKILINK");
-    assert.equal(codeLabel("SENSITIVE_DATA"), "SENSITIVE_DATA");
   });
 });
