@@ -265,11 +265,11 @@ function scanSensitive(absPath) {
   return hits;
 }
 
-/** 套用自動修正到單一檔案，回傳 { applied, blocked } */
+/** 套用自動修正到單一檔案，回傳 { applied, blocked, renamedTo } */
 function applyFixes(absPath, issues, parsed, raw) {
   const applied = [];
   const blocked = [];
-  if (!parsed) return { applied, blocked };
+  if (!parsed) return { applied, blocked, renamedTo: null };
   let data = { ...parsed.data };
   let content = parsed.content;
   let renamedTo = null;
@@ -319,7 +319,7 @@ function applyFixes(absPath, issues, parsed, raw) {
       renameSync(absPath, renamedTo);
     }
   }
-  return { applied, blocked };
+  return { applied, blocked, renamedTo };
 }
 
 async function main() {
@@ -332,12 +332,14 @@ async function main() {
   for (const abs of files) {
     const { issues, parsed, raw } = auditFile(abs);
     allIssues.push(...issues);
+    let currentAbs = abs;
     if (args.fix && issues.length) {
       const result = applyFixes(abs, issues, parsed, raw);
       allApplied.push(...result.applied);
       blocked.push(...result.blocked);
+      if (result.renamedTo) currentAbs = result.renamedTo;
     }
-    const sHits = scanSensitive(abs);
+    const sHits = scanSensitive(currentAbs);
     if (sHits.length) {
       sensitive.push(...sHits);
       allIssues.push(...sHits);
