@@ -16,7 +16,7 @@ Obsidian 個人知識庫，以 [Quartz 4](https://quartz.jzhao.xyz/) 發佈至 `
 
 - **Vault 層**（`content/`）— 筆記本體，規則見 `content/CLAUDE.md`
 - **發佈層**（`quartz/`、`quartz.config.ts`、`quartz.layout.ts`、`.github/workflows/`）— Quartz 建置與 GitHub Pages 部署
-- **工作流層**（`.claude/` + `scripts/`）— agents（`vault-writer` / `vault-query` / `vault-auditor`）、skills（`ob`、`vault-check`、`vault-youtube-sync`、`vault-topic-moc`、`vault-reddit-sync`）、Node 稽核腳本。`.claude/` 可 symlink 至 `~/.claude/` 跨專案使用
+- **工作流層**（`.claude/` + `.agents/` + `scripts/`）— agents（`vault-writer` / `vault-query` / `vault-auditor`）、skills（`ob`、`vault-check`、`vault-youtube-sync`、`vault-topic-moc`、`vault-reddit-sync`）、Node 稽核腳本。`.claude/` 可 symlink 至 `~/.claude/` 跨專案使用；`.agents/skills/` 是 repo-local skill 來源，`.claude/skills` symlink 到此處
 
 ## 常用指令
 
@@ -60,6 +60,18 @@ Vault 內容規則（寫入前 Checklist、frontmatter schema、tag/命名、敏
 此 repo 統一管理 Obsidian 相關的 Claude Code 設定。部分透過 symlink 掛載至全域（僅 `/ob` 相關），讓跨專案可用；其餘綁本 repo。全 skill 化（不再有 command）。
 
 依作用分組。「全域路徑」有值 = 需 symlink 掛全域（跨專案可用），`—` = 僅本 repo 生效。
+
+## Codex Repo-Local Skills
+
+Codex 不會自動把 repo 內 `.agents/skills/` 註冊為全域 skill registry；在本 repo 工作時，遇到下列流程需手動讀對應 `SKILL.md`，並依其 references/scripts 執行：
+
+- `/ob` 或自然語言筆記操作 → 讀 `.agents/skills/ob/SKILL.md`
+- `/vault-check` 或 vault 稽核修正 → 讀 `.agents/skills/vault-check/SKILL.md`
+- YouTube 同步 → 讀 `.agents/skills/vault-youtube-sync/SKILL.md`
+- 主題 MOC 生成 → 讀 `.agents/skills/vault-topic-moc/SKILL.md`
+- Reddit 同步 → 讀 `.agents/skills/vault-reddit-sync/SKILL.md`
+
+`.agents/skills/` 是 repo-local skill 的唯一維護來源；`.claude/skills` 應維持為指向 `.agents/skills/` 的 symlink，避免兩份內容漂移。
 
 ### 1. 筆記操作（`/ob` 流程）
 
