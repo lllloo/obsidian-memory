@@ -26,7 +26,7 @@
 VAULT_ROOT = $OBSIDIAN_VAULT_ROOT
 ```
 
-env 未設或該路徑底下找不到 `master-index.md` → 直接輸出空結果，`error` 欄寫「`$OBSIDIAN_VAULT_ROOT` 未設或無效，設定方式見 README」。
+env 未設或該路徑底下找不到 `master-index.md` → 直接輸出空結果，`error` 欄寫「`$OBSIDIAN_VAULT_ROOT` 未設或無效，設定方式見 README」。orchestrator 通常會在 step 1 早停，這條是兜底，避免 subagent 被孤立呼叫時誤掃。
 
 ## 掃描範圍
 
@@ -35,7 +35,7 @@ env 未設或該路徑底下找不到 `master-index.md` → 直接輸出空結�
 
 開工前先 `Read <VAULT_ROOT>/CLAUDE.md` 取得當前的「寫入前 Checklist」內容（敏感資料定義、frontmatter schema、tag 一致性判準、命名規則）作為稽核依據。Checklist 更新時本流程自動跟上，不需改 reference。
 
-## 五類稽核
+## 四類稽核
 
 ### 1. schema_issues — 缺必填或 parse 失敗
 
@@ -68,8 +68,6 @@ env 未設或該路徑底下找不到 `master-index.md` → 直接輸出空結�
 - 找出疑似同義但寫法不同的 group：`claude-code` vs `claudeCode` vs `claude_code`、`ai` vs `AI` vs `人工智慧`、單複數差異等
 - 給 `suggestion`（建議標準化到哪個，優先選最常出現的）
 - 列出每組受影響的檔案路徑
-
-### 5. （schema_issues 已含 parse error，不另開類）
 
 ## 輸出格式
 

@@ -5,22 +5,17 @@ description: 對 Obsidian vault 的 content/ 執行稽核與自動修正，分�
 
 # /vault-check — Vault 稽核與自動修正
 
-對 `content/` 執行 vault 稽核與自動修正，分兩段：硬規則由 `scripts/vault-check.mjs` 自動修；語意層由 `references/audit.md` 經 general-purpose subagent 給建議。**語意層採用「general-purpose subagent + references prompt」模式**，不依賴命名 agent，可在跨工具環境間移植。
+orchestrator：串接 deterministic script（自動修）與語意層 subagent（給建議），把結果合併成一份報告交用戶審核。分兩段是因為兩種問題的可信度不同——格式錯誤可機械判定，語意問題（斷鏈、tag drift、自然語言敏感資料）需要讀內容才能評估。
 
 ## 執行流程
 
 ### 1. 前置檢查
 
-執行 `git status --porcelain`。若有任何涉及 `content/` 的變更（含 untracked），**直接中止**並印出：
+依序檢查兩件事，任一失敗即中止：
 
-```
-偵測到 content/ 變更，已中止以避免 diff 混雜：
-<git status --porcelain 內 content/ 相關行>
+**a. `$OBSIDIAN_VAULT_ROOT` 必須有效**：未設或該路徑底下找不到 `master-index.md`，印出「`$OBSIDIAN_VAULT_ROOT` 未設或無效，設定方式見 README」並停。語意層 subagent 也會檢查同一條件，但在 orchestrator 早停可避免浪費 subagent context。
 
-請先 commit 或 stash 後再跑 /vault-check。
-```
-
-工作區乾淨（無 `content/` 變更）才進入下一步。
+**b. 工作區 `content/` 必須乾淨**：執行 `git status --porcelain`，若有任何涉及 `content/` 的變更（含 untracked），印出受影響檔案並停，建議用戶先 commit 或 stash。這是為了讓自動修的 diff 不被既有 in-progress 變更混淆。
 
 ### 2. 硬規則自動修（Script）
 
@@ -39,9 +34,11 @@ npm run vault:fix
 - `updated` 缺失 → 補今日
 - 日期格式可推斷 → normalize 為 `YYYY-MM-DD`
 
-**額外硬掃（script 已做，不自動修，命中 → exit non-zero）：**
+**額外硬掃（script 已做，不自動修，命中 → exit code 1）：**
 
 - 敏感資料 high-precision regex（Anthropic / OpenAI / GitHub / Google / AWS / Slack token、private key header、JWT），作為 CI 最後一道防線；語意層敏感資料仍由下一步接手
+
+script exit non-zero **不中止本流程**——硬掃結果與語意層建議都要進最終報告，用戶才能一次看到全貌。讀完 script 輸出後直接進 step 3。
 
 **不在 script 處理範圍**（會由下一步 subagent 接手）：
 
@@ -52,60 +49,22 @@ npm run vault:fix
 
 ### 3. 語意層稽核（subagent）
 
-呼叫 Agent tool：
+呼叫 Agent tool：`subagent_type: "general-purpose"`，prompt 為 `references/audit.md` 全文。subagent 唯讀，依 references 的「唯讀工具契約」執行，回 JSON。
 
-- `subagent_type`: `"general-purpose"`
-- `prompt`: `references/audit.md` 全文
-
-subagent 唯讀，依 references 內的「唯讀工具契約」執行，回 JSON。拿到 JSON 後填入 step 4 總結模板。
-
-**無 subagent 環境的 fallback**：若執行環境沒有 Agent / subagent 能力（例如 Cursor、Codex、Gemini CLI 等），主 agent 直接 Read `references/audit.md` 並依其指示執行同一流程，**仍必須遵守 references 內的「唯讀工具契約」**——禁止 Write/Edit、禁止寫入命令、無法確認唯讀即停止。
+無 Agent 工具的環境（Cursor / Codex / Gemini CLI 等）由主 agent 直接 Read `references/audit.md` 跑同一流程，唯讀工具契約照常生效。
 
 ### 4. 收尾
 
 **不自動 commit**。所有變更（含 step 2 的自動修）留在工作目錄未 commit，交用戶審核。
 
-印出總結：
+印出總結，固定三段：
 
-```
-## Vault Check 完成（變更未 commit，請審核）
-
-### 硬規則自動修（script）
-<script 輸出的「已修正」摘要>
-<script 輸出的「修正被阻擋」清單，若有>
-
-### 語意層建議（audit reference，需手動處理）
-
-#### Schema 問題
-<schema_issues：缺 title / created / tags、parse error，含 LLM 建議值>
-
-#### Wikilink 斷鏈
-<broken_wikilinks：含 LLM 推測的目標>
-
-#### 敏感資料
-<sensitive_data：含嚴重度與位置>
-
-#### Tag 一致性
-<tag_conflicts：含建議標準化值>
-
-### 變更摘要
-<git status --short content/>
-<git diff --stat content/>
-
-### 下一步
-- 審核 diff：`git diff content/`
-- 處理語意層建議（subagent 不會自動改檔，需自行決定）
-- 滿意後自行 commit（建議訊息：`vault-check: 自動修正 frontmatter`）
-- 若前置做了 auto-stash：審核完畢後記得 `git stash pop`
-```
-
-若某類別無建議，該段落可省略。
+1. **硬規則自動修（script）**：直接貼 `npm run vault:fix` 輸出的「已修正」摘要與「修正被阻擋」清單
+2. **語意層建議（audit JSON）**：依 audit JSON 的非空 key 逐項成段，每段用該 key 的中文名稱（schema_issues / broken_wikilinks / sensitive_data / tag_conflicts → Schema 問題 / Wikilink 斷鏈 / 敏感資料 / Tag 一致性）。空 key 整段省略，不要留空標題。欄位格式以 `references/audit.md` 的 JSON schema 為準
+3. **變更摘要與下一步**：`git status --short content/` + `git diff --stat content/`，提示用戶審核 diff、處理語意層建議、滿意後自行 commit
 
 ## 規則
 
-- 只能修 `content/` 底下（script 已限制範圍）
-- 不 push、不 merge（除非用戶明確要求）
-- 全程繁體中文、禁用 `$()`
-- **硬規則變更請改 `scripts/vault-schema.mjs` 的 Zod schema**，不要在此 skill 或別處另寫
-- **語意規則變更請改 `.agents/skills/vault-check/references/audit.md`**，不要塞進 script
+- 硬規則變更改 `scripts/vault-schema.mjs` 的 Zod schema，不要在此 skill 或別處另寫
+- 語意規則變更改 `.agents/skills/vault-check/references/audit.md`，不要塞進 script
 - subagent 給的所有建議都「只 flag 不改檔」，最終是否套用由用戶決定
