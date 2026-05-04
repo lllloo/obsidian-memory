@@ -1,18 +1,37 @@
 ---
 name: ob
-description: Obsidian vault 操作入口：依使用者需求分派建檔或查詢。建檔（「建立筆記」、「新增」、「記一下」、「寫一篇」、「筆記關於…」、「日記」、「daily」）→ vault-writer agent；查詢（「找筆記」、「搜尋筆記」、「有沒有」、「查」）→ vault-query agent。觸發詞：「ob」、「/ob」、「筆記」、「日記」、「daily」、「記一下」、「找筆記」、「搜尋筆記」。不應觸發：純技術提問已由全域協議自動並行 vault-query + WebSearch、跨多篇筆記整合（用 vault-topic-moc）、批次 YouTube/Reddit 同步（用對應 sync skill）。
+description: Obsidian vault 操作入口：依使用者需求分派建檔或查詢。建檔（「建立筆記」、「新增」、「記一下」、「寫一篇」、「筆記關於…」、「日記」、「daily」）→ 建檔流程；查詢（「找筆記」、「搜尋筆記」、「有沒有」、「查」）→ 查詢流程。觸發詞：「ob」、「/ob」、「筆記」、「日記」、「daily」、「記一下」、「找筆記」、「搜尋筆記」。不應觸發：純技術提問已由全域協議自動並行查詢流程 + WebSearch、跨多篇筆記整合（用 vault-topic-moc）、批次 YouTube/Reddit 同步（用對應 sync skill）。
 ---
 
 # /ob — Obsidian Vault 操作入口
 
-依使用者需求判斷模式後分派：
+依使用者需求判斷模式後分派。**分派採用「general-purpose subagent + references prompt」模式**，不依賴命名 agent，可在跨工具環境間移植。
 
-- **建檔**（「建立筆記」、「新增」、「記一下」、「寫一篇」、「筆記關於…」）
-  → Agent tool，`subagent_type: vault-writer`，傳入原始需求
-- **查詢**（「找」、「搜尋」、「有沒有」、「查」）
-  → Agent tool，`subagent_type: vault-query`，傳入原始問題；拿到 JSON 後依下方格式呈現
+## 分派
 
-模式不明確時，向使用者確認。不做 WebSearch（全域協議會在其他場景自動並行）。
+### 建檔（「建立筆記」、「新增」、「記一下」、「寫一篇」、「筆記關於…」）
+
+呼叫 Agent tool：
+
+- `subagent_type`: `"general-purpose"`
+- `prompt`: `references/write.md` 全文 + `\n\n## 本次需求\n` + 使用者原始輸入
+
+### 查詢（「找」、「搜尋」、「有沒有」、「查」）
+
+呼叫 Agent tool：
+
+- `subagent_type`: `"general-purpose"`
+- `prompt`: `references/query.md` 全文 + `\n\n## 本次查詢\n` + 使用者原始問題
+
+拿到 JSON 後依下方「查詢命中呈現格式」呈現。
+
+### 模式不明確
+
+向使用者確認。不做 WebSearch（全域協議會在其他場景自動並行）。
+
+## 無 subagent 環境的 fallback
+
+若執行環境沒有 Agent / subagent 能力（例如 Cursor、Codex、Gemini CLI 等），主 agent 直接 Read 對應 `references/*.md` 並依其指示執行同一流程。query 流程**仍必須遵守 references 內的「唯讀工具契約」**——禁止 Write/Edit、禁止寫入命令、無法確認唯讀即停止。
 
 ## 查詢命中呈現格式
 
