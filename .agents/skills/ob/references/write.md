@@ -60,7 +60,15 @@ fi
 
 CLI 可用時 `obsidian create path="Cards/..."` 會自動定位 vault；但走 Write/Edit fallback 時，`Cards/<標題>.md` 會被當 cwd-relative，從其他專案呼叫會寫到錯地方。**fallback 路徑必須用絕對路徑**：以 `$OBSIDIAN_VAULT_ROOT` 環境變數為 vault 根目錄。
 
-env 未設或該路徑底下找不到 `master-index.md` → 告知用戶「`$OBSIDIAN_VAULT_ROOT` 未設或無效，設定方式見 README」並停止，不要猜測寫到錯誤位置。
+`$OBSIDIAN_VAULT_ROOT` 必須指向 repo 的 `content/` 目錄（也就是底下直接有 `master-index.md`、`Cards/`、`Topics/`）。env 未設或該路徑底下找不到 `master-index.md` → 告知用戶「`$OBSIDIAN_VAULT_ROOT` 未設或無效，設定方式見 README」並停止，不要猜測寫到錯誤位置。
+
+若任務需要執行 git 操作（例如歸檔搬移），先解析 repo root：
+
+```bash
+REPO_ROOT=$(git -C "$VAULT_ROOT" rev-parse --show-toplevel 2>/dev/null)
+```
+
+解析失敗時不要用 cwd-relative 路徑猜測；改用絕對路徑 fallback，並提醒使用者在 Obsidian reload。
 
 ## 前置作業
 
@@ -126,7 +134,7 @@ obsidian tags                    # 查看現有 tags
 當使用者說「這張 Card 我想歸到 X 主題」、「幫我把這幾張搬到 Y 主題」等類似需求時：
 
 1. 確認或建立 `Topics/<主題>/` 資料夾（含 `index.md` 作為主題入口頁）
-2. 對每張指定 Card 執行 `git mv Cards/<標題>.md Topics/<主題>/<標題>.md`（保持內容不動）
+2. 對每張指定 Card 優先執行 `git -C "$REPO_ROOT" mv "content/Cards/<標題>.md" "content/Topics/<主題>/<標題>.md"`（保持內容不動）
 3. 提示使用者在 `Topics/<主題>/index.md` 補上對應的 wikilink 清單
 4. 若是批次搬多張（同主題累積或 Card 裂變），一次處理完再回報
 

@@ -25,7 +25,7 @@
 VAULT_ROOT = $OBSIDIAN_VAULT_ROOT
 ```
 
-env 未設或該路徑底下找不到 `master-index.md`，直接輸出未命中 JSON：`hits` 為空，`miss_reason` 寫「`$OBSIDIAN_VAULT_ROOT` 未設或無效，設定方式見 README」。
+`$OBSIDIAN_VAULT_ROOT` 必須指向 repo 的 `content/` 目錄（也就是底下直接有 `master-index.md`、`Cards/`、`Topics/`）。env 未設或該路徑底下找不到 `master-index.md`，直接輸出未命中 JSON：`hits` 為空，`miss_reason` 寫「`$OBSIDIAN_VAULT_ROOT` 未設或無效，設定方式見 README」。
 
 ## Vault 佈局
 
@@ -112,6 +112,7 @@ env 未設或該路徑底下找不到 `master-index.md`，直接輸出未命中 
 `path` 規則：
 
 - 一律回 `content/...`，不要回 `<VAULT_ROOT>` 絕對路徑
+- 因 `$OBSIDIAN_VAULT_ROOT` 指向 `content/`，輸出時需把 `<VAULT_ROOT>` 下的相對路徑前綴補成 `content/`；例如 `<VAULT_ROOT>/Cards/foo.md` → `content/Cards/foo.md`
 - 例如實際檔案是 `~/code/obsidian-memory/content/Cards/foo.md`，輸出仍要寫成 `content/Cards/foo.md`
 
 ## 與其他流程的分工

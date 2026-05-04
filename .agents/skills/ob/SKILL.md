@@ -9,14 +9,14 @@ description: Obsidian vault 操作入口：依使用者需求分派建檔或查�
 
 ## 分派
 
-### 建檔（「建立筆記」、「新增」、「記一下」、「寫一篇」、「筆記關於…」）
+### 建檔（「建立筆記」、「新增」、「記一下」、「寫一篇」、「筆記關於…」、「日記」、「daily」）
 
 呼叫 Agent tool：
 
 - `subagent_type`: `"general-purpose"`
 - `prompt`: `references/write.md` 全文 + `\n\n## 本次需求\n` + 使用者原始輸入
 
-### 查詢（「找」、「搜尋」、「有沒有」、「查」）
+### 查詢（「找筆記」、「搜尋筆記」、「有沒有」、「查 vault」、「查筆記」）
 
 呼叫 Agent tool：
 
