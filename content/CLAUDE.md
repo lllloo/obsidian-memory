@@ -62,7 +62,7 @@
 
 ## 寫入前 Checklist（所有 agent 寫入 content/ 前必做）
 
-此 vault 透過 Quartz 發佈到公開網站（ob.bugloop.com），寫入前必須自檢。這是 vault 健康的第一道防線——任何修改 `content/` 的流程（vault-writer、skills、手動編輯）在寫入前逐項檢查。`/vault-check` 只兜底跨檔案 emergent 問題（斷鏈、tag drift、非 writer 來源漏網），**不依賴它抓本清單能預防的錯**。
+此 vault 透過 Quartz 發佈到公開網站（ob.bugloop.com），寫入前必須自檢。這是 vault 健康的第一道防線——任何修改 `content/` 的流程（`/ob` 寫入流程、其他 skills、手動編輯）在寫入前逐項檢查。`/vault-check` 只兜底跨檔案 emergent 問題（斷鏈、tag drift、非寫入流程來源漏網），**不依賴它抓本清單能預防的錯**。
 
 ### 1. 敏感資料（零容忍）
 

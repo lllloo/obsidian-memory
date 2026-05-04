@@ -40,9 +40,11 @@ npm run vault:fix
 - 日期格式可推斷 → normalize 為 `YYYY-MM-DD`
 
 **額外硬掃（script 已做，不自動修，命中 → exit non-zero）：**
+
 - 敏感資料 high-precision regex（Anthropic / OpenAI / GitHub / Google / AWS / Slack token、private key header、JWT），作為 CI 最後一道防線；語意層敏感資料仍由下一步接手
 
 **不在 script 處理範圍**（會由下一步 subagent 接手）：
+
 - frontmatter parse error、缺 `title` / `created` / `tags`、其他 INVALID_VALUE
 - wikilink 斷鏈
 - 敏感資料語意層（自然語言密碼、個資、內部資訊）

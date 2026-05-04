@@ -42,29 +42,27 @@ npm run vault:fix            # 稽核並自動修正（/vault-check 內部呼叫
 
 ## Claude Code 整合
 
-此 repo 的 `.claude/` 管理 Obsidian 相關的 agents、skills（已全 skill 化，不再使用 slash command）。三個使用者入口：
+此 repo 的 `.claude/` 管理 Obsidian 相關的 skills（已全 skill 化，不再使用 slash command；skill 內子流程以 `general-purpose` subagent + references prompt 執行，不依賴命名 agent）。三個使用者入口：
 
-- **`/ob <需求>`** — 筆記建立與查詢（依語意分派到 `vault-writer` 或 `vault-query` agent）
-- **`/vault-check`** — vault frontmatter 與語意稽核（script 自動修 + subagent 給建議）
+- **`/ob <需求>`** — 筆記建立與查詢（依語意分派到建檔流程 `references/write.md` 或查詢流程 `references/query.md`，皆經 general-purpose subagent）
+- **`/vault-check`** — vault frontmatter 與語意稽核（script 自動修 + audit reference 經 general-purpose subagent 給建議）
 - **`/vault-youtube-sync`、`/vault-topic-moc`、`/vault-reddit-sync`** — 批次工作流
 
-另有一條自動行為：技術／知識性提問時，會自動並行呼叫 `vault-query` + WebSearch 綜合答覆（協議在全域 `~/.claude/CLAUDE.md` 的 `## Obsidian` 段）。
+另有一條自動行為：技術／知識性提問時，會自動並行呼叫查詢流程（`/ob` skill + `references/query.md`）+ WebSearch 綜合答覆（協議在全域 `~/.claude/CLAUDE.md` 的 `## Obsidian` 段）。
 
-完整 agent / skill 清單、工作流協議、第三方 Skill 依賴見 [CLAUDE.md](CLAUDE.md)。
+完整 skill 清單、工作流協議、第三方 Skill 依賴見 [CLAUDE.md](CLAUDE.md)。
 
 ### 全域掛載（讓 `/ob` 跨專案可用）
 
-把 `.claude/skills/ob/`、`vault-writer.md`、`vault-query.md` symlink 到 `~/.claude/` 後，Claude Code 在任何專案目錄都能叫到 `/ob`。改 repo 內的檔案會即時同步到全域，不需手動複製。
+把 `.claude/skills/ob/` symlink 到 `~/.claude/skills/` 後，Claude Code 在任何專案目錄都能叫到 `/ob`。改 repo 內的檔案會即時同步到全域，不需手動複製。
 
-- 不做 symlink 也能用，但 skill / agent 只在本 repo 目錄內生效
+- 不做 symlink 也能用，但 skill 只在本 repo 目錄內生效
 - `/vault-check` 與其他批次 skills 綁本 repo（需讀 `content/` 與 git），不需掛全域
 
 **Windows（需開啟 Developer Mode 或以管理員執行）：**
 
 ```powershell
 # 在 repo 根目錄執行
-New-Item -ItemType SymbolicLink -Path "$env:USERPROFILE\.claude\agents\vault-writer.md" -Target "$PWD\.claude\agents\vault-writer.md"
-New-Item -ItemType SymbolicLink -Path "$env:USERPROFILE\.claude\agents\vault-query.md" -Target "$PWD\.claude\agents\vault-query.md"
 New-Item -ItemType SymbolicLink -Path "$env:USERPROFILE\.claude\skills\ob" -Target "$PWD\.claude\skills\ob"
 ```
 
@@ -72,15 +70,13 @@ New-Item -ItemType SymbolicLink -Path "$env:USERPROFILE\.claude\skills\ob" -Targ
 
 ```bash
 # 在 repo 根目錄執行
-mkdir -p ~/.claude/agents ~/.claude/skills
-ln -sf "$PWD/.claude/agents/vault-writer.md" ~/.claude/agents/vault-writer.md
-ln -sf "$PWD/.claude/agents/vault-query.md" ~/.claude/agents/vault-query.md
+mkdir -p ~/.claude/skills
 ln -sf "$PWD/.claude/skills/ob" ~/.claude/skills/ob
 ```
 
 ### Vault 路徑設定（跨機器）
 
-`vault-writer` / `vault-query` / `vault-auditor` 一律從 `$OBSIDIAN_VAULT_ROOT` 解析 vault 位置。**必須**在每台機器的 `~/.claude/settings.json` 注入絕對路徑：
+skill 內子流程（建檔／查詢／語意稽核）一律從 `$OBSIDIAN_VAULT_ROOT` 解析 vault 位置。**必須**在每台機器的 `~/.claude/settings.json` 注入絕對路徑：
 
 ```json
 {

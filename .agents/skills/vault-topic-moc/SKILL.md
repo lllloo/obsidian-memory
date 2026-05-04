@@ -30,11 +30,11 @@ env 未設或該路徑底下找不到 `master-index.md` → 告知用戶並停�
 
 依 `content/CLAUDE.md`，AI 整理 Inbox/ 或合併既有筆記的產出**一律先進 `Cards/`**，由使用者主觀判斷成熟度後再批次 `git mv` 進 `Topics/<類別>/`。
 
-| 來源 → 產出 | 預設目的地 | 由誰決定 |
-|---|---|---|
-| Inbox/* 整理 → MOC | `Cards/<主題>.md` | 本 skill |
-| Cards/* 同主題整合 → MOC | `Cards/<主題>.md`（覆寫或新建） | 本 skill |
-| Cards/ → Topics/ 升級 | `Topics/<類別>/<主題>.md` | **使用者** 人工 `git mv` |
+| 來源 → 產出               | 預設目的地                      | 由誰決定                 |
+| ------------------------- | ------------------------------- | ------------------------ |
+| Inbox/\* 整理 → MOC       | `Cards/<主題>.md`               | 本 skill                 |
+| Cards/\* 同主題整合 → MOC | `Cards/<主題>.md`（覆寫或新建） | 本 skill                 |
+| Cards/ → Topics/ 升級     | `Topics/<類別>/<主題>.md`       | **使用者** 人工 `git mv` |
 
 本 skill 預設**不寫 `Topics/`、不更新 `Topics/<類別>/index.md`**。若使用者明確指示寫 Topics/（罕見），才走 `Topics/<類別>/<主題>.md` 並補 index.md wikilink。
 
@@ -42,10 +42,10 @@ env 未設或該路徑底下找不到 `master-index.md` → 告知用戶並停�
 
 下列名詞僅在使用者明確指示寫 Topics/ 時用得到。`Topics/` 實際結構：
 
-| 層級 | content/CLAUDE.md 稱呼 | 本文件稱呼 | 範例 |
-|---|---|---|---|
-| 第一層資料夾 | 「主題」 | **類別** | `Topics/Claude-Code/` |
-| 第二層 MOC 檔 | —（視為 cards 之一） | **主題 MOC** | `Topics/Claude-Code/Agent-Harness.md` |
+| 層級          | content/CLAUDE.md 稱呼 | 本文件稱呼   | 範例                                  |
+| ------------- | ---------------------- | ------------ | ------------------------------------- |
+| 第一層資料夾  | 「主題」               | **類別**     | `Topics/Claude-Code/`                 |
+| 第二層 MOC 檔 | —（視為 cards 之一）   | **主題 MOC** | `Topics/Claude-Code/Agent-Harness.md` |
 
 content/CLAUDE.md「Topics/ 第一層不跨主題巢套」指的是不要建 `Topics/AI-工具/Claude-Code/`（兩層類別）；單層類別 `Topics/<類別>/<主題>.md` 不違反此規則。
 
@@ -84,6 +84,7 @@ content/CLAUDE.md「Topics/ 第一層不跨主題巢套」指的是不要建 `To
 **典型陷阱（必看）**：
 
 > 候選群「RAG / CAG / NotebookLM / 書本 Skill 主副檔」表面都涉及「給 LLM 知識」這個 umbrella term，實際每篇的核心問題是：
+>
 > - CAG 篇：「context window 變大後是否還需要 RAG」
 > - Web 搜尋篇：「Agent 怎麼編排多個工具決定查哪邊」
 > - NotebookLM 篇：「怎麼用 NotebookLM CLI 把外部記憶接進工作流」
@@ -115,6 +116,7 @@ content/CLAUDE.md「Topics/ 第一層不跨主題巢套」指的是不要建 `To
 ### 2. 讀取全部內容
 
 Read 全部候選筆記。記錄：
+
 - 每篇的觀點、關鍵數字、獨特資訊
 - 可能的偏誤（影片創作者的主觀解讀 vs 官方事實）
 - 筆記間的重複與差異
@@ -132,6 +134,7 @@ Read 全部候選筆記。記錄：
 **v0 寫完後必須停下來讓用戶看再繼續**。事實校正會花 WebFetch 與 token，方向走偏才做白工；reviewer/fixer 迴圈會產生大量修改來回，太早進去用戶難追蹤、也無法在方向走偏時及早喊停。
 
 停點要做的事：
+
 1. 簡述 v0 寫了什麼（章節列表 + 字數或行數）
 2. 給 MOC 絕對路徑讓用戶自行打開看
 3. 明確詢問下一步，提示可能的選項：
@@ -145,6 +148,7 @@ Read 全部候選筆記。記錄：
 ### 5. 事實校正（用戶選擇做、且有官方來源時）
 
 若主題是技術概念（工具、API、框架），影片創作者常有二手轉述或過度簡化。應：
+
 - WebSearch 找官方 docs、Engineering blog、GitHub repo
 - WebFetch 抓原文比對 MOC 中的「事實性描述」：數字、規則、語法、API 介面
 - 不確定的社群數據加註「（社群實測）」等來源標記
@@ -169,7 +173,7 @@ Read 全部候選筆記。記錄：
 
 **subagent 呼叫方式**：用 `Agent` tool，`subagent_type: "general-purpose"`，prompt 從 [references/review-loop.md](references/review-loop.md) 取用並填入該輪的 MOC 絕對路徑、官方來源 URL、review 輪次編號。**若 Step 5 跳過（沒做事實校正）**，官方來源欄位填 `N/A`，reviewer 會跳過事實準確性檢查。
 
-**與 `/vault-check` 的分工**：`/vault-check` 是 repo-wide 兩段稽核（`scripts/vault-check.mjs` 硬規則自動修 + `vault-auditor` subagent 語意層），對象是整個 vault、判準是 schema 與跨檔一致性；本 skill 的 reviewer/fixer 是對單篇 MOC 做深度 review + 事實校正，判準是主題內部一致與官方事實對齊。兩邊不共用流程。
+**與 `/vault-check` 的分工**：`/vault-check` 是 repo-wide 兩段稽核（`scripts/vault-check.mjs` 硬規則自動修 + audit reference 經 general-purpose subagent 跑語意層），對象是整個 vault、判準是 schema 與跨檔一致性；本 skill 的 reviewer/fixer 是對單篇 MOC 做深度 review + 事實校正，判準是主題內部一致與官方事實對齊。兩邊不共用流程。
 
 ### 7. 原筆記處置（與用戶確認）
 
@@ -189,11 +193,13 @@ Read 全部候選筆記。記錄：
 MOC 聚焦**概念與大方向**，經得起時間、可在不同模型世代重讀仍有效。
 
 **應該放**：
+
 - 問題本質、架構策略、操作準則、速查表
 - 相對關係（例：「Opus 成本約 Sonnet 3 倍」）
 - 世代演進趨勢（例：「context rot 從斷崖到緩降」）
 
 **不要放**：
+
 - 特定模型版本的 benchmark 分數（例：「Opus 4.6 MRCR v2 76%」）
 - 模型發布日期（例：「Opus 4.6 2026-02-05 發布」）
 - plan 可用矩陣（例：「Max / Team / Enterprise 才支援 1M」）

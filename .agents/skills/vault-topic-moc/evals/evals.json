@@ -69,7 +69,7 @@
         },
         {
           "name": "不跨界到 vault-check",
-          "description": "不呼叫 /vault-check 或 vault-auditor；reviewer/fixer 是對單篇 MOC 做深度 review，與 vault 稽核分工不同"
+          "description": "不呼叫 /vault-check skill 或 audit reference；reviewer/fixer 是對單篇 MOC 做深度 review，與 vault 稽核分工不同"
         },
         {
           "name": "Workflow Checklist 追蹤",

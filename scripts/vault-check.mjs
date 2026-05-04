@@ -36,7 +36,7 @@ const REQUIRED_SET = new Set(REQUIRED_FIELDS);
  * 敏感資料 high-precision regex（CI 最後一道防線）。
  *
  * 原則：只收進「幾乎不可能誤判」的 token shape，寧可漏也不要誤報。
- * 完整語意層檢查（自然語言密碼、個資、內部資訊）仍由 vault-auditor subagent 處理。
+ * 完整語意層檢查（自然語言密碼、個資、內部資訊）仍由語意層稽核流程（/vault-check skill 內 audit reference）處理。
  */
 const SENSITIVE_PATTERNS = [
   { name: "Anthropic key", regex: /sk-ant-[A-Za-z0-9_-]{20,}/ },
@@ -76,7 +76,7 @@ if (args.help) {
 
 掃描 content/ 下所有 .md，只處理硬規則（檔名、frontmatter 結構、日期 normalize）。
 語意層稽核（wikilink 斷鏈、敏感資料、tag 一致性、缺 title/created/tags、parse error）
-由 vault-auditor subagent 處理，不在此 script。
+由語意層稽核流程（/vault-check skill 內 audit reference）處理，不在此 script。
 
   --fix    自動修可修項目（欄位順序、白名單外欄位、補 updated、日期 normalize、檔名空格）
   --json   以 JSON 輸出（預設為人類可讀）`);
@@ -115,7 +115,7 @@ function checkFilename(absPath) {
 /**
  * 對單一檔案做稽核，回傳 issues 陣列。
  * 只回 autofix=true 的硬規則；不能自動修的（parse error、缺 title/created/tags、
- * 不可推斷的 INVALID_VALUE）一律跳過交 vault-auditor subagent 處理。
+ * 不可推斷的 INVALID_VALUE）一律跳過交語意層稽核流程（audit reference）處理。
  */
 function auditFile(absPath) {
   const issues = [];
@@ -450,7 +450,7 @@ async function main() {
     }
 
     console.log(
-      `\n備註：完整語意層稽核（wikilink 斷鏈、tag 一致性、自然語言密碼 / 個資、缺 title/created/tags）由 vault-auditor subagent 處理。`,
+      `\n備註：完整語意層稽核（wikilink 斷鏈、tag 一致性、自然語言密碼 / 個資、缺 title/created/tags）由語意層稽核流程（/vault-check skill 內 audit reference）處理。`,
     );
   }
 

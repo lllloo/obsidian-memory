@@ -104,11 +104,13 @@ env 未設或該路徑底下找不到 `master-index.md`，直接輸出未命中 
 ```
 
 `relevance` 三值：
+
 - `high` — 筆記主題直接對應問題
 - `medium` — 筆記主題相關但非焦點
 - `low` — 僅字面提到、需配合其他筆記才能答題
 
 `path` 規則：
+
 - 一律回 `content/...`，不要回 `<VAULT_ROOT>` 絕對路徑
 - 例如實際檔案是 `~/code/obsidian-memory/content/Cards/foo.md`，輸出仍要寫成 `content/Cards/foo.md`
 

@@ -7,8 +7,8 @@
  * content/CLAUDE.md 的「欄位說明」表格只記人類語意（作用、出現情境），
  * 不複述欄位清單或順序。兩者分工：schema 管機械，CLAUDE.md 管語意。
  *
- * /vault-check 的兩段（scripts/vault-check.mjs 硬規則自動修 + vault-auditor
- * 語意稽核）皆讀取此檔。
+ * /vault-check 的兩段（scripts/vault-check.mjs 硬規則自動修 + 語意層稽核
+ * 流程，即 /vault-check skill 內 audit reference）皆讀取此檔。
  */
 import { z } from "zod";
 
@@ -31,8 +31,8 @@ export const REQUIRED_FIELDS = ["title", "created", "updated", "tags"];
  *
  * 列 script 會自動修的硬規則，外加 SENSITIVE_DATA 與 PARSE_ERROR（script 做
  * high-precision 偵測 + flag 不修，作為 CI 最後一道防線；完整語意層稽核仍由
- * vault-auditor subagent 處理）。其餘語意層問題（BROKEN_WIKILINK /
- * 缺 title-created-tags / tag 一致性）仍全由 vault-auditor 處理。
+ * 語意層稽核流程（audit reference）處理）。其餘語意層問題（BROKEN_WIKILINK /
+ * 缺 title-created-tags / tag 一致性）仍全由 audit reference 處理。
  */
 export const CODE_LABELS = {
   FILENAME_HAS_SPACE: "檔名含空格",

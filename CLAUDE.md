@@ -16,7 +16,7 @@ Obsidian 個人知識庫，以 [Quartz 4](https://quartz.jzhao.xyz/) 發佈至 `
 
 - **Vault 層**（`content/`）— 筆記本體，規則見 `content/CLAUDE.md`
 - **發佈層**（`quartz/`、`quartz.config.ts`、`quartz.layout.ts`、`.github/workflows/`）— Quartz 建置與 GitHub Pages 部署
-- **工作流層**（`.claude/` + `.agents/` + `scripts/`）— agents（`vault-writer` / `vault-query` / `vault-auditor`）、skills（`ob`、`vault-check`、`vault-youtube-sync`、`vault-topic-moc`、`vault-reddit-sync`）、Node 稽核腳本。`.claude/` 可 symlink 至 `~/.claude/` 跨專案使用；`.agents/skills/` 是 repo-local skill 來源，`.claude/skills` symlink 到此處
+- **工作流層**（`.claude/` + `.agents/` + `scripts/`）— skills（`ob`、`vault-check`、`vault-youtube-sync`、`vault-topic-moc`、`vault-reddit-sync`）、Node 稽核腳本。skill 內子流程（建檔／查詢／語意稽核）由 skill 以 `general-purpose` subagent 呼叫，prompt 從各自 `references/` 載入，不依賴命名 agent。`.claude/skills/ob` 可 symlink 至 `~/.claude/skills/` 跨專案使用；`.agents/skills/` 是 repo-local skill 來源，`.claude/skills` symlink 到此處
 
 ## 常用指令
 
@@ -55,9 +55,11 @@ Vault 內容規則（寫入前 Checklist、frontmatter schema、tag/命名、敏
 
 - @content/CLAUDE.md
 
-## Claude Code Agent 與 Skills
+## Claude Code Skills
 
 此 repo 統一管理 Obsidian 相關的 Claude Code 設定。部分透過 symlink 掛載至全域（僅 `/ob` 相關），讓跨專案可用；其餘綁本 repo。全 skill 化（不再有 command）。
+
+skill 內所有「subagent 子流程」（建檔／查詢／語意稽核）一律以 `Agent` tool 呼叫 `subagent_type: "general-purpose"`，prompt 從該 skill 的 `references/*.md` 載入。**不依賴命名 agent**，跨工具環境可移植；無 subagent 能力的工具（Cursor/Codex/Gemini CLI 等）由主 agent 直接 Read references 執行同流程。
 
 依作用分組。「全域路徑」有值 = 需 symlink 掛全域（跨專案可用），`—` = 僅本 repo 生效。
 
@@ -77,25 +79,25 @@ Codex 不會自動把 repo 內 `.agents/skills/` 註冊為全域 skill registry�
 
 使用者唯一入口。`/ob <需求>` 或對話中自然提到「建立筆記」、「找筆記」，`ob` skill 依語意分派：
 
-- 建檔（「建立」、「記一下」、「寫一篇」）→ `vault-writer`
-- 查詢（「找」、「搜尋」、「有沒有」、「查」）→ `vault-query`
+- 建檔（「建立」、「記一下」、「寫一篇」）→ `references/write.md` 經 general-purpose subagent
+- 查詢（「找」、「搜尋」、「有沒有」、「查」）→ `references/query.md` 經 general-purpose subagent（含唯讀工具契約）
 
-| 檔案                             | 類型  | 全域路徑                           | 用途                               |
-| -------------------------------- | ----- | ---------------------------------- | ---------------------------------- |
-| `.claude/skills/ob/`             | Skill | `~/.claude/skills/ob/`             | `/ob` 入口，依語意分派             |
-| `.claude/agents/vault-writer.md` | Agent | `~/.claude/agents/vault-writer.md` | 寫入：建檔、append、改 frontmatter |
-| `.claude/agents/vault-query.md`  | Agent | `~/.claude/agents/vault-query.md`  | 唯讀查詢：三層搜尋回 JSON          |
+| 檔案                                    | 類型      | 全域路徑               | 用途                            |
+| --------------------------------------- | --------- | ---------------------- | ------------------------------- |
+| `.claude/skills/ob/`                    | Skill     | `~/.claude/skills/ob/` | `/ob` 入口，依語意分派          |
+| `.agents/skills/ob/references/write.md` | Reference | —（隨 skill 載入）     | 寫入流程指令（subagent prompt） |
+| `.agents/skills/ob/references/query.md` | Reference | —（隨 skill 載入）     | 查詢流程指令（subagent prompt） |
 
 ### 2. Vault 稽核修正（`/vault-check` 流程）
 
 兩段分工、零重疊：**Script 管格式與敏感資料硬掃（硬規則自動修 + high-precision 敏感資料 flag），Subagent 管語意（建議不改檔）**。skill 串接兩段。全程綁本 repo，不需掛全域。
 
-| 檔案                              | 類型        | 全域路徑 | 用途                                                                                                                                           |
-| --------------------------------- | ----------- | -------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
-| `.claude/skills/vault-check/`     | Skill       | —        | `/vault-check` orchestrator：git 前置檢查 → 跑 script → 呼叫 subagent → 合併總結                                                               |
-| `scripts/vault-check.mjs`         | Node script | —        | 硬規則自動修（檔名、frontmatter 結構、日期 normalize）＋ high-precision 敏感資料硬掃（只 flag 不修，命中 exit non-zero，作為 CI 最後一道防線） |
-| `scripts/vault-schema.mjs`        | Node module | —        | Zod schema 與欄位順序／白名單定義，**硬規則變更改這裡**                                                                                        |
-| `.claude/agents/vault-auditor.md` | Agent       | —        | 語意層稽核（wikilink 斷鏈、完整敏感資料、tag 一致性、缺 title/created/tags、parse error），唯讀只 flag 不改檔                                  |
+| 檔案                                             | 類型        | 全域路徑 | 用途                                                                                                                                           |
+| ------------------------------------------------ | ----------- | -------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
+| `.claude/skills/vault-check/`                    | Skill       | —        | `/vault-check` orchestrator：git 前置檢查 → 跑 script → 經 general-purpose subagent 跑 audit reference → 合併總結                              |
+| `scripts/vault-check.mjs`                        | Node script | —        | 硬規則自動修（檔名、frontmatter 結構、日期 normalize）＋ high-precision 敏感資料硬掃（只 flag 不修，命中 exit non-zero，作為 CI 最後一道防線） |
+| `scripts/vault-schema.mjs`                       | Node module | —        | Zod schema 與欄位順序／白名單定義，**硬規則變更改這裡**                                                                                        |
+| `.agents/skills/vault-check/references/audit.md` | Reference   | —        | 語意層稽核指令（subagent prompt）：wikilink 斷鏈、完整敏感資料、tag 一致性、缺 title/created/tags、parse error；含唯讀工具契約，只 flag 不改檔 |
 
 ### 3. 批次筆記工作流（Skills）
 
@@ -128,6 +130,6 @@ Codex 不會自動把 repo 內 `.agents/skills/` 註冊為全域 skill registry�
 
 Vault 同時作為 Claude Code 的參考資料來源，與 WebSearch 互補並行：
 
-- **協議**：觸發條件、綜合原則、引用格式寫在全域 `~/.claude/CLAUDE.md` 的 `## Obsidian` 段；技術/知識性提問會自動並行呼叫 `vault-query` + WebSearch
+- **協議**：觸發條件、綜合原則、引用格式寫在全域 `~/.claude/CLAUDE.md` 的 `## Obsidian` 段；技術/知識性提問會自動並行呼叫查詢流程（`/ob` skill + `references/query.md`）+ WebSearch。若全域 `~/.claude/CLAUDE.md` 仍有舊命名 agent 字樣（`vault-query` / `vault-writer`），需手動更新為新模式
 - **搜尋工具**：搜 vault 一律用 `Grep` + `Glob content/**/*<關鍵字>*.md`，不要呼叫 Obsidian CLI 的 `search:context`（慢約 9 倍且覆蓋率較低）
-- **跨機器路徑**：各 agent 一律讀 `$OBSIDIAN_VAULT_ROOT`，**必須**在**全域** `~/.claude/settings.json` 的 `env` 段注入絕對路徑（不是 repo 內的 settings）——因為 `/ob` 相關設定已 symlink 到全域供跨專案使用，env 放 repo 內的 settings 只在本 repo 工作時可見，從其他專案呼叫 `/ob` 會讀不到。未設或無效直接中止，不做猜測 fallback。path 契約詳見各 agent 檔。設定時可直接請 Claude Code 用 `update-config` skill 處理，會自動 merge 既有 `env` 不覆蓋
+- **跨機器路徑**：各 skill / reference 一律讀 `$OBSIDIAN_VAULT_ROOT`，**必須**在**全域** `~/.claude/settings.json` 的 `env` 段注入絕對路徑（不是 repo 內的 settings）——因為 `/ob` 相關設定已 symlink 到全域供跨專案使用，env 放 repo 內的 settings 只在本 repo 工作時可見，從其他專案呼叫 `/ob` 會讀不到。未設或無效直接中止，不做猜測 fallback。path 契約詳見各 reference 檔。設定時可直接請 Claude Code 用 `update-config` skill 處理，會自動 merge 既有 `env` 不覆蓋

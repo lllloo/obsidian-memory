@@ -57,6 +57,7 @@ env 未設或該路徑底下找不到 `master-index.md` → 直接輸出空結�
 **清單以 `content/CLAUDE.md` 的「寫入前 Checklist §1」為準**（regex 白名單 + 自然語言密碼 + 個資 / 公司內部資訊）。開工前已 Read 該檔，依當下清單掃描，CLAUDE.md 更新時本流程自動跟上。
 
 稽核側專屬規則（不屬於清單本身）：
+
 - 排除 code fence 內的範例
 - 嚴重度分三級：`high`（確定的 secret，regex 命中）/ `medium`（疑似但需人工確認，語意命中）/ `low`（一般敏感詞）
 - `match` 欄位只取前 12 字 + `…` 避免日誌洩漏

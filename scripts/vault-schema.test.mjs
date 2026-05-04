@@ -221,7 +221,7 @@ describe("codeLabel", () => {
     assert.equal(codeLabel("NOT_A_CODE"), "NOT_A_CODE");
   });
 
-  it("語意層 code 不在 label 表（已交 vault-auditor）", () => {
+  it("語意層 code 不在 label 表（已交 audit reference）", () => {
     assert.equal(codeLabel("BROKEN_WIKILINK"), "BROKEN_WIKILINK");
   });
 });
