@@ -5,7 +5,7 @@ description: Obsidian vault 操作入口：依使用者需求分派建檔或查�
 
 # /ob — Obsidian Vault 操作入口
 
-依使用者需求判斷模式後分派。**分派採用「general-purpose subagent + references prompt」模式**，不依賴命名 agent，可在跨工具環境間移植。
+依使用者需求判斷模式後分派到 build / query 流程。
 
 ## 分派
 
@@ -16,7 +16,9 @@ description: Obsidian vault 操作入口：依使用者需求分派建檔或查�
 - `subagent_type`: `"general-purpose"`
 - `prompt`: `references/write.md` 全文 + `\n\n## 本次需求\n` + 使用者原始輸入
 
-### 查詢（「找筆記」、「搜尋筆記」、「有沒有」、「查 vault」、「查筆記」）
+subagent 完成後直接回報結果（建檔路徑、是否走 fallback 等）。
+
+### 查詢（「找筆記」、「搜尋筆記」、「有沒有」、「查」）
 
 呼叫 Agent tool：
 
@@ -27,11 +29,11 @@ description: Obsidian vault 操作入口：依使用者需求分派建檔或查�
 
 ### 模式不明確
 
-向使用者確認。不做 WebSearch（全域協議會在其他場景自動並行）。
+向使用者確認。
 
 ## 無 subagent 環境的 fallback
 
-若執行環境沒有 Agent / subagent 能力（例如 Cursor、Codex、Gemini CLI 等），主 agent 直接 Read 對應 `references/*.md` 並依其指示執行同一流程。query 流程**仍必須遵守 references 內的「唯讀工具契約」**——禁止 Write/Edit、禁止寫入命令、無法確認唯讀即停止。
+無 Agent 工具的環境（Cursor / Codex / Gemini CLI 等）由主 agent 直接 Read 對應 `references/*.md` 跑同一流程，query 流程的「唯讀工具契約」照常生效。
 
 ## 查詢命中呈現格式
 

@@ -17,7 +17,7 @@
 - **輸出必為 JSON**：不加解釋、不加 markdown wrapper，純 JSON 物件
 - **不再呼叫其他 subagent**（避免遞迴）
 - **不做 WebSearch**：只負責 vault；web 由主 agent 並行處理
-- **path 一律正規化**：所有命中結果的 `path` 都必須是 repo-relative 的 `content/...`，不要回傳絕對路徑
+- **path 一律正規化**：詳見下方「輸出格式」段的 `path` 規則
 
 ## Vault 路徑解析（必先執行）
 
@@ -29,16 +29,13 @@ VAULT_ROOT = $OBSIDIAN_VAULT_ROOT
 
 ## Vault 佈局
 
-- 入口：`<VAULT_ROOT>/master-index.md`（資料夾 + tag 指南；**動態實際清單以此為準，不要相信本檔列出的範例**）
-- 資料夾用途：
+- 入口：`<VAULT_ROOT>/master-index.md` — 資料夾索引與 Tag 查詢指南都在裡面，**實際資料夾清單與 tag 字典以 master-index 為準**，下列只是粗結構
+- 資料夾粗結構：
   - `Cards/` — 未歸屬的完整概念 Cards（工作區）
-  - `Topics/<主題>/` — 已歸檔主題，第一層子目錄一個主題一個（實際主題清單見 master-index）
-  - `Inbox/YouTube/<頻道>/` — 影片摘要，每個頻道一個子目錄（清單見 master-index）
+  - `Topics/<主題>/` — 已歸檔主題，第一層子目錄一個主題一個
+  - `Inbox/YouTube/<頻道>/` — 影片摘要，每個頻道一個子目錄
   - `Inbox/Clippings/` — 網頁剪貼
 - **搜尋時排除**：`.obsidian/`
-- 筆記規則（來自 `content/CLAUDE.md`）：
-  - 檔名不含空格，用 `-` 連接（如 `Obsidian-CLI-整合指南.md`）
-  - Frontmatter 必有 `title`、`created`、`updated`、`tags`（YAML 清單）
 
 ## 三層搜尋策略
 

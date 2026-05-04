@@ -112,8 +112,10 @@ env 未設或路徑無效 → 告知用戶並停止，不猜測 fallback。
 
 掃 `$OBSIDIAN_VAULT_ROOT/Inbox/Reddit/` 底下所有含 `01.index.md` 的子資料夾。實作建議：用 Glob 列出 channel index 路徑，sub 名稱直接取資料夾名（不需 parse frontmatter）。
 
+Glob tool 的 `path` 與 `pattern` 參數不展開 env var 字面值，**先用 Bash 取出 `$OBSIDIAN_VAULT_ROOT` 的實際值**，再帶入 Glob。例如展開後呼叫：
+
 ```
-Glob: $OBSIDIAN_VAULT_ROOT/Inbox/Reddit/*/01.index.md
+Glob: path="<vault 絕對路徑>/Inbox/Reddit", pattern="*/01.index.md"
 sub 名 = 該檔的父資料夾名
 ```
 
@@ -256,7 +258,7 @@ N. [score:<分數> comments:<留言數>] <標題>
 - 跳過原因分布（主貼粗篩 / subagent 評估後）
 - 本次 top 3 最高價值貼文（含一行摘要）
 
-若 subagents 回傳 `saved` 超過上限，主 skill 端需依步驟 5 的優先級**二次淘汰**，多出的筆記立即刪除，不保留「也許之後有用」的低信號篇。**被淘汰的 post_id 仍要寫入 graveyard（標 skip），避免下次重複處理。**
+若 subagents 回傳 `saved` 超過上限，主 skill 端需依步驟 4 的優先級**二次淘汰**，多出的筆記立即刪除，不保留「也許之後有用」的低信號篇。**被淘汰的 post_id 仍要寫入 graveyard（標 skip），避免下次重複處理。**
 
 ## 注意事項
 
