@@ -58,11 +58,7 @@ fi
 
 ## Vault 路徑解析（Write fallback 必做）
 
-CLI 可用時 `obsidian create path="Cards/..."` 會自動定位 vault；但走 Write/Edit fallback 時，`Cards/<標題>.md` 會被當 cwd-relative，從其他專案呼叫會寫到錯地方。**fallback 路徑必須用絕對路徑**。
-
-```
-VAULT_ROOT = $OBSIDIAN_VAULT_ROOT
-```
+CLI 可用時 `obsidian create path="Cards/..."` 會自動定位 vault；但走 Write/Edit fallback 時，`Cards/<標題>.md` 會被當 cwd-relative，從其他專案呼叫會寫到錯地方。**fallback 路徑必須用絕對路徑**：以 `$OBSIDIAN_VAULT_ROOT` 環境變數為 vault 根目錄。
 
 env 未設或該路徑底下找不到 `master-index.md` → 告知用戶「`$OBSIDIAN_VAULT_ROOT` 未設或無效，設定方式見 README」並停止，不要猜測寫到錯誤位置。
 
@@ -73,7 +69,7 @@ env 未設或該路徑底下找不到 `master-index.md` → 告知用戶「`$OBS
 
 1. 取得 vault 規則：
    - CLI 可用 → `obsidian read file="CLAUDE.md"`
-   - CLI 不可用（偵測失敗）→ `Read <VAULT_ROOT>/CLAUDE.md`（即 `$OBSIDIAN_VAULT_ROOT/CLAUDE.md`）
+   - CLI 不可用（偵測失敗）→ `Read $OBSIDIAN_VAULT_ROOT/CLAUDE.md`
 2. 每次寫入前依 CLAUDE.md 的「寫入前 Checklist」逐項自檢（敏感資料、frontmatter schema、tag 沿用、命名），通過才寫入；這是寫入路徑的主要職責，不要把規則預防外包給 `/vault-check`
 
 ## 建檔位置判斷
@@ -94,6 +90,7 @@ env 未設或該路徑底下找不到 `master-index.md` → 告知用戶「`$OBS
 
 1. **優先使用對話上下文** — 若用戶已提供主題說明或內容，直接採用
 2. **無上下文時自行補充** — 可用 Glob/Grep 瀏覽當前工作專案的檔案取得脈絡，或上網搜尋（WebSearch/WebFetch），確保筆記內容有實質內容，不要建空殼筆記
+   - 注意：此 WebSearch 是「寫筆記前的素材蒐集」，與全域協議「`/ob` 不做 WebSearch」不衝突——後者指的是「分派階段不額外觸發 web 並行查詢」，跟 subagent 內部寫作補料是兩件事
 
 ```bash
 obsidian tags                    # 查看現有 tags

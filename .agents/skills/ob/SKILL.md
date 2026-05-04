@@ -1,6 +1,6 @@
 ---
 name: ob
-description: Obsidian vault 操作入口：依使用者需求分派建檔或查詢。建檔（「建立筆記」、「新增」、「記一下」、「寫一篇」、「筆記關於…」、「日記」、「daily」）→ 建檔流程；查詢（「找筆記」、「搜尋筆記」、「有沒有」、「查」）→ 查詢流程。觸發詞：「ob」、「/ob」、「筆記」、「日記」、「daily」、「記一下」、「找筆記」、「搜尋筆記」。不應觸發：純技術提問已由全域協議自動並行查詢流程 + WebSearch、跨多篇筆記整合（用 vault-topic-moc）、批次 YouTube/Reddit 同步（用對應 sync skill）。
+description: Obsidian vault 操作入口：依使用者需求分派建檔或查詢。建檔（「建立筆記」、「新增」、「記一下」、「寫一篇」、「筆記關於…」、「日記」、「daily」）→ 建檔流程；查詢（「找筆記」、「搜尋筆記」、「有沒有」、「查」）→ 查詢流程。觸發詞：「ob」、「/ob」、「筆記」、「日記」、「daily」、「記一下」、「找筆記」、「搜尋筆記」。不應觸發：純技術問答（主流程會並行查 vault + web，不走此 skill）、跨多篇筆記整合（用 vault-topic-moc）、批次 YouTube/Reddit 同步（用對應 sync skill）。
 ---
 
 # /ob — Obsidian Vault 操作入口

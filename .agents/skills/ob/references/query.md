@@ -29,11 +29,11 @@ env 未設或該路徑底下找不到 `master-index.md`，直接輸出未命中 
 
 ## Vault 佈局
 
-- 入口：`<VAULT_ROOT>/master-index.md`（資料夾 + tag 指南）
-- 資料夾：
+- 入口：`<VAULT_ROOT>/master-index.md`（資料夾 + tag 指南；**動態實際清單以此為準，不要相信本檔列出的範例**）
+- 資料夾用途：
   - `Cards/` — 未歸屬的完整概念 Cards（工作區）
-  - `Topics/` — 已歸檔主題，含子目錄 `Claude-Code/`、`Obsidian/`、`前端設計/`
-  - `Inbox/YouTube/` — 影片摘要，4 個頻道子目錄（AIJasonZ、AILABS-393、Chase-H-AI、daveebbelaar）
+  - `Topics/<主題>/` — 已歸檔主題，第一層子目錄一個主題一個（實際主題清單見 master-index）
+  - `Inbox/YouTube/<頻道>/` — 影片摘要，每個頻道一個子目錄（清單見 master-index）
   - `Inbox/Clippings/` — 網頁剪貼
 - **搜尋時排除**：`.obsidian/`
 - 筆記規則（來自 `content/CLAUDE.md`）：
