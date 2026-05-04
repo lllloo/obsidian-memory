@@ -1,11 +1,11 @@
 ---
 name: vault-check
-description: 對 Obsidian vault 的 content/ 執行稽核與自動修正，分兩段：硬規則由 scripts/vault-check.mjs 自動修（檔名、frontmatter 結構、日期 normalize、敏感資料 high-precision regex）；語意層由 vault-auditor subagent 給建議（wikilink 斷鏈、自然語言敏感資料、tag 一致性、缺欄位）。觸發詞：「vault check」、「/vault-check」、「稽核 vault」、「檢查 vault」、「跑 vault-check」、「vault 健檢」。不應觸發：單篇筆記建檔/查詢（用 /ob）、跨筆記主題整合（用 vault-topic-moc）、批次同步（用 vault-youtube-sync / vault-reddit-sync）。
+description: 對 Obsidian vault 的 content/ 執行稽核與自動修正，分兩段：硬規則由 scripts/vault-check.mjs 自動修（檔名、frontmatter 結構、日期 normalize、敏感資料 high-precision regex）；語意層由 audit references 經 general-purpose subagent 給建議（wikilink 斷鏈、自然語言敏感資料、tag 一致性、缺欄位）。觸發詞：「vault check」、「/vault-check」、「稽核 vault」、「檢查 vault」、「跑 vault-check」、「vault 健檢」。不應觸發：單篇筆記建檔/查詢（用 /ob）、跨筆記主題整合（用 vault-topic-moc）、批次同步（用 vault-youtube-sync / vault-reddit-sync）。
 ---
 
 # /vault-check — Vault 稽核與自動修正
 
-對 `content/` 執行 vault 稽核與自動修正，分兩段：硬規則由 `scripts/vault-check.mjs` 自動修；語意層由 `vault-auditor` subagent 給建議。
+對 `content/` 執行 vault 稽核與自動修正，分兩段：硬規則由 `scripts/vault-check.mjs` 自動修；語意層由 `references/audit.md` 經 general-purpose subagent 給建議。**語意層採用「general-purpose subagent + references prompt」模式**，不依賴命名 agent，可在跨工具環境間移植。
 
 ## 執行流程
 
@@ -40,7 +40,7 @@ npm run vault:fix
 - 日期格式可推斷 → normalize 為 `YYYY-MM-DD`
 
 **額外硬掃（script 已做，不自動修，命中 → exit non-zero）：**
-- 敏感資料 high-precision regex（Anthropic / OpenAI / GitHub / Google / AWS / Slack token、private key header、JWT），作為 CI 最後一道防線；語意層敏感資料仍由 subagent 接手
+- 敏感資料 high-precision regex（Anthropic / OpenAI / GitHub / Google / AWS / Slack token、private key header、JWT），作為 CI 最後一道防線；語意層敏感資料仍由下一步接手
 
 **不在 script 處理範圍**（會由下一步 subagent 接手）：
 - frontmatter parse error、缺 `title` / `created` / `tags`、其他 INVALID_VALUE
@@ -48,9 +48,16 @@ npm run vault:fix
 - 敏感資料語意層（自然語言密碼、個資、內部資訊）
 - tag 一致性
 
-### 3. 語意層稽核（Subagent）
+### 3. 語意層稽核（subagent）
 
-呼叫 `vault-auditor` subagent，請它對 `content/` 執行語意稽核並回 JSON。subagent 唯讀，只 flag 不改檔。
+呼叫 Agent tool：
+
+- `subagent_type`: `"general-purpose"`
+- `prompt`: `references/audit.md` 全文
+
+subagent 唯讀，依 references 內的「唯讀工具契約」執行，回 JSON。拿到 JSON 後填入 step 4 總結模板。
+
+**無 subagent 環境的 fallback**：若執行環境沒有 Agent / subagent 能力（例如 Cursor、Codex、Gemini CLI 等），主 agent 直接 Read `references/audit.md` 並依其指示執行同一流程，**仍必須遵守 references 內的「唯讀工具契約」**——禁止 Write/Edit、禁止寫入命令、無法確認唯讀即停止。
 
 ### 4. 收尾
 
@@ -65,7 +72,7 @@ npm run vault:fix
 <script 輸出的「已修正」摘要>
 <script 輸出的「修正被阻擋」清單，若有>
 
-### 語意層建議（vault-auditor，需手動處理）
+### 語意層建議（audit reference，需手動處理）
 
 #### Schema 問題
 <schema_issues：缺 title / created / tags、parse error，含 LLM 建議值>
@@ -98,5 +105,5 @@ npm run vault:fix
 - 不 push、不 merge（除非用戶明確要求）
 - 全程繁體中文、禁用 `$()`
 - **硬規則變更請改 `scripts/vault-schema.mjs` 的 Zod schema**，不要在此 skill 或別處另寫
-- **語意規則變更請改 `.claude/agents/vault-auditor.md`**，不要塞進 script
+- **語意規則變更請改 `.agents/skills/vault-check/references/audit.md`**，不要塞進 script
 - subagent 給的所有建議都「只 flag 不改檔」，最終是否套用由用戶決定
