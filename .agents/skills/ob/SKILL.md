@@ -1,6 +1,6 @@
 ---
 name: ob
-description: Obsidian vault 操作入口：依使用者需求分派建檔或查詢。建檔（「建立筆記」、「新增」、「記一下」、「寫一篇」、「筆記關於…」、「日記」、「daily」）→ 建檔流程；查詢（「找筆記」、「搜尋筆記」、「有沒有」、「查」）→ 查詢流程。觸發詞：「ob」、「/ob」、「筆記」、「日記」、「daily」、「記一下」、「找筆記」、「搜尋筆記」。不應觸發：純技術問答（主流程會並行查 vault + web，不走此 skill）、跨多篇筆記整合（用 vault-topic-moc）、批次 YouTube/Reddit 同步（用對應 sync skill）。
+description: Obsidian vault 操作入口：用於使用者明確要求操作個人 vault，例如 /ob、建立/追加/整理單篇 Obsidian 筆記、記到 vault、建立日記/daily note、找 vault 筆記、搜尋 vault 內容。依需求分派到建檔流程或查詢流程。不應觸發：一般技術問答中只是提到「筆記」或「daily」、純知識查詢（主流程會並行查 vault + web）、跨多篇筆記整合（用 vault-topic-moc）、批次 YouTube/Reddit 同步（用對應 sync skill）。
 ---
 
 # /ob — Obsidian Vault 操作入口
@@ -31,7 +31,10 @@ description: Obsidian vault 操作入口：依使用者需求分派建檔或查�
 
 ## 無 subagent 環境的 fallback
 
-若執行環境沒有 Agent / subagent 能力（例如 Cursor、Codex、Gemini CLI 等），主 agent 直接 Read 對應 `references/*.md` 並依其指示執行同一流程。query 流程**仍必須遵守 references 內的「唯讀工具契約」**——禁止 Write/Edit、禁止寫入命令、無法確認唯讀即停止。
+若執行環境沒有 Agent / subagent 能力（例如 Cursor、Codex、Gemini CLI 等），主 agent 直接 Read 對應 `references/*.md` 並依其指示執行同一流程。
+
+- write 流程：直接執行 `references/write.md`，依當前工具與 shell 選擇 CLI 或直寫 fallback。
+- query 流程：先依 `references/query.md` 產生同 schema 的 JSON 作為內部中介資料，再由主 agent 依下方「查詢命中呈現格式」回覆使用者；不要把 raw JSON 當作最終回覆。query 流程**仍必須遵守 references 內的「唯讀工具契約」**——禁止 Write/Edit、禁止寫入命令、無法確認唯讀即停止。
 
 ## 查詢命中呈現格式
 

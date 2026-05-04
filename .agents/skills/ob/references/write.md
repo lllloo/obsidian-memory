@@ -4,19 +4,31 @@
 
 **查詢不是此流程的工作** — `/ob` skill 會把查詢分派給 `references/query.md`，不會路由到此處。若被誤派，回覆「查詢請改走 query 流程」並停止。
 
-## CLI 可用性偵測（第一次寫入前必做）
+## 執行路徑選擇（第一次寫入前必做）
 
-Obsidian CLI 依賴 macOS XPC/IPC，沙箱模式會擋；Windows Git Bash 有時回 exit 127。**不偵測就直衝 CLI 會 silently fail，然後誤報成功**。
+Obsidian CLI 依賴本機 Obsidian IPC，沙箱、未安裝 CLI、Windows shell 差異都可能讓指令失敗或 silently fail。**不偵測就直衝 CLI 會留下空檔或誤報成功**。
 
-Session 首次需要寫入時，先跑一次輕量探測：
+Session 首次需要寫入時，先依目前可用 shell 跑一次輕量探測。不要假設 Bash 可用。
+
+**Bash / Git Bash / zsh：**
 
 ```bash
-obsidian vault 2>&1; echo "EXIT=$?"
+obsidian vault 2>&1
+printf 'EXIT=%s\n' "$?"
 ```
 
-- `EXIT=0` 且有輸出 vault 路徑 → CLI 可用，走 CLI 路徑（下方優先順序 1）
-- 其他（exit 非 0、127、空輸出）→ CLI 不可用，**全程改走 Write/Edit fallback**，並在首次使用時告知用戶：
-  > 「obsidian CLI 不可用（可能沙箱模式或未安裝），改用 Write 直寫檔案。完成後請在 Obsidian 按 `Ctrl+P → Reload app without saving` 讓實例感知變更。」
+**PowerShell：**
+
+```powershell
+$vaultOutput = & obsidian vault 2>&1
+$exit = if ($null -ne $LASTEXITCODE) { $LASTEXITCODE } else { 1 }
+$vaultOutput
+"EXIT=$exit"
+```
+
+- `EXIT=0` 且有輸出 vault 路徑 → CLI 可用，走 CLI 路徑
+- 其他（exit 非 0、127、空輸出、command not found）→ CLI 不可用，**全程改走直寫 fallback**，並在首次使用時告知用戶：
+  > 「obsidian CLI 不可用（可能沙箱模式或未安裝），改用檔案直寫。完成後請在 Obsidian 按 `Ctrl+P → Reload app without saving` 讓實例感知變更。」
 
 本 session 內偵測一次即可，結果自己記著。
 
@@ -24,8 +36,8 @@ obsidian vault 2>&1; echo "EXIT=$?"
 
 前提：CLI 可用性偵測通過。若偵測失敗，全部跳到 fallback。
 
-1. **vault 檔案內容讀寫**（建檔、追加、改 frontmatter、改 tags）：**一律 Bash 執行 obsidian CLI**，確保 Obsidian 能即時感知變更
-2. **Obsidian CLI 無對應的操作**（如重命名、批次 regex 替換、需要精準 old_string 匹配的局部修改）：可用 Bash `mv` 或 Write/Edit 當 fallback。**事後提醒用戶**在 Obsidian 內執行 `Ctrl+P → Reload app without saving` 讓實例感知變更
+1. **vault 檔案內容讀寫**（建檔、追加、改 frontmatter、改 tags）：優先用目前 shell 執行 `obsidian` CLI，確保 Obsidian 能即時感知變更
+2. **Obsidian CLI 無對應的操作**（如重命名、批次 regex 替換、需要精準 old_string 匹配的局部修改）：可用 `git mv` / `Move-Item` / Write/Edit 當 fallback。**事後提醒用戶**在 Obsidian 內執行 `Ctrl+P → Reload app without saving` 讓實例感知變更
 3. **查找或確認 vault 檔案是否存在**：Glob/Grep/Read
 4. **當前工作目錄的非 vault 檔案**（程式碼、文件）：Glob/Grep/Read/Edit/Write 皆可
 
@@ -37,15 +49,35 @@ CLI 呼叫後**一律檢查 exit code、檔案存在、且檔案非空**，不�
 
 **重點：CLI 把「建檔」與「寫內容」當兩個獨立步驟。** Windows / 沙箱等環境下 `--stdin` 管道可能斷掉但建檔成功，留下 0 bytes 空檔。只檢查 `-f` 會漏掉這種 silent failure，**必須加 size 檢查**：
 
+**Bash / Git Bash / zsh：**
+
 ```bash
 FILE="<vault_root>/Cards/<標題>.md"
 printf '%s\n' "---" "title: ..." "---" "正文" | obsidian create path="Cards/<標題>.md" --stdin open
 EXIT=$?
 SIZE=$(wc -c < "$FILE" 2>/dev/null || echo 0)
 if [ $EXIT -ne 0 ] || [ ! -f "$FILE" ] || [ "$SIZE" -lt 10 ]; then
-  echo "CLI 建檔失敗或檔案空（exit=$EXIT, size=$SIZE），降級為 Write"
-  # 用 Write 直寫，並提示用戶 reload
+  echo "CLI 建檔失敗或檔案空（exit=$EXIT, size=$SIZE），降級為檔案直寫"
+  # 用可用的檔案寫入能力直寫，並提示用戶 reload
 fi
+```
+
+**PowerShell：**
+
+```powershell
+$file = Join-Path $env:OBSIDIAN_VAULT_ROOT "Cards\<標題>.md"
+$content = @(
+  "---"
+  "title: ..."
+  "---"
+  "正文"
+) -join "`n"
+$content | & obsidian create path="Cards/<標題>.md" --stdin open
+$exit = if ($null -ne $LASTEXITCODE) { $LASTEXITCODE } else { 1 }
+$size = if (Test-Path -LiteralPath $file) { (Get-Item -LiteralPath $file).Length } else { 0 }
+if ($exit -ne 0 -or -not (Test-Path -LiteralPath $file) -or $size -lt 10) {
+  "CLI 建檔失敗或檔案空（exit=$exit, size=$size），降級為檔案直寫"
+}
 ```
 
 驗證三項缺一不可：
@@ -56,16 +88,28 @@ fi
 
 失敗降級後繼續完成任務，不要中止；但回報時要如實告知用戶走了 fallback 路徑，並附上實際 byte 數作為證據。
 
-## Vault 路徑解析（Write fallback 必做）
+## Vault 路徑解析（直寫 fallback 必做）
 
-CLI 可用時 `obsidian create path="Cards/..."` 會自動定位 vault；但走 Write/Edit fallback 時，`Cards/<標題>.md` 會被當 cwd-relative，從其他專案呼叫會寫到錯地方。**fallback 路徑必須用絕對路徑**：以 `$OBSIDIAN_VAULT_ROOT` 環境變數為 vault 根目錄。
+CLI 可用時 `obsidian create path="Cards/..."` 會自動定位 vault；但走檔案直寫時，`Cards/<標題>.md` 可能被當 cwd-relative，從其他專案呼叫會寫到錯地方。**fallback 路徑必須用絕對路徑**：以 `OBSIDIAN_VAULT_ROOT` 環境變數為 vault 根目錄。
 
-`$OBSIDIAN_VAULT_ROOT` 必須指向 repo 的 `content/` 目錄（也就是底下直接有 `master-index.md`、`Cards/`、`Topics/`）。env 未設或該路徑底下找不到 `master-index.md` → 告知用戶「`$OBSIDIAN_VAULT_ROOT` 未設或無效，設定方式見 README」並停止，不要猜測寫到錯誤位置。
+`OBSIDIAN_VAULT_ROOT` 必須指向 repo 的 `content/` 目錄（也就是底下直接有 `master-index.md`、`Cards/`、`Topics/`）。env 未設或該路徑底下找不到 `master-index.md` → 告知用戶「`OBSIDIAN_VAULT_ROOT` 未設或無效，設定方式見 README」並停止，不要猜測寫到錯誤位置。
+
+依 shell 取值：
+
+- Bash / Git Bash / zsh：`$OBSIDIAN_VAULT_ROOT`
+- PowerShell：`$env:OBSIDIAN_VAULT_ROOT`
+- 有 Read/Write/Edit 工具時：先用唯讀工具確認 `<OBSIDIAN_VAULT_ROOT>/master-index.md` 存在，再對絕對路徑寫入
 
 若任務需要執行 git 操作（例如歸檔搬移），先解析 repo root：
 
 ```bash
 REPO_ROOT=$(git -C "$VAULT_ROOT" rev-parse --show-toplevel 2>/dev/null)
+```
+
+PowerShell：
+
+```powershell
+$repoRoot = & git -C $env:OBSIDIAN_VAULT_ROOT rev-parse --show-toplevel 2>$null
 ```
 
 解析失敗時不要用 cwd-relative 路徑猜測；改用絕對路徑 fallback，並提醒使用者在 Obsidian reload。
@@ -77,7 +121,7 @@ REPO_ROOT=$(git -C "$VAULT_ROOT" rev-parse --show-toplevel 2>/dev/null)
 
 1. 取得 vault 規則：
    - CLI 可用 → `obsidian read file="CLAUDE.md"`
-   - CLI 不可用（偵測失敗）→ `Read $OBSIDIAN_VAULT_ROOT/CLAUDE.md`
+   - CLI 不可用（偵測失敗）→ `Read <OBSIDIAN_VAULT_ROOT>/CLAUDE.md`
 2. 每次寫入前依 CLAUDE.md 的「寫入前 Checklist」逐項自檢（敏感資料、frontmatter schema、tag 沿用、命名），通過才寫入；這是寫入路徑的主要職責，不要把規則預防外包給 `/vault-check`
 
 ## 建檔位置判斷
@@ -104,7 +148,7 @@ REPO_ROOT=$(git -C "$VAULT_ROOT" rev-parse --show-toplevel 2>/dev/null)
 obsidian tags                    # 查看現有 tags
 ```
 
-建立筆記時，`content=` 直接帶入完整 frontmatter（含 tags YAML 清單），**不要事後用 `property:set` 設定 tags**（會產生 inline 字串格式）。frontmatter 格式依 `content/CLAUDE.md` 的「Frontmatter Schema」與「寫入前 Checklist」。
+建立筆記時，一次寫入完整 frontmatter（含 tags YAML 清單），**不要事後用 `property:set` 設定 tags**（會產生 inline 字串格式）。frontmatter 格式依 `content/CLAUDE.md` 的「Frontmatter Schema」與「寫入前 Checklist」。
 
 建檔一律優先從 **stdin 傳入內容**，不要把多行 frontmatter 塞進 `content='...'` 參數——字面 `\n` 是否被 CLI 解成換行是未定義行為（依 obsidian CLI 版本而異），stdin 方式行為穩定：
 
@@ -121,6 +165,8 @@ obsidian tags                    # 查看現有 tags
   若 obsidian CLI 該版不支援 `--stdin`，退而走 `content=` 行內版本，但需記住：PowerShell/Bash 單引號內的字面 `\n` 在不同 shell 與 CLI 版本的解碼行為不同，會讓 frontmatter 壞成單行字串。退到 `content=` 方案時，**呼叫後必須 `obsidian read file=...` 驗證 frontmatter 真的是多行**。
 
 > ⚠ 不論走 `--stdin` 或 `content=`，呼叫完都要跑「每次寫入後驗證」段的 size 檢查（≥ 10 bytes），不可只看 exit code。Windows 環境 `--stdin` 已知會 silent fail 留 0 bytes 空檔。
+
+若 CLI 不可用，使用 Write/Edit 或環境允許的檔案寫入能力直接寫到絕對路徑；寫入後仍要驗證檔案存在且 size > 10 bytes，並在回覆中說明走直寫 fallback。
 
 建立後若需追加正文內容，再用 `append`。
 
