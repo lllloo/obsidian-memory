@@ -1,7 +1,7 @@
 ---
 title: Context Engineering 與成本優化
 created: 2026-04-20
-updated: 2026-04-25
+updated: 2026-05-04
 tags:
   - claude-code
   - ai-agent
@@ -276,13 +276,10 @@ project/
 
 - 所有付費方案採 **5 小時滾動視窗**，從第一則訊息開始計算
 - 視窗期間無論是否閒置都持續倒數，多裝置共用
-- **訊息配額**：
-  - Pro ≈ 40–45 messages / 5hr
-  - Max 5x ≈ 225 messages / 5hr
-  - Max 20x ≈ 900 messages / 5hr
-- **週上限**：2025-08-28 起對重度使用者引入 7 天週上限（weekly ceiling），與 5 小時滾動視窗疊加
+- **不要把固定訊息數當正式承諾**：Anthropic 近年的官方說法已偏向「依訊息長度、對話長度、工具使用、模型與系統負載而變動」，而不是保證某個固定 messages 數
+- **週上限存在，但方案細節會變動**：至少 Pro 已明確有 weekly usage limit；其他方案與門檻請以當下 Help Center 與 Usage 頁面為準，不要把舊日期或舊額度寫死
 - Opus 比 Sonnet 消耗約 3 倍 token，實際訊息數更少
-- 高峰時段 Anthropic 會額外加速限制到期
+- 高峰時段可用量可能更緊，實際體感會受當下容量與負載影響
 - Claude.ai 與 Claude Code 共用同一 usage bucket
 
 ### Claude Code 常見的 context 浪費來源（實務觀察）

@@ -1,7 +1,7 @@
 ---
 title: "claude --dangerously-skip-permissions"
 created: 2026-04-09
-updated: 2026-04-25
+updated: 2026-05-04
 tags:
   - claude-code
   - cli
@@ -92,7 +92,7 @@ claude -p "重構所有測試檔案" --dangerously-skip-permissions
 
 ## 相關
 
-- [[Claude-Code-Session-指令]] — session 指令速查（/insights、/btw、/statusline 等）
+- [[Claude-Code-指令速查]] — session 指令速查（/insights、/btw、/statusline 等）
 
 ## 來源
 

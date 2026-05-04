@@ -1,7 +1,7 @@
 ---
 title: Claude Code CLI 優先
 created: 2026-04-24
-updated: 2026-04-25
+updated: 2026-05-04
 tags:
   - claude-code
   - cli
@@ -32,7 +32,7 @@ tags:
 
 ## 相關主題
 
-- [[Claude-Code-Session-指令]] — session 指令速查（/insights、/btw、/statusline 等）
+- [[Claude-Code-指令速查]] — session 指令速查（/insights、/btw、/statusline 等）
 - [[Claude-Code-多-Agent-協作]] — Subagent / Teams / Fork / worktree
 - [[Claude-Code-Skills]] — CLI 工具通常與 skill 綁在一起發布
 - [[Agent-Harness]] — 強化開源專案（AutoResearch / OpenSpace / Claude Peers 等）與 harness 架構

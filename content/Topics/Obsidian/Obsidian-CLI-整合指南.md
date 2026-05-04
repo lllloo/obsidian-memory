@@ -1,7 +1,7 @@
 ---
 title: Obsidian CLI 整合指南
 created: 2026-03-17
-updated: 2026-04-25
+updated: 2026-05-04
 tags:
   - obsidian
   - claude-code
@@ -63,8 +63,8 @@ obsidian <指令> [參數]
 | 指令 | 說明 |
 |------|------|
 | `obsidian properties file="Note"` | 查看屬性 |
-| `obsidian properties:set file="Note" key=value` | 設定屬性 |
-| `obsidian properties:remove file="Note" key=field` | 移除屬性 |
+| `obsidian property:set file="Note" name=field value="..."` | 設定屬性 |
+| `obsidian property:remove file="Note" name=field` | 移除屬性 |
 
 ### 開發者
 
