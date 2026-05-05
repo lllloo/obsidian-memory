@@ -16,12 +16,13 @@ tags:
 
 `/init` 會掃描專案、產出基礎 CLAUDE.md（偵測 build system、test framework、code patterns）。
 
-### 官方放置位置（3 個 scope）
+### 官方放置位置（4 類 scope）
 
 按 scope 從廣到窄。所有層都會被載入並 concat 進 context（不互相覆寫），更具體的讀在後面、優先級高：
 
 | Scope | 位置 | 用途 |
 |---|---|---|
+| Managed policy | 系統層 CLAUDE.md（依 OS 不同） | 組織統一政策，不能被個人設定排除 |
 | User | `~/.claude/CLAUDE.md` | 個人偏好，跨所有專案 |
 | Project | `./CLAUDE.md` 或 `./.claude/CLAUDE.md` | 團隊共享，commit 進 git |
 | Local | `./CLAUDE.local.md` | 個人專案私記事，加 `.gitignore` |
@@ -214,7 +215,7 @@ ln -s ~/company-standards/security.md .claude/rules/security.md
 
 **官方文件**
 - [Best practices for Claude Code](https://code.claude.com/docs/en/best-practices) — CLAUDE.md 寫法、verification、prompt 建議
-- [How Claude remembers your project](https://code.claude.com/docs/en/memory) — CLAUDE.md 6 個位置、Rules（`.claude/rules/` + paths frontmatter）、200 行上限、`/memory`、auto memory
+- [How Claude remembers your project](https://code.claude.com/docs/en/memory) — CLAUDE.md 4 類 scope、Rules（`.claude/rules/` + paths frontmatter）、200 行上限、`/memory`、auto memory
 - [Explore the .claude directory](https://code.claude.com/docs/en/claude-directory) — CLAUDE.md / settings.json / hooks / skills / commands / subagents / rules / auto memory 全景
 - [Hooks guide](https://code.claude.com/docs/en/hooks-guide)
 - [Skills](https://code.claude.com/docs/en/skills)
