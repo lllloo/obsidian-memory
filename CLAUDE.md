@@ -72,6 +72,7 @@ Codex 不會自動把 repo 內 `.agents/skills/` 註冊為全域 skill registry�
 - YouTube 同步 → 讀 `.agents/skills/vault-youtube-sync/SKILL.md`
 - 主題 MOC 生成 → 讀 `.agents/skills/vault-topic-moc/SKILL.md`
 - Reddit 同步 → 讀 `.agents/skills/vault-reddit-sync/SKILL.md`
+- Reddit 每日日報 → 讀 `.agents/skills/vault-reddit-daily-report/SKILL.md`
 
 `.agents/skills/` 是 repo-local skill 的唯一維護來源；`.claude/skills` 應維持為指向 `.agents/skills/` 的 symlink，避免兩份內容漂移。
 
@@ -108,6 +109,7 @@ Codex 不會自動把 repo 內 `.agents/skills/` 註冊為全域 skill registry�
 | `.claude/skills/vault-youtube-sync/` | Skill | —        | YouTube 頻道影片轉 Obsidian 筆記                     |
 | `.claude/skills/vault-topic-moc/`    | Skill | —        | 多篇筆記整合為主題 MOC（generator/reviewer 迴圈）    |
 | `.claude/skills/vault-reddit-sync/`  | Skill | —        | Reddit Claude 相關討論抓取分析、同步為 Obsidian 筆記 |
+| `.claude/skills/vault-reddit-daily-report/` | Skill | — | Reddit AI 高訊號討論整理成每日一篇日報，保留原文連結 |
 
 ### 4. 建議安裝的第三方 Skills（非本 repo 管理，需另行安裝至 `~/.claude/skills/`）
 
