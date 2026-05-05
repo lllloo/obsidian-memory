@@ -180,6 +180,11 @@ INDEX="$OBSIDIAN_VAULT_ROOT/Inbox/Reddit/<subreddit>/01.index.md"
 
 - selftext < 50 字且無 code block（單行感嘆 / 求援 / showcase）
 - 標題明顯抱怨 / 焦慮類：`suspended` / `banned` / `pricing` / `billing` / `refund` / `support` / `customer service`（除非含具體技術現象 + 重現步驟）
+- **時效性新聞 / 行情變動**：標題主軸是「半年後失效」的內容，除非 selftext 已命中上方「保留」清單第 1 條（含 code block）或第 2 條（含具體路徑 / 指令）。常見模式：
+  - Plan / pricing / billing 變動：`plan change`、`new multiplier`、`(usage|tier|billing) (change|update)`、`pricing (cut|nerf|raise)`、`(\d+)x plan`
+  - 模型發布 / 下架 / 替換：`(release|launch|drops?|out now|announce|unveil) (gpt|claude|gemini|qwen|deepseek|llama|gemma|opus|sonnet|haiku)`、`(deprecat|removed|sunset|discontinu)`、`replac.*model`
+  - 跨模型 benchmark / vs 對比：`\bvs\b`、`benchmark`、`comparison`、`outperform`（涉及具體模型名）
+  - 額度 / 限制 / cost shock：`(\d+-?(hour|day|week)) limit`、`cost shock`、`(rate|usage) limit (raised|cut|changed)`、`shrink.*limit`、`token tracker`
 - meme / image-only post（標題含 `[image]` / `[meme]`，或 selftext 為空且無外部 URL）
 - 純展示 / showcase / vibecoding 成果，無方法論
 - 個人使用心得 / 偏好投票 / 泛問答

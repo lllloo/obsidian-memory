@@ -59,6 +59,12 @@ COMMENT:<score>|||<已 collapse 為單行的留言；上限 500 字>
 - 純圖片、meme、showcase、vibecoding 成果展示；若無可重現 workflow / repo 做法 → 跳過
 - 純讚美、泛問答、偏好投票、個人使用心得
 - pricing / plan / support / suspension / customer service / trust / privacy 類抱怨，若無具體技術做法
+- **時效性新聞**（半年後失效類）：
+  - Plan / pricing / billing / quota 變動
+  - 特定模型發布 / 下架 / 替換亮點
+  - 跨模型 benchmark / vs 對比（含具體模型版本與數字）
+  - 5-hour limit / token tracker / cost shock 等行情類
+  - **例外**：若貼文核心是「在 X 限制下的可遷移**方法論**」（如 routing 策略、降低 token cost 的 prompt 設計、limit-aware workflow），可保留 — 但筆記只記方法論本身，**不抄具體模型名 / plan 名 / 行數價格**（這些半年後會失效）
 - Bug 回報但沒有重現步驟、沒有 workaround、沒有明確 context
 - 主題與 AI 工程 / 工具 / 模型完全無關（例：純 Reddit drama、政治、生活雜談）
 - **價值主要來自留言而非主文** → 跳過；留言只能加強判斷，不能單獨救一篇文
