@@ -1,6 +1,6 @@
 ---
 name: vault-youtube-sync
-description: 當使用者提供 YouTube **頻道** URL（含 @handle 的網址，如 youtube.com/@XXX 或 youtube.com/@XXX/videos）並想建立、同步或整理 Obsidian 筆記時，一定要用此 skill。觸發情境：「頻道影片建成筆記」、「youtube 轉筆記」、「yt 轉 ob」、「整理到 vault」、「存成 Obsidian 筆記」、「同步這個頻道」、「看有沒有新影片沒存到的」、「抓頻道影片」。不應觸發：單部影片 URL（watch?v=XXX）、使用者明確說「不用建筆記」或只是查詢既有筆記。
+description: 當使用者提供 YouTube **頻道** URL（含 @handle 的網址，如 youtube.com/@XXX 或 youtube.com/@XXX/videos）或想批次同步所有既有 YouTube 頻道筆記時，一定要用此 skill。觸發情境：「頻道影片建成筆記」、「youtube 轉筆記」、「yt 轉 ob」、「整理到 vault」、「存成 Obsidian 筆記」、「同步這個頻道」、「看有沒有新影片沒存到的」、「抓頻道影片」、「同步全部頻道」、「更新所有頻道」、「youtube 全部更新」、不指定頻道直接呼叫 `/vault-youtube-sync`。不應觸發：單部影片 URL（watch?v=XXX）、使用者明確說「不用建筆記」或只是查詢既有筆記。
 ---
 
 # YouTube Channel to Notes
@@ -45,6 +45,33 @@ env 未設或該路徑底下找不到 `master-index.md` → 告知用戶並停�
 - **命名**：檔名不含空格，中英文間用 `-`，不含 `?:;"'` 等特殊字元
 
 `/vault-check` 只兜底跨檔案 emergent 問題，不負責抓本清單能預防的錯。
+
+## 步驟 0：判斷執行模式
+
+依使用者輸入決定處理範圍：
+
+- **模式 A — 指定頻道**：使用者給 handle 或頻道 URL（例：`@Chase-H-AI`、`https://www.youtube.com/@Chase-H-AI/videos`）→ 直接以該 handle 執行步驟 1-6
+- **模式 B — 同步全部既有頻道**：使用者未指定頻道，或明說「同步全部 / 更新所有頻道 / yt 全部更新」→ 掃 `$OBSIDIAN_VAULT_ROOT/Inbox/YouTube/*/01.index.md`，從每份 frontmatter 的 `source:` 欄位抽出 handle，**依序**逐頻道跑步驟 1-6（頻道之間順序執行避免 YouTube rate limit；單頻道內步驟 5 仍維持 5-6 部一批平行）
+
+模式 B 取得頻道清單（每行一個 `source:` URL）：
+
+```bash
+python -c "
+import os, re, glob, sys
+vault = os.environ.get('OBSIDIAN_VAULT_ROOT')
+if not vault: sys.exit('ERROR: OBSIDIAN_VAULT_ROOT 未設')
+for idx in sorted(glob.glob(os.path.join(vault, 'Inbox', 'YouTube', '*', '01.index.md'))):
+    text = open(idx, encoding='utf-8').read()
+    m = re.search(r'^source:\s*(https://www\.youtube\.com/@[^/\s]+)', text, re.M)
+    if m: print(m.group(1))
+"
+```
+
+模式 B 規則：
+
+- 只處理已有 `01.index.md` 的頻道；**不會自動加新頻道**。新頻道首次同步仍須 `/vault-youtube-sync @handle` 顯式觸發
+- 單頻道任一步驟失敗（fetch_videos error、network 異常等）→ 記錄錯誤、跳下一頻道，不中斷整批
+- 全部跑完後在步驟 6 用一張總表呈現各頻道結果
 
 ## 步驟 1：抓取影片清單與頻道簡介
 
@@ -211,11 +238,19 @@ N. <標題> — <URL>
 
 ## 步驟 6：彙整結果 + 更新 Checkpoint
 
-輸出彙整表格：
+輸出彙整表格（單頻道）：
 
 | #   | 影片標題 | 筆記路徑                           | published  | 狀態                |
 | --- | -------- | ---------------------------------- | ---------- | ------------------- |
 | 1   | ...      | content/Inbox/YouTube/<頻道名>/... | YYYY-MM-DD | ✓ 完整 / ⚠ 內容不足 |
+
+**模式 B（多頻道）額外彙總表**：所有頻道跑完後，最末再加一張總覽：
+
+| 頻道           | 新增完整 | draft 占位 | 跳過（篩選/已存在/已刪） | 失敗 |
+| -------------- | -------- | ---------- | ------------------------ | ---- |
+| Chase-H-AI     | 3        | 0          | 2                        | 0    |
+| AIJasonZ       | 0 (已是最新) | -      | -                        | -    |
+| ...            | ...      | ...        | ...                      | ...  |
 
 **更新 checkpoint**：所有筆記建立完成後，將 `01.index.md` 的 `last_sync_id` 更新為**步驟 1 清單中第一筆**的 video ID（即目前頻道最新的影片）：
 
