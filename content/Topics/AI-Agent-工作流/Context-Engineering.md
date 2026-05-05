@@ -1,7 +1,7 @@
 ---
 title: Context Engineering 與成本優化
 created: 2026-04-20
-updated: 2026-05-04
+updated: 2026-05-05
 tags:
   - claude-code
   - ai-agent
@@ -43,12 +43,40 @@ LLM 世代更迭下，長 context 效能呈現兩階段變化：
 
 但退化仍在，不會消失。真正的技術進步不是「context 變大」，而是「大 context 下仍可用」。
 
+### Rot 實際起點：約 40% 容量（Anthropic 內部觀察）
+
+Claude Code 開發者 Tariq 指出：context rot 從 **300K–400K tokens（約 40% 使用量）** 就開始出現，不是撐到接近 1M 才惡化。把 1M 當成「實際可用 1M」是危險誤解，多數人預設的 auto-compact 反而常讓事情更糟。
+
+### 長任務 Agent 的 4 種失敗模式
+
+context 沒管好時，長任務 agent 會出現這 4 種失敗——值得當 checklist 自查：
+
+1. **Context pollution（污染）**：context 太雜，干擾推理
+2. **Goal drift（目標漂移）**：忘掉原任務目標，反覆提醒仍跑偏
+3. **Memory corruption（記憶損毀）**：內部狀態被寫錯仍依舊狀態繼續動作（典型：主 agent 建檔後 sub-agent 改了檔，主 agent 仍依舊記憶操作）
+4. **Decision inaccuracy（決策不一致）**：近乎相同情境給矛盾決策（如同份程式兩處用不同 error handling pattern）
+
 ### 操作準則
 
 - 長 context 仍有成本，但**不存在單一萬用門檻**；退化速度取決於模型、任務型態、工具輸出與工作方式
 - 對 Claude Code 來說，`/clear`、`/compact`、`/resume`、auto-compaction 都是官方提供的 session 管理手段，不必自己發明一堆 hack
 - **如果是新任務，就偏向新 session**；如果是同一任務的連續工作，再考慮延續當前脈絡
 - 把「何時清 context」視為 workflow 決策，而不是迷信某個固定 token 數
+- 在 300K–400K 區間**主動觸發 compact**，不要等 auto-compact——後者觸發時 Claude 被剝掉 system prompt、又有 recency bias，最不可靠
+
+### 任務段落結束後的 5 種下一步（依意圖選）
+
+每段工作完成後，下一步不只「繼續」一個選項。**依任務意圖選**：
+
+| 選項                | 何時用                                                |
+| ------------------- | ----------------------------------------------------- |
+| 繼續                | 同一任務連續推進，當前 context 還健康                 |
+| compact             | 想保留**部分**脈絡進新視窗（lossy，會丟細節）         |
+| clear               | 開全新任務，**不需要**舊 context                      |
+| clear + compaction（handoff） | 完成階段任務、需把摘要交給下一段／下一個 agent 接手 |
+| rewind（雙擊 Esc）  | 上一個指令下錯了，回到那則指令前重下，**錯誤輸出不進 context** |
+
+關鍵：別把「繼續」當預設。明確選擇能省下後面修錯的成本。
 
 ## 策略一：架構層 — 檔案系統取代 Context
 
@@ -299,6 +327,20 @@ AI 系統：不只第 1 輪要通過，**第 10 輪、第 20 輪都要通過**�
 
 **解法**：定期審視真實使用者的完整 trace，而不是只在開發環境跑幾輪短測試。
 
+## 按需載入：5 種讓 context 只在需要時出現的機制
+
+把資訊放進 context 應該是**按需的**，不是預先全塞。Claude Code 提供 5 種按需載入機制，搭配使用可避免 context 一開機就被填滿：
+
+| 機制                       | 觸發時機                          | 典型用途                                                              |
+| -------------------------- | --------------------------------- | --------------------------------------------------------------------- |
+| **Rules（path-scoped）**   | 模型動到對應檔案類型時            | Python 規則只在動 .py 才注入；前端規則只在動 frontend/ 才注入         |
+| **Hooks**                  | 預設事件觸發                      | 涉及時間的訊息 → 注入「先確認今日日期」；工具跑完 → 注入「檢查輸出有無洩密」 |
+| **Skills**                 | 用戶 `/skill` 或模型讀主檔判斷需用 | 把例行流程封裝；主檔簡述、副檔按需                                    |
+| **Sub-agent**              | 主 agent 派任務時                 | 長文件處理、研究步驟外包，只回傳摘要                                  |
+| **MCP Tool Search**        | 預設啟用                          | 工具描述按需呼叫，不全部 upfront；用 `ENABLE_TOOL_SEARCH` 控制（`auto` 模式：可塞進 10% context window 才一次載入），server/tool 層可用 `alwaysLoad: true` opt-out |
+
+關鍵原則：**不要把可以按需的東西預先塞進 system prompt 或 CLAUDE.md**。長期來看，按需載入比單次 `/clear` 更省 context。
+
 ## 實務速查：何時用什麼
 
 | 情境 | 策略 |
@@ -309,7 +351,8 @@ AI 系統：不只第 1 輪要通過，**第 10 輪、第 20 輪都要通過**�
 | 旁支問題 | `/btw` |
 | 大量結構化資料查詢 | 檔案系統 + `grep`，非 RAG |
 | 跨 session 記憶需求 | Git Context Controller |
-| MCP 工具太多佔 context | 停用不用的 MCP、減少 upfront 載入的工具描述，或將常用流程獨立成 skill |
+| MCP 描述太多佔 context | 預設 Tool Search 已按需載入；停用不用的 MCP；常用流程封 skill |
+| MCP 工具大輸出灌爆 context | 把 MCP 呼叫包成 bash 命令（或經 CLI 包裝層），輸出重導向到檔案，再 `grep` 提取真正需要的段落 |
 | 多階段 agent | 動態 system prompt + state machine |
 | 連鎖規則越堆越多 | 加 router 拆問題，不要堆 if/else |
 | 重複性確定任務 | 封裝為 skill，不要佔 Claude token |
@@ -334,6 +377,9 @@ AI 系統：不只第 1 輪要通過，**第 10 輪、第 20 輪都要通過**�
 - AIJasonZ《.agent 資料夾讓 Claude Code 效能提升 10 倍》（2025-10-06）— <https://www.youtube.com/watch?v=MW3t6jP9AOs>
 - AIJasonZ《Agent 記憶體管理 — Git Context Controller》（2026-02-18）— <https://www.youtube.com/watch?v=pAIF7vZm5k0>
 - AILABS-393《Claude Code 用量限制優化指南》（2026-04-07）— <https://www.youtube.com/watch?v=YsdQE6juGXY>
+- AILABS-393《Anthropic 修復 1M Context Window 的問題》（2026-04-22）— <https://www.youtube.com/watch?v=O1XLCh-uA_E>（Tariq 300K–400K rot 起點、4 種失敗模式、5 種下一步）
+- AgentcrewAcademy《Claude 上下文總是爆滿、回答變蠢？5 個按需載入》（2026-04-20）— <https://www.youtube.com/watch?v=J1WjxzzSzv8>（按需載入 5 機制框架）
+- AILABS-393《MCP2CLI — 用 CLI 工具解決 MCP Context 膨脹問題》— <https://www.youtube.com/watch?v=LqN_ItMqovA>
 
 ### 官方與學術資源
 
