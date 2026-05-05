@@ -8,7 +8,7 @@ parent: "[[01.index]]"
 tags:
   - youtube
   - ai-coding
-  - vibe-coding
+  - vibecoding
   - indie-hacker
   - product-building
 ---
