@@ -1,7 +1,7 @@
 ---
 title: Claude Code 前端設計工作流
 created: 2026-04-20
-updated: 2026-04-25
+updated: 2026-05-05
 tags:
   - claude-code
   - design
@@ -30,7 +30,7 @@ Claude Code 在 agentic coding 表現卓越，但前端設計是普遍弱項。�
 
 最低成本的介入，安裝 Skill 讓 Claude Code 拿到「設計觀念」。
 
-- **[Impeccable](https://impeccable.style)**（[repo](https://github.com/pbakaus/impeccable)）：1 個 skill + 23 個設計命令，用**反模式**（anti-patterns）直接列舉 AI slop
+- **[Impeccable](https://impeccable.style)**（[repo](https://github.com/pbakaus/impeccable)）：1 個 skill + 23 個設計命令，用**反模式**（anti-patterns）直接列舉 AI slop。詳見 [[Impeccable-前端設計Skill]]
 - **[UI UX Pro Max](https://www.uupm.cc/)**（[repo](https://github.com/nextlevelbuilder/ui-ux-pro-max-skill)）：提供 style / color / typography / landing pattern 的設計資料庫與 design-system generation；官網與 README 的數字會隨版本更新，適合看方向，不適合背固定統計
 - **[Taste Skill](https://www.tasteskill.dev)**（[repo](https://github.com/Leonxlnx/taste-skill)）：用 `DESIGN_VARIANCE`、`MOTION_INTENSITY`、`VISUAL_DENSITY` 三個參數調節風格強度，適合差異化
 - **[awesome-design-md](https://github.com/VoltAgent/awesome-design-md)**：概念源自 Google Stitch 的 DESIGN.md，內建 ElevenLabs / Bugatti 等知名網站的設計系統拆解

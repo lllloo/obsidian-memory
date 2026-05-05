@@ -1,7 +1,7 @@
 ---
 title: Claude Code Skills
 created: 2026-03-29
-updated: 2026-04-25
+updated: 2026-05-05
 tags:
   - claude-code
   - ai-tools
@@ -146,6 +146,7 @@ MCP 的工具 schema 則是另一種成本模型；**實際 token 開銷會依 c
 | The Fool | 想法 / decision / plan 缺批判性壓力測試 | 多種挑戰模式逐一套用，輸出 failure mode 報告與連鎖後果 |
 | Reddit Fetch | Reddit 封鎖 bot 讓市場研究難抓內容 | Gemini CLI + Tmux 當 primary，curl Reddit JSON API 當 fallback |
 | Color Expert | Agent 常收斂到千篇一律紫+白 UI | 帶 100+ references（WCAG、palette、色彩科學），agent 讀完再實作 |
+| Impeccable | Coding agent 預設前端輸出 AI slop（紫漸層、Inter、bento box、過度 nesting） | 1 skill + 23 commands + 7 references + 27 deterministic anti-pattern + 12 LLM critique；含 `live` 瀏覽器內 micro 變體模式（alpha）；詳見 [[Impeccable-前端設計Skill]] |
 
 > 這些是共通 pattern 的實例化，不必全裝；依痛點挑選。
 
