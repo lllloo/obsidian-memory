@@ -8,3 +8,4 @@ public/
 .claude/worktrees/
 __pycache__/
 *.pyc
+.env
