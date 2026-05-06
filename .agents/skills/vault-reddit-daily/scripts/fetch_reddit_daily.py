@@ -6,8 +6,15 @@
 
 輸出格式：
     META:<subreddit>|||<post_count>
-    POST:<post_id>|||<subreddit>|||<score>|||<num_comments>|||<title>
+    POST:<post_id>|||<subreddit>|||<score>|||<num_comments>|||<is_self>|||<post_hint>|||<domain>|||<link_flair_text>|||<upvote_ratio>|||<title>
     ERROR:<subreddit>:<錯誤訊息>
+
+欄位說明：
+    is_self          true|false（text post vs link/image post）
+    post_hint        image | hosted:video | rich:video | link | self | ""（API 未回傳時為空）
+    domain           外連 domain（如 i.redd.it / github.com）或 self.<sub>
+    link_flair_text  sub 自訂 flair；無則為空字串
+    upvote_ratio     0.00–1.00 兩位小數
 """
 
 import json
@@ -118,6 +125,13 @@ def fetch_json(url):
     raise last_error or RuntimeError("unknown error")
 
 
+def _sanitize(value):
+    """去除分隔符與換行，回傳安全字串。"""
+    if value is None:
+        return ""
+    return str(value).replace("|||", " ").replace("\n", " ").replace("\r", "").strip()
+
+
 def fetch_subreddit(subreddit):
     data = fetch_json(build_url(subreddit))
     children = data.get("data", {}).get("children", [])
@@ -125,11 +139,32 @@ def fetch_subreddit(subreddit):
     for child in children:
         d = child.get("data", {})
         post_id = d.get("id", "")
-        title = d.get("title", "").replace("|||", " ").replace("\n", " ").replace("\r", "")
+        if not post_id:
+            continue
+        title = _sanitize(d.get("title", ""))
         score = int(d.get("score", 0))
         num_comments = int(d.get("num_comments", 0))
-        if post_id:
-            posts.append((post_id, score, num_comments, title))
+        is_self = "true" if d.get("is_self") else "false"
+        post_hint = _sanitize(d.get("post_hint", ""))
+        domain = _sanitize(d.get("domain", ""))
+        link_flair_text = _sanitize(d.get("link_flair_text", ""))
+        try:
+            upvote_ratio = f"{float(d.get('upvote_ratio', 0.0)):.2f}"
+        except (TypeError, ValueError):
+            upvote_ratio = "0.00"
+        posts.append(
+            (
+                post_id,
+                score,
+                num_comments,
+                is_self,
+                post_hint,
+                domain,
+                link_flair_text,
+                upvote_ratio,
+                title,
+            )
+        )
     return posts
 
 
@@ -149,8 +184,22 @@ def main():
             continue
 
         print(f"META:{subreddit}|||{len(posts)}")
-        for post_id, score, num_comments, title in posts:
-            print(f"POST:{post_id}|||{subreddit}|||{score}|||{num_comments}|||{title}")
+        for (
+            post_id,
+            score,
+            num_comments,
+            is_self,
+            post_hint,
+            domain,
+            link_flair_text,
+            upvote_ratio,
+            title,
+        ) in posts:
+            print(
+                f"POST:{post_id}|||{subreddit}|||{score}|||{num_comments}|||"
+                f"{is_self}|||{post_hint}|||{domain}|||{link_flair_text}|||"
+                f"{upvote_ratio}|||{title}"
+            )
 
 
 if __name__ == "__main__":

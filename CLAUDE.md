@@ -16,7 +16,7 @@ Obsidian 個人知識庫，以 [Quartz 4](https://quartz.jzhao.xyz/) 發佈至 `
 
 - **Vault 層**（`content/`）— 筆記本體，規則見 `content/CLAUDE.md`
 - **發佈層**（`quartz/`、`quartz.config.ts`、`quartz.layout.ts`、`.github/workflows/`）— Quartz 建置與 GitHub Pages 部署
-- **工作流層**（`.claude/` + `.agents/` + `scripts/`）— skills（`ob`、`vault-check`、`vault-youtube-sync`、`vault-topic-moc`、`vault-reddit-sync`、`vault-reddit-daily-report`）、Node 稽核腳本。skill 內子流程（建檔／查詢／語意稽核）由 skill 以 `general-purpose` subagent 呼叫，prompt 從各自 `references/` 載入，不依賴命名 agent。`.claude/skills/ob` 可 symlink 至 `~/.claude/skills/` 跨專案使用；`.agents/skills/` 是 repo-local skill 來源，`.claude/skills` symlink 到此處
+- **工作流層**（`.claude/` + `.agents/` + `scripts/`）— skills（`ob`、`vault-check`、`vault-youtube-sync`、`vault-topic-moc`、`vault-reddit-sync`、`vault-reddit-daily`）、Node 稽核腳本。skill 內子流程（建檔／查詢／語意稽核）由 skill 以 `general-purpose` subagent 呼叫，prompt 從各自 `references/` 載入，不依賴命名 agent。`.claude/skills/ob` 可 symlink 至 `~/.claude/skills/` 跨專案使用；`.agents/skills/` 是 repo-local skill 來源，`.claude/skills` symlink 到此處
 
 ## 常用指令
 
@@ -70,7 +70,7 @@ Codex 不會自動把 repo 內 `.agents/skills/` 註冊為全域 skill registry�
 - YouTube 同步 → 讀 `.agents/skills/vault-youtube-sync/SKILL.md`
 - 主題 MOC 生成 → 讀 `.agents/skills/vault-topic-moc/SKILL.md`
 - Reddit 同步 → 讀 `.agents/skills/vault-reddit-sync/SKILL.md`
-- Reddit 每日日報 → 讀 `.agents/skills/vault-reddit-daily-report/SKILL.md`
+- Reddit 每日日報 → 讀 `.agents/skills/vault-reddit-daily/SKILL.md`
 
 `.agents/skills/` 是 repo-local skill 的唯一維護來源；`.claude/skills` 應維持為指向 `.agents/skills/` 的 symlink，避免兩份內容漂移。
 
@@ -109,7 +109,7 @@ Codex 不會自動把 repo 內 `.agents/skills/` 註冊為全域 skill registry�
 | `.claude/skills/vault-youtube-sync/` | Skill | —        | YouTube 頻道影片轉 Obsidian 筆記                     |
 | `.claude/skills/vault-topic-moc/`    | Skill | —        | 多篇筆記整合為主題 MOC（generator/reviewer 迴圈）    |
 | `.claude/skills/vault-reddit-sync/`  | Skill | —        | Reddit Claude 相關討論抓取分析、同步為 Obsidian 筆記 |
-| `.claude/skills/vault-reddit-daily-report/` | Skill | — | Reddit AI 高訊號討論整理成每日一篇日報，保留原文連結 |
+| `.claude/skills/vault-reddit-daily/` | Skill | — | Reddit AI 高訊號討論整理成每日一篇日報，保留原文連結 |
 
 ### 4. 建議安裝的第三方 Skills（非本 repo 管理，需另行安裝至 `~/.claude/skills/`）
 
@@ -136,4 +136,4 @@ Vault 同時作為 Claude Code 的參考資料來源，與 WebSearch 互補並�
 - **搜尋工具**：搜 vault 一律用 `Grep` + `Glob content/**/*<關鍵字>*.md`，不要呼叫 Obsidian CLI 的 `search:context`（慢約 9 倍且覆蓋率較低）
 - **路徑契約**：分兩種——
   - **`/ob`（掛全域、跨專案可用）**：references/write.md、references/query.md 一律讀 `$OBSIDIAN_VAULT_ROOT`，**必須**在**全域** `~/.claude/settings.json` 的 `env` 段注入絕對路徑（不是 repo 內的 settings）——因為 `/ob` 相關設定已 symlink 到全域，env 放 repo 內的 settings 只在本 repo 工作時可見，從其他專案呼叫 `/ob` 會讀不到。未設或無效直接中止，不做猜測 fallback。設定時可直接請 Claude Code 用 `update-config` skill 處理，會自動 merge 既有 `env` 不覆蓋
-  - **其他 repo-local skill（vault-check / vault-topic-moc / vault-youtube-sync / vault-reddit-sync / vault-reddit-daily-report）**：cwd 必為 repo root，用 `content/...` 相對路徑直接讀寫；不依賴 env。前置作業會先驗 `test -f content/master-index.md`，cwd 不在 repo root 即中止
+  - **其他 repo-local skill（vault-check / vault-topic-moc / vault-youtube-sync / vault-reddit-sync / vault-reddit-daily）**：cwd 必為 repo root，用 `content/...` 相對路徑直接讀寫；不依賴 env。前置作業會先驗 `test -f content/master-index.md`，cwd 不在 repo root 即中止

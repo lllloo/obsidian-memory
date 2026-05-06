@@ -1,10 +1,10 @@
 {
-  "skill_name": "vault-reddit-daily-report",
+  "skill_name": "vault-reddit-daily",
   "evals": [
     {
       "id": 0,
       "prompt": "給我 Reddit 日報",
-      "expected_output": "觸發 vault-reddit-daily-report，讀 Inbox/RedditDaily/01.index.md 的「訂閱頻道」段取得 subreddit，抓 top day 貼文，只做本次執行內 post_id 去重，分析後建立或覆蓋 Inbox/RedditDaily/Reddit日報-YYYY-MM-DD.md",
+      "expected_output": "觸發 vault-reddit-daily，讀 Inbox/RedditDaily/01.index.md 的「訂閱頻道」段取得 subreddit，抓 top day 貼文，只做本次執行內 post_id 去重，分析後建立或覆蓋 Inbox/RedditDaily/Reddit日報-YYYY-MM-DD.md",
       "files": [],
       "assertions": [
         {
