@@ -54,28 +54,38 @@ def _retry_after_from_curl_stderr(stderr):
     return _parse_retry_after(m.group(1)) if m else None
 
 
+def _is_local_proxy_refused(stderr):
+    if not stderr:
+        return False
+    return "via 127.0.0.1" in stderr and "Could not connect to server" in stderr
+
+
 def fetch_json(url):
     curl = shutil.which("curl")
     last_error = None
+    proxy_bypass = False
 
     for attempt in range(len(RETRY_BACKOFF_SECONDS) + 1):
         retry_after = None
         try:
             if curl:
+                cmd = [
+                    curl,
+                    "-sS",
+                    "--fail",
+                    "-L",
+                    "-H",
+                    f"User-Agent: {HEADERS['User-Agent']}",
+                    "-H",
+                    f"Accept: {HEADERS['Accept']}",
+                    "-H",
+                    f"Accept-Language: {HEADERS['Accept-Language']}",
+                    url,
+                ]
+                if proxy_bypass:
+                    cmd[1:1] = ["--noproxy", "*"]
                 proc = subprocess.run(
-                    [
-                        curl,
-                        "-sS",
-                        "--fail",
-                        "-L",
-                        "-H",
-                        f"User-Agent: {HEADERS['User-Agent']}",
-                        "-H",
-                        f"Accept: {HEADERS['Accept']}",
-                        "-H",
-                        f"Accept-Language: {HEADERS['Accept-Language']}",
-                        url,
-                    ],
+                    cmd,
                     check=True,
                     capture_output=True,
                     text=True,
@@ -90,6 +100,9 @@ def fetch_json(url):
             stderr = (e.stderr or "").strip()
             last_error = RuntimeError(stderr or f"curl exit {e.returncode}")
             retry_after = _retry_after_from_curl_stderr(stderr)
+            if _is_local_proxy_refused(stderr) and not proxy_bypass:
+                proxy_bypass = True
+                continue
         except urllib.error.HTTPError as e:
             last_error = RuntimeError(f"HTTP {e.code}")
             if e.code == 429:
