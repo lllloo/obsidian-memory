@@ -58,8 +58,14 @@ tags:
 
 ## 跳過摘要
 
-- 主貼粗篩跳過：<數量>（<主要原因分布>）
-- 分析後跳過：<數量>（<主要原因分布>）
+| Subreddit | 抓取 | 粗篩通過 | 收錄 |
+| --------- | ---- | -------- | ---- |
+| <name>    | <N>  | <N>      | <N>  |
+
+- 主貼粗篩跳過：<數量>（<主要原因分布，例：純抱怨 X / showcase Y / meme Z>）
+- 分析後跳過：<數量>
+  - <post_id>：<一行原因>
+  - ...
 ```
 
 若當日沒有任何可保留貼文，仍建立日報，正文寫明「今日無高訊號貼文」，並附各 subreddit 抓取數與主要跳過原因。
@@ -138,49 +144,60 @@ fi
 
 `RedditDaily` 不寫入 persisted dedup。只在本次執行的記憶體中用 post_id 去重，避免同一次抓取中重複分析同一貼文。
 
-主流程此時只有 `fetch_reddit_daily.py` 回傳的標題、score、comment 數，**不要使用 selftext 條件做 gate**。selftext / comments 的完整判斷交給步驟 4 的 subagent 透過 `fetch_post.py` 處理。
+主流程此時只有 `fetch_reddit_daily.py` 回傳的標題、score、comment 數，**不要使用 selftext 條件做 gate**。selftext / comments 的完整判斷一律交給步驟 4 的 subagent 透過 `fetch_post.py` 處理。
 
-**送 subagent 的 title-level 預篩條件**：
+**分工原則**：步驟 3 只負責「光看標題就能 100% 確定可刷掉」的硬篩；任何模糊邊界（含可疑技術訊號、可疑數字、無法從標題斷定主題）一律放行給 subagent。subagent 才做完整價值判斷。**這份清單與 `references/report-analyzer.md` 不重疊**——前者只看標題、後者看全文。
 
-- 標題含技術關鍵詞：`workflow` / `workaround` / `bug` / `fix` / `MCP` / `hook` / `skill` / `subagent` / `config` / `prompt` / `cache` / `context` / `model` / `API` / `rate limit` / `token` / `memory` / `worktree` / `agent`
-- 標題暗示具體工具、repo、設定或方法：`AGENTS.md`、`Claude.md`、`rules`、`CI`、`Docker`、`VS Code`、`Copilot`、`Codex`、`Claude Code`
-- comment 數高且標題與 AI 工程 / 工具使用相關，值得讓 subagent 抓全文確認
-- score 低但標題明確指向 bug、workflow、成本控制、context 管理、parallel agents 等高訊號題材
+**直接跳過（標題即可斷定）**：
 
-**直接跳過**：
+- meme / image-only / 截圖梗圖（標題明顯如「look at this」「lol」「😭」「lmao」）
+- 純讚美 / 純抱怨單句，且無任何工具名 / 工具行為描述（如「X is garbage」「WTF」「anyone else」）
+- pricing / billing / suspension / SMS verification / 帳號登入問題（標題只談計費或客服）
+- 純粹的「我做了個 X」showcase，且標題未提到方法、設定、規格或可重現做法
+- 主題與 AI 工程 / 工具 / 模型完全無關（旅遊、政治、寵物等）
 
-- 標題明顯是純抱怨、pricing / billing / support / suspension，且沒有 bug / workflow / workaround / config 等技術訊號
-- 純時效新聞、模型發布、額度變動、行情類 benchmark，且標題沒有可遷移方法論訊號
-- meme / image-only / showcase / 偏好投票 / 泛問答
-- 主題與 AI 工程 / 工具 / 模型完全無關
+**其餘一律放行**——包含但不限於：含技術關鍵詞、提及具體工具或 repo、score 低但題材具體、comment 數高暗示有實質討論。寧可多送幾篇給 subagent 篩，也不要在標題層誤刷。
 
-通過預篩的貼文由 subagent 抓全文後做最終 `KEEP` / `SKIP` 判斷。直接跳過與 subagent skip 都不寫入 vault；下次重跑可重新評估當日列表。
+直接跳過與 subagent skip 都不寫入 vault；下次重跑可重新評估當日列表。
 
 ## 步驟 4：分批平行分析貼文
 
-將通過粗篩的貼文合併，按每批 5-6 篇，用 Agent tool 平行啟動 subagents。
-
-若候選過多，依以下優先級只送最值得分析的一批：
+**Batching 上限**：每批 5-6 篇，**最多 3 批、總候選上限 18 篇**。若粗篩通過數超過 18，依以下優先級二次淘汰至 18 篇以內：
 
 1. 可重現 bug / workaround
 2. 具體 workflow / commands / files / prompt / config
 3. 官方變更且有 operational impact
 4. 有量化結果的工具 / 模型比較
 
-每個 subagent prompt：
+二次淘汰時優先保留標題明確指向上述四類的貼文；同類內按 comment 數排序（comment 多通常代表有實質討論）。
+
+用 Agent tool（`subagent_type: "general-purpose"`）平行啟動 subagents，一次發出多個 Agent 呼叫於同一訊息中以實際並行。
+
+**Subagent prompt 結構**（依 `~/.claude/rules/skill-writing.md`：references 全文嵌入，不叫 subagent 自己 Read）：
 
 ```text
-任務：分析 Reddit 貼文的技術價值，回傳可放入每日 Reddit 日報的精簡條目；不要建立獨立貼文筆記。
-詳細指示請先 Read `.claude/skills/vault-reddit-daily-report/references/report-analyzer.md`。
+任務：分析 Reddit 貼文的技術價值，回傳可放入每日 Reddit 日報的精簡條目；不要建立獨立貼文筆記，不寫任何檔。
+詳細指示如下（references/report-analyzer.md 全文）：
+
+---
+<在此貼上 .claude/skills/vault-reddit-daily-report/references/report-analyzer.md 全文>
+---
 
 今日日期：<YYYY-MM-DD>
 
-貼文清單：
+cwd：<repo root 絕對路徑>（已驗證）
+
+貼文清單（本批 N 篇）：
 1. [score:<分數> comments:<留言數>] <標題>
    ID: <post_id>
    Subreddit: <subreddit>
    URL: https://www.reddit.com/r/<subreddit>/comments/<post_id>/
+...
+
+請對每篇逐一執行 fetch_post.py、判斷、回傳 KEEP/SKIP 條目。最後合併所有條目以純文字輸出（每篇之間空一行），不要寫入任何檔案。
 ```
+
+**Fallback（無 Agent tool 環境）**：主 agent 直接 Read `references/report-analyzer.md` 後，逐批序列執行同流程，產出相同 KEEP/SKIP 條目格式。
 
 ## 步驟 5：建立或更新每日報告
 
