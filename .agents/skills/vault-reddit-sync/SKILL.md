@@ -5,7 +5,7 @@ description: 抓取 Reddit 上 AI 相關的高訊號討論（工程實踐、工�
 
 # Vault Reddit Sync
 
-掃 `$OBSIDIAN_VAULT_ROOT/Inbox/Reddit/` 底下所有頻道資料夾，對每個訂閱 sub 抓一週 top 貼文，內容導向粗篩 + subagent 深入分析後存為 Obsidian 筆記。
+掃 `content/Inbox/Reddit/` 底下所有頻道資料夾，對每個訂閱 sub 抓一週 top 貼文，內容導向粗篩 + subagent 深入分析後存為 Obsidian 筆記。
 
 > 本 skill 產出進入 `Inbox/Reddit/`，代表「待消化暫存」。使用者讀完後可自行歸檔至 `Cards/` 或 `Topics/`，Inbox 原篇刪除。Skill 只負責抓取與篩選，不負責消化。
 >
@@ -17,7 +17,7 @@ description: 抓取 Reddit 上 AI 相關的高訊號討論（工程實踐、工�
 
 ## 資料夾即訂閱清單
 
-- 筆記存放：`$OBSIDIAN_VAULT_ROOT/Inbox/Reddit/<subreddit>/`
+- 筆記存放：`content/Inbox/Reddit/<subreddit>/`
 - **資料夾本身即訂閱清單**：skill 不 hardcode 任何 sub 名稱，啟動時掃 `Inbox/Reddit/*/01.index.md` 列出所有訂閱
 - 每個 channel 資料夾必含 `01.index.md`（dedup graveyard 來源）與 `02.文章清單.base`（Bases 表格）
 - 貼文筆記**不加 `parent:` 欄位**（Reddit 筆記無頻道圖譜需求）
@@ -88,20 +88,17 @@ views:
 
 ## 前置作業（寫入前必做）
 
-### Vault 路徑解析
+### Cwd 契約
 
-所有讀寫操作一律用絕對路徑（以 `$OBSIDIAN_VAULT_ROOT` 為 base）。
+本 skill 是 repo-local，所有讀寫路徑均為 repo root 相對的 `content/...`。呼叫前先確認 cwd 為 repo root：
 
 ```bash
-[ -z "$OBSIDIAN_VAULT_ROOT" ] && { echo "ERROR: OBSIDIAN_VAULT_ROOT 未設"; exit 1; }
-[ -f "$OBSIDIAN_VAULT_ROOT/master-index.md" ] || { echo "ERROR: $OBSIDIAN_VAULT_ROOT 底下找不到 master-index.md"; exit 1; }
+[ -f "content/master-index.md" ] || { echo "ERROR: cwd 不在 repo root"; exit 1; }
 ```
-
-env 未設或路徑無效 → 告知用戶並停止，不猜測 fallback。
 
 ### 寫入前 Checklist
 
-此 skill 是 `content/` 的寫入路徑。寫入前依 `$OBSIDIAN_VAULT_ROOT/CLAUDE.md` 的「寫入前 Checklist」自檢：
+此 skill 是 `content/` 的寫入路徑。寫入前依 `content/CLAUDE.md` 的「寫入前 Checklist」自檢：
 
 - **敏感資料零容忍**：貼文正文（含 code block）若含 token / 私鑰 / API key → 移除該段，不寫入。Reddit selftext 常把 token 貼在 ``` fence 裡，**fence 內也要掃**，subagent 自掃為主、`scripts/vault-check.mjs` 作為兜底（已對 `content/Inbox/**` 啟用 fence 內掃描）
 - **Tag 沿用既有**：`reddit` 以外的主題 tag 先 grep 既有 vault tags，避免同義異寫
@@ -110,12 +107,10 @@ env 未設或路徑無效 → 告知用戶並停止，不猜測 fallback。
 
 ## 步驟 1：列舉訂閱頻道
 
-掃 `$OBSIDIAN_VAULT_ROOT/Inbox/Reddit/` 底下所有含 `01.index.md` 的子資料夾。實作建議：用 Glob 列出 channel index 路徑，sub 名稱直接取資料夾名（不需 parse frontmatter）。
-
-Glob tool 的 `path` 與 `pattern` 參數不展開 env var 字面值，**先用 Bash 取出 `$OBSIDIAN_VAULT_ROOT` 的實際值**，再帶入 Glob。例如展開後呼叫：
+掃 `content/Inbox/Reddit/` 底下所有含 `01.index.md` 的子資料夾。實作建議：用 Glob 列出 channel index 路徑，sub 名稱直接取資料夾名（不需 parse frontmatter）：
 
 ```
-Glob: path="<vault 絕對路徑>/Inbox/Reddit", pattern="*/01.index.md"
+Glob: path="content/Inbox/Reddit", pattern="*/01.index.md"
 sub 名 = 該檔的父資料夾名
 ```
 
@@ -151,10 +146,10 @@ fi
 
 ### Graveyard 去重
 
-讀取 `$OBSIDIAN_VAULT_ROOT/Inbox/Reddit/<subreddit>/01.index.md` 的「## 已處理紀錄」段，擷取所有 post_id：
+讀取 `content/Inbox/Reddit/<subreddit>/01.index.md` 的「## 已處理紀錄」段，擷取所有 post_id：
 
 ```bash
-INDEX="$OBSIDIAN_VAULT_ROOT/Inbox/Reddit/<subreddit>/01.index.md"
+INDEX="content/Inbox/Reddit/<subreddit>/01.index.md"
 [ -f "$INDEX" ] && \
   awk '/^## 已處理紀錄/{flag=1; next} /^## /{flag=0} flag' "$INDEX" \
   | grep -oE '^- [a-z0-9]+ ' | awk '{print $2}'
@@ -208,13 +203,13 @@ INDEX="$OBSIDIAN_VAULT_ROOT/Inbox/Reddit/<subreddit>/01.index.md"
 
 **目標上限：每個 subreddit 最多保留 4 篇，全體最多保留 12 篇。**
 
-每個 subagent 的任務 prompt 格式如下。**所有 `<...>` 占位符，主 skill 端必須在送出前全部替換為實際值**（`$OBSIDIAN_VAULT_ROOT` 展開、subreddit 帶入、subreddit-tag 從資料夾名 normalize 取得、日期填上），不要把字面 `$OBSIDIAN_VAULT_ROOT` 或未替換的 `<…>` 傳給 subagent：
+每個 subagent 的任務 prompt 格式如下。**所有 `<...>` 占位符，主 skill 端必須在送出前全部替換為實際值**（subreddit 帶入、subreddit-tag 從資料夾名 normalize 取得、日期填上），不要把未替換的 `<…>` 傳給 subagent。subagent cwd 必為 repo root，所有路徑為 repo root 相對：
 
 ```
 任務：分析 Reddit 貼文的技術價值，並在 Obsidian vault 建立有價值貼文的筆記。
 詳細指示請先 Read `.claude/skills/vault-reddit-sync/references/post-analyzer.md`。
 
-NOTES_DIR：<vault 絕對路徑>/Inbox/Reddit/<subreddit>/
+NOTES_DIR：content/Inbox/Reddit/<subreddit>/
 今日日期：<YYYY-MM-DD>
 Subreddit：<subreddit>
 

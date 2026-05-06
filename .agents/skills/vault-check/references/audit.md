@@ -20,20 +20,22 @@
 - **不再呼叫其他 subagent**
 - **path 一律正規化**：`content/...`，不要絕對路徑
 
-## Vault 路徑解析（必先執行）
+## Cwd 契約（必先執行）
 
-```
-VAULT_ROOT = $OBSIDIAN_VAULT_ROOT
+本流程是 repo-local，cwd 必為 repo root。先驗證：
+
+```bash
+test -f content/master-index.md
 ```
 
-env 未設或該路徑底下找不到 `master-index.md` → 直接輸出空結果，`error` 欄寫「`$OBSIDIAN_VAULT_ROOT` 未設或無效，設定方式見 README」。orchestrator 通常會在 step 1 早停，這條是兜底，避免 subagent 被孤立呼叫時誤掃。
+失敗即直接輸出空結果，`error` 欄寫「cwd 不在 repo root，無法執行 audit」。orchestrator 通常會在 step 1 早停，這條是兜底，避免 subagent 被孤立呼叫時誤掃。
 
 ## 掃描範圍
 
-- 全部 `<VAULT_ROOT>/**/*.md`
-- **排除**：`.obsidian/`、`<VAULT_ROOT>/index.md`、`<VAULT_ROOT>/master-index.md`、`<VAULT_ROOT>/CLAUDE.md`
+- 全部 `content/**/*.md`
+- **排除**：`.obsidian/`、`content/index.md`、`content/master-index.md`、`content/CLAUDE.md`
 
-開工前先 `Read <VAULT_ROOT>/CLAUDE.md` 取得當前的「寫入前 Checklist」內容（敏感資料定義、frontmatter schema、tag 一致性判準、命名規則）作為稽核依據。Checklist 更新時本流程自動跟上，不需改 reference。
+開工前先 `Read content/CLAUDE.md` 取得當前的「寫入前 Checklist」內容（敏感資料定義、frontmatter schema、tag 一致性判準、命名規則）作為稽核依據。Checklist 更新時本流程自動跟上，不需改 reference。
 
 ## 四類稽核
 
@@ -48,7 +50,7 @@ env 未設或該路徑底下找不到 `master-index.md` → 直接輸出空結�
 ### 2. broken_wikilinks — wikilink 斷鏈
 
 - 掃正文與 frontmatter `parent` 的 `[[...]]`
-- target 對照 `<VAULT_ROOT>/**/*.{md,base}` 的檔名（Quartz `shortest` 語義，比 basename）
+- target 對照 `content/**/*.{md,base}` 的檔名（Quartz `shortest` 語義，比 basename）
 - 排除 code fence 內的 `[[...]]`
 - 對每個斷鏈，找最相似的現有檔名做 suggestion；找不到就 `suggestion: null`
 
@@ -73,7 +75,6 @@ env 未設或該路徑底下找不到 `master-index.md` → 直接輸出空結�
 
 ```json
 {
-  "vault_root": "/abs/path/to/content",
   "scanned_files": 123,
   "schema_issues": [
     {
@@ -117,7 +118,7 @@ env 未設或該路徑底下找不到 `master-index.md` → 直接輸出空結�
 }
 ```
 
-未命中的類別給空陣列。掃描失敗（vault root 找不到）`error` 寫原因。
+未命中的類別給空陣列。掃描失敗（cwd 不對等）`error` 寫原因。
 
 ## 效能守則
 

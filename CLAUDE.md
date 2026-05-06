@@ -16,7 +16,7 @@ Obsidian 個人知識庫，以 [Quartz 4](https://quartz.jzhao.xyz/) 發佈至 `
 
 - **Vault 層**（`content/`）— 筆記本體，規則見 `content/CLAUDE.md`
 - **發佈層**（`quartz/`、`quartz.config.ts`、`quartz.layout.ts`、`.github/workflows/`）— Quartz 建置與 GitHub Pages 部署
-- **工作流層**（`.claude/` + `.agents/` + `scripts/`）— skills（`ob`、`vault-check`、`vault-youtube-sync`、`vault-topic-moc`、`vault-reddit-sync`）、Node 稽核腳本。skill 內子流程（建檔／查詢／語意稽核）由 skill 以 `general-purpose` subagent 呼叫，prompt 從各自 `references/` 載入，不依賴命名 agent。`.claude/skills/ob` 可 symlink 至 `~/.claude/skills/` 跨專案使用；`.agents/skills/` 是 repo-local skill 來源，`.claude/skills` symlink 到此處
+- **工作流層**（`.claude/` + `.agents/` + `scripts/`）— skills（`ob`、`vault-check`、`vault-youtube-sync`、`vault-topic-moc`、`vault-reddit-sync`、`vault-reddit-daily-report`）、Node 稽核腳本。skill 內子流程（建檔／查詢／語意稽核）由 skill 以 `general-purpose` subagent 呼叫，prompt 從各自 `references/` 載入，不依賴命名 agent。`.claude/skills/ob` 可 symlink 至 `~/.claude/skills/` 跨專案使用；`.agents/skills/` 是 repo-local skill 來源，`.claude/skills` symlink 到此處
 
 ## 常用指令
 
@@ -61,8 +61,6 @@ Vault 內容規則（寫入前 Checklist、frontmatter schema、tag/命名、敏
 
 skill 內所有「subagent 子流程」（建檔／查詢／語意稽核）一律以 `Agent` tool 呼叫 `subagent_type: "general-purpose"`，prompt 從該 skill 的 `references/*.md` 載入。**不依賴命名 agent**，跨工具環境可移植；無 subagent 能力的工具（Cursor/Codex/Gemini CLI 等）由主 agent 直接 Read references 執行同流程。
 
-依作用分組。「全域路徑」有值 = 需 symlink 掛全域（跨專案可用），`—` = 僅本 repo 生效。
-
 ## Codex Repo-Local Skills
 
 Codex 不會自動把 repo 內 `.agents/skills/` 註冊為全域 skill registry；在本 repo 工作時，遇到下列流程需手動讀對應 `SKILL.md`，並依其 references/scripts 執行：
@@ -75,6 +73,8 @@ Codex 不會自動把 repo 內 `.agents/skills/` 註冊為全域 skill registry�
 - Reddit 每日日報 → 讀 `.agents/skills/vault-reddit-daily-report/SKILL.md`
 
 `.agents/skills/` 是 repo-local skill 的唯一維護來源；`.claude/skills` 應維持為指向 `.agents/skills/` 的 symlink，避免兩份內容漂移。
+
+下面三節（§ 1-3）每張表都有「全域路徑」欄：有值 = 需 symlink 掛全域（跨專案可用），`—` = 僅本 repo 生效。
 
 ### 1. 筆記操作（`/ob` 流程）
 
@@ -132,6 +132,8 @@ Codex 不會自動把 repo 內 `.agents/skills/` 註冊為全域 skill registry�
 
 Vault 同時作為 Claude Code 的參考資料來源，與 WebSearch 互補並行：
 
-- **協議**：觸發條件、綜合原則、引用格式寫在全域 `~/.claude/CLAUDE.md` 的 `## Obsidian` 段；技術/知識性提問會自動並行呼叫查詢流程（`/ob` skill + `references/query.md`）+ WebSearch。若全域 `~/.claude/CLAUDE.md` 仍有舊命名 agent 字樣（`vault-query` / `vault-writer`），需手動更新為新模式
+- **協議**：觸發條件、綜合原則、引用格式寫在全域 `~/.claude/CLAUDE.md` 的 `## Obsidian` 段；技術/知識性提問會自動並行呼叫查詢流程（`/ob` skill + `references/query.md`）+ WebSearch
 - **搜尋工具**：搜 vault 一律用 `Grep` + `Glob content/**/*<關鍵字>*.md`，不要呼叫 Obsidian CLI 的 `search:context`（慢約 9 倍且覆蓋率較低）
-- **跨機器路徑**：各 skill / reference 一律讀 `$OBSIDIAN_VAULT_ROOT`，**必須**在**全域** `~/.claude/settings.json` 的 `env` 段注入絕對路徑（不是 repo 內的 settings）——因為 `/ob` 相關設定已 symlink 到全域供跨專案使用，env 放 repo 內的 settings 只在本 repo 工作時可見，從其他專案呼叫 `/ob` 會讀不到。未設或無效直接中止，不做猜測 fallback。path 契約詳見各 reference 檔。設定時可直接請 Claude Code 用 `update-config` skill 處理，會自動 merge 既有 `env` 不覆蓋
+- **路徑契約**：分兩種——
+  - **`/ob`（掛全域、跨專案可用）**：references/write.md、references/query.md 一律讀 `$OBSIDIAN_VAULT_ROOT`，**必須**在**全域** `~/.claude/settings.json` 的 `env` 段注入絕對路徑（不是 repo 內的 settings）——因為 `/ob` 相關設定已 symlink 到全域，env 放 repo 內的 settings 只在本 repo 工作時可見，從其他專案呼叫 `/ob` 會讀不到。未設或無效直接中止，不做猜測 fallback。設定時可直接請 Claude Code 用 `update-config` skill 處理，會自動 merge 既有 `env` 不覆蓋
+  - **其他 repo-local skill（vault-check / vault-topic-moc / vault-youtube-sync / vault-reddit-sync / vault-reddit-daily-report）**：cwd 必為 repo root，用 `content/...` 相對路徑直接讀寫；不依賴 env。前置作業會先驗 `test -f content/master-index.md`，cwd 不在 repo root 即中止

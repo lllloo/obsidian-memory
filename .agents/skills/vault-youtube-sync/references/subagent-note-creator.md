@@ -2,9 +2,9 @@
 
 > **Python 指令**：以下指令用 `python3`；Windows 環境若 `python3` 無效，改用 `python`。
 >
-> **路徑契約**：任務 prompt 會傳入 `NOTES_DIR`（絕對路徑到 `<vault>/Inbox/YouTube/<頻道名>/`）。所有讀寫操作一律以 `NOTES_DIR` 為 base，不可用 cwd-relative 路徑，避免從非 repo cwd 呼叫時誤寫到別處。
+> **路徑契約**：任務 prompt 會傳入 `NOTES_DIR`（repo root 相對路徑：`content/Inbox/YouTube/<頻道名>/`）。所有讀寫操作以 `NOTES_DIR` 為 base，cwd 必為 repo root（subagent 預設繼承父 agent cwd）。
 >
-> **NOTES_DIR 自檢**：開工前確認 `NOTES_DIR` 值已被主 skill 展開。若值包含字面 `<`、`>`、或 `$OBSIDIAN_VAULT_ROOT` 字樣（代表占位符未替換 / env var 未展開），視為主 skill 傳錯，**立即回報並停止**，不寫入任何檔案。
+> **NOTES_DIR 自檢**：開工前確認 `NOTES_DIR` 值已被主 skill 展開。若值包含字面 `<`、`>` 或仍是占位符（代表主 skill 未替換），視為傳錯，**立即回報並停止**，不寫入任何檔案。同時確認 cwd 為 repo root（`test -f content/master-index.md`）。
 
 ## 步驟
 
@@ -159,13 +159,13 @@ print(m.group(1)[:10] if m else '')
 
 ## 筆記規則（必須嚴格遵守）
 
-`$OBSIDIAN_VAULT_ROOT/CLAUDE.md` 的「寫入前 Checklist」是真實來源，本檔只列本 subagent 高頻踩到的點。敏感資料零容忍、tag 沿用既有、白名單制等通則詳見 Checklist 本身。
+`content/CLAUDE.md` 的「寫入前 Checklist」是真實來源，本檔只列本 subagent 高頻踩到的點。敏感資料零容忍、tag 沿用既有、白名單制等通則詳見 Checklist 本身。
 
 - **語言**：正文內容一律以**繁體中文**撰寫；技術名詞、品牌名、工具名保留英文（例：Claude Code、OpenAI、defuddle）
 - **敏感資料**：defuddle transcript 若含 token / 私鑰 / 個資 → 移除該段或跳過整筆，不寫入
 - **`#` 開頭內容**：hex 色碼（`#57F287`）或其他 `#` 開頭字串在 Obsidian 會被當 tag，**必須用反引號包住**（寫成 `` `#57F287` ``）；前端/設計類影片容易踩到
 - **不主動加 wikilink**：Inbox/ 是「消化完刪除」的暫存，筆記彼此 `[[wikilink]]` 沒意義（會一起被刪）。即使偵測到主題重疊，也**不要**掃 `<NOTES_DIR>` 找兄弟筆記補連結——wikilink 真正長出來的時機是使用者把 Cards/ 歸檔到 Topics/，由人決定，不是 AI。例外：`parent: "[[01.index]]"` 是 schema 必填，照寫
-- 檔案路徑：`<NOTES_DIR>/<繁體中文精簡標題>.md`（`NOTES_DIR` 從任務 prompt 取得，為絕對路徑）
+- 檔案路徑：`<NOTES_DIR>/<繁體中文精簡標題>.md`（`NOTES_DIR` 從任務 prompt 取得，為 repo root 相對路徑）
 - 檔案名稱命名規則：
   - 繁體中文為主，技術名詞與品牌名保留英文
   - 不可含空格；英文/數字與中文之間用 `-` 連接（例：`Claude-Code準確度提升技巧`）；中文詞之間不加符號

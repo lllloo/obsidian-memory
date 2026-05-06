@@ -20,8 +20,8 @@
           "description": "筆記有正確 frontmatter（title, created, updated, source, published, tags），無 parent 欄位，無 # heading"
         },
         {
-          "name": "Vault 路徑守衛執行",
-          "description": "執行 OBSIDIAN_VAULT_ROOT guard bash 命令，env 未設時中止"
+          "name": "Cwd 守衛執行",
+          "description": "執行 cwd guard bash 命令（test -f content/master-index.md），cwd 不在 repo root 時中止"
         },
         {
           "name": "彙整報告輸出",

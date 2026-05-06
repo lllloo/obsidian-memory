@@ -19,8 +19,8 @@ description: 每天整理 Reddit 上 AI 相關高訊號討論成一篇 Obsidian 
 
 ## 產出格式
 
-- 日報路徑：`$OBSIDIAN_VAULT_ROOT/Inbox/RedditDaily/Reddit日報-<YYYY-MM-DD>.md`
-- 訂閱來源：`$OBSIDIAN_VAULT_ROOT/Inbox/RedditDaily/01.index.md`
+- 日報路徑：`content/Inbox/RedditDaily/Reddit日報-<YYYY-MM-DD>.md`
+- 訂閱來源：`content/Inbox/RedditDaily/01.index.md`
 - `Inbox/RedditDaily/` 是獨立日報資料夾，不放在 `Inbox/Reddit/` 底下
 
 日報 frontmatter：
@@ -66,20 +66,17 @@ tags:
 
 ## 前置作業
 
-### Vault 路徑解析
+### Cwd 契約
 
-所有讀寫操作一律用絕對路徑（以 `$OBSIDIAN_VAULT_ROOT` 為 base）。
+本 skill 是 repo-local，所有讀寫路徑均為 repo root 相對的 `content/...`。呼叫前先確認 cwd 為 repo root：
 
 ```bash
-[ -z "$OBSIDIAN_VAULT_ROOT" ] && { echo "ERROR: OBSIDIAN_VAULT_ROOT 未設"; exit 1; }
-[ -f "$OBSIDIAN_VAULT_ROOT/master-index.md" ] || { echo "ERROR: $OBSIDIAN_VAULT_ROOT 底下找不到 master-index.md"; exit 1; }
+[ -f "content/master-index.md" ] || { echo "ERROR: cwd 不在 repo root"; exit 1; }
 ```
-
-env 未設或路徑無效 → 告知用戶並停止，不猜測 fallback。
 
 ### 寫入前 Checklist
 
-此 skill 是 `content/` 的寫入路徑。寫入前依 `$OBSIDIAN_VAULT_ROOT/CLAUDE.md` 的「寫入前 Checklist」自檢：
+此 skill 是 `content/` 的寫入路徑。寫入前依 `content/CLAUDE.md` 的「寫入前 Checklist」自檢：
 
 - **敏感資料零容忍**：貼文正文與留言若含 token / 私鑰 / API key，不寫入日報；若貼文核心依賴敏感內容，直接跳過
 - **Frontmatter schema**：欄位、順序、白名單以 `scripts/vault-schema.mjs` 為真實來源
@@ -88,7 +85,7 @@ env 未設或路徑無效 → 告知用戶並停止，不猜測 fallback。
 
 ## 步驟 1：讀取 RedditDaily 訂閱頻道
 
-讀取 `$OBSIDIAN_VAULT_ROOT/Inbox/RedditDaily/01.index.md` 的「## 訂閱頻道」段，擷取每行 `- <subreddit>`。
+讀取 `content/Inbox/RedditDaily/01.index.md` 的「## 訂閱頻道」段，擷取每行 `- <subreddit>`。
 
 若 `Inbox/RedditDaily/01.index.md` 不存在，先建立含空訂閱清單的 index，再輸出「尚未訂閱任何 RedditDaily 頻道，請先在 `Inbox/RedditDaily/01.index.md` 的『訂閱頻道』段新增 subreddit」並中止。不 bootstrap 預設頻道。
 
@@ -187,7 +184,7 @@ fi
 
 ## 步驟 5：建立或更新每日報告
 
-建立資料夾：`$OBSIDIAN_VAULT_ROOT/Inbox/RedditDaily/`
+建立資料夾：`content/Inbox/RedditDaily/`
 
 日報檔案：`Reddit日報-<YYYY-MM-DD>.md`
 

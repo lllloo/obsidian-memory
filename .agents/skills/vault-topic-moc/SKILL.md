@@ -9,22 +9,13 @@ description: Consolidates multiple related notes in an Obsidian vault into a sin
 
 ## 前置作業（寫入前必做）
 
-### Vault 路徑解析
+### Cwd 契約
 
-所有讀寫與 Grep/Glob 路徑以 `$OBSIDIAN_VAULT_ROOT` 為 base，避免從非 repo cwd 呼叫時讀寫到錯地方。
-
-```
-VAULT_ROOT = $OBSIDIAN_VAULT_ROOT
-```
-
-env 未設或該路徑底下找不到 `master-index.md` → 告知用戶並停止，不要猜測 fallback。開工前先跑一次可執行 guard：
+本 skill 是 repo-local，所有讀寫與 Grep/Glob 路徑均為 repo root 相對的 `content/...`。呼叫前先確認 cwd 為 repo root：
 
 ```bash
-[ -z "$OBSIDIAN_VAULT_ROOT" ] && { echo "ERROR: OBSIDIAN_VAULT_ROOT 未設"; exit 1; }
-[ -f "$OBSIDIAN_VAULT_ROOT/master-index.md" ] || { echo "ERROR: $OBSIDIAN_VAULT_ROOT 底下找不到 master-index.md"; exit 1; }
+[ -f "content/master-index.md" ] || { echo "ERROR: cwd 不在 repo root"; exit 1; }
 ```
-
-設定方式見 README 的「Vault 路徑設定（跨機器）」。
 
 ### 產出位置（卡片盒三層工作流）
 
@@ -53,7 +44,7 @@ content/CLAUDE.md「Topics/ 第一層不跨主題巢套」指的是不要建 `To
 
 寫入前依 content/CLAUDE.md 的寫入前 Checklist 自檢（敏感資料、frontmatter schema、命名、tags 沿用）。本 skill 額外注意：
 
-- **`moc` tag 處理**：用 Grep（`pattern="^tags:"`, `path="$OBSIDIAN_VAULT_ROOT"`, `-A 5`）看既有同主題 MOC 習慣——都加 `moc` 就跟上、都沒加就先不加，避免單篇開新風格
+- **`moc` tag 處理**：用 Grep（`pattern="^tags:"`, `path="content"`, `-A 5`）看既有同主題 MOC 習慣——都加 `moc` 就跟上、都沒加就先不加，避免單篇開新風格
 - **WebFetch 內容過濾**：事實校正從官方來源抓的內容若帶 token / API key / 私人資訊，移除再寫入
 
 `/vault-check` 只兜底跨檔案 emergent 問題，不負責抓本清單能預防的錯。
@@ -64,10 +55,10 @@ content/CLAUDE.md「Topics/ 第一層不跨主題巢套」指的是不要建 `To
 
 #### 1a. 蒐集候選
 
-先讀 `$OBSIDIAN_VAULT_ROOT/master-index.md` 了解 vault 結構，再用 Glob / Grep tool 找出候選筆記（pattern / path 為獨立參數，非單一 shell 字串）：
+先讀 `content/master-index.md` 了解 vault 結構，再用 Glob / Grep tool 找出候選筆記（pattern / path 為獨立參數，非單一 shell 字串）：
 
-- 檔名含關鍵字：**Glob** `pattern="**/*<keyword>*.md"`, `path="$OBSIDIAN_VAULT_ROOT"`
-- 內容含關鍵字：**Grep** `pattern="<keyword>"`, `path="$OBSIDIAN_VAULT_ROOT"`
+- 檔名含關鍵字：**Glob** `pattern="**/*<keyword>*.md"`, `path="content"`
+- 內容含關鍵字：**Grep** `pattern="<keyword>"`, `path="content"`
 - Frontmatter tags 或 source URL 過濾：同上，`pattern` 改為 `^tags:` 或 URL regex
 
 #### 1b. 內聚度檢驗 + 給用戶確認（**必做**）
@@ -123,7 +114,7 @@ Read 全部候選筆記。記錄：
 
 ### 3. 產出 MOC v0
 
-寫進 `$OBSIDIAN_VAULT_ROOT/Cards/<主題>.md`（依「產出位置」段預設規則）。骨架範本見 [references/moc-structure.md](references/moc-structure.md)。
+寫進 `content/Cards/<主題>.md`（依「產出位置」段預設規則）。骨架範本見 [references/moc-structure.md](references/moc-structure.md)。
 
 若 `Cards/<主題>.md` 已存在，先問用戶：擴充既有的？重寫？還是另建子主題（如 `<主題>-進階.md`）？
 
@@ -226,7 +217,7 @@ MOC 聚焦**概念與大方向**，經得起時間、可在不同模型世代重
 ## Workflow Checklist（複製到回應中追蹤進度）
 
 ```
-- [ ] 0. 前置作業：env guard + 寫入前 Checklist 自檢
+- [ ] 0. 前置作業：cwd guard + 寫入前 Checklist 自檢
 - [ ] 1a. 蒐集候選筆記
 - [ ] 1b. 內聚度檢驗 + 給用戶確認範圍（含核心問題 + 內聚度自評）
 - [ ] 2. Read 全部筆記內容

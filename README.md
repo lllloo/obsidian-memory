@@ -6,7 +6,7 @@
 
 - **Obsidian vault**（`content/`）— 筆記本體，Obsidian 桌面版的編輯目標
 - **Quartz 4 發佈層**（`quartz/` + `quartz.config.ts`）— 將 `content/` 靜態化為 `ob.bugloop.com`
-- **Claude Code 工作流層**（`.claude/`）— agents、skills，管理筆記建立、查詢、稽核；可 symlink 至 `~/.claude/` 跨專案使用
+- **Claude Code 工作流層**（`.claude/` symlink 自 `.agents/skills/`，後者為實際維護來源）— skills，管理筆記建立、查詢、稽核；`/ob` 可 symlink 至 `~/.claude/skills/` 跨專案使用
 
 三層各有 `CLAUDE.md`：全域（`~/.claude/`）、repo（本檔）、vault（`content/CLAUDE.md`），規則按作用域分層。
 
@@ -15,7 +15,7 @@
 - [Obsidian](https://obsidian.md/) 桌面版
 - Obsidian CLI plugin（在 Obsidian 內安裝）
 - Node.js 22+（本地預覽用）
-- [Claude Code](https://claude.ai/code)（AI 筆記助手，選用；啟用時必須設 `OBSIDIAN_VAULT_ROOT`，見下方 [Vault 路徑設定](#vault-路徑設定跨機器)）
+- [Claude Code](https://claude.ai/code)（AI 筆記助手，選用；跨專案使用 `/ob` 時必須設 `OBSIDIAN_VAULT_ROOT`，見下方 [Vault 路徑設定](#vault-路徑設定跨機器)；其他 repo-local skill 用 cwd 不需 env）
 
 ## Vault 結構
 
@@ -46,7 +46,7 @@ npm run vault:fix            # 稽核並自動修正（/vault-check 內部呼叫
 
 - **`/ob <需求>`** — 筆記建立與查詢（依語意分派到建檔流程 `references/write.md` 或查詢流程 `references/query.md`，皆經 general-purpose subagent）
 - **`/vault-check`** — vault frontmatter 與語意稽核（script 自動修 + audit reference 經 general-purpose subagent 給建議）
-- **`/vault-youtube-sync`、`/vault-topic-moc`、`/vault-reddit-sync`、Reddit 每日日報** — 批次工作流
+- **`/vault-youtube-sync`、`/vault-topic-moc`、`/vault-reddit-sync`、`/vault-reddit-daily-report`** — 批次工作流
 
 另有一條自動行為：技術／知識性提問時，會自動並行呼叫查詢流程（`/ob` skill + `references/query.md`）+ WebSearch 綜合答覆（協議在全域 `~/.claude/CLAUDE.md` 的 `## Obsidian` 段）。
 
@@ -74,9 +74,13 @@ mkdir -p ~/.claude/skills
 ln -sf "$PWD/.claude/skills/ob" ~/.claude/skills/ob
 ```
 
-### Vault 路徑設定（跨機器）
+### `/ob` Vault 路徑設定（跨專案）
 
-skill 內子流程（建檔／查詢／語意稽核）一律從 `$OBSIDIAN_VAULT_ROOT` 解析 vault 位置。**必須**在每台機器的 `~/.claude/settings.json` 注入絕對路徑：
+**為什麼只有 `/ob` 需要 env**：因為 `/ob` 要 symlink 到 `~/.claude/skills/`，讓你從其他專案的 Claude Code session 也能呼叫 — 此時 cwd 不在本 repo，沒辦法用相對路徑找到 vault，必須靠 env 解析。其他 skill 沒掛全域、永遠 repo-local 觸發（cwd 必為 repo root），用 `content/...` 相對路徑直接讀寫即可，**不依賴此變數**。
+
+啟用 `/ob` 跨專案使用前，**必須**在每台機器的 `~/.claude/settings.json` 注入絕對路徑：
+
+> ⚠️ 此 env **僅供 `/ob` 使用**；其他 repo-local skill 看不到也不需要它。
 
 ```json
 {
@@ -90,7 +94,7 @@ skill 內子流程（建檔／查詢／語意稽核）一律從 `$OBSIDIAN_VAULT
 
 > **Tip**：在 Claude Code 內可直接請它用 `update-config` skill 設定（例：「用 update-config 加 `OBSIDIAN_VAULT_ROOT=/絕對路徑/content` 到全域 settings」），它會自動 merge 既有 `env` 欄位，不會覆蓋其他設定。
 
-未設定或路徑無效時，agent 會直接中止並回報錯誤，不做猜測 fallback——避免寫到錯誤位置或回傳錯誤搜尋結果。設定後需重啟 Claude Code session 才會載入。
+未設定或路徑無效時，`/ob` 會直接中止並回報錯誤，不做猜測 fallback——避免寫到錯誤位置或回傳錯誤搜尋結果。設定後需重啟 Claude Code session 才會載入。
 
 ## Web Clipper 模板
 

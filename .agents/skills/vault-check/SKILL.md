@@ -13,7 +13,7 @@ orchestrator：串接 deterministic script（自動修）與語意層 subagent�
 
 依序檢查兩件事，任一失敗即中止：
 
-**a. `$OBSIDIAN_VAULT_ROOT` 必須有效**：未設或該路徑底下找不到 `master-index.md`，印出「`$OBSIDIAN_VAULT_ROOT` 未設或無效，設定方式見 README」並停。語意層 subagent 也會檢查同一條件，但在 orchestrator 早停可避免浪費 subagent context。
+**a. cwd 必須為 repo root**：`test -f content/master-index.md` 失敗即印出「cwd 不在 repo root，請於 repo 根目錄執行 `/vault-check`」並停。語意層 subagent 也會檢查同一條件，但在 orchestrator 早停可避免浪費 subagent context。
 
 **b. 工作區 `content/` 必須乾淨**：執行 `git status --porcelain`，若有任何涉及 `content/` 的變更（含 untracked），印出受影響檔案並停，建議用戶先 commit 或 stash。這是為了讓自動修的 diff 不被既有 in-progress 變更混淆。
 
