@@ -7,21 +7,21 @@ description: 每天整理 Reddit 上 AI 相關社群動態與新知成一篇依 
 
 參考 `vault-reddit-sync` 的訂閱機制，但這是**獨立功能**：自帶 subreddit 訂閱清單，不讀 `Inbox/Reddit/`，不建立逐篇 Reddit 筆記，只建立或更新每日一篇依頻道分類的社群動態 briefing。
 
-> 產出進入 `Inbox/RedditDaily/`，代表「每日社群動態快照」。日報整理當日 Reddit 在 AI 工程相關 sub 的討論熱度、工具新知、官方變更與行為觀察，每則保留原文連結；使用者讀完掌握社群當天的氛圍與焦點，需要深入的內容自行抽到 `Cards/` 或 `Topics/`，日報本身可刪除。
+> 產出進入 `content/Inbox/RedditDaily/`，代表「每日社群動態快照」。日報整理當日 Reddit 在 AI 工程相關 sub 的討論熱度、工具新知、官方變更與行為觀察，每則保留原文連結；使用者讀完掌握社群當天的氛圍與焦點，需要深入的內容自行抽到 `Cards/` 或 `Topics/`，日報本身可刪除。
 >
 > 採 **broad coverage but selective** 策略：單日日報目標保留 **10-20 則**，最多 25 則。重點是「掃過知道今天社群在討論什麼」，**不是「找可重現 bug 或技術文章」**。Reddit 是討論型社群，不是技術文獻來源；保留範圍包含官方新訊息、工具發布、行為觀察、熱議與抱怨潮（集體事件本身就是訊號），跳過範圍限於純 meme、純個人 showcase、純個人客服故障。
 
 ## 與 vault-reddit-sync 的分工
 
 - `vault-reddit-sync`：抓一週 top，分析後把高價值貼文各自存成 Obsidian 筆記（深度導向）
-- `vault-reddit-daily`：讀 `Inbox/RedditDaily/01.index.md` 的訂閱清單，抓當日 top，依 subreddit 頻道分類彙整成一篇 `Inbox/RedditDaily/Reddit日報-YYYY-MM-DD.md`，記錄當日**社群動態、工具新知、行為觀察、熱議爭議**（廣度導向）
+- `vault-reddit-daily`：讀 `content/Inbox/RedditDaily/01.index.md` 的訂閱清單，抓當日 top，依 subreddit 頻道分類彙整成一篇 `content/Inbox/RedditDaily/Reddit日報-YYYY-MM-DD.md`，記錄當日**社群動態、工具新知、行為觀察、熱議爭議**（廣度導向）
 - `RedditDaily` 不維護 persisted dedup；同一天重跑覆蓋日報，不影響逐篇同步流程
 
 ## 產出格式
 
 - 日報路徑：`content/Inbox/RedditDaily/Reddit日報-<YYYY-MM-DD>.md`
 - 訂閱來源：`content/Inbox/RedditDaily/01.index.md`
-- `Inbox/RedditDaily/` 是獨立日報資料夾，不放在 `Inbox/Reddit/` 底下
+- `content/Inbox/RedditDaily/` 是獨立日報資料夾，不放在 `content/Inbox/Reddit/` 底下
 
 日報 frontmatter：
 
@@ -48,9 +48,9 @@ tags:
 
 ## 頻道總覽
 
-| 頻道 | 抓取 | 粗篩通過 | 收錄 | 今日焦點 |
-| ---- | ---- | -------- | ---- | -------- |
-| r/<subreddit> | <N> | <N> | <N> | <一句話描述該頻道今天的主要討論；無收錄寫「無高訊號」> |
+| 頻道          | 抓取 | 粗篩通過 | 收錄 | 今日焦點                                               |
+| ------------- | ---- | -------- | ---- | ------------------------------------------------------ |
+| r/<subreddit> | <N>  | <N>      | <N>  | <一句話描述該頻道今天的主要討論；無收錄寫「無高訊號」> |
 
 ## r/<subreddit>
 
@@ -58,13 +58,13 @@ tags:
 
 ### 1. <貼文標題>
 
-- 分類：工具與模型新知 | 行為觀察與工作流 | 熱議與爭議
+- 分類（擇一）：<工具與模型新知 | 行為觀察與工作流 | 熱議與爭議>
 - 連結：<https://www.reddit.com/r/<subreddit>/comments/<post_id>/>
 - 訊號：<為什麼值得看>
 - 摘要：<繁中 2-4 句，技術名詞保留英文，不補充推測>
 - 可參考點：<打開原文時優先看的內容>
 
-各頻道章節按照 `content/Inbox/RedditDaily/01.index.md` 的訂閱順序輸出；同一頻道內先放 `priority=high`，再按討論熱度排序。沒有收錄貼文的頻道不要建立空章節，只在「頻道總覽」與「跳過摘要」保留統計。
+各頻道章節按照 `content/Inbox/RedditDaily/01.index.md` 的訂閱順序輸出；同一頻道內先放 `priority` 為 `high` 的條目，再按討論熱度排序。沒有收錄貼文的頻道不要建立空章節，只在「頻道總覽」與「跳過摘要」保留統計。
 
 ## 跳過摘要
 
@@ -104,7 +104,7 @@ tags:
 
 讀取 `content/Inbox/RedditDaily/01.index.md` 的「## 訂閱頻道」段，擷取每行 `- <subreddit>`。
 
-若 `Inbox/RedditDaily/01.index.md` 不存在，先建立含空訂閱清單的 index，再輸出「尚未訂閱任何 RedditDaily 頻道，請先在 `Inbox/RedditDaily/01.index.md` 的『訂閱頻道』段新增 subreddit」並中止。不 bootstrap 預設頻道。
+若 `content/Inbox/RedditDaily/01.index.md` 不存在，先建立含空訂閱清單的 index，再輸出「尚未訂閱任何 RedditDaily 頻道，請先在 `content/Inbox/RedditDaily/01.index.md` 的『訂閱頻道』段新增 subreddit」並中止。不 bootstrap 預設頻道。
 
 Index 範本：
 
@@ -128,7 +128,6 @@ Reddit 每日日報訂閱 index。日報正文依這裡的 subreddit 頻道分�
 - codex
 - GithubCopilot
 - vibecoding
-
 ```
 
 ## 步驟 2：抓取當日 Reddit 貼文清單
@@ -221,6 +220,7 @@ note：`post_hint` 在 text post 為空，**不可單獨用「post_hint 為空�
 6. **可重現 bug / workaround**（不再排第一，但仍保留）
 
 二次淘汰時：
+
 - 優先保留 1-3 類（動態訊號）
 - 同類內按 `score × num_comments` 大致排序（雙高代表討論熱度高）
 - 跨 sub 適度分配，避免單一 sub 壟斷收錄
@@ -264,7 +264,7 @@ cwd：<repo root 絕對路徑>（已驗證）
 - 每則 `KEEP` 必須包含原文連結
 - 若 `KEEP` 超過 25 則，主 skill 端依步驟 4 優先級二次淘汰；理想保留 10-20 則
 - 正文依 subreddit 頻道分類：每個有收錄貼文的 subreddit 一個 `## r/<subreddit>` 章節；每則條目用「分類」標示 `工具與模型新知` / `行為觀察與工作流` / `熱議與爭議`
-- 頻道章節按照 `01.index.md` 訂閱順序輸出；同一頻道內先放 `priority=high`，再按討論熱度排序；沒有收錄貼文的頻道不要產出空 heading
+- 頻道章節按照 `content/Inbox/RedditDaily/01.index.md` 訂閱順序輸出；同一頻道內先放 `priority` 為 `high` 的條目，再按討論熱度排序；沒有收錄貼文的頻道不要產出空 heading
 
 ## 步驟 6：總結
 
