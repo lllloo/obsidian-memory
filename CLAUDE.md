@@ -35,10 +35,12 @@ npm run vault:fix                # 稽核並自動修正（/vault-check 內部�
 ## 架構
 
 - `content/` — Obsidian vault（筆記、模板），Quartz 從此目錄讀取 Markdown 建站；入口索引 `content/master-index.md`
+- `topics-review.md` — Cards → Topics 升降規則治理文件（5 條保留條件、7 條退回反指標、書籤型例外）
 - `quartz/` — Quartz 框架原始碼（不需修改）
 - `quartz.config.ts` — 站台設定（外觀、plugins、ignorePatterns）
 - `quartz.layout.ts` — 版面配置
 - `AGENTS.md` — `CLAUDE.md` 的 symlink，給非 Claude Code 的 agent 工具讀（改 CLAUDE.md 自動同步）
+- `.clipper/vault-clipper.json` — Obsidian Web Clipper 模板（`Inbox/Clippings/` 抓取規則、frontmatter 白名單；非白名單欄位由 `/vault-check` 清掉）
 - `.github/workflows/deploy.yml` — push 到 `main` 自動建置並部署至 GitHub Pages
 
 ## Quartz 重要行為
