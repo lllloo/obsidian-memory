@@ -1,44 +1,39 @@
 ---
 title: Claude Code Review 工作流
 created: 2026-04-26
-updated: 2026-04-26
+updated: 2026-05-08
 tags:
   - claude-code
   - code-review
 ---
 
-## 核心 Review 指令
+PR 規模分層跑不同 review 工具，避免「每次都 ultra」浪費 token、也避免「只跑 review」漏掉安全或大型重構。
 
-| 指令 | 說明 | 耗時 |
-|------|------|------|
-| `/review` | 通用 PR 審查，每次都跑 | ~3–4 分鐘 |
-| `/simplify` | 3 agent 平行找重用/品質/效率問題並自動修 | 快 |
-| `/security-review` | 安全漏洞掃描（SQL 注入、權限、認證等） | 中 |
-| `/ultrareview` | 多 agent 雲端深度審查（v2.1.111，2026/04/16 推出） | ~10–20 分鐘 |
+## 分層策略
 
-## 建議分層策略
+| 規模 | 流程 |
+|---|---|
+| 一般 PR | 本地測試 → `/review` → `/security-review` |
+| 大型 / 關鍵 PR（>500 行）| 加 `/simplify`（前）+ `/ultrareview`（後） |
+| 基礎設施變更（DB migration、auth、permission） | 全跑 + 人工最終確認 |
 
-**一般 PR**：
-本地測試 → `/review` → `/security-review`
+## 各指令的角色
 
-**大型 / 關鍵 PR（>500 行）**：
-本地測試 → `/simplify` → `/review` → `/security-review` → `/ultrareview`
+- **`/review`**：通用 PR 審查，每個 PR 都跑
+- **`/simplify`**：多 review agent 平行找重用 / 品質 / 效率問題後**自動修**——所以放最前，省得後面 review 還在針對被它修掉的東西
+- **`/security-review`**：聚焦當前 branch 待提交變更的安全漏洞（OWASP Top 10、注入、認證 / 授權、權限提升）
+- **`/ultrareview`**：把 branch 交給雲端 specialist agent 群（安全 / 架構 / 正確性 / 風格 / 測試）合併報告。耗時最久，留給大型 / 關鍵 PR 合併前最後關卡——無參數審本地 branch、`/ultrareview <PR#>` 審指定 GitHub PR
 
-**基礎設施變更**（DB migration、auth 等）：
-以上全跑 + 人工最終確認
+## 立場：自動 review 不能取代人工 finding 確認
 
-## 補充說明
+每個 finding 都該人工判斷「真該修嗎」。LLM review 常見偏差：
 
-- `/simplify` 是 3 個 review agent 平行執行，找重用與效率問題後直接自動修正
-- `/security-review` 針對當前 branch 的待提交變更，涵蓋 OWASP Top 10、注入向量、認證/授權、權限提升等
-- 所有自動 review 應搭配人工確認每個 finding 是否真正需要修
+- 把 stylistic preference 當 critical issue
+- 對 generated code / vendor code 給意見
+- 重複指出同一問題多種包裝
 
-### /ultrareview
+讓 review agent 全自動修是 `/simplify` 的特權（且範圍受限），其他模式產出的 finding 應視為「待審核 hint」而非「TODO list」。
 
-`/ultrareview` 於 Claude Code v2.1.111（2026/04/16）正式推出。會將 branch 交給雲端的 specialist agent 群（安全、架構、正確性、風格、測試各有專責），合併成一份完整報告。
+## 跨模型 review 補同模型盲點
 
-使用方式：
-- 無參數：審查本地當前 branch
-- `/ultrareview <PR#>`：審查指定 GitHub PR
-
-適合大型或關鍵 PR 合併前最後一道關。
+Claude review 自己生成的 code 時，思路往往跟生成時類似——同樣的判斷、同樣的盲點，跑兩次 `/review` 看不出多少新東西。關鍵 PR 引入 [[codex-plugin-cc]] 讓 Codex 從不同訓練分佈、不同推理路徑切入，比同模型重跑更可能抓到漏掉的盲點。

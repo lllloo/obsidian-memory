@@ -9,17 +9,12 @@ tags:
 
 前端技術實作：CSS 技巧、常見 bug、best practices 與動效實作。
 
-## 動效與互動
-
-- [[動效與互動]] — Hero 動效、捲動手感與互動層的總覽
-- [[GSAP-與-Lenis-捲動動畫分工]] — smooth scroll 與 scroll-triggered animation 的分工
-
 ## CSS 技巧與陷阱
 
-- [[Flexbox-min-width-auto-陷阱]] — Flexbox min-width auto 導致的溢出問題
-- [[有-Border-的容器-Padding-規則]] — 有 Border 容器的 Padding 規則
-- [[避免魔術數字]] — 避免 Magic Number 的 CSS 最佳實踐
 - [[sr-only-導致-body-scrollbar-的-bug]] — sr-only 導致 body scrollbar 的 bug
+- [[Flexbox-min-width-auto-陷阱]] — 子元素 `min-width: auto` 導致 `flex-1` 不收縮
+- [[有-Border-的容器-Padding-規則]] — `border` 容器 padding 必須放子元件，不放外層
+- [[切版的反推魔術數字]] — 看到 `w-[XXX]px` 先問是否反推結果
 
 ## JavaScript 與框架
 

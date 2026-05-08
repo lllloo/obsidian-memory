@@ -52,6 +52,8 @@
 
 跨主題靠 `tags` 串連：`Topics/` 第一層不做跨主題巢套（不建「AI-工具/Claude-Code/」這種群組）；單一主題內 Cards 過多時，可在 `Topics/<主題>/` 底下再分子資料夾。
 
+升 Topic 前的品質門檻、退回 Cards 的反指標：見 repo 根 [`topics-review.md`](../topics-review.md)。**已升 Topic 重看時若命中反指標，可隨時退回**。
+
 ### 防爆量
 
 - Inbox 靠「消化完刪除」

@@ -9,17 +9,10 @@ tags:
 
 用 Obsidian 搭配 Claude Code 打造個人知識庫的筆記集合。
 
-## 組織方法
+## 工具書籤
 
-- [[MOC-筆記組織法]] — 用 MOC + 資料夾的混合策略組織筆記
-
-## 工具與設定
-
-- [[Obsidian-CLI-整合指南]] — CLI 常用指令速查
-- [[Obsidian-Skills]] — 目前安裝、日常使用的 skills（Obsidian 共同創辦人維護的集合）
-- [[Obsidian-Skills-候選]] — YouTube 影片整理的候選清單（含視覺化、教學、研究等待評估項目）
-- [[defuddle]] — 網頁剪藏 skill 介紹與適用範圍
-- [[Quartz-部署筆記]] — 把 vault 發佈成靜態網站
+- [[Obsidian-CLI-整合指南]] — 讓 Claude Code 讀寫 vault 的 CLI（kepano 維護）
+- [[defuddle]] — 網頁內容清洗 CLI，把網頁納入吸收型卡片盒的第一步
 
 ## 踩坑紀錄
 

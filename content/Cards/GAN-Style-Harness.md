@@ -80,7 +80,7 @@ gan-evaluator → Playwright 測試 + feedback.md + score
 
 ## 相關
 
-- [[Agent-Harness]] — 三角結構的上位概念
+- [[Harness-Engineering]] — 三角結構的上位概念
 - [[Superpowers框架]] — 另一種把 evaluator 內建到流程裡的做法（TDD gate）
 
 ## 來源

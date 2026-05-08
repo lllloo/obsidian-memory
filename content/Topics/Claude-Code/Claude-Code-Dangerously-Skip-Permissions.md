@@ -1,102 +1,39 @@
 ---
 title: "claude --dangerously-skip-permissions"
 created: 2026-04-09
-updated: 2026-05-04
+updated: 2026-05-08
 tags:
   - claude-code
   - cli
   - automation
 ---
 
-`--dangerously-skip-permissions` 是 Claude Code CLI 的旗標，**等同於** `--permission-mode bypassPermissions`。
+`--dangerously-skip-permissions`（等同 `--permission-mode bypassPermissions`）跳過權限提示，**僅用於有隔離邊界的環境**——容器 / VM / devcontainer、受控 sandbox 自動化腳本、壞了能整包砍掉的短期實驗環境。
 
-啟用後，Claude Code 會跳過一般權限提示與 safety checks；**唯一仍會保留的提示，是對受保護路徑的寫入**。
+主機本機 dev、production、含敏感資料時都不該開——`rm -rf`、`git reset --hard`、`git push --force` 會無提示直接執行。
 
-## 使用方式
+## 不要跟 `auto mode` 搞混
 
-```bash
-# 互動模式
-claude --dangerously-skip-permissions
+`bypassPermissions` 重點是「略過提示」不是「拔掉所有限制」；如果只是「少按確認」需求，更細粒度的權限模式更合適：
 
-# 搭配 -p 單次執行
-claude -p "重構所有測試檔案" --dangerously-skip-permissions
-```
+| 場景 | 用 |
+|---|---|
+| 想少按確認，但還要看大多數 Bash / network 提示 | `acceptEdits` |
+| 想盡量無提示但要 background safety checks 攔危險操作 | `auto mode` |
+| 大多數安全操作免問、危險操作問或封鎖 | fine-grained `permissions.allow / ask / deny` |
 
-## 它實際跳過了什麼
+## 還沒被 bypass 的東西
 
-- 一般工具權限提示
-- 多數原本要逐次確認的 tool approval 流程
-- auto mode 的 background safety checks（因為這不是 auto mode）
-
-## 仍然不會無提示放行的東西
-
-官方文件明確列出：**受保護路徑寫入**在所有模式下都有額外保護。
-
-另外，**明確的 deny rules 仍然是硬邊界**；`bypassPermissions` 的重點是略過提示，不是把所有限制都拔掉。
-
-常見受保護位置包含：
-
-- `.git`
-- `.vscode`
-- `.idea`
-- `.husky`
-- `.claude`（但 `.claude/commands`、`.claude/agents`、`.claude/skills`、`.claude/worktrees` 是例外）
-
-## 適用場景
-
-- **隔離容器 / VM / devcontainer**：你願意把整個工作區交給 Claude 自動跑
-- **受控自動化腳本**：你已經用 sandbox、deny rules、測試與環境隔離把風險壓低
-- **短生命週期實驗環境**：壞了就整包砍掉重來
-
-## 風險與注意事項
-
-- **沒有 prompt injection 防護**：官方直接建議如果你要「少提示但保留安全檢查」，應優先考慮 `auto mode`
-- **CLAUDE.md 不是硬安全邊界**：它可以降低 agent 做傻事的機率，但不是 OS-level enforcement
-- **會直接執行高風險命令**：像 `rm -rf`、`git reset --hard`、`git push --force` 這類都可能在無提示下發生
-- **不適合 production 或含敏感資料環境**
-
-## 比較安全的替代方案
-
-### 1. `acceptEdits`
-
-適合你想少按很多次確認，但還是保留大部分 Bash / network prompt 的場景。
-
-### 2. `auto mode`
-
-如果你的需求是「盡量無提示，但要有 background classifier 幫我攔危險操作」，選 `auto` 比 `bypassPermissions` 合理。
-
-### 3. Fine-grained permission rules
-
-不要用舊版 `allowedTools` 寫法；官方 `settings.json` 用的是 `permissions.allow / ask / deny`：
-
-```json
-{
-  "permissions": {
-    "allow": [
-      "Read",
-      "Bash(git status)",
-      "Bash(git diff *)"
-    ],
-    "ask": [
-      "Bash(git push *)"
-    ],
-    "deny": [
-      "Read(./.env)",
-      "Bash(curl *)"
-    ]
-  }
-}
-```
-
-這樣可以做到「大多數安全操作免問，但危險操作仍要問或直接封鎖」。
+- **deny rules**——即使 bypass 也擋（硬邊界）
+- **受保護路徑**——`.git`、`.vscode`、`.idea`、`.husky`、`.claude` 等部分子目錄官方有額外保護，但細節可能隨版本改
+- **CLAUDE.md 規則 ≠ 硬邊界**——只能降低 agent 做傻事的機率，不是 OS-level enforcement
+- **沒有 prompt injection 防護**——任何 bypass 模式都沒有
 
 ## 相關
 
-- [[Claude-Code-指令速查]] — session 指令速查（/insights、/btw、/statusline 等）
+- [[Claude-Code-規則系統設計]] — CLAUDE.md / Rules / Hooks 三層機制
+- [[Claude-Code-Skills]]
 
 ## 來源
 
-- [CLI reference](https://code.claude.com/docs/en/cli-reference)
-- [Choose a permission mode](https://code.claude.com/docs/en/permission-modes)
-- [Configure permissions](https://code.claude.com/docs/en/permissions)
-- [Claude Code settings](https://code.claude.com/docs/en/settings)
+- [權限模式官方文件](https://code.claude.com/docs/en/permission-modes)
