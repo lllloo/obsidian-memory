@@ -1,37 +1,34 @@
 ---
 title: Claude Code 多 Agent 協作
 created: 2026-04-24
-updated: 2026-04-25
+updated: 2026-05-08
 tags:
   - claude-code
   - workflow
 ---
 
-## Subagent vs Agent Teams vs Forked subagent
+四種多 agent 機制按「想做什麼」對應，**不是疊加越多越好**——選錯機制比少用一個更傷效率。版本相依細節（env name、`/branch` vs `/fork` alias 行為、subagent fork 啟用條件）以官方 docs 為準。
 
-| | Subagent | Agent Teams | Forked subagent |
-|---|---|---|---|
-| Context | 獨立，不繼承主對話 | 各自獨立，可共享 task list / mailbox | 繼承主 session 對話 |
-| 互相溝通 | 否，結果回主線 | 是，可彼此傳訊 | 否，最後回主線 |
-| 啟動方式 | 自動 delegation 或明確指定 | `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1` | `CLAUDE_CODE_FORK_SUBAGENT=1`（v2.1.117+），或 `/fork <任務>` |
-| 適合場景 | 單點研究、單點審查、隔離輸出 | 多人分工、長任務、平行 review/fix | 中途開支線、不想重講背景 |
+## 該怎麼選
 
-## `/branch` vs `/fork`
+| 想做什麼 | 用 | 為什麼 |
+|---|---|---|
+| 單點研究 / 審查 / 隔離輸出 | **Subagent** | 獨立 context 不繼承主對話，結果回主線；適合用後即丟 |
+| 多人分工 / 平行 review-fix / 長任務 | **Agent Teams** | 各自獨立 context 但共享 task list / mailbox 可互傳訊 |
+| 中途開支線 / 不想重講背景 | **Forked subagent** | 繼承當前 session 對話，最後回主線；省 prompt-context 重建成本 |
+| 多 agent 同時改檔避免互踩 | 上述 + **Git worktrees** | 每 agent 各有 working tree；subagent 沒留下變更時 worktree 自動清掉 |
 
-- `/branch` 是主命令（v2.1.77 改名自 `/fork`）；`/fork` 預設為向後相容 alias，兩者等效
-- 開啟 `CLAUDE_CODE_FORK_SUBAGENT=1` 後，`/fork` 改為真正 spawn 一個 forked subagent，不再等於 `/branch`
+## 怎麼啟用 / 觸發
 
-## Git worktrees 平行 Agent
+- **Subagent**：Claude 依 description 自動 delegate；`/agents` 管理或建立自訂；`claude agents` CLI 列出所有
+- **Agent Teams**：experimental，需先在 settings 啟用；之後自然語言告訴 Claude「create an agent team」即可
+- **Forked subagent**：experimental，需啟用 fork mode；用 `/fork <directive>` 觸發（未啟用時 `/fork` = `/branch` 只分對話不 spawn）
+- **Git worktrees**：`claude --worktree <name>` CLI flag，或 subagent frontmatter `isolation: worktree`
 
-官方支援 worktree isolation：
+實際 env var 名、版本要求、`/fork` 在不同 mode 下行為差異請查官方 docs（會隨版本變動）。
 
-- `claude --worktree feature-auth`
-- subagent frontmatter 可設 `isolation: worktree`
+## 踩坑
 
-每個 agent 各有自己的 working tree，避免互相覆蓋檔案。**subagent 若沒有留下變更，worktree 會自動清掉。**
-
-## 來源
-
-- [Create custom subagents](https://code.claude.com/docs/en/sub-agents)
-- [Forked subagents](https://code.claude.com/docs/en/sub-agents#fork-the-current-conversation)
-- [Agent Teams](https://code.claude.com/docs/en/agent-teams)
+- **Subagent vs Forked subagent 容易混**：差別只在「要不要繼承當前對話」——要從零開始選 Subagent，要接著聊選 Forked subagent
+- **Agent Teams 不是跨家族 LLM**：teammate 是獨立 Claude Code session（可混搭 Sonnet / Opus / Haiku），但仍是 Claude 家族；想跨家族（GPT / Gemini）獨立視角看 [[codex-plugin-cc]]
+- **worktree 不解決 race condition**：兩個 agent 改不同檔不互踩沒錯，但改同一個邏輯區塊（如 schema migration）還是會撞——分支策略要先想好

@@ -1,6 +1,6 @@
 # Subagent：Reddit 日報條目分析（社群動態 briefing 版）
 
-> **任務契約**：只分析貼文並回傳日報條目，不建立獨立貼文筆記，不更新 graveyard，不寫檔。主 skill 端負責依 subreddit 頻道分類組裝 `Inbox/RedditDaily/Reddit日報-YYYY-MM-DD.md`。
+> **任務契約**：只分析貼文並回傳日報條目，不建立獨立貼文筆記，不更新 graveyard，不寫檔。主 skill 端負責組裝 `Inbox/RedditDaily/Reddit日報-YYYY-MM-DD.md`。
 
 ## 定位提醒
 
@@ -26,7 +26,7 @@ fi
 
 ## 步驟 2：分類判斷
 
-對每篇貼文先判定**屬於哪一類動態**，再決定 KEEP / SKIP。日報最終的 top-level heading 由 subreddit 頻道決定；這裡的類型只用來當每則條目的「分類」標籤與排序輔助。
+對每篇貼文先判定**屬於哪一類動態**，再決定 KEEP / SKIP。
 
 ### 三大保留類型
 
@@ -80,20 +80,18 @@ title: <貼文標題>
 subreddit: <subreddit>
 url: https://www.reddit.com/r/<subreddit>/comments/<post_id>/
 published: <YYYY-MM-DD>
-category: news | observation | debate
+section: news | observation | debate
 signal: <一行說明這是哪種動態訊號（工具新知 / 行為觀察 / 集體事件 / 爭議）>
 summary: <繁中 2-4 句摘要，技術名詞保留英文；不要補充推測；若是 link post，描述外連內容的核心點>
 reference: <使用者打開原文時應優先看的點：通常是留言區的共鳴、外連 repo / docs、或主文的 key 段落>
 priority: high | medium | low
 ```
 
-**category 對應條目分類**：
+**section 對應日報三節**：
 
 - `news` → 工具與模型新知
 - `observation` → 行為觀察與工作流
 - `debate` → 熱議與爭議
-
-主日報不要再用 `news` / `observation` / `debate` 當一級章節；一級章節應是 `## r/<subreddit>`，category 只顯示在每則條目的「分類」欄位。
 
 **priority 判定**：
 

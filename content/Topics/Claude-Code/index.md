@@ -11,19 +11,16 @@ tags:
 
 ## 核心能力與日常操作
 
-- [[Claude-Code-Dangerously-Skip-Permissions|claude --dangerously-skip-permissions]] — bypass permissions 的實際邊界與替代方案
+- [[Claude-Code-規則系統設計]] — CLAUDE.md / Rules / Hooks 三層機制與升級路徑
 - [[Claude-Code-雙帳號設定]] — 用 `CLAUDE_CONFIG_DIR` 在同機切換多帳號
-- [[Claude-Code-CLI-優先]] — CLI 優於 MCP 的原因與工具速查表
-- [[Claude-Code-多-Agent-協作]] — Subagent / Teams / Fork / worktree
-- [[Claude-Code-指令速查]] — 依頻率分三梯隊的完整指令速查（`/compact`、`/rewind`、`/batch`、`/autofix-pr` 等）
-- [[Claude-Code-Review-工作流]] — `/review`、`/simplify`、`/security-review`、`/ultrareview` 分層策略
+- [[Claude-Code-CLI-優先]] — 工具整合優先選 CLI 退而選 MCP（架構 / Token / 生態三層論述）
+- [[Claude-Code-Dangerously-Skip-Permissions]] — `--dangerously-skip-permissions` 該用 / 不該用 / 替代決策
+- [[Claude-Code-Skill-Command-命名]] — kebab-case + 同家族前綴 + 動名詞偏好
+- [[Claude-Code-Review-工作流]] — PR 規模分層跑 review 工具的決策表
+- [[Claude-Code-多-Agent-協作]] — Subagent / Agent Teams / Forked subagent / worktrees 該怎麼選
+- [[Claude-Code-Skills]] — Skill 概念定位、立場（vs MCP / token 是 bonus / 不是所有重複都該包）、陷阱
 
-## Skills / Agents / 命名
+## 工具書籤
 
-- [[Claude-Code-Skills]] — Skills 機制、frontmatter、常見坑與社群 pattern
-- [[Claude-Code-Agent-Packages]] — 常見社群 agent packs 與目前安裝清單
-- [[Claude-Code-Skill-Command-命名]] — `name`、資料夾名與 `/` 呼叫名的命名規則
+- [[codex-plugin-cc]] — OpenAI 出的 Claude Code plugin，做跨模型 review / task delegation
 
-## 跨主題延伸
-
-- [[Claude-Code-前端設計工作流]] — 已整理進 `Topics/UI設計/`，聚焦從靈感、設計系統到動效落地的流程
