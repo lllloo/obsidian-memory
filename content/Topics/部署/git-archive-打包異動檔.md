@@ -13,12 +13,7 @@ tags:
 ## 指令
 
 ```bash
-files=$(git diff --name-only --diff-filter=ACMR HEAD~1..HEAD)
-if [ -n "$files" ]; then
-    git archive -o update.zip HEAD $files
-else
-    echo "無 ACMR 異動，跳過打包"
-fi
+git archive -o update.zip HEAD $(git diff --name-only --diff-filter=ACMR HEAD~1..HEAD)
 ```
 
 ## 變體
@@ -26,12 +21,7 @@ fi
 指定兩個 commit 之間：
 
 ```bash
-files=$(git diff --name-only --diff-filter=ACMR <from-commit>..<to-commit>)
-if [ -n "$files" ]; then
-    git archive -o update.zip <to-commit> $files
-else
-    echo "無 ACMR 異動，跳過打包"
-fi
+git archive -o update.zip <to-commit> $(git diff --name-only --diff-filter=ACMR <from-commit>..<to-commit>)
 ```
 
 輸出刪除清單（`deleted.txt`，方便對方手動刪檔）：
@@ -45,4 +35,3 @@ git diff --name-only --diff-filter=D HEAD~1..HEAD > deleted.txt
 - `--diff-filter=ACMR`：只取新增 / 修改 / 改名 / 複製，**不含刪除**（D）——刪除清單另出文字檔交付
 - `archive` 後面第一個參數是「從哪個 commit 抓檔案內容」，通常用 `HEAD`
 - `$()` 命令替換 **Windows cmd 不支援**，改用 PowerShell（同樣支援 `$()`）或 Git Bash
-- **空清單必 guard**：若 ACMR 篩完無檔案（例如刪除-only 的 release），`$(...)` 會展開為空，命令退化成 `git archive -o update.zip HEAD`——反而打包整個 repo；先把清單存變數、判斷非空才執行
