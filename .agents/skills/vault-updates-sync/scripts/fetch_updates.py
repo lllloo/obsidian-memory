@@ -145,17 +145,32 @@ def request_text(url: str) -> str:
     if token and "api.github.com" in url:
         headers["Authorization"] = f"Bearer {token}"
 
+    curl = shutil.which("curl")
     last_error: Exception | None = None
     for attempt in range(len(RETRY_BACKOFF_SECONDS) + 1):
         try:
+            if curl:
+                cmd = [
+                    curl, "-sS", "--fail", "-L",
+                    "-H", f"User-Agent: {headers['User-Agent']}",
+                    "-H", f"Accept: {headers['Accept']}",
+                    "-H", f"Accept-Language: {headers['Accept-Language']}",
+                ]
+                if "Authorization" in headers:
+                    cmd += ["-H", f"Authorization: {headers['Authorization']}"]
+                cmd.append(url)
+                proc = subprocess.run(cmd, check=True, capture_output=True, text=True, timeout=25)
+                return proc.stdout
             req = urllib.request.Request(url, headers=headers)
             with urllib.request.urlopen(req, timeout=25) as resp:
                 return resp.read().decode("utf-8", errors="replace")
+        except subprocess.CalledProcessError as e:
+            last_error = RuntimeError((e.stderr or "").strip() or f"curl exit {e.returncode}")
         except Exception as exc:  # noqa: BLE001 - preserve short script portability
             last_error = exc
-            if attempt >= len(RETRY_BACKOFF_SECONDS):
-                break
-            time.sleep(RETRY_BACKOFF_SECONDS[attempt])
+        if attempt >= len(RETRY_BACKOFF_SECONDS):
+            break
+        time.sleep(RETRY_BACKOFF_SECONDS[attempt])
     raise RuntimeError(str(last_error or "unknown request error"))
 
 
@@ -221,6 +236,8 @@ def fetch_issues(repo: str, since: dt.datetime) -> None:
 
 def _issue_is_candidate(labels: str, title: str, comments: int, state: str) -> bool:
     label_text = labels.lower()
+    if "security" in label_text:
+        return True
     if any(marker in label_text for marker in ("duplicate", "invalid", "stale")) and comments < 10:
         return False
     if state.lower() == "closed" and comments < 3 and "has repro" not in label_text:
@@ -290,7 +307,11 @@ query($owner:String!, $name:String!) {
             timeout=25,
         )
         payload = json.loads(proc.stdout)
-    except Exception:
+    except subprocess.CalledProcessError as e:
+        print(f"ERROR:discussions:{repo}:{(e.stderr or '').strip() or f'gh exit {e.returncode}'}")
+        return
+    except Exception as exc:  # noqa: BLE001
+        print(f"ERROR:discussions:{repo}:{exc}")
         return
 
     nodes = (
