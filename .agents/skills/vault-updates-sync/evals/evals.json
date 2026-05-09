@@ -1,0 +1,57 @@
+{
+  "skill_name": "vault-updates-sync",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "同步最近一週 Codex 和 Claude Code 的官方變更與 GitHub issues",
+      "expected_output": "觸發 vault-updates-sync，讀 content/Inbox/Updates/01.index.md 或建立預設 index，抓官方 changelog、GitHub releases、GitHub issues / discussions，僅把高信任且可操作的候選建成 content/Inbox/Updates/ 下的筆記",
+      "files": [],
+      "assertions": [
+        {
+          "name": "使用高信任來源",
+          "description": "流程使用官方 changelog / release notes、GitHub releases、GitHub issues / discussions 作為主要來源"
+        },
+        {
+          "name": "高精度篩選",
+          "description": "跳過無 repro、無 workaround、無 maintainer confirmation 的低價值 issue"
+        },
+        {
+          "name": "正確寫入路徑",
+          "description": "保存的筆記寫入 content/Inbox/Updates/<source>/，frontmatter 包含 title、created、updated、source、published、tags"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "整理 Cursor changelog 和 GitHub Copilot 相關 changelog 到 vault",
+      "expected_output": "觸發 vault-updates-sync，處理 Official changelogs 中的 Cursor Changelog 與 GitHub Changelog，僅保留對 developer tooling / coding agent workflow 有影響的 entry",
+      "files": [],
+      "assertions": [
+        {
+          "name": "處理官方 changelog",
+          "description": "使用 official changelog URL 或 GitHub Changelog feed"
+        },
+        {
+          "name": "避免整頁搬運",
+          "description": "不把整個 changelog 全文寫入筆記，只摘要與本次相關的 entry"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "同步最近幾天 openai/codex 裡有 workaround 或 maintainer confirmation 的 bug",
+      "expected_output": "觸發 vault-updates-sync，抓 openai/codex GitHub issues，優先保留有 repro、workaround、maintainer confirmation 或多人命中的 actionable bugs",
+      "files": [],
+      "assertions": [
+        {
+          "name": "issue 篩選",
+          "description": "保留 actionable bug，跳過單點抱怨或帳號問題"
+        },
+        {
+          "name": "來源可回查",
+          "description": "每篇保存筆記都以 GitHub issue URL 作為 source"
+        }
+      ]
+    }
+  ]
+}

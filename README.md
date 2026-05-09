@@ -23,6 +23,7 @@
 content/
 ├── Inbox/          # 待消化暫存（不發佈）
 │   ├── YouTube/    # YouTube 影片摘要
+│   ├── Updates/    # 官方 changelog / GitHub 高信任更新
 │   └── Clippings/  # 網頁剪貼
 ├── Cards/          # 未歸屬的完整概念 Cards
 └── Topics/         # 已歸檔主題資料夾（含 MOC）
@@ -42,11 +43,11 @@ npm run vault:fix            # 稽核並自動修正（/vault-check 內部呼叫
 
 ## Claude Code 整合
 
-此 repo 的 `.claude/` 管理 Obsidian 相關的 skills（已全 skill 化，不再使用 slash command；skill 內子流程以 `general-purpose` subagent + references prompt 執行，不依賴命名 agent）。三個使用者入口：
+此 repo 的 `.claude/` 管理 Obsidian 相關的 skills（已全 skill 化，不再使用 slash command；skill 內子流程以 `general-purpose` subagent + references prompt 執行，不依賴命名 agent）。主要使用者入口：
 
 - **`/ob <需求>`** — 筆記建立與查詢（依語意分派到建檔流程 `references/write.md` 或查詢流程 `references/query.md`，皆經 general-purpose subagent）
 - **`/vault-check`** — vault frontmatter 與語意稽核（script 自動修 + audit reference 經 general-purpose subagent 給建議）
-- **`/vault-youtube-sync`、`/vault-topic-moc`、`/vault-reddit-sync`、`/vault-reddit-daily`** — 批次工作流
+- **`/vault-youtube-sync`、`/vault-topic-moc`、`/vault-updates-sync`、`/vault-reddit-daily`** — 批次工作流
 
 另有一條自動行為：技術／知識性提問時，會自動並行呼叫查詢流程（`/ob` skill + `references/query.md`）+ WebSearch 綜合答覆（協議在全域 `~/.claude/CLAUDE.md` 的 `## Obsidian` 段）。
 

@@ -1,21 +1,21 @@
 ---
 name: vault-reddit-daily
-description: 每天整理 Reddit 上 AI 相關社群動態與新知成一篇 Obsidian briefing，涵蓋工具新版、官方變更、模型行為觀察、熱議與爭議，每則附原文連結。觸發時機：「Reddit 日報」、「每日 Reddit」、「今天 Reddit 有什麼」、「Reddit 動態」、「整理 Reddit 日報」、「AI Reddit 近況」、「給我 Reddit 每日摘要」。不應觸發：逐篇同步 Reddit 筆記（用 vault-reddit-sync）、查詢既有 vault 筆記、YouTube 同步、非 Reddit 來源分析。
+description: 每天整理 Reddit 上 AI 相關社群動態與新知成一篇 Obsidian briefing，涵蓋工具新版、官方變更、模型行為觀察、熱議與爭議，每則附原文連結。觸發時機：「Reddit 日報」、「每日 Reddit」、「今天 Reddit 有什麼」、「Reddit 動態」、「整理 Reddit 日報」、「AI Reddit 近況」、「給我 Reddit 每日摘要」。不應觸發：官方 changelog / GitHub issue 同步（用 vault-updates-sync）、查詢既有 vault 筆記、YouTube 同步、非 Reddit 來源分析。
 ---
 
 # Vault Reddit Daily Report
 
-參考 `vault-reddit-sync` 的訂閱機制，但這是**獨立功能**：自帶 subreddit 訂閱清單，不讀 `Inbox/Reddit/`，不建立逐篇 Reddit 筆記，只建立或更新每日一篇社群動態 briefing。
+Reddit 社群動態 briefing。自帶 subreddit 訂閱清單，不讀 `Inbox/Reddit/`，不建立逐篇 Reddit 筆記，只建立或更新每日一篇社群動態 briefing。
 
 > 產出進入 `Inbox/RedditDaily/`，代表「每日社群動態快照」。日報整理當日 Reddit 在 AI 工程相關 sub 的討論熱度、工具新知、官方變更與行為觀察，每則保留原文連結；使用者讀完掌握社群當天的氛圍與焦點，需要深入的內容自行抽到 `Cards/` 或 `Topics/`，日報本身可刪除。
 >
 > 採 **broad coverage but selective** 策略：單日日報目標保留 **10-20 則**，最多 25 則。重點是「掃過知道今天社群在討論什麼」，**不是「找可重現 bug 或技術文章」**。Reddit 是討論型社群，不是技術文獻來源；保留範圍包含官方新訊息、工具發布、行為觀察、熱議與抱怨潮（集體事件本身就是訊號），跳過範圍限於純 meme、純個人 showcase、純個人客服故障。
 
-## 與 vault-reddit-sync 的分工
+## 與 vault-updates-sync 的分工
 
-- `vault-reddit-sync`：抓一週 top，分析後把高價值貼文各自存成 Obsidian 筆記（深度導向）
+- `vault-updates-sync`：同步官方 changelog / release notes、GitHub releases、GitHub issues / discussions，建立高信任來源筆記
 - `vault-reddit-daily`：讀 `Inbox/RedditDaily/01.index.md` 的訂閱清單，抓當日 top，彙整成一篇 `Inbox/RedditDaily/Reddit日報-YYYY-MM-DD.md`，記錄當日**社群動態、工具新知、行為觀察、熱議爭議**（廣度導向）
-- `RedditDaily` 不維護 persisted dedup；同一天重跑覆蓋日報，不影響逐篇同步流程
+- `RedditDaily` 不維護 persisted dedup；同一天重跑覆蓋日報，不影響官方 / GitHub 更新同步流程
 
 ## 產出格式
 
@@ -136,7 +136,6 @@ Reddit 每日日報訂閱 index。
 - codex
 - GithubCopilot
 - vibecoding
-
 ```
 
 ## 步驟 2：抓取當日 Reddit 貼文清單
@@ -229,6 +228,7 @@ note：`post_hint` 在 text post 為空，**不可單獨用「post_hint 為空�
 6. **可重現 bug / workaround**（不再排第一，但仍保留）
 
 二次淘汰時：
+
 - 優先保留 1-3 類（動態訊號）
 - 同類內按 `score × num_comments` 大致排序（雙高代表討論熱度高）
 - 跨 sub 適度分配，避免單一 sub 壟斷收錄
