@@ -1,11 +1,11 @@
 ---
 name: vault-updates-sync
-description: 同步高信任 developer tooling 更新到 Obsidian，來源以官方 changelog / release notes、GitHub releases、GitHub issues / discussions 為主。使用者提到「updates sync」、「changelog 同步」、「release notes 同步」、「GitHub issue 同步」、「Codex/Claude Code/Copilot/Cursor 更新」、「官方變更整理」、「agent tooling 變更」時使用。
+description: 同步高信任 developer tooling 更新到 Obsidian，來源以官方 changelog / release notes、GitHub releases、GitHub discussions 為主。使用者提到「updates sync」、「changelog 同步」、「release notes 同步」、「Codex/Claude Code/Copilot/Gemini CLI 更新」、「官方變更整理」、「agent tooling 變更」時使用。
 ---
 
 # Vault Updates Sync
 
-同步高信任 developer tooling 更新到 Obsidian。重點是可回查、可操作、可沉澱的來源：官方 changelog、release notes、GitHub releases、GitHub issues / discussions。
+同步高信任 developer tooling 更新到 Obsidian。重點是可回查、可操作、可沉澱的來源：官方 changelog、release notes、GitHub releases、GitHub discussions。
 
 ## 定位
 
@@ -13,7 +13,7 @@ description: 同步高信任 developer tooling 更新到 Obsidian，來源以官
 
 1. **官方 changelog / release notes**：最高信任，適合建立正式來源筆記。
 2. **GitHub releases**：版本、功能、breaking change、修復資訊。
-3. **GitHub issues / discussions**：actionable bug、workaround、tooling change、maintainer confirmation。
+3. **GitHub discussions**：actionable workaround、maintainer confirmation、重要設計決策。
 
 不處理：
 
@@ -24,7 +24,7 @@ description: 同步高信任 developer tooling 更新到 Obsidian，來源以官
 
 ## 產出
 
-- 筆記：`content/Inbox/Updates/<YYYY-MM-DD>-weekly-updates.md`（每次 sync 一篇，按工具分 section）
+- 筆記：`content/Inbox/Updates/<YYYY-MM-DD>-daily-updates.md`（每次 sync 一篇，按工具分 section；同日多次 sync 追加而非覆蓋）
 - Index：`content/Inbox/Updates/01.index.md`
 - 筆記代表「高信任待消化來源」，進 Inbox 不直接發佈；後續可由使用者整理到 `Cards/` 或 `Topics/`。
 
@@ -32,38 +32,40 @@ description: 同步高信任 developer tooling 更新到 Obsidian，來源以官
 
 ```yaml
 ---
-title: "<YYYY-MM-DD> Weekly Updates"
+title: "<YYYY-MM-DD> Daily Updates"
 created: <今日 YYYY-MM-DD>
 updated: <今日 YYYY-MM-DD>
 tags:
   - updates
-  - <涵蓋的工具 tag，如 claude-code、codex、copilot、cursor>
+  - <涵蓋的工具 tag，如 claude-code、codex、copilot、gemini-cli>
 ---
 ```
 
-常用 tags：`updates`、`claude-code`、`codex`、`copilot`、`cursor`、`mcp`。
+常用 tags：`updates`、`claude-code`、`codex`、`copilot`、`gemini-cli`、`mcp`。
 
 ### 筆記結構
 
 ```markdown
-## <工具名>（版本範圍，日期）
+## <工具名>
 
-**新功能**
+### <版本或日期>（[release 標題](<url>)）
+
+> **繁中摘要**：...
+
+**變更重點**
 - ...
 
-**Bug Fixes**
-- ...
-
-**待注意**
+**實務影響**
 - ...
 
 ---
 
 ## <工具名>
+### <版本或日期>
 ...
 ```
 
-每個工具一個 section，按重要性排序（自用工具優先）。跳過無使用者可見變更的項目。
+每個工具一個 `##` section，底下每個 release / changelog entry 一個 `###` 子標題。跳過無使用者可見變更的項目。
 
 ## Source index
 
@@ -83,19 +85,23 @@ tags:
 
 ## Official changelogs
 
-- OpenAI Codex|https://help.openai.com/en/articles/11428266-codex-changelog|codex
+- OpenAI Codex|https://developers.openai.com/codex/changelog|codex
 - Claude Code|https://code.claude.com/docs/en/changelog|claude-code
+- Gemini CLI|https://geminicli.com/docs/changelogs/|gemini-cli
 - GitHub Changelog|https://github.blog/changelog/feed/|copilot
-- Cursor Changelog|https://www.cursor.com/changelog|cursor
 
 ## GitHub repositories
 
 - openai/codex|codex
 - anthropics/claude-code|claude-code
+- google-gemini/gemini-cli|gemini-cli
 
 ## GitHub starred
 
 sync: releases
+
+## 日報
+
 ```
 
 來源格式：
@@ -142,35 +148,55 @@ sync: releases
 - `## GitHub starred` 段含 `sync: releases`：加上 `--starred` flag
 
 ```bash
-SCRIPT=".claude/skills/vault-updates-sync/scripts/fetch_updates.py"
+SCRIPT=$(find .agents/skills/vault-updates-sync .claude/skills/vault-updates-sync -name "fetch_updates.py" 2>/dev/null | head -1)
 PY=$(command -v python3 || command -v python)
+INDEX="content/Inbox/Updates/01.index.md"
+
+# 從 index 解析官方 changelog（awk 確保不跨段）
+OFFICIAL_ARGS=()
+while IFS= read -r official; do
+  [[ -n "$official" ]] && OFFICIAL_ARGS+=("--official" "$official")
+done < <(awk '/^## Official changelogs/{f=1;next} /^## /{f=0} f && /^\- .+\|/' \
+  "$INDEX" | sed 's/^- //')
 
 # 從 index 解析 repos（用 array 避免換行問題）
 REPO_ARGS=()
 while IFS= read -r repo; do
   [[ -n "$repo" ]] && REPO_ARGS+=("--repo" "$repo")
-done < <(grep -A50 '## GitHub repositories' content/Inbox/Updates/01.index.md \
-  | grep -E '^\- [A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+' \
+done < <(awk '/^## GitHub repositories/{f=1;next} /^## /{f=0} f && /^\- /' \
+  "$INDEX" | grep -E '^\- [A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+' \
   | sed 's/^- //' | cut -d'|' -f1)
 
 # 檢查是否啟用 starred
 STARRED=()
-grep -A5 '## GitHub starred' content/Inbox/Updates/01.index.md \
+grep -A5 '## GitHub starred' "$INDEX" \
   | grep -q 'sync: releases' && STARRED=("--starred")
 
-$PY $SCRIPT --since <YYYY-MM-DD> "${REPO_ARGS[@]}" "${STARRED[@]}"
+# since 日期：7 天前（macOS / Linux 相容）
+SINCE=$(date -v-7d +%Y-%m-%d 2>/dev/null || date -d '7 days ago' +%Y-%m-%d)
+# 使用者指定日期時直接替換 SINCE="<YYYY-MM-DD>"
+
+$PY $SCRIPT --since "$SINCE" "${OFFICIAL_ARGS[@]}" "${REPO_ARGS[@]}" "${STARRED[@]}"
 ```
 
 輸出格式：
 
 - `META:since|||<YYYY-MM-DD>`
 - `OFFICIAL:<name>|||<url>|||<tag>`
-- `CHANGELOG:<source>|||<published>|||<title>|||<url>`
-- `RELEASE:<repo>|||<published>|||<tag>|||<name>|||<url>`
-- `DISCUSSION:<repo>|||<updated>|||<comments>|||<title>|||<url>`（explicit repos 才抓；starred repos 只抓 releases）
+- `CHANGELOG:<source>|||<published>|||<title>|||<url>|||<body-snippet>`
+- `RELEASE:<repo>|||<published>|||<tag>|||<name>|||<url>|||<body-snippet>`
+- `DISCUSSION:<repo>|||<updated>|||<comments>|||<title>|||<url>|||<body-snippet>`（explicit repos 才抓；starred repos 只抓 releases）
 - `ERROR:<source>:<message>`（記錄後繼續）
 
-官方 changelog 若沒有 RSS/API（例如單頁 changelog），由主流程或 subagent 直接讀 URL，抽取最近日期區段；不要把整頁全文寫入筆記。
+**OFFICIAL 行的處理**：腳本只列出 URL，不會自行抓取。對每個 `OFFICIAL:` 行（GitHub Changelog 除外，已由 RSS 轉成 `CHANGELOG:` 行），主 agent 用 Defuddle 或 WebFetch 讀取該 URL。若有多個 OFFICIAL URL 且有 subagent 能力，平行各呼叫一個 subagent 抓取；無 subagent 能力時串列執行。
+
+抓到頁面後，找出日期格式的 heading（如 `## 2025-01-01`、`## v1.5.0 (2025-01-01)`），擷取 `since` 日期之後的 section（heading 到下一個同級 heading 之間的內容）作為一筆候選。無法識別日期 heading 時，以最近 5 個 major section 作為候選。每筆格式化為：
+
+```
+CHANGELOG:<name>|||<entry-date>|||<entry-title>|||<url>#<slug>|||<body-snippet>
+```
+
+其中 `<body-snippet>` 從段落提取純文字，截斷至 800 字元。無法取得個別 entry URL 時，用頁面 URL 加 heading slug（`<url>#<slug>`）作為 canonical URL，確保後續去重可識別。
 
 ## 步驟 3：高精度粗篩
 
@@ -190,47 +216,104 @@ $PY $SCRIPT --since <YYYY-MM-DD> "${REPO_ARGS[@]}" "${STARRED[@]}"
 
 1. 官方 changelog / release notes
 2. Stable GitHub releases 或明確 user-facing release
-3. 有 `has repro`、workaround、maintainer confirmation、或 comments >= 5 的 issue
-4. 有具體設計決策或官方回答的 discussion
+3. 有具體設計決策或官方回答的 discussion
 
-## 步驟 4：分批分析與建檔
+## 步驟 4：去重與分批分析
 
-將通過粗篩的候選按每批 5-6 筆，使用 general-purpose subagent 平行分析。無 subagent 能力時由主 agent 直接讀 `references/item-analyzer.md` 執行同流程。
+### 去重（傳給 subagent 前先做）
 
-Subagent prompt：
+日報是合併格式（無 `source:` frontmatter），改用以下兩層去重：
+
+```bash
+# 1. 舊個別筆記格式（Cards / Topics / 舊 Inbox 個別檔）
+grep -rl "^source: <url>$" content/Inbox/Updates content/Cards content/Topics 2>/dev/null
+
+# 2. 當日日報（URL 出現在檔案正文中）
+DAILY="content/Inbox/Updates/<YYYY-MM-DD>-daily-updates.md"
+[ -f "$DAILY" ] && grep -qF "<url>" "$DAILY"
+```
+
+任一命中則標記 skip，不傳給 subagent。若 changelog entry 沒有獨立 URL，使用該頁 URL 加 heading slug 作為 canonical URL（如 `<url>#<entry-slug>`），避免整頁只能存一次。
+
+### 分批平行分析
+
+去重後剩餘候選每批 8-10 筆，平行呼叫 general-purpose subagent。無 subagent 能力時由主 agent 直接讀 `references/item-analyzer.md` 全文執行同流程。
+
+呼叫前讀取 `references/item-analyzer.md` 全文，放入 subagent prompt；不要叫 subagent 自己讀檔。
+
+Subagent prompt 結構：
 
 ```text
-任務：分析 developer tooling update 的可操作價值，必要時建立 Obsidian 筆記。
-詳細指示請依 `.claude/skills/vault-updates-sync/references/item-analyzer.md`。
+[item-analyzer.md 全文]
 
-NOTES_ROOT：content/Inbox/Updates/
+---
+
 今日日期：<YYYY-MM-DD>
 
 候選清單：
 1. <TYPE> <source/repo> <published/updated> <title>
    URL: <url>
-   metadata: <labels/comments/tag/state 等>
-
-回傳格式：每篇一行 `<url> save|skip <一行原因>`。
+   Body: <body-snippet，腳本已預先截取，無需再 fetch>
+   metadata: <comments 數等>
 ```
 
-## 步驟 5：彙整
+Subagent 回傳格式（每個候選一條，save 附帶 section 內容）：
+
+```text
+SAVE <url>
+TOOL: <工具名（依 item-analyzer.md 工具名稱正規表）>
+META: <版本或日期，如 v1.5.0 · 2025-01-01 或 2025-01-01；用 · 分隔多個欄位>
+CONTENT:
+<此 item 的 markdown 內容，不含 ## 或 ### heading>
+END_CONTENT
+
+SKIP <url> <一行原因>
+```
+
+## 步驟 5：組裝日報與彙整
+
+收集所有 subagent 回傳，依 `TOOL:` 分組，組裝日報：
+
+1. 日報路徑：`content/Inbox/Updates/<YYYY-MM-DD>-daily-updates.md`
+2. 若當日已有日報（同日第二次 sync），將新 section 追加到檔尾；不覆蓋已有內容。追加時同步更新 frontmatter：將本次涵蓋的工具 tag 合入既有 `tags`（去重），並更新 `updated` 為今日日期。
+3. 寫入格式：
+
+```markdown
+---
+title: "<YYYY-MM-DD> Daily Updates"
+created: <YYYY-MM-DD>
+updated: <YYYY-MM-DD>
+tags:
+  - updates
+  - <涵蓋的工具 tag>
+---
+
+## <工具名>
+
+### <META>（[標題](<url>)）
+
+<CONTENT block>
+
+---
+
+## <工具名>
+
+### <META>
+
+<CONTENT block>
+
+---
+```
+
+主 agent 組裝邏輯：依 `TOOL:` 分組 → 每個 TOOL 寫 `## <工具名>` → 同 TOOL 底下每個 SAVE item 寫 `### <META>（[標題](<url>)）` 後接 CONTENT block → TOOL 之間插 `---`。若同 TOOL 下只有一筆，`### META` 標題可省略，直接放 CONTENT。
+
+4. 同步更新 `content/Inbox/Updates/01.index.md`：若 `## 日報` section 下未含今日日報的 wikilink，補上一行 `- [[<YYYY-MM-DD>-daily-updates]]`。
 
 回覆固定包含：
 
-- 各來源抓取數 / 粗篩通過數 / 存入數
-- 已建立筆記路徑
+- 各來源抓取數 / 粗篩通過數 / 已寫入數
+- 日報路徑
 - 跳過原因分布
 - 需要人工追蹤但未建檔的候選（最多 5 筆）
 
 不自動 commit。所有變更留給使用者審核。
-
-## 去重
-
-建立筆記前先用 `source:` URL 去重：
-
-```bash
-grep -rl "^source: <url>$" content/Inbox/Updates content/Cards content/Topics 2>/dev/null
-```
-
-若 changelog entry 沒有獨立 URL，使用該頁 URL 加 heading slug 作為 canonical URL（例如 `<url>#<entry-slug>`），避免整頁只能存一次。

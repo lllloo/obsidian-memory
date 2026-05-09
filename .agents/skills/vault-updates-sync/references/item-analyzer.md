@@ -1,34 +1,27 @@
 # Subagent：Developer Tooling Update Analyzer
 
-> **任務契約**：只處理主 prompt 傳入的候選。可以建立高價值筆記到 `NOTES_ROOT`，不要改 `Cards/` 或 `Topics/`，不要更新其他 skill 設定。
+> **任務契約**：分析主 prompt 傳入的候選，回傳結構化內容供主 agent 組裝日報。不自行建立或修改任何檔案。
+> Release/discussion body 由腳本預先截取；CHANGELOG（官方網頁）body 由主 agent 從頁面段落提取後傳入。皆已放入 `Body:` 欄位，不需自行 fetch URL。
 
-## 開工檢查
+## 工具名稱正規表
 
-- 確認 cwd 為 repo root：`test -f content/master-index.md`
-- 確認 `NOTES_ROOT` 已展開，且值為 `content/Inbox/Updates/`
-- 讀 `content/CLAUDE.md` 的寫入規則摘要；frontmatter 欄位順序以 `scripts/vault-schema.mjs` 為準
+寫 `TOOL:` 時固定使用下表；來源不在表中時用 repo/changelog 原名，不要縮寫或自創別名。
+
+| 工具 | 固定寫法 |
+|------|---------|
+| Claude Code | Claude Code |
+| OpenAI Codex | OpenAI Codex |
+| GitHub Copilot | GitHub Copilot |
+| Gemini CLI | Gemini CLI |
+| Cursor | Cursor |
+| GitHub | GitHub |
+| MCP | MCP |
 
 ## 逐項處理
 
-### 1. 去重
+### 1. 價值判斷
 
-先找同一 canonical URL：
-
-```bash
-grep -rl "^source: <url>$" content/Inbox/Updates content/Cards content/Topics 2>/dev/null
-```
-
-若已存在，回報 `skip 已有筆記`。
-
-### 2. 讀來源
-
-- GitHub release / discussion：讀標題、body、comments 重點；優先看 maintainer / author 的說明。
-- GitHub Changelog RSS entry：讀 entry 頁面，不只看標題。
-- 官方 changelog 單頁：只抽最近日期區段；不要整頁摘要。
-
-可用 `curl`、`gh api`、Defuddle、或一般 web 讀取。若抓取失敗，跳過並回報原因。
-
-### 3. 價值判斷
+根據 `Body:` 內容和標題判斷：
 
 **Save：**
 
@@ -41,74 +34,42 @@ grep -rl "^source: <url>$" content/Inbox/Updates content/Cards content/Topics 2>
 
 - 只有版本號、dependency bump、alpha noise，沒有可用資訊。
 - 與 developer tooling / coding agent workflow 無關。
+- Body 為空且標題也無法判斷價值時，跳過。
 
 判斷模糊時跳過；這條流程追求 high precision。
 
-## 建檔
+### 2. 敏感資料
 
-### 路徑
+若 Body 含 token / key（`sk-`、`ghp_`、`AKIA`、`eyJ`、`-----BEGIN`），移除該段後繼續；若核心內容依賴敏感段落則 skip。
 
-依來源建立資料夾：
+## 回傳格式
 
-- `content/Inbox/Updates/OpenAI-Codex/`
-- `content/Inbox/Updates/Claude-Code/`
-- `content/Inbox/Updates/GitHub-Changelog/`
-- `content/Inbox/Updates/Cursor/`
-- `content/Inbox/Updates/GitHub-Issues/`
+每個候選回傳一條，save 必須附帶 CONTENT（主 agent 用來組裝日報 section）：
 
-檔名使用來源標題縮短而成：
+```text
+SAVE <url>
+TOOL: <工具名（依工具名稱正規表）>
+META: <版本或日期，如 v1.5.0 · 2025-01-01 或 2025-01-01；用 · 分隔多個欄位>
+CONTENT:
+> **繁中摘要**：<一到兩句說明這個變更對實務的影響。技術名詞保留英文。>
 
-- 空格改 `-`
-- 移除 `?:;"'`
-- 盡量 40 字元內，保留產品名與核心變更
+**變更重點**
+- <只整理 Body 可支持的事實>
 
-### Frontmatter
-
-```yaml
----
-title: <來源標題>
-created: <今日 YYYY-MM-DD>
-updated: <今日 YYYY-MM-DD>
-source: <canonical URL>
-published: <YYYY-MM-DD>
-tags:
-  - updates
-  - <source-tag>
----
-```
-
-### 正文
-
-```markdown
-> **繁中摘要**：<一到兩句說明這個變更或 issue 對實務的影響。技術名詞保留英文。>
-
----
-
-## 變更重點
-
-- <只整理來源可支持的事實>
-
-## 實務影響
-
+**實務影響**
 - <對 workflow / CLI / API / model / agent setup 的影響>
 
-## 待追蹤
+**待追蹤**（若有，否則省略）
+- <未定狀態、open issue、未確認 workaround>
+END_CONTENT
 
-- <若有未定狀態、open issue、未確認 workaround，列出；沒有就省略整節>
+SKIP <url> <一行原因>
 ```
 
 Rules：
 
-- 不大段引用原文。
-- 不補充無來源支持的猜測。
-- 敏感資料零容忍；若來源 body 或 comments 含 token / key，移除該段或跳過。
+- CONTENT 不含 `## heading` 或 `### heading`（由主 agent 加 heading）。
+- META 缺版本時填日期；日期也不確定時填 `unknown`。
+- 不大段引用原文，不補充無 Body 支持的猜測。
 - 不使用 `# ` heading。
-
-## 回報格式
-
-每個候選都回一行：
-
-```text
-<url> save <筆記路徑> - <一行原因>
-<url> skip <一行原因>
-```
+- 若同一 TOOL 下有多個 save item，各自回一條完整的 SAVE 區塊。

@@ -43,13 +43,15 @@ HEADERS = {
     "Accept-Language": "en-US,en;q=0.9",
 }
 
-DEFAULT_REPOS = ["openai/codex", "anthropics/claude-code"]
+DEFAULT_REPOS = ["openai/codex", "anthropics/claude-code", "google-gemini/gemini-cli"]
+# Fallback when --official args not passed (e.g. called standalone without the skill)
 OFFICIAL_SOURCES = [
     ("OpenAI Codex", "https://help.openai.com/en/articles/11428266-codex-changelog", "codex"),
     ("Claude Code", "https://code.claude.com/docs/en/changelog", "claude-code"),
+    ("Gemini CLI", "https://geminicli.com/docs/changelogs/", "gemini-cli"),
     ("GitHub Changelog", "https://github.blog/changelog/feed/", "copilot"),
-    ("Cursor Changelog", "https://www.cursor.com/changelog", "cursor"),
 ]
+_GITHUB_RSS_URL = "https://github.blog/changelog/feed/"
 CHANGELOG_KEYWORDS = [
     "agent",
     "agents",
@@ -71,6 +73,16 @@ def _sanitize(value: object) -> str:
     if value is None:
         return ""
     return str(value).replace("|||", " ").replace("\n", " ").replace("\r", "").strip()
+
+
+def _sanitize_body(text: str, max_chars: int = 800) -> str:
+    """Strip markdown/HTML noise, collapse whitespace, truncate."""
+    if not text:
+        return ""
+    plain = re.sub(r'<[^>]+>', ' ', text)          # strip HTML tags
+    plain = re.sub(r'!\[.*?\]\(.*?\)', '', plain)   # strip image embeds
+    plain = re.sub(r'\s+', ' ', plain).strip()
+    return _sanitize(plain[:max_chars])
 
 
 def _parse_date(value: str) -> dt.datetime:
@@ -185,6 +197,7 @@ query {
             tagName
             publishedAt
             url
+            description
           }
         }
       }
@@ -225,7 +238,8 @@ query {
             tag = _sanitize(release.get("tagName"))
             rname = _sanitize(release.get("name") or tag)
             url = _sanitize(release.get("url"))
-            print(f"RELEASE:{name_with_owner}|||{published.isoformat()}|||{tag}|||{rname}|||{url}")
+            body = _sanitize_body(release.get("description") or "")
+            print(f"RELEASE:{name_with_owner}|||{published.isoformat()}|||{tag}|||{rname}|||{url}|||{body}")
 
 
 def fetch_releases(repo: str, since: dt.datetime) -> None:
@@ -254,7 +268,8 @@ def _fetch_releases_lines(repo: str, since: dt.datetime) -> list[str]:
         tag = _sanitize(item.get("tag_name"))
         name = _sanitize(item.get("name") or tag)
         html_url = _sanitize(item.get("html_url"))
-        lines.append(f"RELEASE:{repo}|||{published.isoformat()}|||{tag}|||{name}|||{html_url}")
+        body = _sanitize_body(item.get("body") or "")
+        lines.append(f"RELEASE:{repo}|||{published.isoformat()}|||{tag}|||{name}|||{html_url}|||{body}")
     return lines
 
 
@@ -278,7 +293,8 @@ def fetch_github_changelog(since: dt.datetime) -> None:
         haystack = title.lower()
         if not any(keyword in haystack for keyword in CHANGELOG_KEYWORDS):
             continue
-        print(f"CHANGELOG:GitHub Changelog|||{published.isoformat()}|||{title}|||{link}")
+        desc = _sanitize_body(item.findtext("description") or "")
+        print(f"CHANGELOG:GitHub Changelog|||{published.isoformat()}|||{title}|||{link}|||{desc}")
 
 
 def fetch_discussions_with_gh(repo: str, since: dt.datetime) -> None:
@@ -294,6 +310,7 @@ query($owner:String!, $name:String!) {
         title
         updatedAt
         url
+        body
         comments { totalCount }
       }
     }
@@ -339,7 +356,8 @@ query($owner:String!, $name:String!) {
         title = _sanitize(item.get("title"))
         url = _sanitize(item.get("url"))
         comments = int(item.get("comments", {}).get("totalCount") or 0)
-        print(f"DISCUSSION:{repo}|||{updated.isoformat()}|||{comments}|||{title}|||{url}")
+        body = _sanitize_body(item.get("body") or "")
+        print(f"DISCUSSION:{repo}|||{updated.isoformat()}|||{comments}|||{title}|||{url}|||{body}")
 
 
 def main() -> int:
@@ -347,6 +365,8 @@ def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--since", default=default_since, help="YYYY-MM-DD, default: 7 days ago")
     parser.add_argument("--repo", action="append", default=[], help="GitHub repo owner/name; repeatable")
+    parser.add_argument("--official", action="append", default=[],
+                        help="Official changelog source: 'name|url|tag'; repeatable")
     parser.add_argument("--starred", action="store_true", help="also fetch releases from all starred repos")
     args = parser.parse_args()
 
@@ -358,15 +378,29 @@ def main() -> int:
 
     explicit_repos = args.repo or DEFAULT_REPOS
     print(f"META:since|||{since.date().isoformat()}")
-    for name, url, tag in OFFICIAL_SOURCES:
-        print(f"OFFICIAL:{name}|||{url}|||{tag}")
 
-    fetch_github_changelog(since)
+    # Build official sources from --official args; fall back to hardcoded defaults
+    official_sources: list[tuple[str, str, str]] = []
+    for raw in args.official:
+        parts = raw.split("|", 2)
+        if len(parts) != 3:
+            print(f"ERROR:official:invalid format {raw!r}; expected name|url|tag")
+            continue
+        official_sources.append((parts[0].strip(), parts[1].strip(), parts[2].strip()))
+    if not official_sources:
+        official_sources = list(OFFICIAL_SOURCES)
+
+    for name, url, tag in official_sources:
+        if url.rstrip("/") == _GITHUB_RSS_URL.rstrip("/"):
+            fetch_github_changelog(since)
+        else:
+            print(f"OFFICIAL:{_sanitize(name)}|||{_sanitize(url)}|||{_sanitize(tag)}")
 
     if args.starred:
         # Single GraphQL call covers all starred repos (includes explicit repos if starred).
+        # Skip explicit repos to avoid duplicate RELEASE lines.
         # Discussions only for explicitly listed repos.
-        fetch_starred_releases(since, skip_repos=set())
+        fetch_starred_releases(since, skip_repos=set(explicit_repos))
         for repo in explicit_repos:
             if not re.match(r"^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$", repo):
                 print(f"ERROR:repo:{repo}:invalid owner/name")
