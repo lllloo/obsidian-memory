@@ -9,7 +9,7 @@
       "assertions": [
         {
           "name": "觸發詞辨識",
-          "description": "從「Reddit 日報」正確觸發本 skill，而不是 vault-reddit-sync"
+          "description": "從「Reddit 日報」正確觸發本 skill，而不是 vault-updates-sync"
         },
         {
           "name": "日報輸出",

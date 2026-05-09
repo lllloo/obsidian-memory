@@ -1,5 +1,5 @@
 """
-抓取單篇 Reddit 貼文完整內容與熱門留言（供 post-analyzer subagent 使用）。
+抓取單篇 Reddit 貼文完整內容與熱門留言（供 Reddit daily analyzer 使用）。
 
 用法：
     python fetch_post.py <subreddit> <post_id>
@@ -38,7 +38,7 @@ import urllib.request
 import urllib.error
 import datetime
 
-# Windows cp950 stdout 對 emoji 會炸，與 fetch_reddit.py 同處理。
+# Windows cp950 stdout 對 emoji 會炸，強制 UTF-8 避免 partial output。
 try:
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 except AttributeError:
@@ -61,9 +61,7 @@ def build_url(subreddit, post_id):
 
 
 def fetch_json(url):
-    """與 fetch_reddit.py 同形式：curl 優先、urllib fallback、有限重試。
-    這裡為 subagent 端單篇抓取，為避免雙重複雜度，retry 直接走固定 backoff。
-    """
+    """curl 優先、urllib fallback、有限重試。"""
     curl = shutil.which("curl")
     last_error = None
 

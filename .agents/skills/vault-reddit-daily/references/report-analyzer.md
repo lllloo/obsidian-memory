@@ -16,9 +16,9 @@
 
 ```bash
 if command -v python3 >/dev/null 2>&1; then
-  python3 .claude/skills/vault-reddit-sync/scripts/fetch_post.py <subreddit> <post_id>
+  python3 .claude/skills/vault-reddit-daily/scripts/fetch_post.py <subreddit> <post_id>
 else
-  python  .claude/skills/vault-reddit-sync/scripts/fetch_post.py <subreddit> <post_id>
+  python  .claude/skills/vault-reddit-daily/scripts/fetch_post.py <subreddit> <post_id>
 fi
 ```
 
@@ -63,6 +63,7 @@ fi
 - **fetch 失敗無法判讀**
 
 **邊界判斷原則**：
+
 - comments 多 + 抱怨型 → KEEP（集體事件，C 類）
 - comments 少 + 抱怨型 + 純情緒 → SKIP（個人發洩）
 - comments 多 + showcase → KEEP（社群有討論，B 或 C 類）
