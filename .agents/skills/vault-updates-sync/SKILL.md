@@ -17,13 +17,14 @@ description: 同步高信任 developer tooling 更新到 Obsidian，來源以官
 
 不處理：
 
+- GitHub issues（訊噪比太差，已移除）
 - YouTube 頻道同步（用 `vault-youtube-sync`）
 - 既有 vault 查詢或單篇筆記建檔（用 `ob`）
 - 社群日報或輿情 briefing
 
 ## 產出
 
-- 筆記存放：`content/Inbox/Updates/<source>/`
+- 筆記：`content/Inbox/Updates/<YYYY-MM-DD>-weekly-updates.md`（每次 sync 一篇，按工具分 section）
 - Index：`content/Inbox/Updates/01.index.md`
 - 筆記代表「高信任待消化來源」，進 Inbox 不直接發佈；後續可由使用者整理到 `Cards/` 或 `Topics/`。
 
@@ -31,18 +32,38 @@ description: 同步高信任 developer tooling 更新到 Obsidian，來源以官
 
 ```yaml
 ---
-title: <來源標題>
+title: "<YYYY-MM-DD> Weekly Updates"
 created: <今日 YYYY-MM-DD>
 updated: <今日 YYYY-MM-DD>
-source: <canonical URL>
-published: <來源日期 YYYY-MM-DD>
 tags:
   - updates
-  - <source tag>
+  - <涵蓋的工具 tag，如 claude-code、codex、copilot、cursor>
 ---
 ```
 
-常用 tags：`updates`、`changelog`、`release-notes`、`github-release`、`github-issue`、`bug`、`workaround`、`codex`、`claude-code`、`copilot`、`cursor`、`mcp`。
+常用 tags：`updates`、`claude-code`、`codex`、`copilot`、`cursor`、`mcp`。
+
+### 筆記結構
+
+```markdown
+## <工具名>（版本範圍，日期）
+
+**新功能**
+- ...
+
+**Bug Fixes**
+- ...
+
+**待注意**
+- ...
+
+---
+
+## <工具名>
+...
+```
+
+每個工具一個 section，按重要性排序（自用工具優先）。跳過無使用者可見變更的項目。
 
 ## Source index
 
@@ -71,12 +92,17 @@ tags:
 
 - openai/codex|codex
 - anthropics/claude-code|claude-code
+
+## GitHub starred
+
+sync: releases
 ```
 
 來源格式：
 
 - Official changelogs：`- <name>|<url>|<tag>`
 - GitHub repositories：`- <owner>/<repo>|<tag>`
+- GitHub starred：`sync: releases` 代表啟用，從 authenticated user 的星星清單抓 releases（`gh` CLI 需已登入）
 
 ## 前置作業
 
@@ -108,14 +134,31 @@ tags:
 
 ## 步驟 2：抓候選
 
-預設同步最近 7 天；使用者指定日期時用該日期到今天。將 GitHub repositories 傳給 fetch script：
+預設同步最近 7 天；使用者指定日期時用該日期到今天。
+
+從 index 解析：
+
+- `## GitHub repositories` 段：逐行取 `<owner>/<repo>` 傳給 `--repo`
+- `## GitHub starred` 段含 `sync: releases`：加上 `--starred` flag
 
 ```bash
-if command -v python3 >/dev/null 2>&1; then
-  python3 .claude/skills/vault-updates-sync/scripts/fetch_updates.py --since <YYYY-MM-DD> --repo openai/codex --repo anthropics/claude-code
-else
-  python .claude/skills/vault-updates-sync/scripts/fetch_updates.py --since <YYYY-MM-DD> --repo openai/codex --repo anthropics/claude-code
-fi
+SCRIPT=".claude/skills/vault-updates-sync/scripts/fetch_updates.py"
+PY=$(command -v python3 || command -v python)
+
+# 從 index 解析 repos（用 array 避免換行問題）
+REPO_ARGS=()
+while IFS= read -r repo; do
+  [[ -n "$repo" ]] && REPO_ARGS+=("--repo" "$repo")
+done < <(grep -A50 '## GitHub repositories' content/Inbox/Updates/01.index.md \
+  | grep -E '^\- [A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+' \
+  | sed 's/^- //' | cut -d'|' -f1)
+
+# 檢查是否啟用 starred
+STARRED=()
+grep -A5 '## GitHub starred' content/Inbox/Updates/01.index.md \
+  | grep -q 'sync: releases' && STARRED=("--starred")
+
+$PY $SCRIPT --since <YYYY-MM-DD> "${REPO_ARGS[@]}" "${STARRED[@]}"
 ```
 
 輸出格式：
@@ -124,8 +167,7 @@ fi
 - `OFFICIAL:<name>|||<url>|||<tag>`
 - `CHANGELOG:<source>|||<published>|||<title>|||<url>`
 - `RELEASE:<repo>|||<published>|||<tag>|||<name>|||<url>`
-- `ISSUE:<repo>|||<updated>|||<state>|||<comments>|||<labels>|||<title>|||<url>`
-- `DISCUSSION:<repo>|||<updated>|||<comments>|||<title>|||<url>`（有 GitHub GraphQL / `gh` 能力時才抓；沒有就跳過）
+- `DISCUSSION:<repo>|||<updated>|||<comments>|||<title>|||<url>`（explicit repos 才抓；starred repos 只抓 releases）
 - `ERROR:<source>:<message>`（記錄後繼續）
 
 官方 changelog 若沒有 RSS/API（例如單頁 changelog），由主流程或 subagent 直接讀 URL，抽取最近日期區段；不要把整頁全文寫入筆記。
@@ -136,15 +178,13 @@ fi
 
 - 官方 changelog entry 有 workflow / CLI / API / model / connector / billing-quota / deprecation / breaking change 影響。
 - GitHub release 包含新功能、breaking change、security fix、workflow 變更、重要 bug fix。
-- GitHub issue 有明確 repro、workaround、maintainer confirmation、多人命中、或 comments 顯示 operational impact。
 - GitHub discussion 形成具體做法、官方回答、或重要設計決策。
 
 跳過候選：
 
-- 純個人帳號 / 地區 / login / billing 問題，且無廣泛工具行為影響。
-- 無 repro、無 workaround、無 maintainer confirmation 的單點 bug 抱怨。
 - release 只有內部依賴 bump、alpha/noise、或無使用者可見變更。
 - changelog 與 developer tooling / coding agent / workflow 無關。
+- starred repo 的 release 若與 coding agent / developer workflow 無關（例如純 UI library patch）。
 
 若粗篩後候選仍過多，最多送 24 筆給分析階段，優先順序：
 

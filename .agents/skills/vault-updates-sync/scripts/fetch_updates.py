@@ -2,14 +2,13 @@
 Fetch high-trust developer tooling updates for vault-updates-sync.
 
 Inputs:
-    python fetch_updates.py --since YYYY-MM-DD --repo openai/codex --repo anthropics/claude-code
+    python fetch_updates.py --since YYYY-MM-DD --repo openai/codex --repo anthropics/claude-code [--starred]
 
 Outputs:
     META:since|||<YYYY-MM-DD>
     OFFICIAL:<name>|||<url>|||<tag>
     CHANGELOG:<source>|||<published>|||<title>|||<url>
     RELEASE:<repo>|||<published>|||<tag>|||<name>|||<url>
-    ISSUE:<repo>|||<updated>|||<state>|||<comments>|||<labels>|||<title>|||<url>
     ERROR:<source>:<message>
 
 This script intentionally keeps the first pass mechanical. The skill/analyzer
@@ -65,42 +64,6 @@ CHANGELOG_KEYWORDS = [
     "model",
     "openai",
 ]
-ISSUE_LABEL_HINTS = [
-    "area:",
-    "bug",
-    "connectivity",
-    "context",
-    "has repro",
-    "hook",
-    "mcp",
-    "packaging",
-    "regression",
-    "sandbox",
-    "security",
-    "skills",
-    "tool-calls",
-]
-ISSUE_TITLE_HINTS = [
-    "auth",
-    "broken",
-    "cannot",
-    "compact",
-    "context",
-    "crash",
-    "does not",
-    "error",
-    "fail",
-    "hang",
-    "hook",
-    "limit",
-    "mcp",
-    "regression",
-    "sandbox",
-    "slow",
-    "timeout",
-    "unable",
-    "workaround",
-]
 RETRY_BACKOFF_SECONDS = [3, 8, 20]
 
 
@@ -140,6 +103,25 @@ def _parse_rss_date(value: str) -> dt.datetime | None:
 
 
 def request_text(url: str) -> str:
+    # For GitHub API URLs, prefer `gh api` (handles auth automatically)
+    gh = shutil.which("gh")
+    if gh and "api.github.com" in url:
+        path = url.replace("https://api.github.com", "")
+        try:
+            proc = subprocess.run(
+                [gh, "api", path],
+                check=True, capture_output=True, text=True, timeout=25,
+            )
+            return proc.stdout
+        except subprocess.CalledProcessError as e:
+            stderr = (e.stderr or "").strip()
+            # gh exit 1 with "Not Found" or 4xx — don't retry
+            if e.returncode in (1, 4) or "Not Found" in stderr or "HTTP 4" in stderr:
+                raise RuntimeError(stderr or f"gh exit {e.returncode}")
+            # fall through to curl/urllib on other errors
+        except Exception:  # noqa: BLE001
+            pass  # fall through
+
     headers = dict(HEADERS)
     token = os.environ.get("GITHUB_TOKEN")
     if token and "api.github.com" in url:
@@ -165,8 +147,14 @@ def request_text(url: str) -> str:
             with urllib.request.urlopen(req, timeout=25) as resp:
                 return resp.read().decode("utf-8", errors="replace")
         except subprocess.CalledProcessError as e:
+            if e.returncode == 22:
+                raise RuntimeError((e.stderr or "").strip() or "HTTP error (4xx)")
             last_error = RuntimeError((e.stderr or "").strip() or f"curl exit {e.returncode}")
-        except Exception as exc:  # noqa: BLE001 - preserve short script portability
+        except urllib.error.HTTPError as e:
+            if e.code < 500:
+                raise RuntimeError(f"HTTP {e.code}")
+            last_error = RuntimeError(f"HTTP {e.code}")
+        except Exception as exc:  # noqa: BLE001
             last_error = exc
         if attempt >= len(RETRY_BACKOFF_SECONDS):
             break
@@ -178,18 +166,85 @@ def request_json(url: str) -> object:
     return json.loads(request_text(url))
 
 
+def fetch_starred_releases(since: dt.datetime, skip_repos: set[str]) -> None:
+    """Fetch releases from all starred repos in a single GraphQL call."""
+    gh = shutil.which("gh")
+    if not gh:
+        print("ERROR:starred:gh CLI not found; skipping starred repos")
+        return
+
+    query = """
+query {
+  viewer {
+    starredRepositories(first: 100) {
+      nodes {
+        nameWithOwner
+        releases(first: 5, orderBy: {field: CREATED_AT, direction: DESC}) {
+          nodes {
+            name
+            tagName
+            publishedAt
+            url
+          }
+        }
+      }
+    }
+  }
+}
+"""
+    try:
+        proc = subprocess.run(
+            [gh, "api", "graphql", "-f", f"query={query}"],
+            check=True,
+            capture_output=True,
+            text=True,
+            timeout=30,
+        )
+        payload = json.loads(proc.stdout)
+    except subprocess.CalledProcessError as e:
+        print(f"ERROR:starred:{(e.stderr or '').strip() or f'gh exit {e.returncode}'}")
+        return
+    except Exception as exc:  # noqa: BLE001
+        print(f"ERROR:starred:{exc}")
+        return
+
+    repos = (
+        payload.get("data", {})
+        .get("viewer", {})
+        .get("starredRepositories", {})
+        .get("nodes", [])
+    )
+    for repo in repos:
+        name_with_owner = _sanitize(repo.get("nameWithOwner"))
+        if name_with_owner in skip_repos:
+            continue
+        for release in repo.get("releases", {}).get("nodes", []):
+            published = _parse_iso(str(release.get("publishedAt") or ""))
+            if not published or published < since:
+                continue
+            tag = _sanitize(release.get("tagName"))
+            rname = _sanitize(release.get("name") or tag)
+            url = _sanitize(release.get("url"))
+            print(f"RELEASE:{name_with_owner}|||{published.isoformat()}|||{tag}|||{rname}|||{url}")
+
+
 def fetch_releases(repo: str, since: dt.datetime) -> None:
+    for line in _fetch_releases_lines(repo, since):
+        print(line)
+
+
+def _fetch_releases_lines(repo: str, since: dt.datetime) -> list[str]:
+    """Return RELEASE/ERROR lines for a repo without printing (thread-safe)."""
     url = f"https://api.github.com/repos/{repo}/releases?per_page=30"
     try:
         data = request_json(url)
     except RuntimeError as exc:
-        print(f"ERROR:releases:{repo}:{exc}")
-        return
+        return [f"ERROR:releases:{repo}:{exc}"]
 
     if not isinstance(data, list):
-        print(f"ERROR:releases:{repo}:unexpected response")
-        return
+        return [f"ERROR:releases:{repo}:unexpected response"]
 
+    lines = []
     for item in data:
         if not isinstance(item, dict):
             continue
@@ -199,53 +254,10 @@ def fetch_releases(repo: str, since: dt.datetime) -> None:
         tag = _sanitize(item.get("tag_name"))
         name = _sanitize(item.get("name") or tag)
         html_url = _sanitize(item.get("html_url"))
-        print(f"RELEASE:{repo}|||{published.isoformat()}|||{tag}|||{name}|||{html_url}")
+        lines.append(f"RELEASE:{repo}|||{published.isoformat()}|||{tag}|||{name}|||{html_url}")
+    return lines
 
 
-def fetch_issues(repo: str, since: dt.datetime) -> None:
-    since_param = urllib.parse.quote(since.isoformat().replace("+00:00", "Z"))
-    url = (
-        f"https://api.github.com/repos/{repo}/issues"
-        f"?state=all&since={since_param}&sort=updated&direction=desc&per_page=50"
-    )
-    try:
-        data = request_json(url)
-    except RuntimeError as exc:
-        print(f"ERROR:issues:{repo}:{exc}")
-        return
-
-    if not isinstance(data, list):
-        print(f"ERROR:issues:{repo}:unexpected response")
-        return
-
-    for item in data:
-        if not isinstance(item, dict) or item.get("pull_request"):
-            continue
-        updated = _parse_iso(str(item.get("updated_at") or ""))
-        if not updated or updated < since:
-            continue
-        labels = ",".join(_sanitize(label.get("name")) for label in item.get("labels", []) if isinstance(label, dict))
-        title = _sanitize(item.get("title"))
-        state = _sanitize(item.get("state"))
-        comments = int(item.get("comments") or 0)
-        if not _issue_is_candidate(labels, title, comments, state):
-            continue
-        html_url = _sanitize(item.get("html_url"))
-        print(f"ISSUE:{repo}|||{updated.isoformat()}|||{state}|||{comments}|||{labels}|||{title}|||{html_url}")
-
-
-def _issue_is_candidate(labels: str, title: str, comments: int, state: str) -> bool:
-    label_text = labels.lower()
-    if "security" in label_text:
-        return True
-    if any(marker in label_text for marker in ("duplicate", "invalid", "stale")) and comments < 10:
-        return False
-    if state.lower() == "closed" and comments < 3 and "has repro" not in label_text:
-        return False
-    if comments >= 3:
-        return True
-    haystack = f"{labels} {title}".lower()
-    return any(hint in haystack for hint in ISSUE_LABEL_HINTS + ISSUE_TITLE_HINTS)
 
 
 def fetch_github_changelog(since: dt.datetime) -> None:
@@ -335,6 +347,7 @@ def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--since", default=default_since, help="YYYY-MM-DD, default: 7 days ago")
     parser.add_argument("--repo", action="append", default=[], help="GitHub repo owner/name; repeatable")
+    parser.add_argument("--starred", action="store_true", help="also fetch releases from all starred repos")
     args = parser.parse_args()
 
     try:
@@ -343,19 +356,30 @@ def main() -> int:
         print(f"ERROR:usage:invalid --since date {args.since!r}; expected YYYY-MM-DD")
         return 1
 
-    repos = args.repo or DEFAULT_REPOS
+    explicit_repos = args.repo or DEFAULT_REPOS
     print(f"META:since|||{since.date().isoformat()}")
     for name, url, tag in OFFICIAL_SOURCES:
         print(f"OFFICIAL:{name}|||{url}|||{tag}")
 
     fetch_github_changelog(since)
-    for repo in repos:
-        if not re.match(r"^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$", repo):
-            print(f"ERROR:repo:{repo}:invalid owner/name")
-            continue
-        fetch_releases(repo, since)
-        fetch_issues(repo, since)
-        fetch_discussions_with_gh(repo, since)
+
+    if args.starred:
+        # Single GraphQL call covers all starred repos (includes explicit repos if starred).
+        # Discussions only for explicitly listed repos.
+        fetch_starred_releases(since, skip_repos=set())
+        for repo in explicit_repos:
+            if not re.match(r"^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$", repo):
+                print(f"ERROR:repo:{repo}:invalid owner/name")
+                continue
+            fetch_discussions_with_gh(repo, since)
+    else:
+        # No starred flag: use REST for explicit repos only
+        for repo in explicit_repos:
+            if not re.match(r"^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$", repo):
+                print(f"ERROR:repo:{repo}:invalid owner/name")
+                continue
+            fetch_releases(repo, since)
+            fetch_discussions_with_gh(repo, since)
 
     return 0
 

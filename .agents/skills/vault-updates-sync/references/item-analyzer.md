@@ -22,7 +22,7 @@ grep -rl "^source: <url>$" content/Inbox/Updates content/Cards content/Topics 2>
 
 ### 2. 讀來源
 
-- GitHub release / issue / discussion：讀標題、body、labels、comments 重點；優先看 maintainer / author / 高價值 comments。
+- GitHub release / discussion：讀標題、body、comments 重點；優先看 maintainer / author 的說明。
 - GitHub Changelog RSS entry：讀 entry 頁面，不只看標題。
 - 官方 changelog 單頁：只抽最近日期區段；不要整頁摘要。
 
@@ -34,13 +34,11 @@ grep -rl "^source: <url>$" content/Inbox/Updates content/Cards content/Topics 2>
 
 - 官方變更會影響實際 workflow、CLI/API 使用、模型選擇、connector、quota、deprecation、security posture。
 - Release 有明確 user-facing change、breaking change、重要 bug fix、migration note。
-- Issue / discussion 有可重現 bug、workaround、maintainer confirmation、或多人命中且會影響日常使用。
+- Discussion 有可重現 bug、workaround、maintainer confirmation、或多人命中且會影響日常使用。
 - 內容能產生穩定筆記，不只是當日情緒。
 
 **Skip：**
 
-- 單點帳號、地區、login、billing/support 問題，且沒有通用工具行為影響。
-- 無 repro / 無 workaround / 無官方或 maintainer confirmation 的抱怨。
 - 只有版本號、dependency bump、alpha noise，沒有可用資訊。
 - 與 developer tooling / coding agent workflow 無關。
 
