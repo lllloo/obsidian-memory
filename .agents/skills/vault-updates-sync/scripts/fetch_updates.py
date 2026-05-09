@@ -46,7 +46,7 @@ HEADERS = {
 DEFAULT_REPOS = ["openai/codex", "anthropics/claude-code", "google-gemini/gemini-cli"]
 # Fallback when --official args not passed (e.g. called standalone without the skill)
 OFFICIAL_SOURCES = [
-    ("OpenAI Codex", "https://help.openai.com/en/articles/11428266-codex-changelog", "codex"),
+    ("OpenAI Codex", "https://developers.openai.com/codex/changelog", "codex"),
     ("Claude Code", "https://code.claude.com/docs/en/changelog", "claude-code"),
     ("Gemini CLI", "https://geminicli.com/docs/changelogs/", "gemini-cli"),
     ("GitHub Changelog", "https://github.blog/changelog/feed/", "copilot"),
