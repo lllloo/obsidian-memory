@@ -1,0 +1,217 @@
+{
+  "skill_name": "vault-distill",
+  "evals": [
+    {
+      "id": 0,
+      "prompt": "/vault-distill（Cards/ 下沒有任何 MOC 檔）",
+      "expected_output": "先問「要整合哪個主題？」，不做任何動作；等用戶給主題名稱後才進步驟 A",
+      "files": [],
+      "assertions": [
+        {
+          "name": "問題前置，不先行動",
+          "description": "呼叫後第一個輸出是詢問主題的問題，不先跑 Glob/Grep、不先讀 master-index.md"
+        },
+        {
+          "name": "不寫任何檔案",
+          "description": "在用戶回答前不對 content/ 做任何 Write/Edit"
+        }
+      ]
+    },
+    {
+      "id": 1,
+      "prompt": "/vault-distill（Cards/Agent-Harness.md 已存在）",
+      "expected_output": "先問「Cards/Agent-Harness.md 已存在，要做什麼？」並列出 review / fix / 校正 / 處理原筆記 四個選項；等用戶回答後才路由",
+      "files": [],
+      "assertions": [
+        {
+          "name": "偵測到現有 MOC",
+          "description": "掃描 content/Cards/ 找到 Agent-Harness.md，在問題中明確列出該檔名"
+        },
+        {
+          "name": "列出四個選項",
+          "description": "選項包含 review / fix / 校正 / 處理原筆記，用戶清楚知道可以做什麼"
+        },
+        {
+          "name": "不自動執行任何步驟",
+          "description": "不先跑 reviewer、不先讀 MOC 內容；等用戶選擇後才行動"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "/vault-distill，主題：Agent Harness（Cards/ 無現有 MOC，候選筆記皆關於同一框架設計，強內聚）",
+      "expected_output": "步驟 A 內聚度檢驗靜默通過，直接生成 v0 寫入 Cards/Agent-Harness.md，結束後提示下一步選項；過程中不中途停頓等確認",
+      "files": [],
+      "assertions": [
+        {
+          "name": "強內聚靜默通過",
+          "description": "內聚度檢驗通過時不輸出確認提示、不等用戶按確認，直接進入讀取與生成"
+        },
+        {
+          "name": "v0 寫入 Cards/",
+          "description": "產出路徑為 content/Cards/Agent-Harness.md，不寫 Topics/ 或 Inbox/"
+        },
+        {
+          "name": "結束時提示下一步",
+          "description": "完成後說明可再次呼叫執行 review / fix / 校正 / 處理原筆記，用戶知道如何推進"
+        },
+        {
+          "name": "單次呼叫不進 review",
+          "description": "生成 v0 後直接結束，不自動進入步驟 B reviewer"
+        },
+        {
+          "name": "附自檢摘要",
+          "description": "A 結束時附上前言 vs 章節對應情況、wikilink 數量、frontmatter 是否符合 schema"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "/vault-distill，主題：AI 知識管理（候選群涵蓋 RAG / CAG / NotebookLM / Skill 主副檔，各篇核心問題不同）",
+      "expected_output": "步驟 A2 判定為弱內聚，打斷流程，明確說明每篇實際解的核心問題不同，給縮範圍或換主題的具體建議；不生成 v0",
+      "files": [],
+      "assertions": [
+        {
+          "name": "讀每篇前 30 行提煉核心問題",
+          "description": "不只比對檔名或關鍵字，而是讀內容後說出每篇在解的具體問題（一句話）"
+        },
+        {
+          "name": "判定弱內聚並說明",
+          "description": "明確指出共同 umbrella term 不算內聚，列出每篇獨立的核心問題"
+        },
+        {
+          "name": "給具體縮範圍建議",
+          "description": "不只說「弱內聚」就停，要給可操作的建議：挑哪幾篇可以做、或建議換哪個主題"
+        },
+        {
+          "name": "不寫 v0",
+          "description": "弱內聚情境下不寫任何 Cards/*.md"
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "/vault-distill，Cards/Agent-Harness.md 已存在，用戶選擇 review",
+      "expected_output": "步驟 B 啟動 reviewer subagent 跑一輪，完整呈現問題清單（必改／應改／可選），然後結束；不自動進 fix，不跑第二輪",
+      "files": [],
+      "assertions": [
+        {
+          "name": "reviewer 跑一輪就結束",
+          "description": "呈現 review 結果後直接結束，不詢問是否繼續、不自動啟動 fixer"
+        },
+        {
+          "name": "問題清單分三層",
+          "description": "輸出包含必改／應改／可選三類，每項有具體位置與建議"
+        },
+        {
+          "name": "提示 fix 指令",
+          "description": "結尾告知用戶加 fix 再次呼叫可套用修正"
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "有什麼建議的主題可以整合？",
+      "expected_output": "步驟 F：掃描 vault，只推薦通過內聚度檢驗的強內聚群，附上每群的對話張力；弱內聚群明確標記不推薦並說明原因；不寫任何檔案",
+      "files": [],
+      "assertions": [
+        {
+          "name": "只推薦強內聚群",
+          "description": "推薦清單中的每個群都通過內聚度檢驗（能用一句話說出共同核心問題）"
+        },
+        {
+          "name": "弱內聚明確標記",
+          "description": "候選數量多但弱內聚的群也要出現在回應中，標記為不推薦並給理由"
+        },
+        {
+          "name": "附對話張力",
+          "description": "每個推薦群說明為什麼有趣（正反對立／互補實作／世代演進等）"
+        },
+        {
+          "name": "不寫任何檔案",
+          "description": "步驟 F 純輸出建議，不對 content/ 做任何讀寫以外的操作"
+        },
+        {
+          "name": "附預估整合工作量",
+          "description": "每個推薦群附上候選篇數、是否需事實校正、預期 review 輪數"
+        },
+        {
+          "name": "排除已歸檔 Topics/ 主題",
+          "description": "Topics/ 下已整合的主題不出現在推薦群中（列為「已整合」供參考即可）"
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "prompt": "有什麼建議的主題可以整合？（vault 中 Topics/Claude-Code/ 已有若干歸檔筆記）",
+      "expected_output": "步驟 F 提前路由，不進狀態偵測；推薦群中 Claude-Code 相關不重複推薦，改列為「已整合主題」",
+      "files": [],
+      "assertions": [
+        {
+          "name": "F 路由提前攔截",
+          "description": "偵測到「建議主題」關鍵詞後立刻走步驟 F，不先掃 Cards/ MOC 數量、不先列現有 MOC 選項"
+        },
+        {
+          "name": "Topics/ 已整合主題不重複推薦",
+          "description": "Topics/ 下已有的主題不出現在推薦群，而是列為「已整合，如需擴充請直接指定」"
+        }
+      ]
+    },
+    {
+      "id": 7,
+      "prompt": "/vault-distill review Claude-Code-Skills（動詞快捷，Cards/Claude-Code-Skills.md 已存在）",
+      "expected_output": "直接路由步驟 B，啟動 reviewer subagent；不先問「要做什麼」",
+      "files": [],
+      "assertions": [
+        {
+          "name": "動詞快捷直接路由",
+          "description": "識別 review + 主題名，直接進步驟 B，跳過「要做什麼？」詢問環節"
+        },
+        {
+          "name": "正確路由到步驟 B",
+          "description": "啟動 reviewer subagent 而非其他步驟"
+        }
+      ]
+    },
+    {
+      "id": 8,
+      "prompt": "/vault-distill dispose（步驟 E，候選清單中有一個檔案在偵測後已被刪除）",
+      "expected_output": "呈現清單給用戶確認前，先驗證每個路徑存在；移除不存在的路徑，明確告知用戶「以下 N 個檔案已不存在，已從清單移除」",
+      "files": [],
+      "assertions": [
+        {
+          "name": "呈現前驗證路徑存在",
+          "description": "在呈現確認清單給用戶之前，用 Glob 或 Read 確認每個候選路徑仍存在"
+        },
+        {
+          "name": "移除不存在路徑並告知",
+          "description": "不存在的路徑從清單中移除，並在輸出中明確列出被移除的路徑與原因"
+        },
+        {
+          "name": "不對不存在的路徑執行 git rm",
+          "description": "不嘗試刪除不存在的檔案"
+        }
+      ]
+    },
+    {
+      "id": 9,
+      "prompt": "/vault-distill，Topics/Claude-Code/claude-code-skills.md 已存在（Topics/ 下的 MOC，不在 Cards/）",
+      "expected_output": "狀態偵測找到 Topics/ 下的 MOC，在選項清單中列出該路徑；不誤判為「沒有 MOC」而進入步驟 A",
+      "files": [],
+      "assertions": [
+        {
+          "name": "偵測 Topics/ 下的 MOC",
+          "description": "狀態偵測掃描 content/Topics/ 找到含 moc tag 的檔案，不只掃 Cards/"
+        },
+        {
+          "name": "清單顯示完整路徑含目錄",
+          "description": "列出 MOC 時顯示 Topics/Claude-Code/claude-code-skills.md，讓用戶知道它在 Topics/ 而非 Cards/"
+        },
+        {
+          "name": "不進入步驟 A",
+          "description": "因為已有 MOC，不啟動新的 v0 生成流程"
+        }
+      ]
+    }
+  ]
+}

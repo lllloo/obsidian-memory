@@ -91,22 +91,11 @@ tags:
 
 ## 前置作業
 
-### Cwd 契約
-
-本 skill 是 repo-local，所有讀寫路徑均為 repo root 相對的 `content/...`。呼叫前先確認 cwd 為 repo root：
-
 ```bash
 [ -f "content/master-index.md" ] || { echo "ERROR: cwd 不在 repo root"; exit 1; }
 ```
 
-### 寫入前 Checklist
-
-此 skill 是 `content/` 的寫入路徑。寫入前依 `content/CLAUDE.md` 的「寫入前 Checklist」自檢：
-
-- **敏感資料零容忍**：貼文正文與留言若含 token / 私鑰 / API key，不寫入日報；若貼文核心依賴敏感內容，直接跳過
-- **Frontmatter schema**：欄位、順序、白名單以 `scripts/vault-schema.mjs` 為真實來源
-- **Tag**：日報固定使用 `reddit`、`daily`
-- **命名**：日報檔名固定 `Reddit日報-YYYY-MM-DD.md`
+寫入前依 `content/CLAUDE.md` 的「寫入前 Checklist」自檢。本 skill 高頻踩雷點：tags 固定 `reddit`/`daily`；日報檔名固定 `Reddit日報-YYYY-MM-DD.md`。
 
 ## 步驟 1：讀取 RedditDaily 訂閱頻道
 
@@ -143,11 +132,9 @@ Reddit 每日日報訂閱 index。
 把步驟 1 列出的 sub 名傳給本 skill 的 fetch script，全收 `top.json?t=day&limit=50`：
 
 ```bash
-if command -v python3 >/dev/null 2>&1; then
-  python3 .claude/skills/vault-reddit-daily/scripts/fetch_reddit_daily.py ClaudeCode LocalLLaMA codex ...
-else
-  python  .claude/skills/vault-reddit-daily/scripts/fetch_reddit_daily.py ClaudeCode LocalLLaMA codex ...
-fi
+SCRIPT=$(find .agents/skills/vault-reddit-daily .claude/skills/vault-reddit-daily -name "fetch_reddit_daily.py" 2>/dev/null | head -1)
+PY=$(command -v python3 || command -v python)
+$PY "$SCRIPT" ClaudeCode LocalLLaMA codex ...
 ```
 
 解析輸出：

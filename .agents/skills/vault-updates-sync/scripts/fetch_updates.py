@@ -7,8 +7,9 @@ Inputs:
 Outputs:
     META:since|||<YYYY-MM-DD>
     OFFICIAL:<name>|||<url>|||<tag>
-    CHANGELOG:<source>|||<published>|||<title>|||<url>
-    RELEASE:<repo>|||<published>|||<tag>|||<name>|||<url>
+    CHANGELOG:<source>|||<published>|||<title>|||<url>|||<body-snippet>
+    RELEASE:<repo>|||<published>|||<tag>|||<name>|||<url>|||<body-snippet>
+    DISCUSSION:<repo>|||<updated>|||<comments>|||<title>|||<url>|||<body-snippet>
     ERROR:<source>:<message>
 
 This script intentionally keeps the first pass mechanical. The skill/analyzer
@@ -243,22 +244,17 @@ query {
 
 
 def fetch_releases(repo: str, since: dt.datetime) -> None:
-    for line in _fetch_releases_lines(repo, since):
-        print(line)
-
-
-def _fetch_releases_lines(repo: str, since: dt.datetime) -> list[str]:
-    """Return RELEASE/ERROR lines for a repo without printing (thread-safe)."""
     url = f"https://api.github.com/repos/{repo}/releases?per_page=30"
     try:
         data = request_json(url)
     except RuntimeError as exc:
-        return [f"ERROR:releases:{repo}:{exc}"]
+        print(f"ERROR:releases:{repo}:{exc}")
+        return
 
     if not isinstance(data, list):
-        return [f"ERROR:releases:{repo}:unexpected response"]
+        print(f"ERROR:releases:{repo}:unexpected response")
+        return
 
-    lines = []
     for item in data:
         if not isinstance(item, dict):
             continue
@@ -269,8 +265,7 @@ def _fetch_releases_lines(repo: str, since: dt.datetime) -> list[str]:
         name = _sanitize(item.get("name") or tag)
         html_url = _sanitize(item.get("html_url"))
         body = _sanitize_body(item.get("body") or "")
-        lines.append(f"RELEASE:{repo}|||{published.isoformat()}|||{tag}|||{name}|||{html_url}|||{body}")
-    return lines
+        print(f"RELEASE:{repo}|||{published.isoformat()}|||{tag}|||{name}|||{html_url}|||{body}")
 
 
 

@@ -9,3 +9,4 @@ public/
 __pycache__/
 *.pyc
 .env
+.vault-distill/

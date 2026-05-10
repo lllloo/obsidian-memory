@@ -16,26 +16,13 @@ description: 當使用者提供 YouTube **頻道** URL（含 @handle 的網址�
 - 每個頻道資料夾下建立 `01.index.md` 與 `02.影片清單.base` 作為索引（數字前綴確保固定排第一）
 - 影片筆記的 frontmatter 需加 `parent: "[[01.index]]"`，讓 Obsidian 圖譜能從影片連回頻道 index（`.base` 檔案不產生圖譜連結，只有 property link 有效）
 
-## 前置作業（寫入前必做）
-
-### Cwd 契約
-
-本 skill 是 repo-local，所有讀寫路徑均為 repo root 相對的 `content/...`。呼叫前先確認 cwd 為 repo root：
+## 前置作業
 
 ```bash
 [ -f "content/master-index.md" ] || { echo "ERROR: cwd 不在 repo root"; exit 1; }
 ```
 
-### 寫入前 Checklist
-
-此 skill 是 `content/` 的寫入路徑。寫入前依 `content/CLAUDE.md` 的「寫入前 Checklist」自檢：
-
-- **敏感資料零容忍**：defuddle transcript 含 token / 私鑰 / 個資 → 移除或跳過該筆，不寫入
-- **Tag 沿用既有**：`youtube` 以外的頻道主題 tag 先 grep 既有 vault tags，避免 `claude-code` vs `claudeCode` 之類 drift
-- **Frontmatter schema**：欄位、順序、白名單以 `scripts/vault-schema.mjs` 為真實來源；寫入當下即合法，不要產出需 auditor 事後補欄位的筆記
-- **命名**：檔名不含空格，中英文間用 `-`，不含 `?:;"'` 等特殊字元
-
-`/vault-check` 只兜底跨檔案 emergent 問題，不負責抓本清單能預防的錯。
+寫入前依 `content/CLAUDE.md` 的「寫入前 Checklist」自檢。本 skill 高頻踩雷點：defuddle transcript 若含 token / 個資直接跳過該筆；頻道主題 tag 先 grep 既有 vault tags 沿用，避免 `claude-code` vs `claudeCode` drift。
 
 ## 步驟 0：判斷執行模式
 
@@ -67,19 +54,16 @@ for idx in sorted(glob.glob('content/Inbox/YouTube/*/01.index.md')):
 用 `scripts/fetch_videos.py` 一次抓取頻道頁面，同時取出影片清單與頻道簡介：
 
 ```bash
-# 只在 python3 指令不存在時退到 python；避免 `2>/dev/null ||` 把 python3 的真實 runtime error 吞掉。
-if command -v python3 >/dev/null 2>&1; then
-  python3 .claude/skills/vault-youtube-sync/scripts/fetch_videos.py <handle>
-else
-  python  .claude/skills/vault-youtube-sync/scripts/fetch_videos.py <handle>
-fi
+SCRIPT=$(find .agents/skills/vault-youtube-sync .claude/skills/vault-youtube-sync -name "fetch_videos.py" 2>/dev/null | head -1)
+PY=$(command -v python3 || command -v python)
+$PY "$SCRIPT" <handle>
 ```
 
 解析輸出：
 
 - `DESC:<text>` → 頻道簡介（Step 3 使用，可能為空）
 - `VIDEO:<videoId>|||<title>` → 每行一部影片（頁面上有幾部就幾部）
-- `ERROR:<message>` → **立即停止**，告知用戶錯誤訊息
+- `ERROR:<message>` → **模式 A：立即停止**，告知用戶錯誤訊息；**模式 B：記錄錯誤、跳下一頻道**，不中斷整批
 
 組成影片 URL：`https://www.youtube.com/watch?v=<videoId>`
 

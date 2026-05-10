@@ -112,22 +112,11 @@ sync: releases
 
 ## 前置作業
 
-### Cwd 契約
-
-本 skill 是 repo-local，所有讀寫路徑均為 repo root 相對的 `content/...`。呼叫前先確認 cwd 為 repo root：
-
 ```bash
 [ -f "content/master-index.md" ] || { echo "ERROR: cwd 不在 repo root"; exit 1; }
 ```
 
-### 寫入前 Checklist
-
-這是 `content/` 的寫入路徑。寫入前依 `content/CLAUDE.md` 自檢：
-
-- 敏感資料零容忍：issue / discussion / release body 若含 token、private key、API key，移除該段；若核心內容依賴敏感內容則跳過。
-- Frontmatter schema：欄位、順序、白名單以 `scripts/vault-schema.mjs` 為準。
-- Tag 沿用既有：新增非固定 tag 前先 grep 既有 vault tags。
-- 命名：檔名不含空格，不含 `?:;"'` 等特殊字元。
+寫入前依 `content/CLAUDE.md` 的「寫入前 Checklist」自檢。
 
 ## 步驟 1：讀取來源
 
@@ -226,7 +215,8 @@ CHANGELOG:<name>|||<entry-date>|||<entry-title>|||<url>#<slug>|||<body-snippet>
 
 ```bash
 # 1. 舊個別筆記格式（Cards / Topics / 舊 Inbox 個別檔）
-grep -rl "^source: <url>$" content/Inbox/Updates content/Cards content/Topics 2>/dev/null
+# 用 -F（fixed string）避免 URL 中的 ?、& 等字元被當成 regex 元字元
+grep -rlF "source: <url>" content/Inbox/Updates content/Cards content/Topics 2>/dev/null
 
 # 2. 當日日報（URL 出現在檔案正文中）
 DAILY="content/Inbox/Updates/<YYYY-MM-DD>-daily-updates.md"
