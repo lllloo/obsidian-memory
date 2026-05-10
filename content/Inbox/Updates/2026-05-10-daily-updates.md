@@ -8,6 +8,7 @@ tags:
   - codex
   - gemini-cli
   - copilot
+  - opencode
 ---
 
 ## Claude Code
@@ -203,3 +204,128 @@ tags:
 - `userPromptSubmitted` hook bypass LLM 讓 Copilot CLI 可作為自訂 router，實作本地快取或規則型回應
 - 多 skill 單訊息呼叫提升 CLI 互動效率
 - Free 用戶 quota 顯示修正影響自我管理使用量的判斷
+
+---
+
+## Claude Code
+
+### v2.1.137 · 2026-05-09（[changelog](https://code.claude.com/docs/en/changelog#21137)）
+
+> **繁中摘要**：v2.1.137 是 Windows / VS Code extension hotfix，修正 extension 無法啟動的問題。
+
+**變更重點**
+- 修正 VS Code extension 在 Windows 上 activation 失敗。
+
+**實務影響**
+- Windows 使用者若在 VS Code 內啟動 Claude Code extension 失敗，先升到 v2.1.137 以上再排查設定。
+
+### v2.1.136 · 2026-05-08（[changelog](https://code.claude.com/docs/en/changelog#21136)）
+
+> **繁中摘要**：v2.1.136 強化 enterprise telemetry、auto mode hard deny 規則，並修正 MCP、Plan Mode、WSL2 image paste、plugin hooks 與多個 TUI/IDE workflow bug。
+
+**變更重點**
+- 新增 `CLAUDE_CODE_ENABLE_FEEDBACK_SURVEY_FOR_OTEL`，讓 enterprise 透過 OpenTelemetry 收集 session quality survey。
+- 新增 `settings.autoMode.hard_deny`，可設定 auto mode classifier 的無條件阻擋規則。
+- 修正 `.mcp.json`、plugins、claude.ai connectors 內的 MCP servers 在 VS Code extension、JetBrains plugin、Agent SDK `/clear` 後消失的問題。
+- 修正多個 remote MCP server 同時 refresh 時 OAuth refresh token 遺失，導致頻繁重新登入的問題。
+- 修正 Plan Mode 在已有 `Edit(...)` allow rule 時未阻擋檔案寫入的問題。
+- WSL2 image paste 新增 PowerShell fallback，當 `xclip` / `wl-paste` 無法讀圖時仍可貼上 Windows clipboard 圖片。
+- 修正 plugin `Stop` / `UserPromptSubmit` hooks 在 cache cleanup 刪掉仍被 session 使用的版本後失敗。
+- 修正 MCP tool results 回傳 content blocks 時不可見、`/doctor` MCP schema error 缺少來源路徑、`CronList` 缺少排程提示等問題。
+
+**實務影響**
+- 多 MCP server 使用者應減少每日重登與 `/clear` 後 connector 消失的情況。
+- Plan Mode 與 auto mode 的安全邊界更明確，適合 enterprise / managed settings 環境。
+- WSL2 與 IDE extension 使用者會直接受益於 image paste、extension、TUI rendering 修正。
+
+---
+
+## GitHub Copilot
+
+### 2026-05-08（[More flexible secrets and variables for Copilot cloud agent](https://github.blog/changelog/2026-05-08-more-flexible-secrets-and-variables-for-copilot-cloud-agent)）
+
+> **繁中摘要**：Copilot cloud agent 新增專屬的 Agents secrets / variables，可在 organization 層級集中配置，不再只能逐 repo 綁在 Actions `copilot` environment。
+
+**變更重點**
+- 新增 Agents 類型的 secrets 與 variables，與 Actions、Codespaces、Dependabot 分開管理。
+- 支援 organization-level secrets / variables，並可指定哪些 repositories 可存取。
+- Repository settings 內新增專屬 Agents 區塊，避免和 Actions 設定混在一起。
+
+**實務影響**
+- 內部 package registry token、共用 MCP server 設定等可集中下發給 Copilot cloud agent。
+- 多 repo rollout 時不必逐一建立 `copilot` environment，agent 基礎設施維護成本下降。
+
+### 2026-05-08（[Copilot code review comment types now in usage metrics API](https://github.blog/changelog/2026-05-08-copilot-code-review-comment-types-now-in-usage-metrics-api)）
+
+> **繁中摘要**：Copilot usage metrics API 現在可依 comment type 統計 Copilot code review suggestions，協助 enterprise / org owner 追蹤 code review 建議的類型與採納情況。
+
+**變更重點**
+- `pull_requests` 報表新增 `copilot_suggestions_by_comment_type` array。
+- 每個 comment type 提供 `total_copilot_suggestions` 與 `total_copilot_applied_suggestions`。
+- 支援 enterprise 與 organization 層級的單日與 28 天 rolling window 報表。
+
+**實務影響**
+- 可量化 Copilot code review 主要抓到哪些類型的問題，例如 security 或 bug risk。
+- 可比較各類建議的提出量與採納量，用於評估 code review agent 的實際價值。
+
+**待追蹤**
+- 目前不能 drill down 到 repository level；GitHub 表示仍在調查。
+
+### 2026-05-08（[Upcoming deprecation of GPT-4.1](https://github.blog/changelog/2026-05-07-upcoming-deprecation-of-gpt-4-1)）
+
+> **繁中摘要**：GitHub Copilot 將於 2026-06-01 在所有 Copilot experiences 停用 GPT-4.1，建議改用 GPT-5.5。
+
+**變更重點**
+- GPT-4.1 將於 2026-06-01 在 Copilot Chat、inline edits、ask / agent modes、code completions 等體驗中 deprecated。
+- 建議替代模型為 GPT-5.5。
+- Copilot Enterprise admins 可能需要在 model policies 中啟用替代模型。
+
+**實務影響**
+- 使用固定 GPT-4.1 的 workflow、教學、團隊設定與 integrations 需要在 2026-06-01 前更新。
+- Enterprise 環境需確認 GPT-5.5 policy 已開，否則使用者可能在 model selector 看不到替代模型。
+
+### 2026-05-07（[Claude Sonnet 4 deprecated](https://github.blog/changelog/2026-05-07-claude-sonnet-4-deprecated)）
+
+> **繁中摘要**：GitHub Copilot 已於 2026-05-06 在所有 Copilot experiences 停用 Claude Sonnet 4，建議改用 Claude Sonnet 4.6。
+
+**變更重點**
+- Claude Sonnet 4 已於 2026-05-06 deprecated。
+- 影響 Copilot Chat、inline edits、ask / agent modes、code completions 等所有 Copilot experiences。
+- 建議替代模型為 Claude Sonnet 4.6。
+
+**實務影響**
+- 固定使用 Claude Sonnet 4 的 Copilot 設定需切換到 Claude Sonnet 4.6。
+- Enterprise admins 需確認替代模型 policy 已啟用，使用者才會在 VS Code / github.com model selector 看到可用模型。
+
+### 2026-05-07（[Rubber Duck in GitHub Copilot CLI now supports more models](https://github.blog/changelog/2026-05-07-rubber-duck-in-github-copilot-cli-now-supports-more-models)）
+
+> **繁中摘要**：Copilot CLI 的 Rubber Duck cross-family review agent 擴大模型組合；GPT orchestrator 可搭配 Claude critic，Claude orchestrator 則升級 GPT-5.5 作為 second opinion。
+
+**變更重點**
+- GPT model 作為 orchestrator 且 `/experimental` 開啟時，可派出 Claude-powered Rubber Duck agent 給第二意見。
+- Claude orchestrator sessions 的 Rubber Duck model 升級為 GPT-5.5。
+
+**實務影響**
+- Copilot CLI 的跨模型 review 能覆蓋 GPT-driven sessions，不再只偏向 Claude orchestrator。
+- 對需要 architecture、cross-file conflict、subtle bug second opinion 的 CLI workflow 有直接幫助。
+
+---
+
+## opencode
+
+### v1.14.42-v1.14.46 · 2026-05-09–2026-05-10（[release](https://github.com/anomalyco/opencode/releases/tag/v1.14.46)）
+
+> **繁中摘要**：opencode 連續 releases 補強 agent workflow、HTTP API、workspace handling、MCP discovery 與 Plan Mode security；其中 v1.14.42 與 v1.14.46 對日常 agent 使用影響最大。
+
+**變更重點**
+- [v1.14.42](https://github.com/anomalyco/opencode/releases/tag/v1.14.42)：新增 Scout agent，用於 repo research、docs lookup、dependency-source inspection。
+- [v1.14.42](https://github.com/anomalyco/opencode/releases/tag/v1.14.42)：新增 workspace sync、`opencode run` interactive split-footer mode、HTTP API large non-streaming response compression。
+- [v1.14.42](https://github.com/anomalyco/opencode/releases/tag/v1.14.42)：修正 Gemini、Anthropic Opus 4.5、OpenAI deep research / GPT-5 reasoning variants 的 reasoning effort options。
+- [v1.14.45](https://github.com/anomalyco/opencode/releases/tag/v1.14.45)：Read tool permission rules 現在會 match worktree-relative paths，read allowlists / denylists 行為更一致。
+- [v1.14.46](https://github.com/anomalyco/opencode/releases/tag/v1.14.46)：新增內建 `customize-opencode` skill，降低修改 opencode config 後啟動失敗的機率。
+- [v1.14.46](https://github.com/anomalyco/opencode/releases/tag/v1.14.46)：修正 broken `outputSchema` MCP server 造成 tool discovery 失敗，以及 subagents 可忽略 parent-agent deny rules 的 Plan Mode security bypass。
+
+**實務影響**
+- 使用 opencode 做 repo 探索或依賴源碼檢查時，Scout agent 是新的核心能力。
+- 若 workflow 依賴 worktree、subagents、MCP servers 或 Plan Mode deny rules，建議升級到 v1.14.46。
+- reasoning effort options 修正可避免模型支援能力與 UI / config 暴露選項不一致。
