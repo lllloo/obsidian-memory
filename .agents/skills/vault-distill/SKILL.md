@@ -21,8 +21,8 @@ description: 將 Obsidian vault 中多篇相關筆記整合為單一主題 MOC�
 
 **Step 2：掃描現有 MOC**
 先嘗試讀取 `.vault-distill/state.json`（gitignored，不存在時靜默略過）取出 `mocs` 鍵清單，再分兩處掃描合併結果：
-- `rg -l "^\s*- moc" content/Cards --include="*.md"`（排除 `index.md`）
-- `rg -l "^\s*- moc" content/Topics --include="*.md"`（排除 `index.md`）
+- `rg -l "^\s*- moc" content/Cards --include="*.md" --glob='!**/index.md'`
+- `rg -l "^\s*- moc" content/Topics --include="*.md" --glob='!**/index.md'`
 
 state.json 的 `round` 與 `candidates` 欄位直接傳給後續步驟（省去跨 session 輪數推算）。詳細 schema 見 `references/state-schema.md`。
 
@@ -111,13 +111,11 @@ Read 全部候選筆記，記錄：觀點、關鍵數字、獨特資訊、可能
 用 Agent tool（`subagent_type: "general-purpose"`）啟動 reviewer subagent，prompt = `references/review-loop.md` 的 **Reviewer Subagent Prompt** 段全文，填入以下 placeholder：
 - `<MOC 絕對路徑>` → 實際路徑（e.g., `/Users/.../content/Cards/主題.md`）
 - `<官方 docs URL 1/2>` → 若未跑步驟 D，填 `N/A`；若已跑步驟 D，從對話中的校正摘要取出官方 docs URL 帶入（reviewer 才會驗收校正效果）
-- `第 N 輪` → 從對話上下文推算：首次 review 填 `第 1 輪`；若對話中已有 review 結果則 +1；無法判斷時預設 `第 1 輪`
+- `第 N 輪` → 優先讀 `.vault-distill/state.json` 的 `round` 欄位；state.json 不存在或無此 MOC 鍵時才預設 `第 1 輪`（告知用戶）
 
 不必告訴 subagent 去 Read references/review-loop.md——直接貼段落全文。
 
 Reviewer 回報**三類問題**（必改 / 應改 / 可選），每項含具體位置與建議。
-
-**輪數計算**：從對話上下文推算。若對話中無法判斷（如跨 session 重開），預設「第 1 輪」並告知用戶目前以第 1 輪計；不因此跳過 review。
 
 ### B 結束
 

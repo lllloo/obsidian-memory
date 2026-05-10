@@ -59,7 +59,7 @@
 
 - Step A 完成 → 寫 `last_step: "A"` + `candidates`
 - Step B 完成 → 寫 `last_step: "B"` + `round +1` + `last_review`
-- Step C 完成 → 寫 `last_step: "C"` + `round +1` + `last_review`
+- Step C 完成 → 寫 `last_step: "C"` + `last_review`（round 不遞增，C 是 fix 不是新 review）
 - Step D 完成 → 寫 `last_step: "D"` + `fact_check_urls`
 - Step E 完成 → 刪除對應 MOC 鍵（原筆記已處置，整合完成）
 

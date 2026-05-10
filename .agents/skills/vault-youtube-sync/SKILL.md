@@ -55,6 +55,7 @@ for idx in sorted(glob.glob('content/Inbox/YouTube/*/01.index.md')):
 
 ```bash
 SCRIPT=$(find .agents/skills/vault-youtube-sync .claude/skills/vault-youtube-sync -name "fetch_videos.py" 2>/dev/null | head -1)
+[ -z "$SCRIPT" ] && { echo "ERROR: fetch_videos.py not found"; exit 1; }
 PY=$(command -v python3 || command -v python)
 $PY "$SCRIPT" <handle>
 ```

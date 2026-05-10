@@ -133,6 +133,7 @@ Reddit 每日日報訂閱 index。
 
 ```bash
 SCRIPT=$(find .agents/skills/vault-reddit-daily .claude/skills/vault-reddit-daily -name "fetch_reddit_daily.py" 2>/dev/null | head -1)
+[ -z "$SCRIPT" ] && { echo "ERROR: fetch_reddit_daily.py not found"; exit 1; }
 PY=$(command -v python3 || command -v python)
 $PY "$SCRIPT" ClaudeCode LocalLLaMA codex ...
 ```
