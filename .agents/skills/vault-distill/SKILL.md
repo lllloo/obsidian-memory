@@ -1,6 +1,6 @@
 ---
 name: vault-distill
-description: 將 Obsidian vault 中多篇相關筆記整合為單一主題 MOC（Map of Content）。辨識重疊筆記、萃取共識與差異、對照官方來源校正事實，並透過 reviewer/fixer subagent 迭代直到定稿。觸發時機：使用者明確要求整合筆記、合併同主題筆記、建立主題索引、依主題整理，或提及「整合筆記」、「合併筆記」、「MOC」、「主題整合」、「topic synthesis」。
+description: 將 Obsidian vault 中多篇相關筆記整合為單一主題 MOC（Map of Content）：辨識重疊、萃取共識與差異、對照官方來源校正事實，透過 reviewer/fixer subagent 迭代直到定稿。也支援推薦適合整合的候選主題（vault 中已累積到內聚門檻的群組）。使用時機：使用者要求「整合筆記」、「合併同主題筆記」、「建立 MOC」、「主題整合」、「topic synthesis」、「有什麼主題可整合」、「推薦主題」，或直接呼叫 /vault-distill。
 ---
 
 # Synthesizing Notes to MOC
@@ -21,12 +21,14 @@ description: 將 Obsidian vault 中多篇相關筆記整合為單一主題 MOC�
 
 **Step 2：掃描現有 MOC**
 先嘗試讀取 `.vault-distill/state.json`（gitignored，不存在時靜默略過）取出 `mocs` 鍵清單，再分兩處掃描合併結果：
+
 - `rg -l "^\s*- moc" content/Cards --include="*.md" --glob='!**/index.md'`
 - `rg -l "^\s*- moc" content/Topics --include="*.md" --glob='!**/index.md'`
 
 state.json 的 `round` 與 `candidates` 欄位直接傳給後續步驟（省去跨 session 輪數推算）。詳細 schema 見 `references/state-schema.md`。
 
 額外偵測半成品：
+
 - 含 `draft: true` 的 MOC → 標記為「進行中」
 
 依 MOC 數量路由：
@@ -62,6 +64,7 @@ state.json 的 `round` 與 `candidates` 欄位直接傳給後續步驟（省去�
 搜尋結果排除 frontmatter 含 `moc` tag 的檔案（已是 MOC，不應作為整合來源）。
 
 搜尋完畢後額外執行：
+
 - 掃 `content/Cards/` 是否有含「## 來源」章節但無 `moc` tag 的 .md 檔（疑似未補 tag 的 MOC）→ 若有，警示用戶確認再繼續
 - 列出所有現有 MOC（moc tag），確認候選主題名稱無同義詞衝突（如「Claude Code Skills」vs「Claude Skills」）→ 若有疑似重複，告知用戶是否合併
 
@@ -97,6 +100,7 @@ Read 全部候選筆記，記錄：觀點、關鍵數字、獨特資訊、可能
 ### A 結束
 
 輸出：
+
 - 檔案路徑、行數、候選筆記清單（N 篇）
 - 自檢摘要：前言列出的面向 vs 實際章節對應（有無孤兒）、wikilink 數量、frontmatter 是否符合 schema
 
@@ -109,6 +113,7 @@ Read 全部候選筆記，記錄：觀點、關鍵數字、獨特資訊、可能
 **觸發**：`Cards/<主題>.md` 存在，使用者選 review 選項。
 
 用 Agent tool（`subagent_type: "general-purpose"`）啟動 reviewer subagent，prompt = `references/review-loop.md` 的 **Reviewer Subagent Prompt** 段全文，填入以下 placeholder：
+
 - `<MOC 絕對路徑>` → 實際路徑（e.g., `/Users/.../content/Cards/主題.md`）
 - `<官方 docs URL 1/2>` → 若未跑步驟 D，填 `N/A`；若已跑步驟 D，從對話中的校正摘要取出官方 docs URL 帶入（reviewer 才會驗收校正效果）
 - `第 N 輪` → 優先讀 `.vault-distill/state.json` 的 `round` 欄位；state.json 不存在或無此 MOC 鍵時才預設 `第 1 輪`（告知用戶）
@@ -172,6 +177,7 @@ Reviewer 回報**三類問題**（必改 / 應改 / 可選），每項含具體�
 **觸發**：使用者含 處理原筆記 / 刪 / dispose。
 
 **原筆記清單來源**（按優先順序）：
+
 1. 對話中已有 **本主題** Step A 候選清單 → 直接使用（使用前先確認主題與當前 MOC 一致，多 MOC 場景尤需注意）
 2. 否則重跑 A1 搜尋，使用 MOC 的 **frontmatter tags**（而非標題文字）作為關鍵字，再用 MOC 現有 wikilink 做交叉補充
 3. 或掃描 MOC 現有 wikilink，把 `[[...]]` 指向 `content/Cards/` 或 `content/Inbox/` 的檔案視為候選
@@ -211,11 +217,11 @@ Reviewer 回報**三類問題**（必改 / 應改 / 可選），每項含具體�
 
 依 `content/CLAUDE.md` 卡片盒工作流，AI 整理的產出**一律先進 `Cards/`**：
 
-| 來源 → 產出 | 預設目的地 | 由誰決定 |
-| ----------- | ---------- | -------- |
-| Inbox/* 整理 → MOC | `Cards/<主題>.md` | 本 skill |
-| Cards/* 同主題整合 → MOC | `Cards/<主題>.md` | 本 skill |
-| Cards/ → Topics/ 升級 | `Topics/<類別>/<主題>.md` | **使用者** 人工 `git mv` |
+| 來源 → 產出               | 預設目的地                | 由誰決定                 |
+| ------------------------- | ------------------------- | ------------------------ |
+| Inbox/\* 整理 → MOC       | `Cards/<主題>.md`         | 本 skill                 |
+| Cards/\* 同主題整合 → MOC | `Cards/<主題>.md`         | 本 skill                 |
+| Cards/ → Topics/ 升級     | `Topics/<類別>/<主題>.md` | **使用者** 人工 `git mv` |
 
 本 skill 預設**不寫 `Topics/`**。使用者明確指示時才例外（同時補 `Topics/<類別>/index.md` 的 wikilink）。
 

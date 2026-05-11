@@ -1,6 +1,6 @@
 ---
 name: vault-updates-daily
-description: 每天彙整高信任 developer tooling 更新成一篇 Obsidian daily updates briefing，來源以官方 changelog / release notes、GitHub releases、GitHub discussions 為主。使用者提到「updates daily」、「changelog 同步」、「release notes 同步」、「Codex/Claude Code/Copilot/Gemini CLI 更新」、「官方變更整理」、「agent tooling 變更」時使用。
+description: 每天彙整高信任 developer tooling 更新成一篇 Obsidian daily updates briefing，來源涵蓋官方 changelog / release notes、GitHub releases（含 authenticated user 的 starred repos）、GitHub discussions；專注 coding agent 與 developer workflow 相關變更。使用時機：使用者要求「同步 changelog」、「release notes 更新」、「Claude Code / Codex / Copilot / Gemini CLI 更新整理」、「官方變更同步」、「daily updates」，或直接呼叫 /vault-updates-daily。
 disable-model-invocation: true
 ---
 
@@ -49,20 +49,24 @@ tags:
 ```markdown
 ## <工具名>
 
-### <版本或日期>（[release 標題](<url>)）
+### <版本或日期>（[release 標題](url)）
 
 > **繁中摘要**：...
 
 **變更重點**
+
 - ...
 
 **實務影響**
+
 - ...
 
 ---
 
 ## <工具名>
+
 ### <版本或日期>
+
 ...
 ```
 
@@ -102,7 +106,6 @@ tags:
 sync: releases
 
 ## 日報
-
 ```
 
 來源格式：
@@ -281,7 +284,7 @@ tags:
 
 ## <工具名>
 
-### <META>（[標題](<url>)）
+### <META>（[標題](url)）
 
 <CONTENT block>
 

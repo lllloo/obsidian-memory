@@ -1,6 +1,6 @@
 ---
 name: vault-check
-description: 對 Obsidian vault 的 content/ 執行稽核與自動修正，分兩段：硬規則由 scripts/vault-check.mjs 自動修（檔名、frontmatter 結構、日期 normalize、敏感資料 high-precision regex）；語意層由 audit references 經 general-purpose subagent 給建議（wikilink 斷鏈、自然語言敏感資料、tag 一致性、缺欄位）。觸發詞：「vault check」、「/vault-check」、「稽核 vault」、「檢查 vault」、「跑 vault-check」、「vault 健檢」。
+description: 對 Obsidian vault 的 content/ 執行稽核與自動修正，分兩段：硬規則由 scripts/vault-check.mjs 自動修（檔名、frontmatter 結構、日期 normalize、敏感資料 high-precision regex）；語意層由 audit references 經 general-purpose subagent 給建議（wikilink 斷鏈、自然語言敏感資料、tag 一致性、缺欄位）。使用時機：使用者要求「稽核 vault」、「檢查 vault」、「跑 vault-check」、「vault 健檢」、「找壞 wikilink」、「修 frontmatter」，或直接呼叫 /vault-check。
 ---
 
 # /vault-check — Vault 稽核與自動修正

@@ -1,6 +1,6 @@
 ---
 name: vault-reddit-daily
-description: 每天整理 Reddit 上 AI 相關社群動態與新知成一篇 Obsidian briefing，涵蓋工具新版、官方變更、模型行為觀察、熱議與爭議，每則附原文連結。觸發時機：「Reddit 日報」、「每日 Reddit」、「今天 Reddit 有什麼」、「Reddit 動態」、「整理 Reddit 日報」、「AI Reddit 近況」、「給我 Reddit 每日摘要」。
+description: 每天整理 Reddit AI 工程社群動態成一篇 Obsidian briefing，採 broad coverage 策略（目標保留 8-15 則、上限 20），涵蓋工具新版、官方變更、模型行為觀察、熱議與爭議，每則附原文連結。使用時機：使用者要求「Reddit 日報」、「整理今天 Reddit」、「AI Reddit 近況」、「Reddit 動態」、「給我 Reddit 摘要」，或直接呼叫 /vault-reddit-daily。
 disable-model-invocation: true
 ---
 

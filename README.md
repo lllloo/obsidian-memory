@@ -35,8 +35,9 @@ content/
 
 ```bash
 npx quartz build --serve     # 本地預覽（http://localhost:8080）
-npm run check                # TypeScript 型別檢查 + Prettier 格式驗證
+npm run check                # TypeScript 型別檢查 + Prettier + skill symlink 驗證
 npm run format               # 自動格式化
+npm run test                 # 執行所有測試（Node.js 內建 test runner，tsx --test）
 npm run vault:check          # 稽核 content/ frontmatter 與檔名（只報告）
 npm run vault:fix            # 稽核並自動修正（/vault-check 內部呼叫）
 ```

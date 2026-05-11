@@ -71,7 +71,7 @@ Codex 不會自動把 repo 內 `.agents/skills/` 註冊為全域 skill registry�
 - `/vault-check` 或 vault 稽核修正 → 讀 `.agents/skills/vault-check/SKILL.md`
 - YouTube 同步 → 讀 `.agents/skills/vault-youtube-sync/SKILL.md`
 - 筆記蒸餾整合 → 讀 `.agents/skills/vault-distill/SKILL.md`
-- 工具更新同步（官方 changelog / GitHub releases / issues / discussions）→ 讀 `.agents/skills/vault-updates-daily/SKILL.md`
+- 工具更新同步（官方 changelog / GitHub releases 含 starred / GitHub discussions）→ 讀 `.agents/skills/vault-updates-daily/SKILL.md`
 - Reddit 每日日報 → 讀 `.agents/skills/vault-reddit-daily/SKILL.md`
 
 `.agents/skills/` 是 repo-local skill 的唯一維護來源；`.claude/skills` 應維持為指向 `.agents/skills/` 的 symlink，避免兩份內容漂移。
@@ -106,12 +106,14 @@ Codex 不會自動把 repo 內 `.agents/skills/` 註冊為全域 skill registry�
 
 整批處理特定來源的筆記。手動在本 repo 內觸發，不掛全域。
 
-| 檔案                                 | 類型  | 全域路徑 | 用途                                                                   |
-| ------------------------------------ | ----- | -------- | ---------------------------------------------------------------------- |
-| `.claude/skills/vault-youtube-sync/` | Skill | —        | YouTube 頻道影片轉 Obsidian 筆記                                       |
-| `.claude/skills/vault-distill/`      | Skill | —        | 多篇筆記蒸餾整合為單篇（逐步呼叫，每次做一件事）                      |
-| `.claude/skills/vault-updates-daily/` | Skill | —        | 每日彙整官方 changelog / GitHub releases / discussions 成 daily updates briefing |
-| `.claude/skills/vault-reddit-daily/` | Skill | —        | Reddit AI 高訊號討論整理成每日一篇日報，保留原文連結                   |
+| 檔案                                  | 類型  | 全域路徑 | 自動觸發 | 用途                                                                                          |
+| ------------------------------------- | ----- | -------- | -------- | --------------------------------------------------------------------------------------------- |
+| `.claude/skills/vault-youtube-sync/`  | Skill | —        | ✗        | YouTube 頻道影片批次轉 Obsidian 筆記，含 last_sync_id checkpoint 與 draft 失敗占位            |
+| `.claude/skills/vault-distill/`       | Skill | —        | ✓        | 多篇筆記蒸餾整合為單篇 MOC（逐步呼叫，每次做一件事）；也支援推薦適合整合的候選主題            |
+| `.claude/skills/vault-updates-daily/` | Skill | —        | ✗        | 每日彙整官方 changelog / GitHub releases（含 authenticated user starred repos）/ discussions  |
+| `.claude/skills/vault-reddit-daily/`  | Skill | —        | ✗        | Reddit AI 工程社群動態每日 briefing，broad coverage 8-15 則，含工具新版 / 行為觀察 / 熱議爭議 |
+
+**「自動觸發」欄**：由 SKILL.md frontmatter 的 `disable-model-invocation` 決定。三個批次工作流（youtube-sync / updates-daily / reddit-daily）關閉自動觸發，避免日常對話意外起動長流程；只能透過 slash command 顯式呼叫。`vault-distill` 保留自動觸發，因為「整合 X 主題」屬於明確意圖。同邏輯適用 § 1-2 的 `ob` / `vault-check`（皆 ✓，使用者高頻入口）。
 
 ### 4. 建議安裝的第三方 Skills（非本 repo 管理，需另行安裝至 `~/.claude/skills/`）
 

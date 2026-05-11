@@ -1,6 +1,6 @@
 ---
 name: vault-youtube-sync
-description: 當使用者提供 YouTube **頻道** URL（含 @handle 的網址，如 youtube.com/@XXX 或 youtube.com/@XXX/videos）或想批次同步所有既有 YouTube 頻道筆記時，一定要用此 skill。觸發情境：「頻道影片建成筆記」、「youtube 轉筆記」、「yt 轉 ob」、「整理到 vault」、「存成 Obsidian 筆記」、「同步這個頻道」、「看有沒有新影片沒存到的」、「抓頻道影片」、「同步全部頻道」、「更新所有頻道」、「youtube 全部更新」、不指定頻道直接呼叫 `/vault-youtube-sync`。
+description: 將 YouTube 頻道影片批次轉成 Obsidian 筆記，支援指定頻道 URL（@handle）或一次同步所有既有頻道；每個頻道建立 index + base view 索引，含增量同步（last_sync_id checkpoint）與失敗占位重試（draft 占位）。使用時機：使用者提供 YouTube 頻道 URL（含 @handle）、要求「同步頻道影片」、「整理 YouTube 到 vault」、「抓頻道影片建筆記」、「更新所有頻道」、「yt 全部更新」，或直接呼叫 /vault-youtube-sync。
 disable-model-invocation: true
 ---
 
@@ -221,11 +221,11 @@ N. <標題> — <URL>
 
 **模式 B（多頻道）額外彙總表**：所有頻道跑完後，最末再加一張總覽：
 
-| 頻道           | 新增完整 | draft 占位 | 跳過（篩選/已存在/已刪） | 失敗 |
-| -------------- | -------- | ---------- | ------------------------ | ---- |
-| Chase-H-AI     | 3        | 0          | 2                        | 0    |
-| AIJasonZ       | 0 (已是最新) | -      | -                        | -    |
-| ...            | ...      | ...        | ...                      | ...  |
+| 頻道       | 新增完整     | draft 占位 | 跳過（篩選/已存在/已刪） | 失敗 |
+| ---------- | ------------ | ---------- | ------------------------ | ---- |
+| Chase-H-AI | 3            | 0          | 2                        | 0    |
+| AIJasonZ   | 0 (已是最新) | -          | -                        | -    |
+| ...        | ...          | ...        | ...                      | ...  |
 
 **更新 checkpoint**：所有筆記建立完成後，將 `01.index.md` 的 `last_sync_id` 更新為**步驟 1 清單中第一筆**的 video ID（即目前頻道最新的影片）：
 
