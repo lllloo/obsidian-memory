@@ -1,6 +1,7 @@
 ---
 name: vault-updates-sync
 description: 同步高信任 developer tooling 更新到 Obsidian，來源以官方 changelog / release notes、GitHub releases、GitHub discussions 為主。使用者提到「updates sync」、「changelog 同步」、「release notes 同步」、「Codex/Claude Code/Copilot/Gemini CLI 更新」、「官方變更整理」、「agent tooling 變更」時使用。
+disable-model-invocation: true
 ---
 
 # Vault Updates Sync
