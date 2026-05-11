@@ -1,10 +1,10 @@
 {
-  "skill_name": "vault-updates-sync",
+  "skill_name": "vault-updates-daily",
   "evals": [
     {
       "id": 1,
       "prompt": "同步最近一週 Codex 和 Claude Code 的官方變更與 releases",
-      "expected_output": "觸發 vault-updates-sync，讀 content/Inbox/Updates/01.index.md 或建立預設 index，抓官方 changelog 與 GitHub releases，篩選有影響的項目建成筆記",
+      "expected_output": "觸發 vault-updates-daily，讀 content/Inbox/Updates/01.index.md 或建立預設 index，抓官方 changelog 與 GitHub releases，篩選有影響的項目建成筆記",
       "files": [],
       "assertions": [
         {
@@ -24,7 +24,7 @@
     {
       "id": 2,
       "prompt": "整理 Cursor changelog 和 GitHub Copilot 相關 changelog 到 vault",
-      "expected_output": "觸發 vault-updates-sync，處理官方 changelog 中 Cursor 與 GitHub Changelog（Copilot），只保留對 developer tooling / coding agent workflow 有影響的 entry",
+      "expected_output": "觸發 vault-updates-daily，處理官方 changelog 中 Cursor 與 GitHub Changelog（Copilot），只保留對 developer tooling / coding agent workflow 有影響的 entry",
       "files": [],
       "assertions": [
         {
@@ -44,7 +44,7 @@
     {
       "id": 3,
       "prompt": "同步我 GitHub 星星的 AI coding tool 最近有什麼新 release",
-      "expected_output": "觸發 vault-updates-sync，用單一 GraphQL call 抓星星 repo 的 releases，篩選 AI coding tool 相關項目（如 gemini-cli、opencode、copilot-cli）建成筆記，跳過 eslint、prettier 等非 AI tooling",
+      "expected_output": "觸發 vault-updates-daily，用單一 GraphQL call 抓星星 repo 的 releases，篩選 AI coding tool 相關項目（如 gemini-cli、opencode、copilot-cli）建成筆記，跳過 eslint、prettier 等非 AI tooling",
       "files": [],
       "assertions": [
         {

@@ -1,10 +1,10 @@
 ---
-name: vault-updates-sync
-description: 同步高信任 developer tooling 更新到 Obsidian，來源以官方 changelog / release notes、GitHub releases、GitHub discussions 為主。使用者提到「updates sync」、「changelog 同步」、「release notes 同步」、「Codex/Claude Code/Copilot/Gemini CLI 更新」、「官方變更整理」、「agent tooling 變更」時使用。
+name: vault-updates-daily
+description: 每天彙整高信任 developer tooling 更新成一篇 Obsidian daily updates briefing，來源以官方 changelog / release notes、GitHub releases、GitHub discussions 為主。使用者提到「updates daily」、「changelog 同步」、「release notes 同步」、「Codex/Claude Code/Copilot/Gemini CLI 更新」、「官方變更整理」、「agent tooling 變更」時使用。
 disable-model-invocation: true
 ---
 
-# Vault Updates Sync
+# Vault Updates Daily
 
 同步高信任 developer tooling 更新到 Obsidian。重點是可回查、可操作、可沉澱的來源：官方 changelog、release notes、GitHub releases、GitHub discussions。
 
@@ -138,7 +138,7 @@ sync: releases
 - `## GitHub starred` 段含 `sync: releases`：加上 `--starred` flag
 
 ```bash
-SCRIPT=$(find .agents/skills/vault-updates-sync .claude/skills/vault-updates-sync -name "fetch_updates.py" 2>/dev/null | head -1)
+SCRIPT=$(find .agents/skills/vault-updates-daily .claude/skills/vault-updates-daily -name "fetch_updates.py" 2>/dev/null | head -1)
 PY=$(command -v python3 || command -v python)
 INDEX="content/Inbox/Updates/01.index.md"
 

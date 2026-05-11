@@ -1,6 +1,6 @@
 ---
 name: vault-reddit-daily
-description: 每天整理 Reddit 上 AI 相關社群動態與新知成一篇 Obsidian briefing，涵蓋工具新版、官方變更、模型行為觀察、熱議與爭議，每則附原文連結。觸發時機：「Reddit 日報」、「每日 Reddit」、「今天 Reddit 有什麼」、「Reddit 動態」、「整理 Reddit 日報」、「AI Reddit 近況」、「給我 Reddit 每日摘要」。不應觸發：官方 changelog / GitHub issue 同步（用 vault-updates-sync）、查詢既有 vault 筆記、YouTube 同步、非 Reddit 來源分析。
+description: 每天整理 Reddit 上 AI 相關社群動態與新知成一篇 Obsidian briefing，涵蓋工具新版、官方變更、模型行為觀察、熱議與爭議，每則附原文連結。觸發時機：「Reddit 日報」、「每日 Reddit」、「今天 Reddit 有什麼」、「Reddit 動態」、「整理 Reddit 日報」、「AI Reddit 近況」、「給我 Reddit 每日摘要」。不應觸發：官方 changelog / GitHub issue 同步（用 vault-updates-daily）、查詢既有 vault 筆記、YouTube 同步、非 Reddit 來源分析。
 disable-model-invocation: true
 ---
 
@@ -12,9 +12,9 @@ Reddit 社群動態 briefing。自帶 subreddit 訂閱清單，不讀 `Inbox/Red
 >
 > 採 **broad coverage but selective** 策略：單日日報目標保留 **8-15 則**，最多 20 則。重點是「掃過知道今天社群在討論什麼」，**不是「找可重現 bug 或技術文章」**。Reddit 是討論型社群，不是技術文獻來源；保留範圍包含官方新訊息、工具發布、行為觀察、熱議與抱怨潮（集體事件本身就是訊號），跳過範圍限於純 meme、純個人 showcase、純個人客服故障。
 
-## 與 vault-updates-sync 的分工
+## 與 vault-updates-daily 的分工
 
-- `vault-updates-sync`：同步官方 changelog / release notes、GitHub releases、GitHub issues / discussions，建立高信任來源筆記
+- `vault-updates-daily`：同步官方 changelog / release notes、GitHub releases、GitHub issues / discussions，建立高信任來源筆記
 - `vault-reddit-daily`：讀 `Inbox/RedditDaily/01.index.md` 的訂閱清單，抓當日 top，彙整成一篇 `Inbox/RedditDaily/Reddit日報-YYYY-MM-DD.md`，記錄當日**社群動態、工具新知、行為觀察、熱議爭議**（廣度導向）
 - `RedditDaily` 不維護 persisted dedup；同一天重跑覆蓋日報，不影響官方 / GitHub 更新同步流程
 

@@ -1,5 +1,5 @@
 """
-Fetch high-trust developer tooling updates for vault-updates-sync.
+Fetch high-trust developer tooling updates for vault-updates-daily.
 
 Inputs:
     python fetch_updates.py --since YYYY-MM-DD --repo openai/codex --repo anthropics/claude-code [--starred]
