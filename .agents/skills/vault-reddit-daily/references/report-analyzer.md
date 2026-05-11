@@ -82,8 +82,7 @@ subreddit: <subreddit>
 url: https://www.reddit.com/r/<subreddit>/comments/<post_id>/
 published: <YYYY-MM-DD>
 section: news | observation | debate
-signal: <一行說明這是哪種動態訊號（工具新知 / 行為觀察 / 集體事件 / 爭議）>
-summary: <繁中 2-4 句摘要，技術名詞保留英文；不要補充推測；若是 link post，描述外連內容的核心點>
+summary: <繁中 1-2 句摘要，技術名詞保留英文；不要補充推測；若是 link post，描述外連內容的核心點>
 reference: <使用者打開原文時應優先看的點：通常是留言區的共鳴、外連 repo / docs、或主文的 key 段落>
 priority: high | medium | low
 ```
