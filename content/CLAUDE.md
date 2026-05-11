@@ -160,6 +160,7 @@ tags:
 
 - Obsidian Web Clipper 若帶入 `author` / `description` / `cover` / `image` / `banner` 等未列欄位，一律清掉
 - `/vault-check` 會自動稽核（`UNKNOWN_FIELD`）並由 `scripts/vault-check.mjs` 刪除
+- 例外：`Inbox/Clippings/` 為剪下的原料，`/vault-check` 豁免其 schema 檢查；整理進 Cards/ 或 Topics/ 後才走稽核
 - 新增欄位前需先在 `scripts/vault-schema.mjs` 擴充，不可直接寫入未列欄位
 
 ## YouTube 筆記語言規範

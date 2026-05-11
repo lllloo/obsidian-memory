@@ -40,7 +40,7 @@ npm run vault:fix                # 稽核並自動修正（/vault-check 內部�
 - `quartz.config.ts` — 站台設定（外觀、plugins、ignorePatterns）
 - `quartz.layout.ts` — 版面配置
 - `AGENTS.md` — `CLAUDE.md` 的 symlink，給非 Claude Code 的 agent 工具讀（改 CLAUDE.md 自動同步）
-- `.clipper/vault-clipper.json` — Obsidian Web Clipper 模板（`Inbox/Clippings/` 抓取規則、frontmatter 白名單；非白名單欄位由 `/vault-check` 清掉）
+- `.clipper/vault-clipper.json` — Obsidian Web Clipper 模板（`Inbox/Clippings/` 抓取規則、frontmatter 白名單）。`Inbox/Clippings/` 為剪下的原料，`/vault-check` 豁免其檔名 / schema 檢查（敏感資料硬掃仍跑）；整理進 Cards/ 或 Topics/ 後才會走完整稽核
 - `.github/workflows/deploy.yml` — push 到 `main` 自動建置並部署至 GitHub Pages
 
 ## Quartz 重要行為

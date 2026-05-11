@@ -63,6 +63,15 @@ const EXCLUDED = new Set([
   "content/CLAUDE.md",
 ]);
 
+// Schema / 檔名豁免：Web Clipper 剪下的原料，整理進 Cards 前不檢查檔名空格與 frontmatter schema。
+// 注意：敏感資料 high-precision 硬掃（scanSensitive）仍會跑——剪貼網頁正是最容易夾帶 token 的地方。
+const SCHEMA_EXEMPT_PREFIXES = ["content/Inbox/Clippings/"];
+
+function isSchemaExempt(absPath) {
+  const r = rel(absPath);
+  return SCHEMA_EXEMPT_PREFIXES.some((p) => r.startsWith(p));
+}
+
 const { values: args } = parseArgs({
   options: {
     fix: { type: "boolean", default: false },
@@ -77,6 +86,9 @@ if (args.help) {
 掃描 content/ 下所有 .md，只處理硬規則（檔名、frontmatter 結構、日期 normalize）。
 語意層稽核（wikilink 斷鏈、敏感資料、tag 一致性、缺 title/created/tags、parse error）
 由語意層稽核流程（/vault-check skill 內 audit reference）處理，不在此 script。
+
+豁免：content/Inbox/Clippings/ 為 Web Clipper 剪下的原料，跳過檔名 / schema 檢查，
+但敏感資料 high-precision 硬掃照跑。
 
   --fix    自動修可修項目（欄位順序、白名單外欄位、補 updated、日期 normalize、檔名空格）
   --json   以 JSON 輸出（預設為人類可讀）`);
@@ -362,17 +374,19 @@ async function main() {
 
   const sensitive = [];
   for (const abs of files) {
-    const { issues, parsed, raw } = auditFile(abs);
     let currentAbs = abs;
-    if (args.fix && issues.length) {
-      const result = applyFixes(abs, issues, parsed, raw);
-      allApplied.push(...result.applied);
-      blocked.push(...result.blocked);
-      if (result.renamedTo) currentAbs = result.renamedTo;
-      // applyFixes 只處理 autofix=true 的 issue；剩下的（PARSE_ERROR 等）才推進 allIssues
-      for (const i of issues) if (!i.autofix || !i.fix) allIssues.push(i);
-    } else {
-      allIssues.push(...issues);
+    if (!isSchemaExempt(abs)) {
+      const { issues, parsed, raw } = auditFile(abs);
+      if (args.fix && issues.length) {
+        const result = applyFixes(abs, issues, parsed, raw);
+        allApplied.push(...result.applied);
+        blocked.push(...result.blocked);
+        if (result.renamedTo) currentAbs = result.renamedTo;
+        // applyFixes 只處理 autofix=true 的 issue；剩下的（PARSE_ERROR 等）才推進 allIssues
+        for (const i of issues) if (!i.autofix || !i.fix) allIssues.push(i);
+      } else {
+        allIssues.push(...issues);
+      }
     }
     const sHits = scanSensitive(currentAbs);
     if (sHits.length) {
