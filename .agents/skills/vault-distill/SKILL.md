@@ -1,6 +1,6 @@
 ---
 name: vault-distill
-description: 將 Obsidian vault 中多篇相關筆記整合為單一主題 MOC（Map of Content）。辨識重疊筆記、萃取共識與差異、對照官方來源校正事實，並透過 reviewer/fixer subagent 迭代直到定稿。觸發時機：使用者要求整合筆記、合併同主題筆記、建立主題索引、依主題整理，或提及「整理成一個主題」、「合併筆記」、「MOC」、「主題整合」、「topic synthesis」。也在詢問主題推薦時觸發（「給我主題」、「給我新主題」、「推薦主題」、「有什麼主題可以整合」、「有什麼建議的主題」、「有什麼可以做」），會啟動「推薦主題模式」掃描 vault 找出內聚候選群。不應觸發：單篇筆記編輯、日記建檔、YouTube 頻道同步（用 vault-youtube-sync）。
+description: 將 Obsidian vault 中多篇相關筆記整合為單一主題 MOC（Map of Content）。辨識重疊筆記、萃取共識與差異、對照官方來源校正事實，並透過 reviewer/fixer subagent 迭代直到定稿。觸發時機：使用者明確要求整合筆記、合併同主題筆記、建立主題索引、依主題整理，或提及「整合筆記」、「合併筆記」、「MOC」、「主題整合」、「topic synthesis」。
 ---
 
 # Synthesizing Notes to MOC

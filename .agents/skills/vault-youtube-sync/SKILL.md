@@ -1,6 +1,6 @@
 ---
 name: vault-youtube-sync
-description: 當使用者提供 YouTube **頻道** URL（含 @handle 的網址，如 youtube.com/@XXX 或 youtube.com/@XXX/videos）或想批次同步所有既有 YouTube 頻道筆記時，一定要用此 skill。觸發情境：「頻道影片建成筆記」、「youtube 轉筆記」、「yt 轉 ob」、「整理到 vault」、「存成 Obsidian 筆記」、「同步這個頻道」、「看有沒有新影片沒存到的」、「抓頻道影片」、「同步全部頻道」、「更新所有頻道」、「youtube 全部更新」、不指定頻道直接呼叫 `/vault-youtube-sync`。不應觸發：單部影片 URL（watch?v=XXX）、使用者明確說「不用建筆記」或只是查詢既有筆記。
+description: 當使用者提供 YouTube **頻道** URL（含 @handle 的網址，如 youtube.com/@XXX 或 youtube.com/@XXX/videos）或想批次同步所有既有 YouTube 頻道筆記時，一定要用此 skill。觸發情境：「頻道影片建成筆記」、「youtube 轉筆記」、「yt 轉 ob」、「整理到 vault」、「存成 Obsidian 筆記」、「同步這個頻道」、「看有沒有新影片沒存到的」、「抓頻道影片」、「同步全部頻道」、「更新所有頻道」、「youtube 全部更新」、不指定頻道直接呼叫 `/vault-youtube-sync`。
 disable-model-invocation: true
 ---
 
