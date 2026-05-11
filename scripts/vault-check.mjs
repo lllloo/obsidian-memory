@@ -25,7 +25,6 @@ import {
   codeLabel,
   frontmatterSchema,
   reorderFields,
-  stripUnknownFields,
   tryNormalizeDate,
   validateFieldOrder,
 } from "./vault-schema.mjs";
@@ -250,11 +249,12 @@ function auditFile(absPath) {
  * - 其餘路徑 → 跳過 fence 內，避免 Cards/Topics/CLAUDE.md 中的範例 / 文件誤報。
  *
  * 命中一律 autofix=false，只 flag。
+ *
+ * `raw` 由 caller 傳入避免重複讀檔；schema-exempt 路徑因 auditFile 沒跑，由 caller 自行讀後傳入。
  */
-function scanSensitive(absPath) {
+function scanSensitive(absPath, raw) {
   const relPath = rel(absPath);
   const isUntrustedSource = relPath.startsWith("content/Inbox/");
-  const raw = readFileSync(absPath, "utf8");
   const lines = raw.split(/\r?\n/);
   const hits = [];
   let inFence = false;
@@ -298,8 +298,6 @@ function applyFixes(absPath, issues, parsed, raw) {
     switch (issue.fix.kind) {
       case "strip": {
         for (const k of issue.fix.keys ?? []) delete data[k];
-        const { clean } = stripUnknownFields(data);
-        data = clean;
         applied.push(issue);
         break;
       }
@@ -375,20 +373,27 @@ async function main() {
   const sensitive = [];
   for (const abs of files) {
     let currentAbs = abs;
+    let raw;
     if (!isSchemaExempt(abs)) {
-      const { issues, parsed, raw } = auditFile(abs);
-      if (args.fix && issues.length) {
-        const result = applyFixes(abs, issues, parsed, raw);
+      const audit = auditFile(abs);
+      raw = audit.raw;
+      if (args.fix && audit.issues.length) {
+        const result = applyFixes(abs, audit.issues, audit.parsed, audit.raw);
         allApplied.push(...result.applied);
         blocked.push(...result.blocked);
         if (result.renamedTo) currentAbs = result.renamedTo;
         // applyFixes 只處理 autofix=true 的 issue；剩下的（PARSE_ERROR 等）才推進 allIssues
-        for (const i of issues) if (!i.autofix || !i.fix) allIssues.push(i);
+        for (const i of audit.issues)
+          if (!i.autofix || !i.fix) allIssues.push(i);
       } else {
-        allIssues.push(...issues);
+        allIssues.push(...audit.issues);
       }
+    } else {
+      raw = readFileSync(abs, "utf8");
     }
-    const sHits = scanSensitive(currentAbs);
+    // 掃原 raw（fix 前）：fix 只動 frontmatter 結構不引入 token，掃原版若 strip 掉
+    // 帶 token 的欄位還能留紀錄提醒；rename 不改內容，currentAbs 僅用於 report 顯示路徑。
+    const sHits = scanSensitive(currentAbs, raw);
     if (sHits.length) {
       sensitive.push(...sHits);
       allIssues.push(...sHits);
