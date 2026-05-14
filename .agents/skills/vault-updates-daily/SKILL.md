@@ -26,7 +26,7 @@ disable-model-invocation: true
 ## 產出
 
 - 筆記：`content/Inbox/Updates/<YYYY-MM-DD>-daily-updates.md`（每次 sync 一篇，按工具分 section；同日多次 sync 追加而非覆蓋）
-- Index：`content/Inbox/Updates/01.index.md`
+- Index：`content/Inbox/Updates/01.index.md`（只保存同步來源設定，不累積日報 wikilink）
 - 筆記代表「高信任待消化來源」，進 Inbox 不直接發佈；後續可由使用者整理到 `Cards/` 或 `Topics/`。
 
 ### Frontmatter
@@ -104,8 +104,6 @@ tags:
 ## GitHub starred
 
 sync: releases
-
-## 日報
 ```
 
 來源格式：
@@ -301,7 +299,7 @@ tags:
 
 主 agent 組裝邏輯：依 `TOOL:` 分組 → 每個 TOOL 寫 `## <工具名>` → 同 TOOL 底下每個 SAVE item 寫 `### <META>（[標題](<url>)）` 後接 CONTENT block → TOOL 之間插 `---`。若同 TOOL 下只有一筆，`### META` 標題可省略，直接放 CONTENT。
 
-4. 同步更新 `content/Inbox/Updates/01.index.md`：若 `## 日報` section 下未含今日日報的 wikilink，補上一行 `- [[<YYYY-MM-DD>-daily-updates]]`。
+4. 不要把日報 wikilink 追加回 `content/Inbox/Updates/01.index.md`。此 index 只保存同步來源設定；日報本身留在 `content/Inbox/Updates/`，讀完後由使用者消化進 `Cards/` / `Topics/` 或刪除。
 
 回覆固定包含：
 
