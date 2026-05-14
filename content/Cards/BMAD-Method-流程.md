@@ -10,14 +10,17 @@ tags:
 
 BMAD Method 把 agile lifecycle 切成 4 個階段（BMad Method / Enterprise track）。Quick Flow 是平行路徑，用單一 `bmad-quick-dev` 跳過完整 phase 1-3 規劃，處理小型、明確的開發任務。每個階段以特定 agent 為主軸；除了 agent menu triggers 外另有可直接以 skill 名稱呼叫的 workflow skills。
 
-## 兩種啟動方式（先分清）
+## 目前公司工作流程
 
-| 機制                   | 用法                                   | 行為                                          |
-| ---------------------- | -------------------------------------- | --------------------------------------------- |
-| **Skill**              | 直接打 skill 名稱（如 `bmad-help`）    | 直接載 agent / 跑 workflow / 執行 task        |
-| **Agent menu trigger** | 先載入 agent，再打 2 碼代號（如 `DS`） | 由 agent 解析代號、進入對應 workflow 保持人格 |
-
-下面表格的「代號」欄都是 **agent menu trigger**；不掛 agent 的功能整理在最後一節 Skills。
+| 階段     | 負責     | Skill                          |
+| -------- | -------- | ------------------------------ |
+| 規劃前期 | PM       | `bmad-product-brief`           |
+| 規劃前期 | PM       | `bmad-create-prd`              |
+| 架構     | 工程師   | `bmad-create-architecture`     |
+| 規劃後期 | PM       | `bmad-create-epics-and-stories` |
+| 開發     | 工程師   | `bmad-sprint-planning`         |
+| 開發     | 工程師   | `bmad-create-story`            |
+| 開發     | 工程師   | `bmad-dev-story`               |
 
 常用 agent skill 對照：
 
