@@ -1,11 +1,11 @@
 ---
 title: Claude Code 規則系統設計
 created: 2026-05-05
-updated: 2026-05-07
+updated: 2026-05-15
 tags:
   - claude-code
   - claude-md
-  - agent
+  - ai-agent
 ---
 
 CLAUDE.md 與 Rules 兩個規則機制的設計判斷：怎麼放、寫什麼、何時拆 Rules、何時升 Hook。
