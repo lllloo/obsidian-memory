@@ -1,7 +1,7 @@
 ---
 title: Master Index
 created: 2026-04-15
-updated: 2026-05-08
+updated: 2026-05-15
 tags:
   - index
 ---
@@ -15,6 +15,7 @@ content/
 │   ├── YouTube/   — 影片摘要，依頻道分組
 │   │   ├── AIJasonZ/              — Claude 設計工作流、Skills、Agent 記憶體管理
 │   │   ├── AILABS-393/            — Claude Code 進階技巧、RAG
+│   │   ├── AgentcrewAcademy/      — Claude Code Windows 安裝、MCP 整合、Sub-Agent 與新手教學
 │   │   ├── Chase-H-AI/            — Claude Code 實戰、RAG、Obsidian 整合
 │   │   └── daveebbelaar/          — Python、LLM Evals、API 整合
 │   └── Clippings/ — 網頁剪貼

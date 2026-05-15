@@ -85,19 +85,16 @@ obsidian tags                    # 查看現有 tags
 
 建立筆記時，`content=` 直接帶入完整 frontmatter（含 tags YAML 清單），**不要事後用 `property:set` 設定 tags**（會產生 inline 字串格式）。frontmatter 格式依 `content/CLAUDE.md` 的「Frontmatter Schema」與「寫入前 Checklist」。
 
-建檔一律優先從 **stdin 傳入內容**，不要把多行 frontmatter 塞進 `content='...'` 參數——字面 `\n` 是否被 CLI 解成換行是未定義行為（依 obsidian CLI 版本而異），stdin 方式行為穩定：
+建檔一律優先從 **stdin 傳入內容**，不要把多行 frontmatter 塞進 `content='...'` 參數——字面 `\n` 是否被 CLI 解成換行是未定義行為（依 obsidian CLI 版本而異），stdin 方式行為穩定。
 
-- **macOS/Linux**：
-  ```bash
-  printf '%s\n' "---" "title: <標題>" "created: <今日>" "updated: <今日>" "tags:" "  - <tag1>" "---" \
-    | obsidian create path="Cards/<標題>.md" --stdin open
-  ```
-- **Windows (Git Bash)**：Git Bash 的 `printf` + pipe 可直接用，不需走 PowerShell：
-  ```bash
-  printf '%s\n' "---" "title: <標題>" "created: <今日>" "updated: <今日>" "tags:" "  - <tag1>" "---" \
-    | obsidian create path="Cards/<標題>.md" --stdin open
-  ```
-  若 obsidian CLI 該版不支援 `--stdin`，退而走 `content=` 行內版本，但需記住：PowerShell/Bash 單引號內的字面 `\n` 在不同 shell 與 CLI 版本的解碼行為不同，會讓 frontmatter 壞成單行字串。退到 `content=` 方案時，**呼叫後必須 `obsidian read file=...` 驗證 frontmatter 真的是多行**。
+**POSIX shell（macOS / Linux / Windows Git Bash 通用）**：
+
+```bash
+printf '%s\n' "---" "title: <標題>" "created: <今日>" "updated: <今日>" "tags:" "  - <tag1>" "---" \
+  | obsidian create path="Cards/<標題>.md" --stdin open
+```
+
+若 obsidian CLI 該版不支援 `--stdin`，退而走 `content=` 行內版本，但需記住：PowerShell/Bash 單引號內的字面 `\n` 在不同 shell 與 CLI 版本的解碼行為不同，會讓 frontmatter 壞成單行字串。退到 `content=` 方案時，**呼叫後必須 `obsidian read file=...` 驗證 frontmatter 真的是多行**。
 
 > ⚠ 不論走 `--stdin` 或 `content=`，呼叫完都要跑下一節「寫入後驗證」的 size 檢查（≥ 10 bytes），不可只看 exit code。Windows 環境 `--stdin` 已知會 silent fail 留 0 bytes 空檔。
 

@@ -48,14 +48,18 @@ VAULT_ROOT = $OBSIDIAN_VAULT_ROOT
 ### L2：Tag 與路徑篩選
 
 - 對 `<VAULT_ROOT>` 下的候選資料夾 Glob 列出 `.md` 檔
-- 對檔案集合 Grep frontmatter tags（例：`^\s*-\s+(claude-code|rag|memory)$`）
+- 對檔案集合**並行兩種篩選**，結果**聯集**進 L3：
+  - Grep frontmatter tags（例：`^\s*-\s+(claude-code|rag|memory)$`）
+  - Grep frontmatter title（例：`^title:.*\b(Discord|webhook)\b`，關鍵字含中英變形）
+  - title 是高密度信號——能救「tag 沒打對但 title 含關鍵字」的筆記
 - 排除匹配：`.obsidian/`
 
 ### L3：正文 Grep 與驗證
 
 1. 對 L2 篩出的檔案 Grep 關鍵字正文（取 `-C 2` 看上下文）
-2. 對 Grep 命中的檔案 Read 首 50 行，判斷是否真正回答問題（不只字面出現）
-3. 挑最相關 1~5 筆組成 `hits`
+2. **L2 空集合 fallback**：若 L2 兩種篩選聯集後仍為 0 筆，L3 改對 `<VAULT_ROOT>/Cards/**/*.md` + `<VAULT_ROOT>/Topics/**/*.md` 全範圍 Grep（**排除 `Inbox/YouTube/`、`Inbox/Clippings/` 避免雜訊**）
+3. 對 Grep 命中的檔案 Read 首 50 行，判斷是否真正回答問題（不只字面出現）
+4. 挑最相關 1~5 筆組成 `hits`
 
 ## 關鍵字抽取
 
@@ -111,6 +115,7 @@ VAULT_ROOT = $OBSIDIAN_VAULT_ROOT
 - 一律回 `content/...`，不要回 `<VAULT_ROOT>` 絕對路徑
 - 因 `$OBSIDIAN_VAULT_ROOT` 指向 `content/`，輸出時需把 `<VAULT_ROOT>` 下的相對路徑前綴補成 `content/`；例如 `<VAULT_ROOT>/Cards/foo.md` → `content/Cards/foo.md`
 - 例如實際檔案是 `~/code/obsidian-memory/content/Cards/foo.md`，輸出仍要寫成 `content/Cards/foo.md`
+- **一律使用 forward slash（`/`）**，不論作業系統。Windows Glob 回 `content\Cards\foo.md` 時，輸出前需 replace `\` 為 `/`
 
 ## 與其他流程的分工
 
