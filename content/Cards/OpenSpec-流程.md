@@ -75,3 +75,11 @@ flowchart LR
 - [[Spec-Kit-流程]] — 類似 SDD 工具，GitHub 出品，phase 更嚴格
 - [[GSD-流程]] — 輕量 spec-driven workflow
 - [Fission-AI/OpenSpec](https://github.com/Fission-AI/OpenSpec)
+
+
+## 版本注意（v1.3.1）
+
+- 安裝：`npm install -g @fission-ai/openspec`（目前最新 v1.3.1）
+- **`/opsx:sync` 尚未在 v1.3.1 release**：GitHub 文件已記載為 core workflow 的一部分，但 npm 實際版本不含此 skill；`openspec config list` 可驗證
+- Core workflow 實際可用指令：`propose → explore → apply → archive`（sync 暫缺）
+- 目前若需同步 delta specs，直接在 `/opsx:archive` 時一併處理
