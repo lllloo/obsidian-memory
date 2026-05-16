@@ -1,7 +1,7 @@
 ---
-title: "Harness Engineering 到底是什么？概念、实战与争议，一次全部讲清楚"
+title: "Harness Engineering 到底是什麼？概念、實戰與爭議，一次全部講清楚"
 created: 2026-05-06
-updated: 2026-05-06
+updated: 2026-05-16
 source: "https://www.youtube.com/watch?v=7nCzfgDjSo8&t=19s"
 published: 2026-05-05
 tags:
@@ -9,247 +9,229 @@ tags:
 ---
 ![](https://www.youtube.com/watch?v=7nCzfgDjSo8)
 
-继 Prompt Engineering、Context Engineering 之后，AI 圈最近又冒出了一个新名词，叫做 Harness Engineering。本期视频，我会带大家了解关于 Harness Engineering 的一切，具体包括：  
-  
-\- Harness Engineering 是什么？  
-\- Harness Engineering 与 Prompt Engineering、Context Engineering 有什么关系  
-\- OpenAI 和 Anthropic 在 Harness Engineering 方面的实战  
-\- Harness Engineering 的来源  
-\- Harness Engineering 是不是噱头？它是软件工程领域的一次技术突破，还是 AI 圈的又一次概念炒作？  
-  
-🎥 相关视频：  
-https://www.youtube.com/watch?v=7qO8-kx3gW8&t=1705s  
-https://www.youtube.com/watch?v=yDc0\_8emz7M  
-https://www.youtube.com/watch?v=25DEMZ7wsSM&t=630s  
-https://www.youtube.com/watch?v=GE0pFiFJTKo&t=2s  
-https://www.youtube.com/watch?v=WWdlme1EAGI&t=8s  
-  
-⏱ 时间轴：  
-00:00 视频内容介绍  
-00:51 Prompt Engineering 和 Context Engineering  
-04:50 Harness Engineering 是什么  
-09:06 OpenAI 的 Harness Engineering 实战  
-18:41 Anthropic 的 Harness Engineering 实战  
-27:19 Harness Engineering 是不是噱头  
-  
-🗎 相关文章链接  
-  
-OpenAI:  
-\- Harness engineering: leveraging Codex in an agent-first world  
-https://openai.com/index/harness-engineering/  
-  
-Anthropic:  
-\- Effective harnesses for long-running agents  
-https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents  
-\- Harness design for long-running application development  
-https://www.anthropic.com/engineering/harness-design-long-running-apps  
-  
-LangChain:  
-\- The Anatomy of an Agent Harness  
-https://www.langchain.com/blog/the-anatomy-of-an-agent-harness  
-  
-Mitchell Hashimoto:  
-\- My AI Adoption Journey  
-https://mitchellh.com/writing/my-ai-adoption-journey  
-  
-martinfowler.com:  
-\- Harness Engineering - first thoughts  
-https://martinfowler.com/articles/exploring-gen-ai/harness-engineering-memo.html  
-\- Harness engineering for coding agent users  
-https://martinfowler.com/articles/harness-engineering.html  
-  
-#AI #大模型 #harnessengineering #openai #anthropic #claude #agent
+繼 Prompt Engineering、Context Engineering 之後，AI 圈最近又冒出了一個新名詞，叫做 Harness Engineering。本期影片，我會帶大家了解關於 Harness Engineering 的一切，具體包括：
+
+- Harness Engineering 是什麼？
+- Harness Engineering 與 Prompt Engineering、Context Engineering 有什麼關係
+- OpenAI 和 Anthropic 在 Harness Engineering 方面的實戰
+- Harness Engineering 的來源
+- Harness Engineering 是不是噱頭？它是軟體工程領域的一次技術突破，還是 AI 圈的又一次概念炒作？
+
+🎥 相關影片：
+https://www.youtube.com/watch?v=7qO8-kx3gW8&t=1705s
+https://www.youtube.com/watch?v=yDc0\_8emz7M
+https://www.youtube.com/watch?v=25DEMZ7wsSM&t=630s
+https://www.youtube.com/watch?v=GE0pFiFJTKo&t=2s
+https://www.youtube.com/watch?v=WWdlme1EAGI&t=8s
+
+⏱ 時間軸：
+00:00 影片內容介紹
+00:51 Prompt Engineering 和 Context Engineering
+04:50 Harness Engineering 是什麼
+09:06 OpenAI 的 Harness Engineering 實戰
+18:41 Anthropic 的 Harness Engineering 實戰
+27:19 Harness Engineering 是不是噱頭
+
+🗎 相關文章連結
+
+OpenAI:
+\- Harness engineering: leveraging Codex in an agent-first world
+https://openai.com/index/harness-engineering/
+
+Anthropic:
+\- Effective harnesses for long-running agents
+https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents
+\- Harness design for long-running application development
+https://www.anthropic.com/engineering/harness-design-long-running-apps
+
+LangChain:
+\- The Anatomy of an Agent Harness
+https://www.langchain.com/blog/the-anatomy-of-an-agent-harness
+
+Mitchell Hashimoto:
+\- My AI Adoption Journey
+https://mitchellh.com/writing/my-ai-adoption-journey
+
+martinfowler.com:
+\- Harness Engineering - first thoughts
+https://martinfowler.com/articles/exploring-gen-ai/harness-engineering-memo.html
+\- Harness engineering for coding agent users
+https://martinfowler.com/articles/harness-engineering.html
+
+`#AI` `#大模型` `#harnessengineering` `#openai` `#anthropic` `#claude` `#agent`
 
 ## Transcript
 
-**0:00** · 继 Prompt Engineering Context Engineering 之后 AI圈最近又冒出了一个新名词 叫做 Harness Engineering 从今年2月份开始 这个词频繁地在 AI 圈里面出现 OpenAI 专门发了一篇文章 讲他们怎么用 Harness Engineering 在5个月内写了将近100万行代码
+繼 Prompt Engineering、Context Engineering 之後，AI 圈最近又冒出了一個新名詞，叫做 Harness Engineering。從今年 2 月份開始，這個詞頻繁地在 AI 圈裡出現。OpenAI 專門發了一篇文章，講他們怎麼用 Harness Engineering 在 5 個月內寫了將近 100 萬行程式碼。Anthropic 也緊接著發文，分享了自己如何使用精心設計的 Harness 架構來驅動 Agent 的開發應用。不僅如此，就連技術大牛 Martin Fowler 創立的技術網站 martinfowler.com 也開始公開討論起了 Harness Engineering。但與此同時，也有不少人認為這不過是個噱頭而已，換湯不換藥。那 Harness Engineering 到底是什麼？它跟 Prompt Engineering 和 Context Engineering 又有什麼關係呢？Harness Engineering 是真正的技術突破，還是說只是 AI 圈又在炒概念？
 
-**0:18** · Anthropic 也紧接着发文 分享了自己如何使用 精心设计的 Harness 架构 来驱动 Agent 的开发应用 不仅如此 就连技术大牛 Martin Fowler 创立的技术网站 martinfowler.com 也开始公开讨论起了 Harness Engineering 但与此同时 也有不少人认为 这不过是个噱头而已 换汤不换药 那 Harness Engineering 到底是什么 它跟 Prompt Engineering 和 Context Engineering 又有什么关系呢 Harness Engineering 是真正的技术突破 还是说只是 AI 圈又在炒概念
+這期影片，我們就來把這個事情徹底搞明白。
 
-**0:48** · 这期视频 我们就来把这个事情彻底搞明白 在讲 Harness Engineering 之前 我们不妨先来讲讲它的两个前任 分别是 Prompt Engineering 和 Context Engineering 对这两个概念比较熟悉的同学 可以直接跳到下一个章节
+---
 
-**1:05** · 首先是 Prompt Engineering 这里的Prompt 你可以简单理解成 用户发给大模型的话 而 Prompt Engineering 就是一门研究 怎么把这句话说清楚的技术 举个具体点的例子 比如说我们可以向大模型发问 帮我的猫起个名字 这个问题就是 Prompt 了 接到 Prompt 之后 大模型就会给你一个答案 比如说是什么花花呀 小白呀之类的 不过这些答案可能都无法让你满意
+## Prompt Engineering 與 Context Engineering
 
-**1:31** · 因为你家的猫呢 可能是橘色的 无论是花花还是小白 都与橘色这个颜色相冲突 那为什么大模型会给你错误的答案呢 这是因为我们没有在 Prompt 里面 给大模型充足的信息 既然问题出在 Prompt 上面 那解决问题的关键 自然也在 Prompt 上面了 说得再具体一点 那就是我们需要学会 如何更精准地表达自己的需求
+在講 Harness Engineering 之前，我們不妨先來講講它的兩個前任，分別是 Prompt Engineering 和 Context Engineering。對這兩個概念比較熟悉的同學，可以直接跳到下一個章節。
 
-**1:56** · 这个呢就引出 Prompt Engineering 了 Prompt Engineering 就是专门用来 研究怎么把话说清楚的 还是用之前的例子 让我们重新设计一下这个问答流程 按照 Prompt Engineering 的理念 我们需要发送的 Prompt 就应该是这样子的 帮我的橘色小猫起名 两个字 需要体现出它活泼爱玩的性格
+首先是 Prompt Engineering。這裡的 Prompt 你可以簡單理解成用戶發給大模型的話，而 Prompt Engineering 就是一門研究怎麼把這句話說清楚的技術。舉個具體點的例子，比如說我們可以向大模型發問「幫我的貓起個名字」，這個問題就是 Prompt。接到 Prompt 之後，大模型就會給你一個答案，比如說是什麼花花啊、小白啊之類的，不過這些答案可能都無法讓你滿意，因為你家的貓可能是橘色的，無論是花花還是小白，都與橘色這個顏色相衝突。
 
-**2:16** · 这个时候大模型就可以给出一些 更让我满意的名字了 比如说是橘宝 代表橘色的大活宝 橙豆 橙色的小豆子 你想小豆子掉在地上蹦蹦跳跳的 那也能够体现出猫活泼的性格嘛 你看这两个名字就跟你的猫更贴切了
+那為什麼大模型會給你錯誤的答案呢？這是因為我們沒有在 Prompt 裡面給大模型充足的信息。既然問題出在 Prompt 上面，那解決問題的關鍵自然也在 Prompt 上面了。說得再具體一點，那就是我們需要學會如何更精準地表達自己的需求，這就引出了 Prompt Engineering。
 
-**2:33** · 没错 说白了呢 Prompt Engineering 就是一门 调整大模型提示词的技术 对就是这么简单 不过如今 Prompt Engineering 已经很少被单独提起了 一方面它的门槛实在是太低了 另一方面呢 模型本身的能力呢也变得更强了
+按照 Prompt Engineering 的理念，我們需要發送的 Prompt 就應該是這樣子的：「幫我的橘色小貓起名，兩個字，需要體現出它活潑愛玩的性格」。這個時候大模型就可以給出一些更讓人滿意的名字了。說白了，Prompt Engineering 就是一門調整大模型提示詞的技術。不過如今 Prompt Engineering 已經很少被單獨提起了，一方面它的門檻實在太低，另一方面模型本身的能力也變得更強了，很多時候不需要在 Prompt 上調來調去，就能給出不錯的回答。
 
-**2:49** · 很多时候不需要在 Prompt 上 调来调去能给出不错的回答 好 这就是 Prompt Engineering 了 下面呢我们来看看 Context Engineering 我们还是用小猫来举例啊 假设你拿到了小猫的名字之后 还继续跟大模型聊天 比如你问它 那它平时吃什么好呢
+下面我們來看看 Context Engineering。假設你拿到了小貓的名字之後，還繼續跟大模型聊天，比如你問它「那它平時吃什麼好呢？」這個就是我們的 Prompt 了。現在重點來了，我們此時要發給大模型的，其實不僅僅有這個 Prompt，還有之前的對話歷史，這樣大模型才知道這個新問題裡面的「它」指代的是什麼。
 
-**3:09** · 这个呢就是我们的 Prompt 了 我们来把它单独标出来 那现在重点来了 我们此时要发给大模型的 其实不仅仅有这个 Prompt 还有之前的对话历史 这样的大模型才知道这个新问题里面的它 指代的是什么 那无论是Prompt还是对话历史 它们呢都是大模型所接收到的信息
+無論是 Prompt 還是對話歷史，它們都是大模型所接收到的信息。我們把大模型所接收的所有信息起個名字，就叫做 Context。當然 Context 的內容還不只有這兩個，它還包含工具列表、Skill 列表等等。你只需要知道，Context 是有容量上限的，所以我們不可能無止境地往裡面塞東西，我們需要精心設計 Context 裡面的內容，這就叫做 Context Engineering。
 
-**3:29** · 我们把大模型所接收的所有信息起个名字 就叫做Context 当然 Context 的内容呢还不只有这两个 它还包含工具列表 Skill列表等等 我们就不一一列举了 你也不用太关心 你只需要知道 Context 是有容量上限的 所以我们不可能无止境的往里面塞东西 我们需要精心设计 Context 里面的内容
+Context Engineering 有很多具體的方法，比如說其中一個非常經典的技術就是上下文壓縮——當對話歷史超過某個閾值的時候，我們就可以使用上下文壓縮技術把之前的對話歷史做個總結，以防止 Context 裡面的內容過多而影響回答效果。除了上下文壓縮之外，Context Engineering 還有很多其他的方法，比如說動態檢索外部資料、漸進式披露等等。不過大家發現，Context Engineering 這門技術的效果有一定的上限。為了進一步榨乾大模型的潛力，AI 圈又整出了新花樣，這就引出了我們今天真正的主角。
 
-**3:51** · 这个呢就叫做 Context Engineering Context Engineering 有很多具体的方法 比如说其中一个非常经典的技术 就是上下文压缩 之前不是说我们会把对话历史放在 Context 里面吗 我们跟模型越聊越多 对话历史呢也会越聊越多 当超过某个阈值的时候 我们就可以使用上下文压缩技术 把之前的对话历史做个总结 以防止 Context 里面的内容过多
+---
 
-**4:16** · 影响回答效果 当然除了上下文压缩之外 Context Engineering 还有很多其他的方法 比如说是什么动态检索外部资料啊 渐进式披露啊等等 这里呢就不一一列举了 可以看出 Context Engineering 还是挺能整活的 搞出了这么多的东西 不过吧这依然不是终点 因为大家发现啊 Context Engineering 这门技术的效果呢 是有一定的上限的 为了进一步榨干大模型的潜力呢 AI 圈又整出了新花样 这个就引出了我们今天真正的主角
+## Harness Engineering 是什麼
 
-**4:49** · Harness Engineering 要搞明白 Harness Engineering 这个概念 我们就得先从 Harness 这个单词说起 这个词在日常生活中其实不太常见 很多人可能也是第一次听说 Harness 这个词的本意啊 其实是马具的意思 大家看这是一匹马 而 Harness 或者说是马具 就是套在马身上 用来控制马的那些装备 比如说是缰绳啊头套啊这些
+要搞明白 Harness Engineering 這個概念，我們就得先從 Harness 這個單詞說起。這個詞在日常生活中其實不太常見。Harness 這個詞的本意其實是馬具的意思，就是套在馬身上、用來控制馬的那些裝備，比如說是韁繩啊、頭套啊這些。雖然馬非常強大，但是我們必須借助馬具的力量來限制馬的活動，這樣我們才能夠讓馬為人類所用。
 
-**5:17** · 虽然马非常强大 但是我们必须借助马具的力量 来限制马的活动 这样呢我们才能够让马为我们人类所用 好现在呢我们把马具 从马身上单独拆下来做一个类比 左边这匹脱掉马具的马 对应的就是 AI 领域里面的大模型 你想大模型是不是特别强 尤其是像 GPT, Opus 这样的顶级模型
+現在我們把馬具從馬身上單獨拆下來做一個類比。左邊這匹脫掉馬具的馬，對應的就是 AI 領域裡面的大模型。大模型特別強，尤其是像 GPT、Opus 這樣的頂級模型，能幹的事情太多了。但大模型就像馬一樣，如果我們不對它加以干預，任由大模型自己去運行和發揮，那它就會像脫韁的野馬一樣發散思維，甚至產生嚴重的幻覺，最終根本無法穩定地給我們想要的結果。
 
-**5:41** · 能干的事情可太多了 但大模型就像马一样 如果我们不对它加以干预 任由大模型自己去运行和发挥 那它就会像脱缰的野马一样发散思维 甚至产生严重的幻觉 最终根本无法稳定的给我们想要的结果
+所以我們必須要把大模型給控制住，就像用馬具來控制馬一樣，而這套用來控制大模型的系統就被稱為 Harness。Harness 就是 Agent 裡面用來控制和駕馭大模型的系統。所以從這一點出發，我們就能推導出 Harness 的公式：**Harness = Agent - Model**，換句話說，一個完整的 Agent 減去裡面的大模型，剩下的所有東西都是 Harness。
 
-**5:58** · 所以呢我们必须要把大模型给控制住 就像用马具来控制马一样 而这套用来控制大模型的系统 就被称为了 Harness 没错 Harness 就对应了这个马具 好 Harness 就是 Agent 里面 用来控制和驾驭大模型的系统 所以从这一点出发 我们就能推导出 Harness 的公式 也就是 Harness 就等于 Agent 减去 Model
+需要注意的是，Harness Engineering 是一個非常新的概念，目前業界還沒有形成嚴格的定義，這個公式只是目前大多數人比較認可的一種說法，並非嚴格的學術定義。
 
-**6:21** · 换句话说一个完整的 Agent 减去里面的大模型 剩下的所有东西都是 Harness 不过需要注意的是 Harness Engineering 是一个非常新的概念 目前业界还没有形成严格的定义 这个公式只是目前大多数人 比较认可的一种说法 并非是严格的学术定义 所以只要不是大模型就是 Harness 关于这一点我相信你已经明白了 下面我们来看个具体的例子 我们可以用 Claude Code 来举例 在 Claude Code 里面 所有不属于 Claude 模型的部分都是 Harness
+我們可以用 Claude Code 來舉例。在 Claude Code 裡面，所有不屬於 Claude 模型的部分都是 Harness，比如說是寫在 AGENTS.md 裡面那些大模型要遵循的規則、Claude Code 可以使用的工具、或者是它的定時排程機制等等，這些都是 Harness。
 
-**6:53** · 比如说是写在 CLAUDE.md 里面 那些大模型要遵循的规则 Claude Code 可以使用的工具 或者是它的定时调度机制等等 这些都是 Harness 当然 Harness 涉及的范围很广 我这里只是举了三个例子而已 总而言之只要不是模型 我们都可以将它视为 Harness 的一部分 那 Harness 了解了 顺理成章的 Harness Engineering 的概念 也就呼之欲出了 Harness Engineering 就是一门专门研究 如何构建与设计 Harness 的技术 换句话说就是除了大模型本身不研究
+那 Harness 了解了，順理成章地，Harness Engineering 的概念也就呼之欲出了。Harness Engineering 就是一門專門研究如何構建與設計 Harness 的技術，換句話說就是除了大模型本身不研究，別的什麼都研究。它不再是緊盯著模型輸入的那點提示詞或者是上下文，而是站在更高的系統層面上，研究怎麼給大模型設計一套可以穩定運行的系統，讓大模型能夠踏踏實實地為人類做事。
 
-**7:26** · 别的什么都研究 它不再是紧紧盯着模型输入的那点提示词 或者是上下文 而是站在更高的系统层面上 研究怎么给大模型设计一套 可以稳定运行的系统 让大模型能够踏踏实实地为我们人类做事 所以从这里可以看出 Prompt Engineering, Context Engineering 和Harness Engineering 更像是一种层层递进 研究范围不断向外扩展的关系
+所以 Prompt Engineering、Context Engineering 和 Harness Engineering 更像是一種層層遞進、研究範圍不斷向外擴展的關係：
 
-**7:50** · 它们关注的问题是越来越大 越来越广 Prompt Engineering 研究的是怎么问问题 具体来说就是如何组织 Prompt 把发给大模型的话说得更清楚 更准确 让模型能够更容易理解你的真实意图 并给出理想的结果 Context Engineering 研究的内容 比 Prompt Engineering 更广一些 它研究的是怎么给信息 具体来说就是怎么在最合适的时机 把最合适的内容放到模型的 Context 里面
+- **Prompt Engineering** 研究的是怎麼問問題，具體來說就是如何組織 Prompt，把發給大模型的話說得更清楚、更準確，讓模型能夠更容易理解你的真實意圖並給出理想的結果。
+- **Context Engineering** 研究的內容比 Prompt Engineering 更廣一些，它研究的是怎麼給信息，具體來說就是怎麼在最合適的時機，把最合適的內容放到模型的 Context 裡面。Context 裡面的內容不僅包括 Prompt，還包括工具列表、對話歷史等等。
+- **Harness Engineering** 的研究範圍就更加激進了，它研究的是如何搭建系統，也就是如何圍繞著大模型搭建一個完整可靠的 Agent，它的研究對象直接覆蓋了除了大模型之外的所有內容，比如說是權限管控、工具管理等等。
 
-**8:18** · Context 里面的内容不仅包括 Prompt 还包括工具列表 对话的历史等等 所以 Context Engineering 的研究范围会更广一些 Harness Engineering 的研究范围就更加激进了 它研究的是如何搭建系统 也就是如何围绕着大模型搭建一个完整可靠的 Agent
+---
 
-**8:36** · 它的研究对象直接就覆盖了 除了大模型之外的所有内容 比如说是什么权限管控 工具管理等等 都是 Harness Engineering 要研究的内容 相信现在你已经了解了 Harness Engineering 是什么了 那 Harness Engineering 具体要做哪些事呢 有没有一些实战的例子 说实话 这个概念实在是太新了 目前业界也没有一个公认的体系 与其我在这里自说自话 我们不如来直接看看大厂是怎么做的 我们首先从 OpenAI 开始
+## OpenAI 的 Harness Engineering 實戰
 
-**9:10** · 2025年8月 OpenAI 内部启动了一个疯狂的实验 那就是用 AI 从零开始写一个真实的软件产品 全程不允许工程师手写一行代码 对 没错 这个产品的所有的组成部分 都是由 AI 生成的 具体是包括业务逻辑 测试 CI 配置 文档 内部工具等等 所有的东西都是 AI 生成的
+2025 年 8 月，OpenAI 內部啟動了一個瘋狂的實驗，那就是用 AI 從零開始寫一個真實的軟體產品，全程不允許工程師手寫一行程式碼。這個產品的所有組成部分，都是由 AI 生成的，具體包括業務邏輯、測試、CI 配置、文件、內部工具等等，所有東西都是 AI 生成的。靠著 AI，這個項目的程式碼規模直接幹到了將近 100 萬行，而且這不是一個玩具，它是一個真正在線上跑、有真實用戶的生產系統。達到這樣的規模，總體耗時只用了 5 個月左右，團隊規模一開始是 3 個人在主導，後來也只不過是擴張到了 7 個人，算下來開發效率差不多是純人工的 10 倍了。
 
-**9:31** · 靠着 AI 这个项目的代码规模 直接是干到了将近100万行 而且注意了 这可不是一个玩具 它是一个真正在线上跑 有真实用户的生产系统 达到这样的规模 总体耗时只用了5个月左右 团队规模一开始是3个人在主导
+有意思的是，這個實驗一開始的進展並不順利。這並不是因為大模型不夠聰明，而是因為 Harness 沒有搭建好。工程師們發現 Agent 經常走錯方向，甚至重複犯同一個錯誤。於是他們意識到，要想讓 Agent 可靠地工作，真正的功夫在於把 Harness 設計好。為此他們做了大量的優化，並且寫了一篇文章詳細記錄了這個過程。
 
-**9:47** · 后来也只不过是扩张到了7个人 算下来 开发效率差不多是纯人工的10倍了 但有意思的是 这个实验一开始的进展并不顺利 这并不是因为大模型不够聪明 而是因为Harness没有搭建好 工程师们发现 Agent 经常走错方向 甚至重复犯同一个错误 于是他们意识到 要想让 Agent 可靠的工作 真正的功夫在于把 Harness 设计好 为此他们做了大量的优化 并且写了一篇文章详细记录了这个过程
+這篇文章的優化點大致可以分三類：**上下文管理**、**驗證與反饋**、**技術債清理**。
 
-**10:14** · 这篇文章我反复读了好几遍 它的信息量非常大 涉及到很多 Harness Engineering 的优化点 所以这期视频我们就来重点聊聊 OpenAI 在 Harness Engineering 上面 到底做了什么 原文是从多个具体的优化点里面展开的 信息密度非常高 所以这里我尝试给这些优化点
+### 上下文管理
 
-**10:33** · 大致分了个类 分别是上下文管理 验证与反馈 和技术债清理 当然需要强调的是 这只是我个人所做的一个分类 主要是为了帮助大家理解 下面我们就来一一看看 这三大类到底是在做什么 首先是上下文管理 上下文管理的主要目标 是让 Agent 获取到足够充足的信息
+上下文管理的主要目標，是讓 Agent 獲取到足夠充足的信息。你可以想像一下，一個新入職的工程師，如果對項目一無所知，不清楚模組怎麼劃分，不知道程式碼規範是什麼，不了解團隊過去做過哪些技術決策，那他根本就沒有辦法開始工作。Agent 也是如此。
 
-**10:54** · 你可以想象一下 一个新入职的工程师 如果对项目一无所知 不清楚模块怎么划分 不知道代码规范是什么 不了解团队过去做过哪些技术决策 那他是根本就没有办法开始工作的 Agent 也是如此 为了解决这个问题 OpenAI 最初的尝试是 把所有的项目规范和相关信息 塞进一个超大的 AGENTS.md 文件
+為了解決這個問題，OpenAI 最初的嘗試是把所有的項目規範和相關信息塞進一個超大的 AGENTS.md 文件，這個文件會隨著用戶的問題一起發給大模型。不過 OpenAI 後來發現，使用一個大而全的 AGENTS.md 文件根本無法解決問題。原因有兩個：第一，內容太多會使得模型的效果變差，就像 HR 第一天砸給你一本巨厚的員工手冊，你肯定一臉懵，完全不知道該從哪裡看起，也完全搞不清楚重點在哪，AI 也是一樣；第二，這個文件會逐步腐化，項目是在不斷演進的，文件裡面的內容卻沒有人及時更新，時間一長就變成了一堆過時信息的垃圾堆。
 
-**11:15** · 这个文件会随着用户的问题 一起发给大模型 这样大模型就有了充足的信息 不过 OpenAI 后来发现 使用一个大而全的 AGENTS.md 文件 根本无法解决问题 原因是有很多 这里说两个最关键的 第一个是内容太多 使得模型的效果变差 设想一下你第一天去新公司报到 HR直接砸给你一个巨厚的员工手册
+所以他們後來改變了策略，把 AGENTS.md 文件壓縮到只有 100 行左右，基本上就是一個目錄，對應的文件系統也把相關文件和 AGENTS.md 放在一起。這樣用到哪塊再給 Agent 看哪塊，效果就會好很多。
 
-**11:37** · 说规矩全在这里 你自己看吧 那我猜你肯定是一脸懵的 完全不知道该从哪里看起 也完全搞不清楚重点在哪 AI 也是一样 一股脑地把所有的信息全部都喂给他 那他就迷失了 只能抓到一些碎片 真正关键的内容 反而被淹没在了废话里 第二点是这个文件会逐步的腐化
+除此之外，OpenAI 還發現項目裡面有很多重要的信息其實並不在程式碼倉庫裡面，它們可能是散落在 Slack 的聊天記錄裡，可能躺在某個 Google Docs 的文件裡，甚至只存在於某個老員工的腦子裡面。對於 Agent 來說，他只能看見倉庫裡面有什麼，倉庫外面的一切對他來說都跟不存在沒有區別。所以 OpenAI 的做法是強制要求把所有重要的決策和約定都搬進程式碼倉庫，讓倉庫成為唯一的事實來源。
 
-**11:58** · 项目是在不断演进的 文件里面的内容 却没有人及时更新 时间一长就变成了一堆 过时信息的垃圾堆 更糟糕的是 这个文件乱到连人都懒得去整理 那 Agent 也就没有办法 判断哪些内容还有效了 所以他们后来改变了策略 把 AGENTS.md 文件压缩到只有 100 行左右
+### 驗證與反饋
 
-**12:16** · 大体结构差不多就是这样子的 可以看出 AGENTS.md 里面 已经没有什么太多实质性的内容了 就是一个目录而已 对应的文件系统大致是这个样子的 可以看出相关的文档和目录 会跟 AGENTS.md 放在一起 这样用到哪块再给 Agent 看哪块 效果就会好很多 看来大模型跟人一样 还是要把信息分门别类的放好才行
+做好了上下文管理、有了充足的信息之後，Agent 就可以寫程式碼了。後面的重點就是在 Agent 寫完程式碼之後，讓他能夠驗證自己的成果是否正確。
 
-**12:37** · 除此之外 OpenAI 还发现了一个问题 项目里面有很多重要的信息 其实并不在代码仓库里面 它们可能是散落在 Slack 的聊天记录里 可能是躺在某个 Google Docs 的文档里 甚至是只存在于某个老员工的脑子里面 这点我相信大家也深有体会 只不过可能用的是国内的软件生态 而不是说是什么Slack Google Doc这些 对于 Agent 来说 他只能是看见仓库里面有什么 仓库外面的一切对他来说 都跟不存在没有什么区别 所以 OpenAI 是怎么做的呢 他们是强制要求把所有重要的
+OpenAI 的做法是給 Codex 配上足夠完善的工具和 Skill。比如說他們把 Chrome DevTools 接入了 Codex 的運行環境裡面，這樣 Codex 就可以自己截圖、自己查看 DOM 結構，並且自己模擬用戶操作，從而去驗證 UI 是否符合用戶的要求。如果發現問題，那 Codex 就可以原地修復，整個過程不需要人去介入。除了 UI 之外，OpenAI 還給 Codex 接入了完整的可觀測性工具棧，以便讓 Codex 可以讀取日誌、讀取指標，並在必要的時候追蹤運行鏈路以排查問題。Codex 的每個任務都跑在一個完全隔離的環境裡，有自己獨立的日誌和指標，任務結束之後也能自動銷毀。
 
-**13:10** · 决策和约定都搬进代码仓库 让仓库成为唯一的事实来源 这样 Agent 就可以了解到 这些外部的信息了 那这个就是上下文管理方面 所做的事情了 下面我们来看看验证和反馈部分在做什么
+在架構合規性方面，OpenAI 把他們的系統分成了好幾層，並且規定了嚴格的依賴關係，從上到下分別是 UI、Runtime、Service、Repo、Config、Types，每一層都只能依賴它下面的層。OpenAI 是使用 linter 和測試來避免違規情況發生：在 Agent 生成程式碼之後，linter 或者測試便會開始檢測程式碼是否合規，如果不合規的話它便會報錯，報錯信息會發回到 Agent 那裡，Agent 會根據報錯信息去修改，改完之後再跑 linter 或者測試，這樣就形成了一個完整的自動閉環，不需要人工去介入。
 
-**13:25** · 做好了上下文管理 有了充足的信息之后 Agent 就可以写代码了 后面的重点就是在 Agent 写完代码之后 让他能够验证自己的成果是否正确 不然他写完了之后没法验证 那这肯定是没有办法保证准确率的 OpenAI 的做法呢 是给 Codex 配上足够完善的工具 和 Skill 在这两者的帮助下 Codex 就能够在任务进行中随时验证自己的输出
+### 技術債清理
 
-**13:50** · 让我们举个例子 比如说他们把 Chrome DevTools 接入了 Codex 的运行环境里面 这样呢 Codex 就可以自己截图 自己查看DOM结构 并且自己模拟用户操作 从而去验证UI是否符合用户的要求 如果发现这里面有问题 那 Codex 就可以原地修复 整个过程呢就不需要人去介入了 除了UI之外 OpenAI 还给 Codex 接入了完整的可观测性工具栈
+Agent 在大規模生成程式碼的過程中，會不可避免地引入一些糟糕的設計模式，比如重複的程式碼、偏離架構規範的寫法、不一致的命名之類的，慢慢積累下去會把整個程式碼庫搞得一團糟。
 
-**14:14** · 以便让 Codex 可以读取日志 读取指标 并在必要的时候追踪运行链路 以排查问题 为了确保日志和输出的准确性 Codex 的每个任务都跑在一个完全隔离的环境里 有自己独立的日志和指标 任务结束之后呢也能自动销毁 这样做了之后 OpenAI 甚至可以让 Codex 对系统做一些 可量化的性能调优 比如说是要确保服务启动时间不能够超过800毫秒之类的
+OpenAI 的解法是給技術債做一些垃圾回收，具體來說就是設置一個後台的 Codex 任務，定期去掃描整個程式碼庫，找出其中偏離規範的地方，自動修改並提交，以確保程式碼的品質始終維持在一個比較高的水準。除了程式碼之外，他們還對文件做了同樣的事情，設置了一個後台任務定期掃描整個文件庫，找出那些過時的和實際程式碼對不上的文件，自動提交修復。
 
-**14:40** · 上面所讲的这些呢 都是为了保证 Codex 生成的代码 可以实现产品诉求 但很多时候我们对 Codex 生成的代码本身 还有一定的要求 比如说呢这些代码至少要符合项目架构上的规范 OpenAI 把它们的系统分成了好几层 并且规定了严格的依赖关系 从上到下分别是 UI, Runtime, Service, Repo, Config, Types
+---
 
-**15:00** · 每一层都只能依赖它下面的层 依赖关系不能反了 比如说是像 Repo 层依赖 UI 层 这样的事情是万万不能发生的 OpenAI 是使用 linter 和测试 来避免类似的情况发生 我们一起来看看它们是怎么保证架构规范的 在 Agent 生成代码之后 linter 或者测试便会开始检测 代码是否合规 如果不合规的话它便会报错 报错信息会发回到 Agent 那里 Agent 会根据报错信息去修改 改完之后再跑 linter 或者测试
+以上就是 OpenAI 所做的一些核心 Harness Engineering 實踐了。看完這些你可能有一個強烈的感覺——這哪裡是在寫程式碼啊，這完全就是在給 AI 構建幹活的環境啊。人負責定方向搭框架，具體幹活的事情就全由 AI 來做了。通過這五個月的瘋狂實驗，OpenAI 不僅跑通了這套 100 萬行程式碼的系統，更重要的是他們在這個過程中重新定義了人類和 AI 在未來的工作邊界。
 
-**15:28** · 这样就形成了一个完整的自动闭环 不需要人工去介入 这个流程会重复个几次 直到某次检测之后 所有的规则所有的测试全部通过 这样我们就拿到了一份 符合架构要求的代码了 这些就是验证与反馈这部分的内容了
+OpenAI 在文章中拋出了一個非常關鍵的斷言：**Humans steer, Agents execute**（人類負責掌舵，Agent 負責幹活）。到了 Harness Engineering 這一步，人和 AI 的分工就徹底變了——人負責定方向、給上下文、制定規則、在關鍵的地方做判斷，而那些真正重複的、瑣碎的開發工作就交給 Agent 在 Harness 裡面跑就好了。
 
-**15:44** · 下面我们来看看 技术债清理这部分在做什么 Agent 在大规模生成代码的过程中 会不可避免地引入一些糟糕的设计模式 比如说是重复的代码 偏离架构规范的写法 不一致的命名之类的 慢慢积累下去的话会把整个代码库搞得一团糟
+OpenAI 由此提出了第二個重要觀點：雖然人類不再需要親自手寫程式碼，但軟體工程的工作並沒有消失，而是演變成了完全不同的形態——如今軟體工程師的核心職責，變成了為 Agent 搭建穩定可靠的系統與支撐框架，以此來盡可能提高程式碼產出效率。Harness Engineering 不僅僅是如何寫好 Prompt 或者如何管理上下文這麼簡單，它是在重塑整個軟體工程的開發流程。
 
-**16:00** · OpenAI 的解法是给 技术债做一些垃圾回收 把这些问题通通解决掉 具体来说就是设置一个后台的 Codex 任务定期去扫描 整个代码库找出其中 偏离规范的地方自动修改并提交 以便确保代码的质量 始终维持在一个比较高的水准 这个是对代码的清理和优化 除了代码之外他们还对文档做了
+---
 
-**16:21** · 同样的事情具体来说是 他们设置了一个后台任务定期 扫描整个文档库找出那些 过时的和实际代码对不上的文档 自动提交修复所以你看 无论是代码还是文档 OpenAI 都有着一套对应的维护方案 两边都不会放任自留
+## Anthropic 的 Harness Engineering 實戰
 
-**16:38** · 以上就是 OpenAI 所做的 一些核心的 Harness Engineering 实践了 看完这些你可能有一个 强烈的感觉这哪里是在写代码啊 这完全就是在给 AI 构建干活的环境啊 人负责定方向搭框架 具体干活的事情就全由 AI 来做了没错这正是 OpenAI 这篇文章想要传达的最核心的 理念通过这五个月的疯狂实验 OpenAI 不仅跑通了这套 100万行代码的系统更重要的是 他们在这个过程中重新定义了 人类和 AI 在未来的工作边界
+Anthropic 有兩篇與 Harness Engineering 相關的文章。第一篇是去年 11 月發表的《Effective Harnesses for Long-Running Agents》，講述了如何配置環境以便讓 Agent 長時間自主運行。第二篇是今年 3 月份發表的《Harness Design for Long-Running Application Development》，可以理解為第一篇文章的續集，它在第一篇文章的基礎上對 Harness 架構做了進一步的優化和調整，使其能夠處理更多類型的任務。
 
-**17:07** · 在文章中 OpenAI 抛出了一个 非常关键的断言 Humans steer, Agents execute 翻译过来就是人类负责掌舵 Agent 负责干活说白了 到了 Harness Engineering 这一步 人和 AI 的分工就彻底变了 以前工程师要亲自下场 一行一行地写代码遇到爆错 自己查测试也要自己跑 但现在人类更像是在掌舵
+這兩篇文章最核心的地方就兩點：一個是跟**任務規劃**有關，另外一個是跟**品質評估**有關。
 
-**17:29** · 人负责定方向给上下文 制定规则在关键的地方做判断 而那些真正重复的 琐碎的开发工作就交给 Agent 在 Harness 里面跑就好了 基于这个全新的边界 OpenAI 紧接着又提出了第二个 非常重要的观点 这个观点点明了软件工程师在 AI 时代的新职责
+### 任務規劃
 
-**17:47** · 对应文章里面是这一段话 这大致意思就是在说 虽然人类不再需要亲自手写代码 但软件工程的工作并没有消失 而是演变成了完全不同的形态 如今软件工程师的核心职责变了 变成了为 Agent 搭建 稳定可靠的系统与支撑框架 以此来尽可能的提高代码产出效率 这两个观点可以说是 OpenAI 那篇文章的灵魂 它直接告诉我们 Harness Engineering 不仅仅是 如何写好 Prompt 或者是 如何管理上下文这么简单 它是在重塑整个软件工程的开发流程
+在第一篇文章中，Anthropic 做了一個實驗，直接讓 Agent 執行一個任務——克隆 claude.ai（Claude 的聊天界面）。雖然看起來只是一個聊天界面，但它背後的功能還是挺多的，一口氣做出來幾乎是不可能的事情。
 
-**18:18** · 那以上就是 OpenAI 这场 Harness Engineering 实战的核心精髓了 最后我想跟大家说明一下 为了帮助大家快速理清脉络 抓住核心思路 这篇文章我是做了一定的提炼和简化的 但必须要说 OpenAI 的这篇文章 写得非常的精彩 如果你对里面的技术细节感兴趣 强烈建议亲自去读一遍原文 相信一定会让你大受启发
+在 Anthropic 的實驗裡，Agent 接到需求之後立馬就開幹了，幹勁非常足，但效果也非常不好，主要是因為這個需求的工作量實在太大了。直接給到 Agent 的話，Agent 就會急於求成，從而引發一系列的問題，比如說他總想一口氣把所有的功能全部做完，結果幹到一半上下文就滿了，直接拋下了個爛攤子。等到下一個 Agent 接手的時候，完全不知道前面發生了什麼，只能靠猜，這一猜就壞事了——雖然有些功能只做了一半，但接手的 Agent 並不知道，粗略地掃了一眼還以為已經大功告成，於是直接宣佈完工草草收場了。
 
-**18:45** · 在这一章节里我们来看看 Anthropic 的两篇与 Harness Engineering 相关的文章 第一篇是去年11月发表的 Effective Harnesses for Long-Running Agents 它讲述了如何配置环境 以便让 Agent 长时间自主运行 第二篇是 今年3月份发表的 Harness Design for Long-Running Application Development
+Anthropic 在第一篇文章裡面寫了對應的解法，他們引入了一個叫做 Initializer 的 Agent，用來初始化執行環境，比如說是拆解用戶需求、編寫啟動腳本、添加進度文件等等。這裡面最核心的就是拆解用戶需求這一點，具體來說就是把用戶的需求拆解為一個詳細的功能列表，後續負責幹活的 Agent 就可以直接拿著這個功能列表去幹活，而且這個幹活的 Agent 會一個功能點一個功能點地做，做完一個標記一個，這樣穩紮穩打，整個流程的可控性就高了很多。
 
-**19:05** · 这篇文章可以理解为 是第一篇文章的续集 它在第一篇文章的基础上 对 Harness 架构做了进一步的优化和调整 使其能够处理更多类型的任务 达到更好的效果 这两篇文章的信息量很大 不过总结下来最核心的地方 就两点 一个是跟任务规划有关 另外一个是跟质量评估有关 我们来一个一个看 首先来看一下任务规划这部分
+後來在寫第二篇文章的時候，Anthropic 對這個思路做了一些演進，他們把 Initializer 裡面最核心的一件事情，也就是拆解用戶需求這個事情，單獨拿了出來做成了一個新的 Agent，叫做 **Planner**。他負責把用戶模糊的需求擴展成一份完整清晰的功能列表，這樣後面 Agent 在寫程式碼的時候，就不用對著用戶的需求猜了，照著功能點一個個做就行。
 
-**19:30** · 在第一篇文章中 Anthropic做了一个实验 直接让 Agent 执行一个任务 克隆 claude.ai claude.ai 就是 Claude 的聊天界面 大致就是这个样子的 它跟 ChatGPT 是同类型产品 虽然看起来只是一个聊天界面而已 但说实话 它背后的功能还是挺多的 一口气做出来是一件几乎不可能做到的事情
+### 品質評估
 
-**19:52** · 这个呢 也是Anthropic一开始所遇到的问题 在 Anthropic 的实验里 Agent 接到需求之后立马就开干了 干劲非常的足啊 但是效果也非常不好 主要是因为这个需求的工作量实在是太大了 直接给到 Agent 的话 Agent 就会急于求成 从而引发一系列的问题 比如说他总想一口气把所有的功能全部做完
+一般來說，光是讓 Agent 生成程式碼是不夠的，我們還需要對它生成的程式碼做一些品質評估，看看產出的東西到底行不行。如果產出品質不行的話，我們需要把對應的問題列表發回給 Agent 以便讓他做相應的修改，這才是一個比較合理的流程。
 
-**20:13** · 结果干到一半上下文就满了 直接抛下了个烂摊子 等到下一个 Agent 接手的时候 完全不知道前面发生了什么 只能靠猜 这一猜就坏事了 虽然有些功能只做了一半 但接手的 Agent 并不知道啊 粗略地扫了一眼还以为已经大功告成 于是直接宣布完工 草草就收工了 Anthropic 在第一篇文章里面写了对应的解法 他们是引入了一个叫做 Initializer 的 Agent
+這裡面有兩種評估方案。一種是人工評估，這個就不太行了，效率太低了。那這就引出了第二個方案——讓 Agent 自評，也就是自己評估自己的產出，有問題就修，修完再評，循環往復直到合格為止。聽起來挺合理的是吧？但 Anthropic 發現這個方案根本不好用，原因很簡單，Agent 自評這件事情本質上就是王婆賣瓜，他對自己做的東西天然就有濾鏡，所以即使產出裡面有明顯的 bug，他也能做到視而不見，給自己打個高分之後就草草收工了。
 
-**20:39** · 从这个名字就可以看出来 这个 Agent 就是用来初始化执行环境的 比如说是拆解用户需求啊 编写启动脚本啊 添加进度文件啊等等 这里面最核心的就是拆解用户需求这一点 具体来说 就是把用户的需求拆解为一个详细的功能列表
+所以 Anthropic 直接把前面兩種方案都廢棄了，搞出了第三個方案，那就是做一個專門的評估 Agent 來評估產出品質。由於這個評估 Agent 是一個獨立的第三方，他自然就沒有理由去替別的 Agent 產出護短，評估結果也就客觀多了。而且把評估 Agent 單獨拎出來還有一個好處，那就是我們可以單獨去優化、去訓練這個評估 Agent，讓他的評估效果做到最好。
 
-**20:56** · 后续负责干活的 Agent 呢 就可以直接拿着这个功能列表去干活了 而且呢 这个干活的 Agent 会一个功能点一个功能点地做 做完一个标记一个 这样稳扎稳打 整个流程的可控性就高了很多 后来在写第二篇文章的时候 Anthropic 对这个思路做了一些演进 他们把 Initializer 里面 最核心的一件事情 也就是拆解用户需求这个事情 单独给拿了出来 做成了一个新的 Agent 叫做 Planner 他负责把用户依据模糊的需求 扩展成一份完整清晰的功能列表
+換句話說，我們最終需要把生成程式碼和品質評估這兩件事情給拆開，分別交給兩個不同的 Agent 來做：其中負責生成程式碼的那個叫做 **Generator**，負責品質評估的那個叫做 **Evaluator**。
 
-**21:28** · 这样后面 Agent 在写代码的时候 就不用对着用户的需求猜了 照着功能点一个个做就行 好那规划的问题解决了 这一部分的产物呢就是Planner 下面呢我们再来看第二点 质量评估 一般来说光是让 Agent 生成代码是不够的 我们还需要对它生成的代码 做一些质量评估 看看产出的东西到底行不行 如果产出质量不行的话 我们需要把对应的问题列表发回给 Agent 以便让他做相应的修改 这个呢才是一个比较合理的流程 现在我们来看看具体是怎么做质量评估的
+### Planner + Generator + Evaluator 的協作流程
 
-**22:00** · 这里面呢有两种评估方案 一种呢是人工评估 这个就不太行了 效率太低了都 AI 时代了 能交给 AI 的就都交给 AI 吧 那这就引出了第二个方案 让 Agent 自评 也就是自己评估自己的产出 有问题就修,修完再评 循环往复制到合格为止 听起来挺合理的是吧 但Anthropic发现这个方案根本不好用
+加上之前說過的 Planner，我們就有三個 Agent 了。這三個 Agent 的協作流程大致如下：
 
-**22:23** · 原因很简单 Agent 自评这件事情 本质上就是王婆卖瓜子买字夸 他对自己做的东西天然就有滤镜 所以呢即使产出里面有明显的bug 他也能做到视而不见 给自己打个高分之后就草草收工了 所以呢 Anthropic 就直接把前面两种方案都给废弃了 搞出了第三个方案 那就是做一个专门的评估 Agent 来评估产出质量 由于这个评估 Agent 是一个独立的第三方 他自然就没有理由去替别的 Agent 产出护短
+首先是 Planner，他會把用戶的需求拆解為具體的功能列表，然後發送給 Generator。Generator 接收到功能列表之後，會從中挑選出一個功能點，然後就著這個功能點去跟 Evaluator 討論交付標準，也就是討論到底做到什麼程度才算是完成了這個功能點。Generator 首先會把他的想法發過去，Evaluator 一開始可能會對這個提議提出一些修改意見，然後再發回給 Generator，Generator 會根據意見再次提交新的交付標準，這個過程會重複幾次，直到 Evaluator 確認 Generator 的提議沒問題為止。
 
-**22:50** · 评估结果也就客观多了 而且把评估 Agent 单独拎出来还有一个好处 那就是我们可以单独去优化 去训练这个评估 Agent 让他的评估效果做到最好 对，这个就是 Anthropic 的最终方案了 换句话说 我们最终需要把生成代码和质量评估 这两件事情给拆开 分别交给两个不同的 Agent 来做 其中负责生成代码的那个 叫做 Generator 负责质量评估的那个叫做 Evaluator 这个呢就是最终的质量评估流程了
+確認好交付標準之後，Generator 便開始生成程式碼來實現這個功能點。實現完畢之後，Generator 會把他的實現結果提交給 Evaluator，Evaluator 會對結果做出評估反饋。如果不通過的話，Generator 就要修改程式碼，這個提交結果、評估反饋的過程也會重複幾次，直到 Evaluator 評估通過為止。到這裡一個功能點就算是開發完了，然後再重複這個流程，把後面的功能點全部都逐步做完。
 
-**23:19** · 所以质量评估这一环节 我们提到了两个 Agent 一个是评估用的 Evaluator 一个是生成代码用的 Generator 再加上之前说过的 Planner 我们就有三个 Agent 了 下面呢我们来画一下持续图 看看这三个 Agent 是怎么分工合作 完成用户需求的 首先是 Planner 他会把用户的需求拆解为具体的功能列表
+Anthropic 把這個包含了三個 Agent 的方案叫做 **Full Harness 方案**，相比之下那種只靠一個 Generator 獨立完成所有需求的傳統單 Agent 模式，被 Anthropic 稱為 **Solo 方案**。
 
-**23:41** · 然后发送给 Generator Generator 接收到功能列表之后 他会从中挑选出一个功能点 然后呢他就就着这个功能点 去跟 Evaluator 讨论下交付标准 也就是讨论下 到底做到什么程度才算是完成了这个功能点 Generator 呢 首先会把他的想法发过去 Evaluator 呢一开始可能会对这个提议 提出一些修改意见 然后再发回给 Generator Generator 呢会根据意见再次提交新的交付标准
+Anthropic 拿了一個具體的任務（做一個遊戲製作工具）來驗證這兩個方案的差距。從效果上來看，Solo 方案的問題很多，比如說佈局不合理、產品邏輯難以理解、bug 到處都是，基本上沒有辦法用。而 Full Harness 方案就有了明顯的改善，無論是佈局還是整體的產品邏輯，都達到了可用的水準。
 
-**24:07** · 所以呢这个过程会重复个几次 直到 Evaluator 确认 Generator 的提议没问题为止 确认好交付标准之后 Generator 便开始生成代码来实现这个功能点了 实现完毕之后呢 Generator 会把他的实现结果 提交给 Evaluator Evaluator 会对结果做出评估反馈 比如说是一开始可能评估不通过
+當然這樣做也不是沒有代價的，Full Harness 方案的耗時和花費都要明顯高於 Solo 方案——Solo 方案耗時 20 分鐘、花費 9 美元，而 Full Harness 方案耗時 6 個小時、花費高達 200 美元。不得不承認，Full Harness 的效果確實好了不少，但精雕細琢是有代價的。
 
-**24:27** · 那如果不通过的话呢 Generator 就要修改代码了 所以呢这个提交结果评估反馈的过程 也会重复个几次 直到 Evaluator 评估通过为止 到这里一个功能点就算是 开发完了 但是我们不只有一个功能点啊
+### 模型能力進化帶來的簡化
 
-**24:43** · 所以呢我们就需要再一次 重复之前的这个流程 把后面的功能点全部都逐步做完 这个呢就是大致的流程了 Anthropic 把这个包含了三个 Agent 的方案 叫做 Full Harness 方案 相比之下 那种只靠一个 Generator 独立完成所有需求的传统单 Agent 模式
+Anthropic 一開始在提示詞裡面強制 Generator 每次只選取一個功能點，做完這個功能點再做下一個，循環往復直到完成所有功能點為止。否則讓 Generator 自行發揮的話，它還是會急於求成，最後留下一堆爛攤子。
 
-**25:00** · 被 Anthropic 称为 Solo 方案 Anthropic 拿了一个具体的任务 来验证这两个方案的差距 这个任务呢就是做一个 游戏制作工具 从效果上来看啊 Solo 和 Full Harness 这两个方案的差距 还是很明显的 Solo 方案的问题呢很多 比如说是布局不合理 产品逻辑难以理解 bug到处都是 基本上呢是没有办法用的 而 Full Harness 方案呢就有了明显的改善了
+不過在 Opus 4.6 發佈之後，這個約束就不怎麼需要了。因為基於 Opus 4.6 做的 Generator 變得更強了，它可以一次把所有的功能點全部都拿過來，自己決定先做哪個再做哪個，穩步向前推進，不需要別人再對它的執行流程指指點點。在這種情況下，Evaluator 也直接評估最終產出就可以了，不需要再分功能點評估了。
 
-**25:26** · 无论是布局 还是整体的产品逻辑 都达到了可用的水准 虽然还是存在一些问题 但比起 Solo 方案来说 Full Harness 的效果呢是明显要好不少的 当然这样做也不是没有代价的 Full Harness 方案的耗时和花费
+---
 
-**25:41** · 都要明显的高于 Solo 方案 Anthropic 给出了一个对比表格 大家可以感受一下 Solo 方案耗时 20 分钟 花费9美元 而 Full Harness 方案呢是耗时 6个小时 花费高达200美元 所以可以看出 Full Harness 的方案 无论是耗时还是花费都要远高于 Solo 方案
+## Harness Engineering 是不是噱頭
 
-**26:01** · 虽然如此啊 但不得不承认 Full Harness 的方案 效果确实是好了不少 毕竟精雕细琢是有代价的呀 这对我们人类来说也是一样 考的60分可能只需要复习三天 但是想考的90分 那可能就得复习一个月了 这个大家多少都会有些体会吧
+在這一章節裡，我們來聊聊目前爭議最大的問題：Harness Engineering 到底是不是一個噱頭？
 
-**26:20** · 最后再提一个 Anthropic 后来做的优化点 让我们重新看一下这个流程图 注意其中的这一部分 这一部分说明了 Generator 每次 只会选取一个功能点 做完这个功能点再做下一个 循环往复直到完成所有的功能点为止
+### 這個詞是怎麼火起來的
 
-**26:35** · 这个逻辑呢是 Anthropic 在 提示词里面强制 Generator 这么处理的 否则让 Generator 自行发挥的话 它还是会急于求成 最后留下一堆烂摊子 不过在 Opus 4.6 发布了之后 这个约束就不怎么需要了 Anthropic 后面就把这一部分给去掉了 最后呢就简化成了 这个样子 那为什么后面就可以这么做了呢 因为基于 Opus 4.6 做的 Generator 变得更强了 它可以一次把所有的功能点全部都拿过来
+首先，單就 Harness 這個詞來說，其實它並不算是一個全新的詞。在傳統的軟體測試領域就有一個概念叫做 Test Harness，它代表為了支持測試程式碼運行而做的一套框架。在 AI 領域，很多開發者其實也早就默默在用這個概念了，比如有個開源的項目叫做 lm-evaluation-harness，它就是為了支持模型效果評估而做的一套框架。Anthropic 去年 11 月發的那篇文章《Effective Harnesses for Long-Running Agents》裡的 Harness，也代表為了支持 Agent 長時間運行而做的一套框架。所以 Harness 這個概念一直都在那兒，大家也都在默默地用，誰也沒覺得這是個需要大吹特吹的新概念。
 
-**27:02** · 自己决定先做哪个再做哪个 稳步地向前推进 不需要别人再对它的执行流程指指点点 而在这种情况下 Evaluator 也直接评估最终产出就可以了 不需要再分功能点评估了 关于这一部分 我们在下一章节还会提到 这里你有个大体的概念就行
+Harness Engineering 把這兩個詞組合在一起，目前比較公認的起點是 2 月 5 號 Mitchell Hashimoto 發表的那篇博客《My AI Adoption Journey》。他在裡面寫道，我也不知道業界有沒有公認的叫法，我就姑且管它叫 Harness Engineering，它的核心理念就是只要 Agent 犯了錯，你就去改造系統，讓它絕不再犯同樣的錯，要是有更好的詞，我隨時改口。
 
-**27:22** · 在这一章节里 我们来聊聊目前争议最大的一个问题 Harness Engineering 到底是不是一个噱头 要回答这个问题 我们不妨先来扒一扒 这个词到底是怎么火起来的 首先，单就 Harness 这个词来说 其实它并不算是一个彻头彻尾的新词 一般大家用它来指代为了支持某个功能所做的一套框架
+從傳播情況來看，這篇文章的討論熱度其實並不算很高。真正引爆這個概念的，是幾天後也就是 2 月 11 號 OpenAI 發的那篇 Harness Engineering 文章，這篇文章信息量極大，迅速在業界引起了巨大反響。緊接著，僅僅 6 天後也就是 2 月 17 號，軟體工程界大名鼎鼎的 Martin Fowler 網站就發了一篇文章，作者是 Thoughtworks 裡一位非常資深的工程師，文章標題叫《Harness Engineering - First Thoughts》，這篇文章一發出來自然就在圈內引發了廣泛的討論。
 
-**27:43** · 我们来举几个具体的例子 比如在传统的软件测试领域 就有一个概念叫做 Test Harness 它代表为了支持测试代码运行而做的一套框架 这个框架里可能包含测试运行器、测试环境等等 而在 AI 领域 很多开发者其实也早就默默在用这个概念了 比如有个开源的项目叫做 lm-evaluation-harness 它就是为了支持模型效果评估而做的一套框架 不仅如此 我们刚才重点讲过 Anthropic 去年 11 月发的一篇文章
+她在文章裡還點出了一個很耐人尋味的細節：雖然 OpenAI 這篇文章的標題有 Harness Engineering 這兩個詞，但如果你仔細去翻 OpenAI 的文章，你會發現這篇文章的正文裡其實只提了一次 Harness 這個詞。因此她推測 OpenAI 搞不好就是受了 Mitchell Hashimoto 的啟發，事後才臨時把 Harness Engineering 這個詞放到了標題裡面。
 
-**28:14** · 叫做 Effective Harnesses for Long-Running Agents 这里的 Harness 就代表为了支持 Agent 长时间运行而做的一套框架 所以你看 Harness 这个概念一直都在那儿 大家也都在默默地用 谁也没觉得这是个需要大吹特吹的新概念 可以说 Harness 这个词本身并不是重点 重点是 Harness Engineering 把这两个词组合在一起 其实是最近才发生的事 目前比较公认的起点 就是我现在屏幕上所展示的这篇文章 My AI Adoption Journey
+隨後到了 3 月 10 號，LangChain 發了一篇文章叫《The Anatomy of an Agent Harness》，這篇文章第一次明確給出了關於 Harness 的公式：Agent = Model + Harness，也就是我們前面聊過那個公式的變體，公式一出，概念就算定調了。隨後在 3 月 24 號，Anthropic 發了那篇 Harness 的文章，拿出了 Planner、Generator 和 Evaluator 的經典架構。雖然 Anthropic 自己比較克制，通篇只用了 Harness 這個名詞，並沒有生搬硬套 Harness Engineering 這個剛剛炒熱的新詞，但在當時那個氛圍下，整個 AI 圈心照不宣，直接就把這套三 Agent 架構當成了 Harness Engineering 的教科書級案例。就這樣，一傳十、十傳百，Harness Engineering 從一個人的私人說法，變成了大家都在用的詞。
 
-**28:46** · 这篇文章在今年 2 月 5 号的时候发表 作者是 Mitchell Hashimoto 可能国内有些同学对这个人不太熟悉 但在海外技术圈 他绝对是响当当的人物 很多大公司的底层工具都是他做的 在这篇博客里，他写了这么一段话 这段话的大意是说我也不知道业界有没有公认的叫法
+### 爭議焦點
 
-**29:06** · 我就姑且管它叫 Harness Engineering 它的核心理念就是 只要 Agent 犯了错，你就去改造系统 让它绝不再犯同样的错 要是有更好的词，我随时改口 你看，大佬还是很实诚的 所以这个词的起点其实非常朴素 甚至带着点随意 跟后来大家讨论的宏大概念还是有区别的
+如果你複盤完這段歷史再仔細琢磨一下，就會發現一件非常微妙的事情：Harness Engineering 裡用到的所有技術，竟然沒有一個是新的。linter 程式碼檢查、任務拆解規劃、品質評估機制，這些東西其實早就有了。Harness Engineering 真正做的，只是把這些技術重新組織了下，統一放到了一個新詞下面。換句話說，它提供的是一套新的系統思維框架，而不是發明了一批顛覆性的新技術。
 
-**29:28** · 从传播情况来看 这篇文章的讨论热度其实并不算很高 那 Harness Engineering 到底是怎么火起来的呢 在很多人的认知里 真正引爆这个概念的 是几天后，也就是 2 月 11 号 OpenAI 发的那篇 Harness Engineering 文章 就是我们之前讲过的那个 这篇文章信息量极大 迅速就在业界引起了巨大反响 紧接着 整个 AI 圈就像触发了连锁反应 仅仅 6 天后，也就是 2 月 17 号 软件工程界鼎鼎大名的 Martin Fowler 网站就发了一篇文章
+懷疑論者的攻擊點主要有兩個：第一，Harness Engineering 根本沒有新東西，全都是「新瓶裝舊酒」，在這種情況下特意造個新詞到處宣傳，可不就是噱頭嗎；第二，所有的 Harness Engineering 都遲早要被淘汰。他們認為，隨著大模型自身能力的持續進化，今天看起來必不可少的這些 Harness 設計，未來很可能會被模型能力本身逐步吸收，最終變得不再需要。
 
-**29:59** · 作者是 Thoughtworks 里一位非常资深的工程师 文章标题叫 Harness Engineering - First Thoughts 就是她读完 OpenAI 那篇文章之后的第一反应 作为顶级技术博客 这篇文章一发出来自然就在圈内引发了广泛的讨论 但抛开技术观点不谈 她在文章里还点出了一个很耐人寻味的细节： 虽然 OpenAI 这篇文章的标题有 Harness Engineering 这两个词 但如果你仔细去翻 OpenAI 的文章 你会发现这篇文章的正文里其实只提了一次 Harness 这个词
+這種擔憂其實連 Anthropic 自己的文章裡都有跡可循。以**上下文焦慮**為例，這是 Sonnet 4.5 的一個問題——具體來說，就是當上下文過長時，模型會急於結束任務，以更少的 token 完成交付，而這往往會影響最終品質。Anthropic 一開始是使用了一種叫做上下文重置的 Harness Engineering 技術來解決這個問題，但後來當模型升級到更強的 Opus 4.5 後，這種現象被大幅緩解，也就不怎麼需要這方面的 Harness Engineering 設計了。再以**強制分步執行**為例，一開始 Anthropic 在提示詞裡強制 Generator 每次只選取一個功能點，等用到更強的 Opus 4.6 之後，這種強制分步執行的機制就不需要了，因為 Opus 4.6 的全局統籌能力夠強，它可以自己做好整體規劃，不需要別人對它的執行流程指指點點。
 
-**30:31** · 因此她推测 OpenAI 搞不好就是受了 Mitchell Hashimoto 的启发 事后才临时把 Harness Engineering 这个词放到了标题里面 虽然只是个猜测 但也给人带来了很大的联想空间 随后到了 3 月 10 号 LangChain 发了一篇文章 叫 The Anatomy of an Agent Harness 这篇文章第一次明确给出了关于 Harness 的公式
+這恰恰印證了一個非常現實的趨勢：**模型越強，需要的 Harness 就越少。** 大模型自身的進化，正在一口一口吃掉 Harness Engineering 的生存空間。
 
-**30:56** · 就是这个 Agent = Model + Harness 这其实就是我们前面聊过的那个公式的变体 当时我们把 Harness 移到了等号左边 我们讲的是 Harness = Agent - Model 这两个等式其实本质上是一回事 公式一出，概念就算定调了 随后在 3 月 24 号 Anthropic 发了那篇 Harness 的文章 拿出了 Planner、Generator 和 Evaluator 的经典架构
+### 個人觀點
 
-**31:22** · 这个我们之前也讲过 虽然 Anthropic 自己比较克制 通篇依然只用了 Harness 这个名词 并没有生搬硬套 Harness Engineering 这个刚刚炒热的新词 但在当时那个氛围下 整个 AI 圈可以说是心照不宣 直接就把这套三 Agent 架构 当成了 Harness Engineering 的教科书级案例 就这样，一传十，十传百 Harness Engineering 从一个人的私人说法 变成了大家都在用的词 但如果你复盘完这段历史
+我的觀點是，Harness Engineering 不是噱頭，但應該也不是終局。
 
-**31:51** · 再仔细琢磨一下 就会发现一件非常微妙的事情 Harness Engineering 里用到的所有技术 竟然没有一个是新的 你看我们前面讲的 Linter 代码检查 任务拆解规划、质量评估机制 这些东西其实早就有了 相信看这个视频的很多观众甚至都在做相关的工作
+說它不是噱頭，是因為它已經實實在在帶來了效果。無論是 OpenAI 還是 Anthropic，都通過 Harness Engineering 把 Agent 的穩定性、自動化程度和生產力往前推了一大步，這些都是可以被驗證的工程成果，而不是概念炒作。當然，也有人會說它不過是「新瓶裝舊酒」，用的都是老技術。但問題在於，工程領域真正的進步，往往不在於發明了什麼新技術，而在於有沒有一套統一的框架，把這些零散的能力組織起來，變成可以系統設計、可以持續優化的工程方法。Harness Engineering 的意義，恰恰就在這裡。
 
-**32:12** · Harness Engineering 真正做的 只是把这些技术重新组织了下 统一放到了一个新词下面 换句话说 它提供的是一套新的系统思维框架 而不是发明了一批颠覆性的新技术 既然没什么新技术 那难怪有些人会觉得 Harness Engineering 这个概念被高估了
+但我不得不承認，Harness Engineering 大概率不是終局。隨著模型能力繼續增強，今天這些用來約束模型、糾正模型、給模型兜底的系統設計，很可能會被模型自身逐步吸收。到那個時候，很多 Harness 可能會變得不再必要，這個詞也許會慢慢淡出大家的視野。
 
-**32:30** · 甚至带着点‘炒作’的成分 仔细听听这波怀疑论者的声音 你会发现他们的攻击点主要有两个： 一方面 Harness Engineering 根本没有新东西 全都是“新瓶装旧酒” 在这种情况下 特意造个新词到处宣传 可不就是噱头吗 不仅如此 这波怀疑论者还提出了一个更扎心的观点
+當然，Anthropic 官方在文章裡其實沒這麼悲觀。他們認為，隨著模型變強，Harness 的形態也會跟著進化，去解鎖更複雜的任務，也就是說 Harness 只會變形，不會消失。但不妨大膽推演一下——如果未來的模型真的強到離譜，也許只要給大模型配置上最基礎的 Harness，它自己就能把剩下 99% 的問題全搞定，到了那一天，Harness Engineering 就不再是一門需要大家專門去鑽研的技術了，它會退化成一個單純的環境接口、一個底層基礎設施。
 
-**32:53** · 所有的 Harness Engineering 都迟早要被淘汰 他们认为 随着大模型自身能力的持续进化 今天看起来必不可少的这些 Harness 设计 未来很可能会被模型能力本身逐步吸收 最终变得不再需要 而这种担忧 其实连 Anthropic 自己的文章里都有迹可循 前面我们讲过 Anthropic 的 Harness 核心方案 但文章里还有很多细节 很值得细细品味 这里我们仔细研究下其中的两个问题 然后分别看看 Anthropic 一开始用 Harness Engineering 是怎么解决的
-
-**33:23** · 以及后来模型强大了之后 如何用模型解决 我们第一个要探讨的问题就是上下文焦虑 这个是 Sonnet 4.5 的一个问题 具体来说，就是当上下文过长时 模型会急于结束任务 以更少的 token 完成交付 而这往往会影响最终质量 Anthropic 一开始是使用了一种 叫做上下文重置的 Harness Engineering 技术来解决这个问题
-
-**33:47** · 但后来 当模型升级到更强的 Opus 4.5 后 这种现象被大幅缓解 因为 Opus 4.5 没有明显的上下文焦虑问题了 也就不怎么需要这方面的 Harness Engineering 设计 第二个相关的问题是长任务的执行效果差 这点其实我们之前也提过 让我们一起来回忆一下 Anthropic 的链路包含 Planner Generator 和 Evaluator 3 个 Agent 一开始的设计是逐个功能点执行 也就是说 Anthropic 会在提示词里面强制 Generator 每次只选取一个功能点
-
-**34:17** · 做完一个再做下一个 以便确保整个产品开发流程稳步向前推进 不过，等用到更强的 Opus 4.6 之后 这种强制分步执行的机制就不需要了 因为 Opus 4.6 的全局统筹能力够强 它可以一次把所有的功能点都拿过来 自己决定先做哪个再做哪个 稳步推进 不需要别人对它的执行流程指指点点 你看 这恰恰印证了一个非常现实的趋势 模型越强，需要的 Harness 就越少 大模型自身的进化 正在一口一口吃掉 Harness Engineering 的生存空间
-
-**34:49** · 当然，为了严谨起见 我需要补充一句 Anthropic 官方在文章里其实没这么悲观 他们认为，随着模型变强 Harness 的形态也会跟着进化 去解锁更复杂的任务 也就是说，Harness 只会变形 不会消失 但我们不妨大胆推演一下 如果未来的模型真的强到离谱呢 这并不是说未来连读写文件、联网搜索这种基础工具都不需要了
-
-**35:14** · 而是说 也许只要给大模型配置上最基础的 Harness 它自己就能把剩下 99% 的问题全搞定 真到了那一天 Harness Engineering 就不再是一门需要大家专门去钻研的技术了 它会退化成一个单纯的环境接口、一个底层基础设施
-
-**35:31** · 仔细想想，这件事发生的概率 恐怕没有那么低吧 所以说了这么多 我们还得回归原来的问题 Harness Engineering 到底是不是噱头 这里我来聊下我个人的看法 可能有误 仅供参考啊 我的观点是 Harness Engineering 不是噱头 但应该也不是终局 说它不是噱头 是因为它已经实实在在带来了效果 无论是 OpenAI 还是 Anthropic 都通过 Harness Engineering 把 Agent 的稳定性、自动化程度和生产力往前推了一大步
-
-**36:01** · 这些都是可以被验证的工程成果 而不是概念炒作 当然，也有人会说 它不过是“新瓶装旧酒” 用的都是老技术 但问题在于，工程领域真正的进步 往往不在于发明了什么新技术 而在于有没有一套统一的框架 把这些零散的能力组织起来 变成可以系统设计、可以持续优化的工程方法
-
-**36:23** · Harness Engineering 的意义 恰恰就在这里 但我不得不承认 Harness Engineering 大概率不是终局 随着模型能力继续增强 今天这些用来约束模型、纠正模型、给模型兜底的系统设计 很可能会被模型自身逐步吸收 到那个时候 很多 Harness 可能会变得不再必要 这个词也许会慢慢淡出大家的视野 所以我更愿意把它看成一个
-
-**36:50** · 过渡期的关键技术 它可能不是未来的终局答案 但它是当下最现实的答案 因为让我们回到今天 模型依然会犯错，依然会幻觉 依然会在复杂任务中偏离轨道 在这种现实下 Harness Engineering 的重要性就不容忽视 可以说，谁能把 Harness 搭得更稳 谁就能更早把 AI 的能力转化成真正的生产力
-
-**37:14** · 从而从中受益 好了，今天的视频就到此结束了 我是马克 用最通俗的语言讲最硬核的技术 我们下期再见，拜拜
+所以我更願意把它看成一個**過渡期的關鍵技術**。它可能不是未來的終局答案，但它是當下最現實的答案。因為模型依然會犯錯，依然會幻覺，依然會在複雜任務中偏離軌道。在這種現實下，Harness Engineering 的重要性就不容忽視。可以說，誰能把 Harness 搭得更穩，誰就能更早把 AI 的能力轉化成真正的生產力，從而從中受益。
