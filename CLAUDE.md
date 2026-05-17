@@ -1,7 +1,22 @@
+# CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+
 # Obsidian Memory Vault — 吸收型卡片盒
 
 **本檔涵蓋**：Vault 內容規則——卡片盒哲學、Inbox/Cards/Topics 工作流、寫入前 Checklist、frontmatter schema、tag/命名、敏感資料。
 **不涵蓋**：Quartz 部署、agent/command/skill 架構、symlink 配置 → 見 repo 根目錄 [`CLAUDE.md`](../CLAUDE.md)。
+
+## 工具指令
+
+```bash
+npm run vault:check   # 稽核 frontmatter schema、敏感資料、日期格式（唯讀，只回報）
+npm run vault:fix     # 同上，並自動修正（欄位排序、日期 normalize、移除未知欄位）
+node scripts/vault-schema.test.mjs  # 執行 schema 單元測試
+node scripts/verify-skill-symlinks.mjs  # 驗證 .claude/skills → .agents/skills symlink
+```
+
+**Skill symlink 架構**：`.agents/skills/` 是 repo-local skill 的唯一維護來源；`.claude/skills` 必須是指向它的 symlink（相對路徑 `../.agents/skills`），兩者不同步時 `verify-skill-symlinks.mjs` 會報錯。
 
 ## 三條原則
 
