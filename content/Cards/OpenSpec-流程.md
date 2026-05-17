@@ -1,7 +1,7 @@
 ---
 title: OpenSpec 流程
 created: 2026-05-16
-updated: 2026-05-16
+updated: 2026-05-17
 source: https://github.com/Fission-AI/OpenSpec/blob/main/docs/getting-started.md
 tags:
   - claude-code
@@ -83,3 +83,16 @@ flowchart LR
 - **`/opsx:sync` 尚未在 v1.3.1 release**：GitHub 文件已記載為 core workflow 的一部分，但 npm 實際版本不含此 skill；`openspec config list` 可驗證
 - Core workflow 實際可用指令：`propose → explore → apply → archive`（sync 暫缺）
 - 目前若需同步 delta specs，直接在 `/opsx:archive` 時一併處理
+
+## Core Profile 實際指令清單（v1.3.1 確認）
+
+Core profile（預設）只有 4 個 skill，**`/opsx:sync` 不在其中**：
+
+| 指令 | 說明 |
+| ---- | ---- |
+| `/opsx:propose` | 建立變更並生成所有規劃 artifacts |
+| `/opsx:explore` | 探索想法與需求 |
+| `/opsx:apply` | 實作 tasks |
+| `/opsx:archive` | 歸檔完成的變更 |
+
+`/opsx:sync` 被視為可選進階指令：`archive` 執行時若偵測到未 sync 的 delta specs，會主動詢問是否執行 sync，因此不強制放在 core。
