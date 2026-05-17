@@ -1,143 +1,180 @@
-# CLAUDE.md
+# Obsidian Memory Vault — 吸收型卡片盒
 
-**本檔涵蓋**：repo 工程層——專案架構、Quartz 部署、agent/skill 清單、symlink 配置。
-**不涵蓋**：Vault 內容規則（卡片盒哲學、frontmatter schema、tag/命名、敏感資料）→ 見 [`content/CLAUDE.md`](content/CLAUDE.md)。
+**本檔涵蓋**：Vault 內容規則——卡片盒哲學、Inbox/Cards/Topics 工作流、寫入前 Checklist、frontmatter schema、tag/命名、敏感資料。
+**不涵蓋**：Quartz 部署、agent/command/skill 架構、symlink 配置 → 見 repo 根目錄 [`CLAUDE.md`](../CLAUDE.md)。
 
-**判斷規則寫哪份**：
+## 三條原則
 
-- 摸 `content/` 會爆炸的（筆記結構、寫入前檢查） → `content/CLAUDE.md`
-- 碰 Quartz / scripts / 部署 / agent 配置會爆炸的 → 本檔
+此 vault 採用「吸收型卡片盒」，核心如下：
 
-## 專案概覽
+1. **吸收並內化** — 筆記是「我理解的版本」，不是別人說法的保存
+2. **不留原料，留參考資料** — Inbox 抄錄整篇消化完刪除（多主題筆記允許保留未消化段落，加 `extracted_to` 標記指回 MOC）；Card 保留參考資料（來源網址等），用於回查原文，不作為證據
+3. **正確 + 不斷更新** — Card 可覆寫、永不定稿（持續修改）
 
-Obsidian 個人知識庫，以 [Quartz 4](https://quartz.jzhao.xyz/) 發佈至 `ob.bugloop.com`。Vault 內容放在 `content/`，Quartz 框架程式碼在 `quartz/`。
+**一句話：Vault 是腦的延伸，不是倉庫。**
 
-此 repo 由三層構成，修改時先判斷變更屬於哪一層再動：
+## Vault 結構（三層成熟度）
 
-- **Vault 層**（`content/`）— 筆記本體，規則見 `content/CLAUDE.md`
-- **發佈層**（`quartz/`、`quartz.config.ts`、`quartz.layout.ts`、`.github/workflows/`）— Quartz 建置與 GitHub Pages 部署
-- **工作流層**（`.claude/` + `.agents/` + `scripts/`）— skills（`ob`、`vault-check`、`vault-youtube-sync`、`vault-distill`、`vault-updates-daily`、`vault-reddit-daily`）、Node 稽核腳本。skill 內子流程（建檔／查詢／語意稽核）由 skill 以 `general-purpose` subagent 呼叫，prompt 從各自 `references/` 載入，不依賴命名 agent。`.claude/skills/ob` 可 symlink 至 `~/.claude/skills/` 跨專案使用；`.agents/skills/` 是 repo-local skill 來源，`.claude/skills` symlink 到此處
+| 資料夾           | 角色                                | 成熟度 | 生命週期                                  |
+| ---------------- | ----------------------------------- | ------ | ----------------------------------------- |
+| `Inbox/`         | AI 抄錄的外部原料                   | 未消化 | 暫存，消化完刪除                          |
+| `Cards/`         | 未歸屬的完整概念 Card               | 待歸類 | 累積同主題或裂變後批次搬進 Topics/<主題>/ |
+| `Topics/<主題>/` | 已歸檔的完整概念 Cards + 主題入口頁 | 已歸檔 | 長期，可持續覆寫                          |
 
-## 常用指令
+## 三層工作流
 
-需要 Node.js 22+、npm 10.9.2+（`package.json` engines）。
+### Inbox → Cards（消化）
 
-```bash
-npx quartz build --serve         # 本地預覽（localhost:8080）
-npm run check                    # TypeScript 型別檢查 + Prettier 格式驗證
-npm run format                   # 自動格式化
-npm run test                     # 執行所有測試（tsx --test，使用 Node.js 內建 test runner）
-tsx --test scripts/vault-schema.test.mjs  # 執行單一測試檔
-npm run vault:check              # 稽核 content/ 的 frontmatter 與檔名（只報告）
-npm run vault:fix                # 稽核並自動修正（/vault-check 內部呼叫這個）
+三條清空路徑：
+
+- A. 寫新 Card（放 `Cards/`） — 真有新啟發（少數）
+- B. 強化既有 Card / Topic 內容 — 呼應舊想法（多數）
+- C. 直接刪除 — 沒學到新東西、品質差（多數）
+
+三條都以「刪除 Inbox/ 原篇」作結。Inbox 空 = 無積欠。
+
+路徑 A、B 寫 Card 時，按既有慣例附上來源連結（回查用）。
+
+**多主題例外**：若 Inbox 筆記同時涵蓋多個主題、本次整理只內化其中一個切角，允許從原筆記移除已內化段落、保留剩餘段落，並在 frontmatter 加 `extracted_to: "[[<MOC 名>]]"` 指回 MOC。半消化筆記仍是 Inbox 的「待消化」狀態，鼓勵下次同主題整理時再消化剩餘。
+
+### Cards → Topics/<主題>/（歸檔）
+
+**Card = 完整概念**（獨立可讀，不需搭配其他筆記或原文就能理解），不是零碎斷句。兩種批次觸發：
+
+- **A. 同主題累積**：多張同主題 Cards 一起搬
+- **B. Card 裂變**：單張長大後拆成多張，同時搬
+
+動作：
+
+1. 找到或建立 `Topics/<主題>/` 資料夾（含 `index.md` 作為主題入口頁）
+2. **一次 `git mv` 整組 Cards** 搬入 `Topics/<主題>/`（內容不動）
+3. 在 `index.md` 補上 wikilink 清單
+
+跨主題靠 `tags` 串連：`Topics/` 第一層不做跨主題巢套（不建「AI-工具/Claude-Code/」這種群組）；單一主題內 Cards 過多時，可在 `Topics/<主題>/` 底下再分子資料夾。
+
+升 Topic 前的品質門檻、退回 Cards 的反指標：見 repo 根 [`topics-review.md`](../topics-review.md)。**已升 Topic 重看時若命中反指標，可隨時退回**。
+
+### 防爆量
+
+- Inbox 靠「消化完刪除」
+- Cards 靠「成批搬走」
+- Topics 靠「第一層不跨主題聚合 + 主題數有限」
+
+不靠紀律，靠流動。
+
+## 寫入前 Checklist（所有 agent 寫入 content/ 前必做）
+
+此 vault 透過 Quartz 發佈到公開網站（ob.bugloop.com），寫入前必須自檢。這是 vault 健康的第一道防線——任何修改 `content/` 的流程（`/ob` 寫入流程、其他 skills、手動編輯）在寫入前逐項檢查。`/vault-check` 只兜底跨檔案 emergent 問題（斷鏈、tag drift、非寫入流程來源漏網），**不依賴它抓本清單能預防的錯**。
+
+### 1. 敏感資料（零容忍）
+
+寫入前掃正文與 frontmatter，確認不含：
+
+- **Token / Key**：`sk-`、`sk-ant-`、`ghp_`、`gho_`、`AKIA`、`AIza`、`xox[baprs]-`、`eyJ`（JWT）
+- **Private key header**：`-----BEGIN ... PRIVATE KEY-----`
+- **自然語言密碼**：「密碼是 …」、「password: …」後接明文
+- **客戶 / 公司內部資訊、個資**：身分證、私人電話、地址、內部 IP / 網址
+
+命中 → 移除或告知使用者中止，不寫入。若發現既有筆記含有敏感資料，立即移除並通知用戶。
+
+### 2. Frontmatter schema（寫入當下即合法）
+
+必含 `title` / `created` / `updated` / `tags`；欄位順序、白名單、型別以 [`scripts/vault-schema.mjs`](../scripts/vault-schema.mjs) 為準。**不要產出需要 auditor 事後補 title 或修 YAML 的筆記**——YAML 引號、縮排、wikilink 包雙引號（`parent: "[[01.index]]"`）等在寫入前就確保正確。
+
+細節見下文「Frontmatter Schema（固定）」。
+
+### 3. Tag 沿用既有
+
+寫入前先查現有 tags（`obsidian tags`，或 `rg -A5 '^tags:' content -g '*.md'`），優先沿用，避免製造同義異寫（`claude-code` vs `claudeCode` vs `claude_code`）。真無合適才建新 tag，小寫、`-` 連接。
+
+### 4. 命名
+
+檔名不含空格，空格一律改為 `-`（例：`Obsidian-CLI-整合指南.md`）；wikilink 對應實際檔名（含 `-`）。`title:` 用主題名，不加日期前綴。
+
+## 規則
+
+### Obsidian Bases（.base 檔案）
+
+- wikilink 必須加副檔名：`[[02.影片清單.base]]`，不加會找不到檔案
+- embed 同理：`![[02.影片清單.base]]`
+- `.base` 檔案的內容**不會在圖譜產生連結**，這是 Obsidian 已知限制
+- 要讓筆記出現在圖譜中，需在筆記 frontmatter 加 `parent` property 指向 index：
+  ```yaml
+  parent: "[[01.index]]"
+  ```
+
+### 色碼與特殊符號
+
+- `#` 開頭的內容（如 hex 色碼 `#57F287`）在 Obsidian 會被解讀為 tag，**必須用反引號包住**：`` `#57F287` ``
+
+### `updated` 欄位（盡力而為）
+
+修改 `.md` 內容時**盡量**同步 frontmatter 的 `updated` 為今日日期（`YYYY-MM-DD`），但不強制 — 偶爾漂移可接受，不需為此中斷流程或裝 hook。
+
+### Frontmatter Schema（固定）
+
+機器驗證真實來源：[`scripts/vault-schema.mjs`](../scripts/vault-schema.mjs)（欄位清單、順序、必填、型別、strict 白名單皆在那）。本節只記**人類語意**（欄位作用、出現情境）與 Obsidian 特有坑。
+
+```yaml
+---
+# ── 核心（必填，所有筆記） ──
+title: <筆記標題>
+created: YYYY-MM-DD
+updated: YYYY-MM-DD
+
+# ── 選填（依筆記類型出現） ──
+source: <URL> # 外部來源
+published: YYYY-MM-DD # 外部來源發佈日
+parent: "[[01.index]]" # 歸屬 index（圖譜用）
+extracted_to: "[[<MOC 名>]]" # 半消化筆記：部分內容已被整合到 MOC
+last_sync_id: <video-id> # 僅 YouTube 頻道 01.index.md
+draft: true # Quartz 不發佈（opt-out）
+
+# ── 必填，固定放最後 ──
+tags:
+  - tag-1
+---
 ```
 
-## 架構
+**欄位說明：**
 
-- `content/` — Obsidian vault（筆記、模板），Quartz 從此目錄讀取 Markdown 建站；入口索引 `content/master-index.md`
-- `topics-review.md` — Cards → Topics 升降規則治理文件（5 條保留條件、7 條退回反指標、書籤型例外）
-- `quartz/` — Quartz 框架原始碼（不需修改）
-- `quartz.config.ts` — 站台設定（外觀、plugins、ignorePatterns）
-- `quartz.layout.ts` — 版面配置
-- `AGENTS.md` — `CLAUDE.md` 的 symlink，給非 Claude Code 的 agent 工具讀（改 CLAUDE.md 自動同步）
-- `.clipper/vault-clipper.json` — Obsidian Web Clipper 模板（`Inbox/Clippings/` 抓取規則、frontmatter 白名單）。`Inbox/Clippings/` 為剪下的原料，`/vault-check` 豁免其檔名 / schema 檢查（敏感資料硬掃仍跑）；整理進 Cards/ 或 Topics/ 後才會走完整稽核
-- `.github/workflows/deploy.yml` — push 到 `main` 自動建置並部署至 GitHub Pages
+| 欄位           | 必填 | 出現於                     | 作用                                                                                                       |
+| -------------- | ---- | -------------------------- | ---------------------------------------------------------------------------------------------------------- |
+| `title`        | ✓    | 全部                       | Quartz 頁面標題來源（正文不用 `# Heading`）                                                                |
+| `created`      | ✓    | 全部                       | 建立日                                                                                                     |
+| `updated`      | ✓    | 全部                       | 最後修改日（盡力而為，見下節）                                                                             |
+| `source`       | 條件 | 有外部來源時               | 外部資料必填，跨階段保留（Inbox → Cards → Topics 都不刪，供回查原文）；純原創 Card 可省略                  |
+| `published`    | —    | 有外部來源發佈日時         | 原文／影片發佈日（YouTube 影片由 `vault-youtube-sync` 帶入、Clipping 由 Web Clipper 帶入）；無法取得可省略 |
+| `parent`       | —    | Inbox/YouTube 影片         | `[[01.index]]`，讓筆記出現在頻道圖譜                                                                       |
+| `extracted_to` | —    | 半消化 Inbox 筆記          | `[[<MOC 名>]]`，指回部分內容已被整合到的 MOC，避免遺忘                                                     |
+| `last_sync_id` | —    | YouTube 頻道 `01.index.md` | `vault-youtube-sync` skill 的同步書籤                                                                      |
+| `draft`        | —    | 草稿                       | `true` = 不發佈到 ob.bugloop.com；完成後移除                                                               |
+| `tags`         | ✓    | 全部                       | 固定放最後                                                                                                 |
 
-## Quartz 重要行為
+**Obsidian 特有注意：**
 
-- `ignorePatterns` 包含 `private`、`.obsidian`、`CLAUDE.md`、`Inbox`（整個 `Inbox/` 含 YouTube 與 Clippings 都不發佈）
-- frontmatter 加 `draft: true` 的筆記會被 `RemoveDrafts` plugin 過濾，不發佈
-- 日期優先順序：frontmatter → git → filesystem（`CreatedModifiedDate` plugin）
-- Plugin pipeline：transformers（解析 Markdown）→ filters（篩選頁面）→ emitters（產生 HTML/靜態資源）
-- Wikilink 以 `shortest` 解析（`CrawlLinks`），連結目標需在 `content/` 下存在對應檔案
+- `tags` 必須 YAML list（`- tag`），不用 inline array `[a, b]` — Obsidian UI 偶爾會誤寫成 inline
+- Wikilink 值必須用雙引號包：`parent: "[[01.index]]"`（YAML parser 會把 `[[...]]` 當 flow sequence 吃掉）
 
-## Vault 規則載入
+**白名單制**：schema 以外的欄位一律移除。
 
-Vault 內容規則（寫入前 Checklist、frontmatter schema、tag/命名、敏感資料等）由子模組規範載入；查詢 vault 時先讀 [`content/master-index.md`](content/master-index.md)。
+- Obsidian Web Clipper 若帶入 `author` / `description` / `cover` / `image` / `banner` 等未列欄位，一律清掉
+- `/vault-check` 會自動稽核（`UNKNOWN_FIELD`）並由 `scripts/vault-check.mjs` 刪除
+- 例外：`Inbox/Clippings/` 為剪下的原料，`/vault-check` 豁免其 schema 檢查；整理進 Cards/ 或 Topics/ 後才走稽核
+- 新增欄位前需先在 `scripts/vault-schema.mjs` 擴充，不可直接寫入未列欄位
 
-- @content/CLAUDE.md
+## YouTube 筆記語言規範
 
-## Claude Code Skills
+所有 YouTube 影片筆記正文內容一律以**繁體中文**撰寫。
 
-此 repo 統一管理 Obsidian 相關的 Claude Code 設定。部分透過 symlink 掛載至全域（僅 `/ob` 相關），讓跨專案可用；其餘綁本 repo。全 skill 化（不再有 command）。
+- 技術名詞、品牌名、工具名保留英文（例：Claude Code、OpenAI、defuddle）
+- 若 defuddle 取得英文 transcript，需翻譯整理為繁體中文後再寫入筆記
 
-skill 內所有「subagent 子流程」（建檔／查詢／語意稽核）一律以 `Agent` tool 呼叫 `subagent_type: "general-purpose"`，prompt 從該 skill 的 `references/*.md` 載入。**不依賴命名 agent**，跨工具環境可移植；無 subagent 能力的工具（Cursor/Codex/Gemini CLI 等）由主 agent 直接 Read references 執行同流程。
+## 查詢規則
 
-## Codex Repo-Local Skills
+查詢相關知識時：
 
-Codex 不會自動把 repo 內 `.agents/skills/` 註冊為全域 skill registry；在本 repo 工作時，遇到下列流程需手動讀對應 `SKILL.md`，並依其 references/scripts 執行：
-
-- `/ob` 或自然語言筆記操作 → 讀 `.agents/skills/ob/SKILL.md`
-- `/vault-check` 或 vault 稽核修正 → 讀 `.agents/skills/vault-check/SKILL.md`
-- YouTube 同步 → 讀 `.agents/skills/vault-youtube-sync/SKILL.md`
-- 筆記蒸餾整合 → 讀 `.agents/skills/vault-distill/SKILL.md`
-- 工具更新同步（官方 changelog / GitHub releases 含 starred / GitHub discussions）→ 讀 `.agents/skills/vault-updates-daily/SKILL.md`
-- Reddit 每日日報 → 讀 `.agents/skills/vault-reddit-daily/SKILL.md`
-
-`.agents/skills/` 是 repo-local skill 的唯一維護來源；`.claude/skills` 應維持為指向 `.agents/skills/` 的 symlink，避免兩份內容漂移。
-
-下面三節（§ 1-3）每張表都有「全域路徑」欄：有值 = 需 symlink 掛全域（跨專案可用），`—` = 僅本 repo 生效。
-
-### 1. 筆記操作（`/ob` 流程）
-
-使用者唯一入口。`/ob <需求>` 或對話中自然提到「建立筆記」、「找筆記」，`ob` skill 依語意分派：
-
-- 建檔（「建立」、「記一下」、「寫一篇」）→ `references/write.md` 經 general-purpose subagent
-- 查詢（「找」、「搜尋」、「有沒有」、「查」）→ `references/query.md` 經 general-purpose subagent（含唯讀工具契約）
-
-| 檔案                                    | 類型      | 全域路徑               | 用途                            |
-| --------------------------------------- | --------- | ---------------------- | ------------------------------- |
-| `.claude/skills/ob/`                    | Skill     | `~/.claude/skills/ob/` | `/ob` 入口，依語意分派          |
-| `.agents/skills/ob/references/write.md` | Reference | —（隨 skill 載入）     | 寫入流程指令（subagent prompt） |
-| `.agents/skills/ob/references/query.md` | Reference | —（隨 skill 載入）     | 查詢流程指令（subagent prompt） |
-
-### 2. Vault 稽核修正（`/vault-check` 流程）
-
-兩段分工、零重疊：**Script 管格式與敏感資料硬掃（硬規則自動修 + high-precision 敏感資料 flag），Subagent 管語意（建議不改檔）**。skill 串接兩段。全程綁本 repo，不需掛全域。
-
-| 檔案                                             | 類型        | 全域路徑 | 用途                                                                                                                                           |
-| ------------------------------------------------ | ----------- | -------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
-| `.claude/skills/vault-check/`                    | Skill       | —        | `/vault-check` orchestrator：git 前置檢查 → 跑 script → 經 general-purpose subagent 跑 audit reference → 合併總結                              |
-| `scripts/vault-check.mjs`                        | Node script | —        | 硬規則自動修（檔名、frontmatter 結構、日期 normalize）＋ high-precision 敏感資料硬掃（只 flag 不修，命中 exit non-zero，作為 CI 最後一道防線） |
-| `scripts/vault-schema.mjs`                       | Node module | —        | Zod schema 與欄位順序／白名單定義，**硬規則變更改這裡**                                                                                        |
-| `.agents/skills/vault-check/references/audit.md` | Reference   | —        | 語意層稽核指令（subagent prompt）：wikilink 斷鏈、完整敏感資料、tag 一致性、缺 title/created/tags、parse error；含唯讀工具契約，只 flag 不改檔 |
-
-### 3. 批次筆記工作流（Skills）
-
-整批處理特定來源的筆記。手動在本 repo 內觸發，不掛全域。
-
-| 檔案                                  | 類型  | 全域路徑 | 自動觸發 | 用途                                                                                          |
-| ------------------------------------- | ----- | -------- | -------- | --------------------------------------------------------------------------------------------- |
-| `.claude/skills/vault-youtube-sync/`  | Skill | —        | ✗        | YouTube 頻道影片批次轉 Obsidian 筆記，含 last_sync_id checkpoint 與 draft 失敗占位            |
-| `.claude/skills/vault-distill/`       | Skill | —        | ✓        | 多篇筆記蒸餾整合為單篇 MOC（逐步呼叫，每次做一件事）；也支援推薦適合整合的候選主題            |
-| `.claude/skills/vault-updates-daily/` | Skill | —        | ✗        | 每日彙整官方 changelog / GitHub releases（含 authenticated user starred repos）/ discussions  |
-| `.claude/skills/vault-reddit-daily/`  | Skill | —        | ✗        | Reddit AI 工程社群動態每日 briefing，broad coverage 8-15 則，含工具新版 / 行為觀察 / 熱議爭議 |
-
-**「自動觸發」欄**：由 SKILL.md frontmatter 的 `disable-model-invocation` 決定。三個批次工作流（youtube-sync / updates-daily / reddit-daily）關閉自動觸發，避免日常對話意外起動長流程；只能透過 slash command 顯式呼叫。`vault-distill` 保留自動觸發，因為「整合 X 主題」屬於明確意圖。同邏輯適用 § 1-2 的 `ob` / `vault-check`（皆 ✓，使用者高頻入口）。
-
-### 4. 建議安裝的第三方 Skills（非本 repo 管理，需另行安裝至 `~/.claude/skills/`）
-
-以下 skill 與 vault 工作流深度整合，`/ob` 等流程會依賴它們，強烈建議安裝至全域：
-
-| Skill               | 服務於     | 用途                                                                   |
-| ------------------- | ---------- | ---------------------------------------------------------------------- |
-| `obsidian-cli`      | 筆記操作   | 透過 Obsidian CLI 讀寫 vault、搜尋筆記、操作 properties/tasks          |
-| `obsidian-markdown` | 筆記操作   | Obsidian Flavored Markdown 語法（wikilinks、callouts、frontmatter）    |
-| `obsidian-bases`    | 筆記操作   | `.base` 檔案（Obsidian Bases）讀寫、views、filters、formulas           |
-| `defuddle`          | 批次工作流 | 網頁轉 clean markdown，`vault-youtube-sync` 與 `Clippings/` 流程皆使用 |
-
-未安裝時 `/ob` 仍可退回用 Read/Write 操作，但缺少 CLI / Bases / 網頁抓取的最佳路徑。
-
-### Symlink 安裝
-
-把 `/ob` 相關設定掛到 `~/.claude/` 讓跨專案可用。Windows / macOS / Linux 指令見 [README.md](README.md) 的「全域掛載」段。
-
-## Vault 作為 Claude Code 資料來源
-
-Vault 同時作為 Claude Code 的參考資料來源，與 WebSearch 互補並行：
-
-- **協議**：觸發條件、綜合原則、引用格式寫在全域 `~/.claude/CLAUDE.md` 的 `## Obsidian` 段；技術/知識性提問會自動並行呼叫查詢流程（`/ob` skill + `references/query.md`）+ WebSearch
-- **搜尋工具**：搜 vault 一律用 `Grep` + `Glob content/**/*<關鍵字>*.md`，不要呼叫 Obsidian CLI 的 `search:context`（慢約 9 倍且覆蓋率較低）
-- **路徑契約**：分兩種——
-  - **`/ob`（掛全域、跨專案可用）**：references/write.md、references/query.md 一律讀 `$OBSIDIAN_VAULT_ROOT`，**必須**在**全域** `~/.claude/settings.json` 的 `env` 段注入絕對路徑（不是 repo 內的 settings）——因為 `/ob` 相關設定已 symlink 到全域，env 放 repo 內的 settings 只在本 repo 工作時可見，從其他專案呼叫 `/ob` 會讀不到。未設或無效直接中止，不做猜測 fallback。設定時可直接請 Claude Code 用 `update-config` skill 處理，會自動 merge 既有 `env` 不覆蓋
-  - **其他 repo-local skill（vault-check / vault-distill / vault-youtube-sync / vault-updates-daily / vault-reddit-daily）**：cwd 必為 repo root，用 `content/...` 相對路徑直接讀寫；不依賴 env。前置作業會先驗 `test -f content/master-index.md`，cwd 不在 repo root 即中止
+1. 先讀 `master-index.md` 確認資料位置
+2. 主題筆記 → 對應 `Topics/` 子目錄
+3. 影片摘要 → 依主題選對應 `Inbox/YouTube/<頻道>/`
+4. 跨主題 → Grep 搜尋 tag（frontmatter 中的 tags 欄位）
