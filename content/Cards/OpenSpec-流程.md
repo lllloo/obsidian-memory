@@ -18,8 +18,8 @@ OpenSpec 是 Fission-AI 出品的輕量 spec 框架（npm）。OPSX 是目前的
 | `EX` | `/opsx:explore` | core | 發散思考，釐清需求與選項 | 無固定輸出；propose 前用 |
 | `PR` | `/opsx:propose` | core ⭐ | 一步建立完整 change | proposal + specs + design + tasks |
 | `AP` | `/opsx:apply` | core ⭐ | 依 tasks.md 執行實作 | 過程可隨時更新 artifact |
-| `SY` | `/opsx:sync` | core ⭐ | 同步 delta specs 進主規格 | archive 執行時亦會提示 |
-| `AR` | `/opsx:archive` | core ⭐ | 合併 delta specs 並封存 change | change 移至 `changes/archive/` |
+| `SY` | `/opsx:sync` | core（v1.3.1 npm 未含） | 同步 delta specs 進主規格 | `archive` 執行時自動詢問是否 sync；npm 版本暫缺此 skill，可用 `archive` 代勞 |
+| `AR` | `/opsx:archive` | core ⭐ | 合併 delta specs 並封存 change | change 移至 `changes/archive/`；含 sync 確認步驟 |
 | `NW` | `/opsx:new` | expanded ⭐ | 建立 change scaffold（只搭架） | — |
 | `CT` | `/opsx:continue` | expanded ⭐ | 依相依圖逐步建立下一個 artifact | 與 `FF` 擇一；每次一個 |
 | `FF` | `/opsx:ff` | expanded ⭐ | 一次產出所有 planning artifacts | 與 `CT` 擇一；目標清楚時用 |
@@ -37,8 +37,7 @@ flowchart TD
     Start --> PR
     EX --> PR["/opsx:propose ⭐<br/>建立完整 change"]
     PR --> AP1["/opsx:apply ⭐<br/>執行實作"]
-    AP1 --> SY["/opsx:sync ⭐"]
-    SY --> AR1["/opsx:archive ⭐"]
+    AP1 --> AR1["/opsx:archive ⭐<br/>（含 sync 確認）"]
     AR1 --> Done([完成])
 
     Start2([開始 · Expanded]) --> NW["/opsx:new ⭐<br/>建立 scaffold"]
@@ -67,7 +66,7 @@ flowchart LR
 - **Actions not phases**：沒有強制 phase gate，`AP` 中發現設計錯誤直接改 design.md 再繼續
 - **EX before PR**：idea 模糊先跑 `EX`；目標清楚直接跑 `PR`
 - **FF vs CT**：知道要做什麼用 `FF` 一次產出；還在探索用 `CT` 逐步推進
-- **Delta not full rewrite**：specs 只記「這次改了什麼」（ADDED / MODIFIED / REMOVED），archive 時才合併進主規格
+- **Delta not full rewrite**：specs 只記「這次改了什麼」（ADDED / MODIFIED / REMOVED），`archive` 時合併進主規格；`sync` 在 v1.3.1 npm 版本未發佈，由 `archive` 內建的確認步驟代勞
 - **Update vs New change**：同目標、微調執行 → 更新既有 change；意圖根本改變或 scope 爆增 → 開新 change
 
 ## 相關
@@ -77,22 +76,8 @@ flowchart LR
 - [Fission-AI/OpenSpec](https://github.com/Fission-AI/OpenSpec)
 
 
-## 版本注意（v1.3.1）
+## 版本備註
 
-- 安裝：`npm install -g @fission-ai/openspec`（目前最新 v1.3.1）
-- **`/opsx:sync` 尚未在 v1.3.1 release**：GitHub 文件已記載為 core workflow 的一部分，但 npm 實際版本不含此 skill；`openspec config list` 可驗證
-- Core workflow 實際可用指令：`propose → explore → apply → archive`（sync 暫缺）
-- 目前若需同步 delta specs，直接在 `/opsx:archive` 時一併處理
-
-## Core Profile 實際指令清單（v1.3.1 確認）
-
-Core profile（預設）只有 4 個 skill，**`/opsx:sync` 不在其中**：
-
-| 指令 | 說明 |
-| ---- | ---- |
-| `/opsx:propose` | 建立變更並生成所有規劃 artifacts |
-| `/opsx:explore` | 探索想法與需求 |
-| `/opsx:apply` | 實作 tasks |
-| `/opsx:archive` | 歸檔完成的變更 |
-
-`/opsx:sync` 被視為可選進階指令：`archive` 執行時若偵測到未 sync 的 delta specs，會主動詢問是否執行 sync，因此不強制放在 core。
+- 安裝：`npm install -g @fission-ai/openspec`（最新 v1.3.1）
+- `/opsx:sync` 在 GitHub 文件中屬 core，但 v1.3.1 npm 版本尚未發佈；`openspec config list` 可驗證
+- Core profile 實際 4 個 skill：`explore` / `propose` / `apply` / `archive`
