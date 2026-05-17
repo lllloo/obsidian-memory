@@ -1,0 +1,69 @@
+{
+  "skill_name": "vault-updates-daily",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "同步最近一週 Codex 和 Claude Code 的官方變更與 releases",
+      "expected_output": "觸發 vault-updates-daily，讀 content/Inbox/Updates/01.index.md 或建立預設 index，抓官方 changelog 與 GitHub releases，篩選有影響的項目寫入 content/Inbox/Updates/<YYYY-MM-DD>-daily-updates.md",
+      "files": [],
+      "assertions": [
+        {
+          "name": "使用官方 changelog 或 GitHub releases 作為來源",
+          "description": "流程使用官方 changelog / release notes 或 GitHub releases，不用其他低信任來源"
+        },
+        {
+          "name": "正確寫入路徑",
+          "description": "筆記寫入 content/Inbox/Updates/<YYYY-MM-DD>-daily-updates.md，frontmatter 包含 title、created、updated、tags"
+        },
+        {
+          "name": "Index 不累積日報",
+          "description": "content/Inbox/Updates/01.index.md 只保存同步來源設定，不追加 daily-updates wikilink 清單"
+        },
+        {
+          "name": "高精度篩選",
+          "description": "跳過只有 dependency bump、alpha noise 或無使用者可見變更的 release"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "整理 Cursor changelog 和 GitHub Copilot 相關 changelog 到 vault",
+      "expected_output": "觸發 vault-updates-daily，處理官方 changelog 中 Cursor 與 GitHub Changelog（Copilot），只保留對 developer tooling / coding agent workflow 有影響的 entry",
+      "files": [],
+      "assertions": [
+        {
+          "name": "處理官方 changelog 來源",
+          "description": "使用 Cursor Changelog URL 或 GitHub Changelog RSS feed"
+        },
+        {
+          "name": "避免整頁搬運",
+          "description": "不把整個 changelog 全文寫入筆記，只摘要與 developer tooling 相關的 entry"
+        },
+        {
+          "name": "語意篩選",
+          "description": "與 workflow / coding agent / model 無關的 changelog entry 被跳過"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "同步我 GitHub 星星的 AI coding tool 最近有什麼新 release",
+      "expected_output": "觸發 vault-updates-daily，用單一 GraphQL call 抓星星 repo 的 releases，篩選 AI coding tool 相關項目（如 gemini-cli、opencode、copilot-cli）建成筆記，跳過 eslint、prettier 等非 AI tooling",
+      "files": [],
+      "assertions": [
+        {
+          "name": "使用 --starred GraphQL 路徑",
+          "description": "透過 fetch_updates.py --starred 用單一 GraphQL call 抓，而非逐 repo REST call"
+        },
+        {
+          "name": "篩選 AI tooling 相關 release",
+          "description": "保留 gemini-cli、opencode、copilot-cli、claude-code 等 AI coding tool 的有意義 release"
+        },
+        {
+          "name": "跳過非 AI tooling",
+          "description": "eslint、prettier、axios 等純前端工具的 release 被跳過或不建筆記"
+        }
+      ]
+    }
+  ]
+}

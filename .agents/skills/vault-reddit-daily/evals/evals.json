@@ -1,0 +1,49 @@
+{
+  "skill_name": "vault-reddit-daily",
+  "evals": [
+    {
+      "id": 0,
+      "prompt": "給我 Reddit 日報",
+      "expected_output": "觸發 vault-reddit-daily，讀 Inbox/RedditDaily/01.index.md 的「訂閱頻道」段取得 subreddit，抓 top day 貼文，只做本次執行內 post_id 去重，分析後建立或覆蓋 Inbox/RedditDaily/Reddit日報-YYYY-MM-DD.md",
+      "files": [],
+      "assertions": [
+        {
+          "name": "觸發詞辨識",
+          "description": "從「Reddit 日報」正確觸發本 skill，而不是 vault-updates-daily"
+        },
+        {
+          "name": "日報輸出",
+          "description": "輸出單一日報檔案，正文每則都包含 Reddit 原文連結、訊號、摘要與可參考點"
+        },
+        {
+          "name": "不建立逐篇筆記",
+          "description": "不在 Inbox/Reddit/<subreddit>/ 下建立單篇貼文筆記"
+        },
+        {
+          "name": "不依賴 Reddit sync 訂閱",
+          "description": "不掃 Inbox/Reddit/*/01.index.md；RedditDaily 的頻道只來自 Inbox/RedditDaily/01.index.md"
+        },
+        {
+          "name": "不維護 persisted dedup",
+          "description": "不寫入已處理紀錄；同一天重跑直接覆蓋當天日報"
+        }
+      ]
+    },
+    {
+      "id": 1,
+      "prompt": "今天 Reddit 有什麼 AI 討論可以參考",
+      "expected_output": "觸發每日 Reddit 日報流程，使用 fetch_reddit_daily.py 抓 top.json?t=day&limit=50，依 high precision 規則收錄 5-12 則並提供來源連結",
+      "files": [],
+      "assertions": [
+        {
+          "name": "daily fetch",
+          "description": "所有訂閱 sub 統一走 top.json?t=day&limit=50"
+        },
+        {
+          "name": "不寫 dedup",
+          "description": "不把 keep 或 skip 的 post_id 寫回任何 01.index.md"
+        }
+      ]
+    }
+  ]
+}

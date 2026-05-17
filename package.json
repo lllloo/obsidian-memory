@@ -1,0 +1,21 @@
+{
+  "name": "obsidian-memory",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "vault:check": "node scripts/vault-check.mjs",
+    "vault:fix": "node scripts/vault-check.mjs --fix"
+  },
+  "dependencies": {
+    "globby": "^16.1.0",
+    "gray-matter": "^4.0.3",
+    "js-yaml": "^4.1.1",
+    "zod": "^4.3.6"
+  },
+  "devDependencies": {
+    "tsx": "^4.21.0"
+  }
+}

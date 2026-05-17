@@ -1,0 +1,73 @@
+{
+  "skill_name": "vault-youtube-sync",
+  "evals": [
+    {
+      "id": 0,
+      "prompt": "https://www.youtube.com/@Chase-H-AI/videos 幫我把這個頻道的影片建成筆記",
+      "expected_output": "抓取頻道影片清單，用 defuddle 擷取每部影片內容，平行 subagents 建立符合 vault 規則的筆記到 content/Inbox/YouTube/<頻道名>/",
+      "files": [],
+      "assertions": [
+        {
+          "name": "影片清單成功抓取",
+          "description": "能從頻道 /videos 頁面解析出影片標題與 URL"
+        },
+        {
+          "name": "筆記格式正確",
+          "description": "筆記有正確 frontmatter（title, tags, created, updated, source），無 # 標題 heading，檔名無空格"
+        },
+        {
+          "name": "平行 subagents 啟動",
+          "description": "影片分批後以平行方式啟動多個 subagents"
+        },
+        {
+          "name": "defuddle 內容擷取",
+          "description": "每部影片有實際內容（描述或逐字稿），不只是標題"
+        },
+        {
+          "name": "published 欄位存在",
+          "description": "每筆筆記 frontmatter 含 published（影片上傳日期 YYYY-MM-DD）"
+        }
+      ]
+    },
+    {
+      "id": 1,
+      "prompt": "youtube 轉筆記：https://www.youtube.com/@AIJasonZ/videos",
+      "expected_output": "辨識觸發詞「youtube 轉筆記」，抓取 AIJasonZ 頻道影片並建立筆記",
+      "files": [],
+      "assertions": [
+        {
+          "name": "觸發詞辨識",
+          "description": "從非標準表達「youtube 轉筆記」正確觸發 skill"
+        },
+        {
+          "name": "影片清單成功抓取",
+          "description": "成功解析頻道影片清單"
+        },
+        {
+          "name": "筆記格式正確",
+          "description": "筆記符合 vault 規則"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "幫我抓這個 YouTube 頻道的影片清單並建立筆記 https://www.youtube.com/@indydevdan/videos",
+      "expected_output": "抓取 indydevdan 頻道影片並建立筆記，每部影片有獨立筆記檔案",
+      "files": [],
+      "assertions": [
+        {
+          "name": "影片清單成功抓取",
+          "description": "成功解析頻道影片清單"
+        },
+        {
+          "name": "筆記數量合理",
+          "description": "建立 10 部以上筆記（頻道有足夠影片）"
+        },
+        {
+          "name": "筆記格式正確",
+          "description": "筆記符合 vault 規則"
+        }
+      ]
+    }
+  ]
+}
