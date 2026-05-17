@@ -1,7 +1,7 @@
 ---
 title: Obsidian
 created: 2026-03-22
-updated: 2026-04-25
+updated: 2026-05-17
 tags:
   - obsidian
   - moc
@@ -11,6 +11,7 @@ tags:
 
 ## 工具書籤
 
+- [[Obsidian-Skills]] — 實際安裝使用的 Claude Code skills（obsidian-cli / obsidian-markdown / obsidian-bases / defuddle）
 - [[Obsidian-CLI-整合指南]] — 讓 Claude Code 讀寫 vault 的 CLI（kepano 維護）
 - [[defuddle]] — 網頁內容清洗 CLI，把網頁納入吸收型卡片盒的第一步
 
