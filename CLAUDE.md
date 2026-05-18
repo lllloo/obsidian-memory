@@ -5,7 +5,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 # Obsidian Memory Vault — 吸收型卡片盒
 
 **本檔涵蓋**：Vault 內容規則——卡片盒哲學、Inbox/Cards/Topics 工作流、寫入前 Checklist、frontmatter schema、tag/命名、敏感資料。
-**不涵蓋**：Quartz 部署、agent/command/skill 架構、symlink 配置 → 見 repo 根目錄 [`CLAUDE.md`](../CLAUDE.md)。
+**不涵蓋**：Quartz 部署（不在本 repo 範圍）。
 
 ## 工具指令
 

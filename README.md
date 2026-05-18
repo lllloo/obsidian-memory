@@ -1,6 +1,6 @@
 # Obsidian Memory Vault
 
-個人 Obsidian vault，採「吸收型卡片盒」工作流。公開版本在 [ob.bugloop.com](https://ob.bugloop.com)（部署機制屬上層容器，見下方）。
+個人 Obsidian vault，採「吸收型卡片盒」工作流。公開版本在 [ob.bugloop.com](https://ob.bugloop.com)。
 
 ## 結構
 
@@ -36,4 +36,3 @@ node scripts/verify-skill-symlinks.mjs    # 驗證 .claude/skills symlink
 
 - [`CLAUDE.md`](./CLAUDE.md) — vault 規則、寫入 Checklist、frontmatter schema
 - [`topics-review.md`](./topics-review.md) — 升 Topic 品質門檻與反指標
-- 上層容器 [`../CLAUDE.md`](../CLAUDE.md) — 部署機制與 sibling repo 關係
