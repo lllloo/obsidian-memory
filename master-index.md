@@ -9,7 +9,7 @@ tags:
 
 ## 資料夾索引
 
-> 路徑以 repo root 為基準（即 vault root）。Quartz CI build 時整個 repo 會被 clone 到 `obsidian-deploy/content/`，但本地工作目錄就是這裡。
+> 路徑以 repo root 為基準（即 vault root）。
 
 ```
 .

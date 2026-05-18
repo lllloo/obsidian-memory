@@ -1,6 +1,6 @@
 # Obsidian Memory Vault
 
-個人 Obsidian vault，採「吸收型卡片盒」工作流，並作為 Quartz 靜態站台 [ob.bugloop.com](https://ob.bugloop.com) 的內容源。
+個人 Obsidian vault，採「吸收型卡片盒」工作流。公開版本在 [ob.bugloop.com](https://ob.bugloop.com)（部署機制屬上層容器，見下方）。
 
 ## 結構
 
@@ -30,20 +30,10 @@ node scripts/vault-schema.test.mjs        # 執行 schema 單元測試
 node scripts/verify-skill-symlinks.mjs    # 驗證 .claude/skills symlink
 ```
 
-## 部署
-
-本 repo 不含部署 CI。push 後需在 sibling repo [`obsidian-deploy`](https://github.com/lllloo/obsidian-deploy) 手動觸發（或 `workflow_dispatch`）GitHub Actions：
-
-1. checkout `obsidian-deploy`
-2. checkout 本 repo 至 `content/`
-3. 跑 `npm run vault:check`
-4. `npx quartz build`
-5. deploy 到 GitHub Pages
-
 ## 規則與工作流
 
 詳見：
 
 - [`CLAUDE.md`](./CLAUDE.md) — vault 規則、寫入 Checklist、frontmatter schema
 - [`topics-review.md`](./topics-review.md) — 升 Topic 品質門檻與反指標
-- 上層容器 [`../CLAUDE.md`](../CLAUDE.md) — 兩個 repo（vault + deploy）的關係
+- 上層容器 [`../CLAUDE.md`](../CLAUDE.md) — 部署機制與 sibling repo 關係
