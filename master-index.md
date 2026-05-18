@@ -9,8 +9,10 @@ tags:
 
 ## 資料夾索引
 
+> 路徑以 repo root 為基準（即 vault root）。Quartz CI build 時整個 repo 會被 clone 到 `obsidian-deploy/content/`，但本地工作目錄就是這裡。
+
 ```
-content/
+.
 ├── Inbox/         — 待消化暫存（理想為空，消化完刪除）
 │   ├── YouTube/   — 影片摘要，依頻道分組
 │   │   ├── AIJasonZ/              — Claude 設計工作流、Skills、Agent 記憶體管理
