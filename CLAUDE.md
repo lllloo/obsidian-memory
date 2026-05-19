@@ -7,17 +7,6 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 **本檔涵蓋**：Vault 內容規則——卡片盒哲學、Inbox/Cards/Topics 工作流、寫入前 Checklist、frontmatter schema、tag/命名、敏感資料。
 **不涵蓋**：Quartz 部署（不在本 repo 範圍）。
 
-## 工具指令
-
-```bash
-npm run vault:check   # 稽核 frontmatter schema、敏感資料、日期格式（唯讀，只回報）
-npm run vault:fix     # 同上，並自動修正（欄位排序、日期 normalize、移除未知欄位）
-node scripts/vault-schema.test.mjs  # 執行 schema 單元測試
-node scripts/verify-skill-symlinks.mjs  # 驗證 .claude/skills → .agents/skills symlink
-```
-
-**Skill symlink 架構**：`.agents/skills/` 是 repo-local skill 的唯一維護來源；`.claude/skills` 必須是指向它的 symlink（相對路徑 `../.agents/skills`），兩者不同步時 `verify-skill-symlinks.mjs` 會報錯。
-
 ## 三條原則
 
 此 vault 採用「吸收型卡片盒」，核心如下：
@@ -96,7 +85,7 @@ node scripts/verify-skill-symlinks.mjs  # 驗證 .claude/skills → .agents/skil
 
 ### 2. Frontmatter schema（寫入當下即合法）
 
-必含 `title` / `created` / `updated` / `tags`；欄位順序、白名單、型別以 [`scripts/vault-schema.mjs`](../scripts/vault-schema.mjs) 為準。**不要產出需要 auditor 事後補 title 或修 YAML 的筆記**——YAML 引號、縮排、wikilink 包雙引號（`parent: "[[01.index]]"`）等在寫入前就確保正確。
+必含 `title` / `created` / `updated` / `tags`；欄位順序、白名單、型別以 [`obsidian-deploy/scripts/vault-schema.mjs`](../obsidian-deploy/scripts/vault-schema.mjs) 為準。**不要產出需要 auditor 事後補 title 或修 YAML 的筆記**——YAML 引號、縮排、wikilink 包雙引號（`parent: "[[01.index]]"`）等在寫入前就確保正確。
 
 細節見下文「Frontmatter Schema（固定）」。
 
@@ -130,7 +119,7 @@ node scripts/verify-skill-symlinks.mjs  # 驗證 .claude/skills → .agents/skil
 
 ### Frontmatter Schema（固定）
 
-機器驗證真實來源：[`scripts/vault-schema.mjs`](../scripts/vault-schema.mjs)（欄位清單、順序、必填、型別、strict 白名單皆在那）。本節只記**人類語意**（欄位作用、出現情境）與 Obsidian 特有坑。
+機器驗證真實來源：[`obsidian-deploy/scripts/vault-schema.mjs`](../obsidian-deploy/scripts/vault-schema.mjs)（欄位清單、順序、必填、型別、strict 白名單皆在那）。本節只記**人類語意**（欄位作用、出現情境）與 Obsidian 特有坑。
 
 ```yaml
 ---
@@ -176,9 +165,9 @@ tags:
 **白名單制**：schema 以外的欄位一律移除。
 
 - Obsidian Web Clipper 若帶入 `author` / `description` / `cover` / `image` / `banner` 等未列欄位，一律清掉
-- `/vault-check` 會自動稽核（`UNKNOWN_FIELD`）並由 `scripts/vault-check.mjs` 刪除
+- `/vault-check` 會自動稽核（`UNKNOWN_FIELD`）並在 CI 由 `obsidian-deploy/scripts/vault-check.mjs` 刪除
 - 例外：`Inbox/Clippings/` 為剪下的原料，`/vault-check` 豁免其 schema 檢查；整理進 Cards/ 或 Topics/ 後才走稽核
-- 新增欄位前需先在 `scripts/vault-schema.mjs` 擴充，不可直接寫入未列欄位
+- 新增欄位前需先在 [`obsidian-deploy/scripts/vault-schema.mjs`](../obsidian-deploy/scripts/vault-schema.mjs) 擴充，不可直接寫入未列欄位
 
 ## YouTube 筆記語言規範
 
