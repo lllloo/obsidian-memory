@@ -1,7 +1,7 @@
 ---
-title: "跟Kaparthy学搭建AI知识库-附Obsidian实例"
+title: "跟 Karpathy 學搭建 AI 知識庫－附 Obsidian 實例"
 created: 2026-05-18
-updated: 2026-05-18
+updated: 2026-05-19
 source: "https://www.youtube.com/watch?v=eUaL48Ph6DM"
 published: 2026-04-11
 tags:
@@ -9,16 +9,16 @@ tags:
 ---
 ![](https://www.youtube.com/watch?v=eUaL48Ph6DM)
 
-Karpathy（OpenAI创始人之一、特斯拉前AI总监）最近发了个LLM Wiki框架，3天5000 star🔥  
-读完我发现：这不是什么新技术，而是一套每个人今天就能开始用的思维模型  
-核心就三层结构：  
-📁 Raw Source - 你收集的原始资料  
-📝 The Wiki - AI帮你提炼的精华  
-⚙️ The Schema - 你和AI的协作规则  
-三个日常动作：  
-🔄 Ingest - 喂资料给AI，自动更新10-15个相关页面  
-💬 Query - 提问得答案，好答案直接回写成Wiki  
-🔍 Lint - 定期体检，找矛盾、过时内容、孤立页面  
-但最容易被忽视的是：  
-你让AI生成了一堆精美Wiki，自己从不读、不用来决策 那再精致也只是"结构化垃圾场"  
-#ai知识库 #知识管理 #obsidian #效率工具 #Kaparthy #ai #笔记方法 #知识工作者
+Karpathy（OpenAI 創始人之一、特斯拉前 AI 總監）最近發了個 LLM Wiki 框架，3 天 5000 star🔥  
+讀完我發現：這不是什麼新技術，而是一套每個人今天就能開始用的思維模型  
+核心就三層結構：  
+📁 Raw Source - 你收集的原始資料  
+📝 The Wiki - AI 幫你提煉的精華  
+⚙️ The Schema - 你和 AI 的協作規則  
+三個日常動作：  
+🔄 Ingest - 餵資料給 AI，自動更新 10-15 個相關頁面  
+💬 Query - 提問得答案，好答案直接回寫成 Wiki  
+🔍 Lint - 定期體檢，找矛盾、過時內容、孤立頁面  
+但最容易被忽視的是：  
+你讓 AI 生成了一堆精美 Wiki，自己從不讀、不用來決策　那再精緻也只是「結構化垃圾場」  
+#ai知識庫 #知識管理 #obsidian #效率工具 #Karpathy #ai #筆記方法 #知識工作者
