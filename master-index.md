@@ -44,6 +44,7 @@ tags:
 | 前端 / CSS / 動效實作 | `css` `flexbox` `animation` | `Topics/前端技術/` + `Cards/` |
 | 記憶系統 | `memory` | `Cards/` |
 | Docker / Laradock / CI3 | `docker` `laradock` `codeigniter` `本機環境` `sop` | `Cards/` |
+| Windows / Git / CLI 工具 | `windows` `git` `cli` `workflow` | `Cards/` |
 | 上版 / 部署 | `deploy` `quartz` | `Topics/部署/` + `Cards/` |
 
 ## 查詢策略

@@ -180,7 +180,30 @@ tags:
 
 查詢相關知識時：
 
-1. 先讀 `master-index.md` 確認資料位置
+1. 先讀 `master-index.md` 確認資料位置（含完整 Tag 查詢指南）
 2. 主題筆記 → 對應 `Topics/` 子目錄
 3. 影片摘要 → 依主題選對應 `Inbox/YouTube/<頻道>/`
-4. 跨主題 → Grep 搜尋 tag（frontmatter 中的 tags 欄位）
+4. 跨主題 → Grep 搜尋 tag：`rg -A5 '^tags:' . -g '*.md'`
+
+## 可用 Skills
+
+本 repo 在 `.agents/skills/`（`.claude/skills` 為 symlink）提供以下 skill：
+
+| Skill | 用途 |
+|---|---|
+| `ob` | 筆記建立／查詢分派入口 |
+| `vault-check` | 稽核 frontmatter、敏感資料、斷鏈（唯讀） |
+| `vault-distill` | 多筆記整合為 MOC |
+| `vault-youtube-sync` | YouTube 影片摘要同步至 Inbox |
+| `vault-reddit-daily` | Reddit 每日摘要同步 |
+| `vault-updates-daily` | 日常更新彙整 |
+
+## Cards → Topics 升級限制
+
+**升 Topic 不由 agent 自主執行**。流程：
+
+1. 列出候選 Cards + 對照 `topics-review.md` 的 5 條保留條件 + 反指標
+2. 給出傾向與理由
+3. 等使用者拍板後才執行 `git mv`
+
+改寫優於直接決定；改寫後必須重跑審核再決定。

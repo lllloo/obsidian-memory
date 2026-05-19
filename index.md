@@ -10,7 +10,8 @@ updated: 2026-04-25
 
 - **[[Topics/Claude-Code/index|Claude Code]]** — Claude Code 工具、設定與技巧
 - **[[Topics/Obsidian/index|Obsidian]]** — 用 Obsidian 搭配 Claude Code 打造個人知識庫
-- **[[Topics/前端設計工作流/index|前端設計工作流]]** — AI 時代前端設計工作流、靈感資源、CSS 切版原則
+- **[[Topics/UI設計/index|UI 設計]]** — 設計工具、DESIGN.md 系統、視覺靈感
+- **[[Topics/前端技術/index|前端技術]]** — CSS、動效、切版原則、常見 bug
 
 ## 依標籤探索
 
