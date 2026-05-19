@@ -112,6 +112,8 @@ sync: releases
 - GitHub repositories：`- <owner>/<repo>|<tag>`
 - GitHub starred：`sync: releases` 代表啟用，從 authenticated user 的星星清單抓 releases（`gh` CLI 需已登入）
 
+> **URL 維護**：Official changelogs 的 URL 可能因文件改版而失效。遇到 `ERROR:` 或抓到空頁時，先 WebFetch 該工具的官網首頁找新的 changelog 路徑，再更新 `Inbox/Updates/01.index.md`。
+
 ## 前置作業
 
 ```bash

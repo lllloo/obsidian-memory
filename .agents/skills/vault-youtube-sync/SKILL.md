@@ -196,11 +196,16 @@ views:
 
 01.index.md 與 02.影片清單.base 建立完成後，將影片清單分成每批 5-6 部，在**同一個 response** 中用 Agent tool 平行啟動所有 subagents。
 
+**前置（送出前必做）**：主 skill 端先 `Read` `references/subagent-note-creator.md` 取得全文，存為 `NOTE_CREATOR_CONTENT`，再嵌入下方 prompt 的 `<NOTE_CREATOR_CONTENT>` 位置。**不要叫 subagent 自己 Read**——跨工具環境中 subagent 不一定能存取檔案系統。
+
 每個 subagent 的任務 prompt 格式如下。**下列所有 `<...>` 占位符，主 skill 端必須在送出前全部替換為實際值**（頻道名帶入、日期填上），不要把未替換的 `<…>` 傳給 subagent。subagent cwd 必為 repo root，所有路徑為 repo root 相對：
 
 ```
 任務：用 defuddle 抓取 YouTube 影片內容，並在 Obsidian vault 建立筆記。
-詳細指示請先 Read `.claude/skills/vault-youtube-sync/references/subagent-note-creator.md`。
+
+--- 詳細指示 ---
+<NOTE_CREATOR_CONTENT>
+--- end ---
 
 NOTES_DIR：Inbox/YouTube/<頻道名>/    # 例：Inbox/YouTube/Chase-H-AI/
 今日日期：<YYYY-MM-DD>                        # 例：2026-04-24
@@ -210,6 +215,8 @@ NOTES_DIR：Inbox/YouTube/<頻道名>/    # 例：Inbox/YouTube/Chase-H-AI/
 N. <標題> — <URL>
 ...
 ```
+
+**無 Agent 工具時**：主 agent 直接 Read `references/subagent-note-creator.md` 後跑同一流程，逐部序列處理。
 
 ## 步驟 6：彙整結果 + 更新 Checkpoint
 

@@ -12,17 +12,16 @@
 
 ## 步驟 1：抓取貼文完整內容
 
-呼叫既有 Reddit 貼文抓取腳本：
+呼叫既有 Reddit 貼文抓取腳本（用 `find` 動態定位，避免路徑綁死）：
 
 ```bash
-if command -v python3 >/dev/null 2>&1; then
-  python3 .claude/skills/vault-reddit-daily/scripts/fetch_post.py <subreddit> <post_id>
-else
-  python  .claude/skills/vault-reddit-daily/scripts/fetch_post.py <subreddit> <post_id>
-fi
+PY=$(command -v python3 || command -v python)
+SCRIPT=$(find .agents/skills/vault-reddit-daily .claude/skills/vault-reddit-daily -name "fetch_post.py" 2>/dev/null | head -1)
+[ -z "$SCRIPT" ] && { echo "SKIP: fetch_post.py not found"; exit 0; }
+$PY "$SCRIPT" <subreddit> <post_id>
 ```
 
-若抓取失敗，回傳 `SKIP`。
+若抓取失敗或 `SCRIPT` 找不到，回傳 `SKIP`。
 
 ## 步驟 2：分類判斷
 
