@@ -46,7 +46,7 @@ obsidian vault 2>&1; echo "EXIT=$?"
 1. 取得 vault 規則：
    - CLI 可用 → `obsidian read file="CLAUDE.md"`
    - CLI 不可用（偵測失敗）→ `Read $OBSIDIAN_VAULT_ROOT/CLAUDE.md`
-2. 每次寫入前依 CLAUDE.md 的「寫入前 Checklist」逐項自檢（敏感資料、frontmatter schema、tag 沿用、命名），通過才寫入；這是寫入路徑的主要職責，不要把規則預防外包給 `/vault-check`
+2. 每次寫入前依 CLAUDE.md 的「寫入前 Checklist」逐項自檢（敏感資料、frontmatter schema、tag 沿用、命名），通過才寫入
 
 ## 4. 工具使用規則（依優先順序）
 

@@ -68,7 +68,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## 寫入前 Checklist（所有 agent 寫入 vault 前必做）
 
-寫入 `.md` 前必須自檢。這是 vault 健康的第一道防線——任何修改 vault 內容的流程（`/ob` 寫入流程、其他 skills、手動編輯）在寫入前逐項檢查。`/vault-check` 只兜底跨檔案 emergent 問題（斷鏈、tag drift、非寫入流程來源漏網），**不依賴它抓本清單能預防的錯**。
+寫入 `.md` 前必須自檢。這是 vault 健康的唯一防線——任何修改 vault 內容的流程（`/ob` 寫入流程、其他 skills、手動編輯）在寫入前逐項檢查。
 
 > 注意：vault 內容會公開發佈，敏感資料一節（下方 §1）尤其零容忍。
 
@@ -165,8 +165,7 @@ tags:
 **白名單制**：schema 以外的欄位一律移除。
 
 - Obsidian Web Clipper 若帶入 `author` / `description` / `cover` / `image` / `banner` 等未列欄位，一律清掉
-- `/vault-check` 會自動稽核（`UNKNOWN_FIELD`）並在 CI 由 `obsidian-deploy/scripts/vault-check.mjs` 刪除
-- 例外：`Inbox/Clippings/` 為剪下的原料，`/vault-check` 豁免其 schema 檢查；整理進 Cards/ 或 Topics/ 後才走稽核
+- CI 由 `obsidian-deploy/scripts/vault-check.mjs` 自動稽核 `UNKNOWN_FIELD` 並刪除（`Inbox/Clippings/` 為剪下的原料，豁免 schema 檢查；整理進 Cards/ 或 Topics/ 後才走稽核）
 - 新增欄位前需先在 [`obsidian-deploy/scripts/vault-schema.mjs`](../obsidian-deploy/scripts/vault-schema.mjs) 擴充，不可直接寫入未列欄位
 
 ## YouTube 筆記語言規範
@@ -192,7 +191,6 @@ tags:
 | Skill | 用途 |
 |---|---|
 | `ob` | 筆記建立／查詢分派入口 |
-| `vault-check` | 稽核 frontmatter、敏感資料、斷鏈（唯讀） |
 | `vault-distill` | 多筆記整合為 MOC |
 | `vault-youtube-sync` | YouTube 影片摘要同步至 Inbox |
 | `vault-reddit-daily` | Reddit 每日摘要同步 |
