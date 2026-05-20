@@ -7,6 +7,18 @@ description: Obsidian vault 操作入口：依使用者需求分派建檔或查�
 
 依使用者需求判斷模式後分派到 build / query 流程。
 
+## 呼叫前置條件
+
+**cwd 必須是 vault root**（obsidian-memory 目錄，底下直接有 `master-index.md`）。本 skill 與其他 vault skills（vault-distill、vault-youtube-sync 等）共用此契約，所有路徑都是 cwd-relative，不依賴環境變數。
+
+分派前先檢查：
+
+```bash
+[ -f "master-index.md" ] || { echo "ERROR: cwd 不在 vault root，請 cd 到 obsidian-memory 後再呼叫 /ob"; exit 1; }
+```
+
+check 失敗就告知用戶並停止，不要硬猜路徑。
+
 ## 分派
 
 ### 建檔（「建立筆記」、「新增」、「記一下」、「寫一篇」、「筆記關於…」、「日記」、「daily 日記」）

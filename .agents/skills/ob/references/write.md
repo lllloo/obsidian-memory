@@ -6,21 +6,23 @@
 
 實際時序：**路徑解析（env 檢查）→ CLI 偵測 → 讀 vault 規則 → 判斷位置 → 寫入 → 驗證**。下列各段照此順序排列。
 
-## 1. Vault 路徑解析（必先執行）
+## 1. Vault 根目錄前置檢查（必先執行）
 
-`$OBSIDIAN_VAULT_ROOT` 必須指向 vault root（底下直接有 `master-index.md`、`Cards/`、`Topics/`）。env 未設或該路徑底下找不到 `master-index.md` → 告知用戶「`$OBSIDIAN_VAULT_ROOT` 未設或無效，設定方式見 README」並停止，不要猜測寫到錯誤位置。
-
-CLI 路徑與 Write/Edit fallback 路徑都需要這條檢查。CLI 可用時 `obsidian create path="Cards/..."` 雖可自動定位 vault，但 env 不正確時建檔位置仍會偏（CLI 也讀同一份 env）。一律先檢查 env，再走後續步驟。
-
-走 Write/Edit fallback 時，`Cards/<標題>.md` 會被當 cwd-relative，從其他專案呼叫會寫到錯地方，**fallback 路徑必須用絕對路徑**（以 `$OBSIDIAN_VAULT_ROOT` 為 base）。
-
-若任務需要執行 git 操作（例如歸檔搬移），先解析 repo root：
+本 skill 的契約是 **cwd 必須是 vault root**（底下直接有 `master-index.md`、`Cards/`、`Topics/`）。所有路徑都是 cwd-relative，不依賴環境變數。
 
 ```bash
-REPO_ROOT=$(git -C "$VAULT_ROOT" rev-parse --show-toplevel 2>/dev/null)
+[ -f "master-index.md" ] || { echo "ERROR: cwd 不在 vault root，請 cd 到 obsidian-memory 後再呼叫 /ob"; exit 1; }
 ```
 
-解析失敗時不要用 cwd-relative 路徑猜測；改用絕對路徑 fallback，並提醒使用者在 Obsidian reload。
+check 失敗就停止，不要猜測寫到別的地方。CLI 與 Write/Edit fallback 都靠 cwd 定位，CLI 可用時 `obsidian create path="Cards/..."` 也是相對 cwd 解析。
+
+若任務需要執行 git 操作（例如歸檔搬移），cwd 本身就是 repo root：
+
+```bash
+git mv "Cards/<標題>.md" "Topics/<主題>/<標題>.md"
+```
+
+不需額外解析 repo root。
 
 ## 2. CLI 可用性偵測（第一次寫入前必做）
 
@@ -41,11 +43,11 @@ obsidian vault 2>&1; echo "EXIT=$?"
 ## 3. 前置作業（讀 vault 規則）
 
 **為什麼要讀 CLAUDE.md：**
-此流程可能從任何工作目錄被呼叫（不一定在 obsidian-memory 目錄下）。若直接在 obsidian-memory 目錄工作，CLAUDE.md 會自動載入為 system context；但透過 `/ob` 從其他專案呼叫時，必須自己讀取 CLAUDE.md 才能取得 vault 規則。CLAUDE.md 是 vault 規則的唯一來源，此 reference 不重複內嵌這些規則，以避免兩者不同步。
+雖然 cwd 已是 vault root，CLAUDE.md 通常會被 Claude Code 自動載入為 system context，但 subagent 不一定能看到主 session 的 system context（依執行環境而異）。為了確保 vault 規則一定到位，subagent 進場時自己 Read 一次。CLAUDE.md 是 vault 規則的唯一來源，此 reference 不重複內嵌這些規則，以避免兩者不同步。
 
 1. 取得 vault 規則：
    - CLI 可用 → `obsidian read file="CLAUDE.md"`
-   - CLI 不可用（偵測失敗）→ `Read $OBSIDIAN_VAULT_ROOT/CLAUDE.md`
+   - CLI 不可用（偵測失敗）→ `Read CLAUDE.md`（cwd-relative，cwd 已是 vault root）
 2. 每次寫入前依 CLAUDE.md 的「寫入前 Checklist」逐項自檢（敏感資料、frontmatter schema、tag 沿用、命名），通過才寫入
 
 ## 4. 工具使用規則（依優先順序）

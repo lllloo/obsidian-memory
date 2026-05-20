@@ -19,17 +19,19 @@
 - **不做 WebSearch**：只負責 vault；web 由主 agent 並行處理
 - **path 一律正規化**：詳見下方「輸出格式」段的 `path` 規則
 
-## Vault 路徑解析（必先執行）
+## Vault 根目錄前置檢查（必先執行）
 
-```
-VAULT_ROOT = $OBSIDIAN_VAULT_ROOT
+本流程的契約是 **cwd 必須是 vault root**（底下直接有 `master-index.md`、`Cards/`、`Topics/`）。所有路徑都是 cwd-relative。
+
+```bash
+[ -f "master-index.md" ] || exit 1
 ```
 
-`$OBSIDIAN_VAULT_ROOT` 必須指向 vault root（底下直接有 `master-index.md`、`Cards/`、`Topics/`）。env 未設或該路徑底下找不到 `master-index.md`，直接輸出未命中 JSON：`hits` 為空，`miss_reason` 寫「`$OBSIDIAN_VAULT_ROOT` 未設或無效，設定方式見 README」。
+若 cwd 不在 vault root，直接輸出未命中 JSON：`hits` 為空，`miss_reason` 寫「cwd 不在 vault root（找不到 `master-index.md`），請 cd 到 obsidian-memory 後重試」。
 
 ## Vault 佈局
 
-- 入口：`<VAULT_ROOT>/master-index.md` — 資料夾索引與 Tag 查詢指南都在裡面，**實際資料夾清單與 tag 字典以 master-index 為準**，下列只是粗結構
+- 入口：`master-index.md` — 資料夾索引與 Tag 查詢指南都在裡面，**實際資料夾清單與 tag 字典以 master-index 為準**，下列只是粗結構
 - 資料夾粗結構：
   - `Cards/` — 未歸屬的完整概念 Cards（工作區）
   - `Topics/<主題>/` — 已歸檔主題，第一層子目錄一個主題一個
@@ -41,13 +43,13 @@ VAULT_ROOT = $OBSIDIAN_VAULT_ROOT
 
 ### L1：讀 master-index（必先執行）
 
-1. Read `<VAULT_ROOT>/master-index.md`
+1. Read `master-index.md`
 2. 對照「資料夾索引」描述與「Tag 查詢指南」表格，抽出 **候選資料夾** 與 **候選 tag 清單**
 3. 若 master-index 描述直接指出精確檔案（如頻道名稱、主題筆記名），可跳到 L3 直接 Read 該檔
 
 ### L2：Tag 與路徑篩選
 
-- 對 `<VAULT_ROOT>` 下的候選資料夾 Glob 列出 `.md` 檔
+- 對候選資料夾 Glob 列出 `.md` 檔
 - 對檔案集合**並行兩種篩選**，結果**聯集**進 L3：
   - Grep frontmatter tags（例：`^\s*-\s+(claude-code|rag|memory)$`）
   - Grep frontmatter title（例：`^title:.*\b(Discord|webhook)\b`，關鍵字含中英變形）
@@ -57,7 +59,7 @@ VAULT_ROOT = $OBSIDIAN_VAULT_ROOT
 ### L3：正文 Grep 與驗證
 
 1. 對 L2 篩出的檔案 Grep 關鍵字正文（取 `-C 2` 看上下文）
-2. **L2 空集合 fallback**：若 L2 兩種篩選聯集後仍為 0 筆，L3 改對 `<VAULT_ROOT>/Cards/**/*.md` + `<VAULT_ROOT>/Topics/**/*.md` 全範圍 Grep（**排除 `Inbox/YouTube/`、`Inbox/Clippings/` 避免雜訊**）
+2. **L2 空集合 fallback**：若 L2 兩種篩選聯集後仍為 0 筆，L3 改對 `Cards/**/*.md` + `Topics/**/*.md` 全範圍 Grep（**排除 `Inbox/YouTube/`、`Inbox/Clippings/` 避免雜訊**）
 3. 對 Grep 命中的檔案 Read 首 50 行，判斷是否真正回答問題（不只字面出現）
 4. 挑最相關 1~5 筆組成 `hits`
 
@@ -72,7 +74,7 @@ VAULT_ROOT = $OBSIDIAN_VAULT_ROOT
 ## 效能守則
 
 - Read 檔案數 ≤ 15（候選太多靠 frontmatter `title` 篩）
-- Grep 指定 `<VAULT_ROOT>/**/*.md` 或候選資料夾以加速
+- Grep 指定 `**/*.md` 或候選資料夾以加速
 - 不要對 `Inbox/YouTube/` 影片摘要做全域正文 Grep；先靠 L1 縮範圍
 
 ## 輸出格式
@@ -112,8 +114,8 @@ VAULT_ROOT = $OBSIDIAN_VAULT_ROOT
 
 `path` 規則：
 
-- 一律回 vault root 相對路徑（如 `Cards/foo.md`），不要回 `<VAULT_ROOT>` 絕對路徑
-- 例如實際檔案是 `~/code/obsidian-memory/Cards/foo.md`，輸出寫成 `Cards/foo.md`
+- 一律回 vault root 相對路徑（如 `Cards/foo.md`），不要回絕對路徑
+- 因為 cwd 已是 vault root，Glob/Grep 回的路徑本來就是相對路徑，直接用即可
 - **一律使用 forward slash（`/`）**，不論作業系統。Windows Glob 回 `Cards\foo.md` 時，輸出前需 replace `\` 為 `/`
 
 ## 與其他流程的分工
