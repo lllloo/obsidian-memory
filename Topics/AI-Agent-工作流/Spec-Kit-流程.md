@@ -1,7 +1,7 @@
 ---
 title: Spec Kit 流程
 created: 2026-05-16
-updated: 2026-05-16
+updated: 2026-05-21
 source: https://github.com/github/spec-kit
 tags:
   - claude-code
@@ -10,6 +10,16 @@ tags:
 ---
 
 Spec Kit 是 GitHub 出品的 Spec-Driven Development（SDD）工具組。核心哲學：先寫可執行規格，再產出實作，而非先碼後補文件。支援 30+ AI coding agents。
+
+## 指令命名兩種形式
+
+依安裝模式不同，同一個指令有兩種寫法：
+
+- **Slash command mode（預設）**：`/speckit.constitution`（dot 形式）
+- **Skills mode**（`--integration-options="--skills"`）：`/speckit-constitution`（dash 形式）
+- **Codex CLI**：`$speckit-*`；**Gemini**：`/speckit:*`
+
+本筆記以 dot 形式為主；agent 端實際顯示可能是 dash，對應同一個指令。
 
 ## 指令一覽
 
@@ -48,6 +58,19 @@ flowchart TD
 - **Clarify before plan**：`CL` 在 `PL` 前跑，明確跳過需向 agent 陳述意圖
 - **Validate before implement**：`PL` 後人工審核計畫再跑 `TK`，避免過度設計
 - **Constitution 是地基**：`CO` 的治理原則貫穿所有後續階段
+
+## specify init 工作流擴充
+
+跑 `specify init` 會安裝擴充到 `.specify/extensions/<name>/`，並在 agent 端註冊額外 `speckit-<extension>-<verb>` 指令。安裝紀錄寫在專案根的 `init-options.json`。
+
+**git 擴充預設啟用**：截至 v0.9.x，`specify init` 會自動裝 git 擴充（5 個 `speckit-git-*` 指令），**不問**。v0.10.0 起改成明確 opt-in，需 init 後手動 `specify extension add git`。
+
+事後管理：
+
+- 加裝：`specify extension add <name>`
+- 移除：`specify extension remove <name>`，slash commands 一併撤掉
+
+若 agent 端跳出非預期的 `speckit-*` 指令，先看 `.specify/extensions/` 與 `init-options.json` 對帳。
 
 ## 相關
 
