@@ -11,7 +11,8 @@
   - `Updates/` — 日常更新彙整
 - `Cards/` — 未歸屬的完整概念 Card（累積同主題後批次升 Topic）
 - `Topics/<主題>/` — 已歸檔主題；目前 6 個（Claude-Code、AI-Agent-工作流、UI設計、前端技術、Obsidian、部署）
-- `master-index.md` — 全局導航與 tag 查詢
+- `index.md` — 真人讀者入口（Quartz 網站首頁，列主題與 tag 連結）
+- `master-index.md` — agent 用的全局導航與 tag 查詢
 - `.agents/skills/` — repo-local Claude Code skills（`.claude/skills` 為 symlink）
 
 ## 規則與工作流
@@ -26,3 +27,10 @@
 `.agents/skills/` 內提供 vault 操作 skills（`ob` 筆記操作、`vault-distill` 主題整合、`vault-youtube-sync` 影片摘要同步等）。完整清單見 [`CLAUDE.md` § 可用 Skills](./CLAUDE.md#可用-skills)。
 
 **使用契約**：cwd 必須是本 repo 根目錄（含 `master-index.md` 的目錄），所有路徑 cwd-relative，不靠環境變數。從別的專案想呼叫 skill，先 `cd` 進來。
+
+## 兩個 index 的差別
+
+| 檔案 | 給誰看 | 內容 |
+|---|---|---|
+| `index.md` | 真人讀者（Quartz 訪客） | ob.bugloop.com 首頁，挑感興趣的主題逛 |
+| `master-index.md` | AI / agent | Vault 結構地圖、tag 索引、查詢用地形圖 |
