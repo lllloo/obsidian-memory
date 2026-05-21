@@ -193,7 +193,6 @@ tags:
 | `ob` | 筆記建立／查詢分派入口 |
 | `vault-distill` | 多筆記整合為 MOC |
 | `vault-youtube-sync` | YouTube 影片摘要同步至 Inbox |
-| `vault-reddit-daily` | Reddit 每日摘要同步 |
 | `vault-updates-daily` | 日常更新彙整 |
 
 **共用契約**：所有 vault skills 要求 **cwd 必須是 vault root**（本 repo 根目錄，底下直接有 `master-index.md`）。路徑都是 cwd-relative，不依賴環境變數。呼叫前若 cwd 不對，skill 會用以下 check 主動停止：
