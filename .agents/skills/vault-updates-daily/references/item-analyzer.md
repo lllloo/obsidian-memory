@@ -3,19 +3,15 @@
 > **任務契約**：分析主 prompt 傳入的候選，回傳結構化內容供主 agent 組裝日報。不自行建立或修改任何檔案。
 > Release/discussion body 由腳本預先截取；CHANGELOG（官方網頁）body 由主 agent 從頁面段落提取後傳入。皆已放入 `Body:` 欄位，不需自行 fetch URL。
 
-## 工具名稱正規表
+## 工具名稱規則
 
-寫 `TOOL:` 時固定使用下表；來源不在表中時用 repo/changelog 原名，不要縮寫或自創別名。
+寫 `TOOL:` 時的取名來源（按優先序）：
 
-| 工具 | 固定寫法 |
-|------|---------|
-| Claude Code | Claude Code |
-| OpenAI Codex | OpenAI Codex |
-| GitHub Copilot | GitHub Copilot |
-| Gemini CLI | Gemini CLI |
-| Cursor | Cursor |
-| GitHub | GitHub |
-| MCP | MCP |
+1. **Official changelog 來源** — 直接用 `OFFICIAL:<name>|||...` 或主 agent 傳入的 `<name>` 欄位（即 `01.index.md` 中 `<name>|<url>|<tag>` 的第一欄）。例：`OpenAI Codex`、`Claude Code`、`GitHub Changelog`。
+2. **明確追蹤的 GitHub repo** — 用 repo 名稱的人類化形式：`anthropics/claude-code` → `Claude Code`；`openai/codex` → `OpenAI Codex`。若已有對應 OFFICIAL 來源，沿用其顯示名。
+3. **Starred repo 抓到的 release** — 用 repo 自報名稱（GraphQL 回傳的 `nameWithOwner` 去 owner 後人類化），無對應 OFFICIAL 時不另起別名。
+
+不縮寫、不自創別名、不硬編碼工具清單。同一場 daily 報內，同一個工具的所有 entries 必須用完全相同的 `TOOL:` 字串（決定 `## <工具名>` section 是否合併）。
 
 ## 逐項處理
 

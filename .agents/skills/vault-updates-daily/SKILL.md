@@ -1,6 +1,6 @@
 ---
 name: vault-updates-daily
-description: 每天彙整高信任 developer tooling 更新成一篇 Obsidian daily updates briefing，來源涵蓋官方 changelog / release notes、GitHub releases（含 authenticated user 的 starred repos）、GitHub discussions；專注 coding agent 與 developer workflow 相關變更。使用時機：使用者要求「同步 changelog」、「release notes 更新」、「Claude Code / Codex / Copilot / Gemini CLI 更新整理」、「官方變更同步」、「daily updates」，或直接呼叫 /vault-updates-daily。
+description: 每天彙整高信任 developer tooling 更新成一篇 Obsidian daily updates briefing，來源涵蓋官方 changelog / release notes、GitHub releases（含 authenticated user 的 starred repos）、GitHub discussions；專注 coding agent 與 developer workflow 相關變更。追蹤的工具清單由 `Inbox/Updates/01.index.md` 決定，skill 不硬編碼。使用時機：使用者要求「同步 changelog」、「release notes 更新」、「官方變更同步」、「daily updates」，或直接呼叫 /vault-updates-daily。
 disable-model-invocation: true
 ---
 
@@ -38,11 +38,11 @@ created: <今日 YYYY-MM-DD>
 updated: <今日 YYYY-MM-DD>
 tags:
   - updates
-  - <涵蓋的工具 tag，如 claude-code、codex、copilot、gemini-cli>
+  - <涵蓋的工具 tag，取自 01.index.md 各來源行的 tag 欄位>
 ---
 ```
 
-常用 tags：`updates`、`claude-code`、`codex`、`copilot`、`gemini-cli`、`mcp`。
+`updates` 永遠保留；其餘 tags 由本次涵蓋的來源決定（不額外硬編碼清單）。
 
 ### 筆記結構
 
@@ -74,13 +74,15 @@ tags:
 
 ## Source index
 
-若 `Inbox/Updates/01.index.md` 不存在，先建立下列預設 index，再繼續同步：
+`Inbox/Updates/01.index.md` 是**唯一**的來源真實值：要追蹤哪些工具、抓哪些 changelog、是否啟用 starred 同步，全部由此檔決定。skill 與腳本都不硬編碼工具清單。
+
+**索引檔格式：**
 
 ```markdown
 ---
 title: Tool Updates
-created: <今日 YYYY-MM-DD>
-updated: <今日 YYYY-MM-DD>
+created: <YYYY-MM-DD>
+updated: <YYYY-MM-DD>
 tags:
   - updates
   - index
@@ -90,16 +92,11 @@ tags:
 
 ## Official changelogs
 
-- OpenAI Codex|https://developers.openai.com/codex/changelog|codex
-- Claude Code|https://code.claude.com/docs/en/changelog|claude-code
-- Gemini CLI|https://geminicli.com/docs/changelogs/|gemini-cli
-- GitHub Changelog|https://github.blog/changelog/feed/|copilot
+- <顯示名>|<changelog URL>|<tag>
 
 ## GitHub repositories
 
-- openai/codex|codex
-- anthropics/claude-code|claude-code
-- google-gemini/gemini-cli|gemini-cli
+- <owner>/<repo>|<tag>
 
 ## GitHub starred
 
@@ -108,11 +105,15 @@ sync: releases
 
 來源格式：
 
-- Official changelogs：`- <name>|<url>|<tag>`
-- GitHub repositories：`- <owner>/<repo>|<tag>`
-- GitHub starred：`sync: releases` 代表啟用，從 authenticated user 的星星清單抓 releases（`gh` CLI 需已登入）
+- Official changelogs：`- <name>|<url>|<tag>`，每行一個官方 changelog。
+- GitHub repositories：`- <owner>/<repo>|<tag>`，每行一個明確追蹤的 repo（會額外抓 discussions）。
+- GitHub starred：`sync: releases` 代表啟用，從 authenticated user 的星星清單抓 releases（`gh` CLI 需已登入）。
+
+三個 `##` 段可任意保留或省略；至少需有其一非空，否則 skill 報錯停止。
 
 > **URL 維護**：Official changelogs 的 URL 可能因文件改版而失效。遇到 `ERROR:` 或抓到空頁時，先 WebFetch 該工具的官網首頁找新的 changelog 路徑，再更新 `Inbox/Updates/01.index.md`。
+>
+> **新增 / 移除工具**：直接編輯 `Inbox/Updates/01.index.md` 對應段落即可，**不要動 SKILL.md 或 fetch_updates.py**。
 
 ## 前置作業
 
@@ -128,8 +129,9 @@ sync: releases
 
 - `## Official changelogs` 段：官方 changelog / release notes。
 - `## GitHub repositories` 段：GitHub release / issue / discussion 來源。
+- `## GitHub starred` 段：是否啟用 starred 同步。
 
-若 index 不存在，用上方範本建立。若某段為空，略過該來源類型，不中止整體流程。
+若 index 不存在，**停止並請使用者依「Source index」段建立**，不要自動產生預設清單（避免引入未經確認的追蹤源）。若三段皆為空，同樣停止並提示使用者至少加一個來源。單段為空時略過該來源類型，不中止整體流程。
 
 ## 步驟 2：抓候選
 

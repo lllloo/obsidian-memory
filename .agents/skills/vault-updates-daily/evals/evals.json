@@ -48,7 +48,7 @@
     {
       "id": 3,
       "prompt": "同步我 GitHub 星星的 AI coding tool 最近有什麼新 release",
-      "expected_output": "觸發 vault-updates-daily，用單一 GraphQL call 抓星星 repo 的 releases，篩選 AI coding tool 相關項目（如 gemini-cli、opencode、copilot-cli）建成筆記，跳過 eslint、prettier 等非 AI tooling",
+      "expected_output": "觸發 vault-updates-daily，用單一 GraphQL call 抓星星 repo 的 releases，篩選 AI coding tool 相關項目（如 opencode、copilot-cli、aider）建成筆記，跳過 eslint、prettier 等非 AI tooling",
       "files": [],
       "assertions": [
         {
@@ -57,7 +57,7 @@
         },
         {
           "name": "篩選 AI tooling 相關 release",
-          "description": "保留 gemini-cli、opencode、copilot-cli、claude-code 等 AI coding tool 的有意義 release"
+          "description": "保留 opencode、copilot-cli、aider、claude-code 等 AI coding tool 的有意義 release"
         },
         {
           "name": "跳過非 AI tooling",

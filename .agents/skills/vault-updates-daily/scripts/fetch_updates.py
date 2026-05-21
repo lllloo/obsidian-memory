@@ -2,7 +2,13 @@
 Fetch high-trust developer tooling updates for vault-updates-daily.
 
 Inputs:
-    python fetch_updates.py --since YYYY-MM-DD --repo openai/codex --repo anthropics/claude-code [--starred]
+    python fetch_updates.py --since YYYY-MM-DD \
+        --official "OpenAI Codex|https://developers.openai.com/codex/changelog|codex" \
+        --repo openai/codex [--starred]
+
+At least one of --official / --repo / --starred is required. The script does
+NOT hardcode any tool list — sources come from Inbox/Updates/01.index.md, which
+the skill parses and passes in.
 
 Outputs:
     META:since|||<YYYY-MM-DD>
@@ -44,14 +50,6 @@ HEADERS = {
     "Accept-Language": "en-US,en;q=0.9",
 }
 
-DEFAULT_REPOS = ["openai/codex", "anthropics/claude-code", "google-gemini/gemini-cli"]
-# Fallback when --official args not passed (e.g. called standalone without the skill)
-OFFICIAL_SOURCES = [
-    ("OpenAI Codex", "https://developers.openai.com/codex/changelog", "codex"),
-    ("Claude Code", "https://code.claude.com/docs/en/changelog", "claude-code"),
-    ("Gemini CLI", "https://geminicli.com/docs/changelogs/", "gemini-cli"),
-    ("GitHub Changelog", "https://github.blog/changelog/feed/", "copilot"),
-]
 _GITHUB_RSS_URL = "https://github.blog/changelog/feed/"
 CHANGELOG_KEYWORDS = [
     "agent",
@@ -371,10 +369,9 @@ def main() -> int:
         print(f"ERROR:usage:invalid --since date {args.since!r}; expected YYYY-MM-DD")
         return 1
 
-    explicit_repos = args.repo or DEFAULT_REPOS
-    print(f"META:since|||{since.date().isoformat()}")
+    explicit_repos = args.repo
 
-    # Build official sources from --official args; fall back to hardcoded defaults
+    # Build official sources from --official args (no hardcoded fallback)
     official_sources: list[tuple[str, str, str]] = []
     for raw in args.official:
         parts = raw.split("|", 2)
@@ -382,8 +379,13 @@ def main() -> int:
             print(f"ERROR:official:invalid format {raw!r}; expected name|url|tag")
             continue
         official_sources.append((parts[0].strip(), parts[1].strip(), parts[2].strip()))
-    if not official_sources:
-        official_sources = list(OFFICIAL_SOURCES)
+
+    if not official_sources and not explicit_repos and not args.starred:
+        print("ERROR:usage:no sources provided; pass --official, --repo, or --starred "
+              "(driven by Inbox/Updates/01.index.md)")
+        return 1
+
+    print(f"META:since|||{since.date().isoformat()}")
 
     for name, url, tag in official_sources:
         if url.rstrip("/") == _GITHUB_RSS_URL.rstrip("/"):
