@@ -74,6 +74,5 @@ flowchart TD
 
 ## 相關
 
-- [[GSD-流程]] — 類似輕量 spec-driven workflow，ceremony 更少
 - [[BMAD-Method-流程]] — agentic agile workflow，phase 更完整
 - [github/spec-kit](https://github.com/github/spec-kit)

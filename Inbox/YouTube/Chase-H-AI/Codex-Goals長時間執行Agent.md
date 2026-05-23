@@ -14,7 +14,7 @@ tags:
 
 ## 核心定位
 
-Codex 新推出實驗性 `/goal` 指令，把 RALF loop（Read-Act-Loop-Feedback，俗稱「Ralph loop」）內建成一個 slash command，不需再外掛 GSD、Superpowers 等 orchestration layer 就能跑數小時甚至數十小時的自主編碼任務。一行指令啟動整個迴圈，是目前最低門檻的長時間 agentic harness。
+Codex 新推出實驗性 `/goal` 指令，把 RALF loop（Read-Act-Loop-Feedback，俗稱「Ralph loop」）內建成一個 slash command，不需再外掛第三方 orchestration layer 就能跑數小時甚至數十小時的自主編碼任務。一行指令啟動整個迴圈，是目前最低門檻的長時間 agentic harness。
 
 ## 啟用方式
 
@@ -64,7 +64,7 @@ big picture 一樣（持續 loop + 內部狀態檔 + 完成條件），但 Codex
 - 任務完成 → 呼叫 `update_goal` tool 改狀態、audit deliverables、全部 thumbs up 才標 goal complete
 - 中途暫停／編輯 goal／crash → 不像傳統 RALF loop 直接斷掉，有 graceful handling
 
-優於 GSD、Superpowers 等 Claude Code orchestration layer 之處在於：那些工具要看 40 分鐘教學才會用，Codex goals 一個 `/` 指令就跑。
+優於既有 Claude Code orchestration layer 之處在於：那些工具要看 40 分鐘教學才會用，Codex goals 一個 `/` 指令就跑。
 
 ## 實作建議
 

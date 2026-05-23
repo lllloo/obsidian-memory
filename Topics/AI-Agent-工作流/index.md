@@ -16,7 +16,6 @@ tags:
 ## 工具書籤
 
 - [[Superpowers框架]] — TDD gate / systematic debugging / review loop 為核心的 implementation workflow
-- [[GSD框架]] — fresh session / state machine / 狀態外部化的 agent orchestration（v1 注入式 workflow pack + v2 Pi SDK CLI）；[[GSD-流程]] 速查指令
 - [[GStack框架]] — planning / design / QA / ship 多 persona workflow pack（CEO / Eng / Design / DevEx 審查）
 - [[BMAD框架]] — agile lifecycle 為骨架的多 agent 開發框架（PM / Architect / Developer / UX 等 12+ 軟體角色 persona）；[[BMAD-Method-流程]] 速查指令
 - [[Spec-Kit]] — GitHub 出的 Spec-Driven Development toolkit，spec 為 first-class artifact 驅動 agent 生 code（跨 30+ agent host）；[[Spec-Kit-流程]] 速查指令

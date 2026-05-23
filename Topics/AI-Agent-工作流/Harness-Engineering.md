@@ -35,7 +35,6 @@ Anthropic 的 long-running app development harness 把複雜任務拆成三個�
 
 - [[GAN-Style-Harness]] — Planner / Generator / Evaluator 三角的具體實作
 - [[Superpowers框架]] — 偏 TDD / implementation gates 的流派
-- [[GSD框架]] — 偏 orchestration / fresh session 的流派
 - [[GStack框架]] — 偏規劃 / design / QA 的 workflow pack
 - [[BMAD框架]] — 偏 agile lifecycle / 12+ 軟體角色 persona 接力
 - [[Spec-Kit]] — 偏 Spec-Driven Development，以 spec 為 first-class artifact 驅動 code 生成
