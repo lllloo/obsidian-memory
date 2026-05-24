@@ -67,8 +67,8 @@ state.json 的 `round` 與 `candidates` 欄位直接傳給後續步驟（省去�
 
 先讀 `master-index.md` 了解 vault 結構，再用 Glob / Grep 找候選（pattern / path 為獨立參數）：
 
-- 檔名含關鍵字：Glob `pattern="**/*<keyword>*.md"`, `path="content"`
-- 內容含關鍵字：Grep `pattern="<keyword>"`, `path="content"`
+- 檔名含關鍵字：Glob `pattern="**/*<keyword>*.md"`, `path="."`
+- 內容含關鍵字：Grep `pattern="<keyword>"`, `path="."`
 - Frontmatter tags 或 source URL：同上，`pattern` 改為 `^tags:` 或 URL regex
 
 搜尋結果排除 frontmatter 含 `moc` tag 的檔案（已是 MOC，不應作為整合來源）。

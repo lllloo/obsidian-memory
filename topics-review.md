@@ -2,7 +2,7 @@
 
 升 Topic 前自檢，已升的也可隨時退回。**v1.x 偏嚴，後續視 vault 真實使用頻率放寬**。
 
-> 卡片盒哲學見 [`content/CLAUDE.md`](content/CLAUDE.md)；本文聚焦「Cards → Topics 的品質門檻」這一道閘。
+> 卡片盒哲學見 [`CLAUDE.md`](CLAUDE.md)；本文聚焦「Cards → Topics 的品質門檻」這一道閘。
 
 ## 前置：主題能成立才談升
 
@@ -12,7 +12,7 @@
 
 **B. 建立新 Topic**（vault 還沒這主題）：必須有 2-3 張同主題 Cards 累積才一起搬建立；或單張裂變成多張同時搬。單張新主題無夥伴 → 留 Cards 等累積。
 
-對應 `content/CLAUDE.md` 的「找到或建立 `Topics/<主題>/`」——找到 = A，建立 = B。
+對應 `CLAUDE.md` 的「找到或建立 `Topics/<主題>/`」——找到 = A，建立 = B。
 
 ## 書籤型筆記（不參與升 Topic 評估）
 

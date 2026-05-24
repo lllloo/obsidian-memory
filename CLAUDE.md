@@ -85,11 +85,30 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ### 2. Tag 沿用既有
 
-寫入前先查現有 tags（`obsidian tags`，或 `rg -A5 '^tags:' content -g '*.md'`），優先沿用，避免製造同義異寫（`claude-code` vs `claudeCode` vs `claude_code`）。真無合適才建新 tag，小寫、`-` 連接。
+寫入前先查現有 tags（`obsidian tags`，或 `rg -A5 '^tags:' . -g '*.md'`），優先沿用，避免製造同義異寫（`claude-code` vs `claudeCode` vs `claude_code`）。真無合適才建新 tag，小寫、`-` 連接。
 
 ### 3. 命名
 
 檔名不含空格，空格一律改為 `-`（例：`Obsidian-CLI-整合指南.md`）；wikilink 對應實際檔名（含 `-`）。`title:` 用主題名，不加日期前綴。
+
+### 4. Frontmatter schema
+
+`.md` frontmatter 欄位採白名單與固定順序；新增欄位前先確認既有筆記是否已使用。
+
+建議順序：
+
+1. `title`
+2. `created`
+3. `updated`
+4. `source`
+5. `published`
+6. `parent`
+7. `last_sync_id`
+8. `draft`
+9. `extracted_to`
+10. `tags`
+
+必要欄位：一般筆記需有 `title`、`created`、`updated`、`tags`；`index.md` 作為公開首頁可不加 `tags`。`tags` 一律用 YAML list，不用 inline array 或字串。
 
 ## 規則
 

@@ -173,7 +173,7 @@ print(m.group(1)[:10] if m else '')
   - 去掉日期（`-2026年4月` 等）
   - 不超過 40 字元
   - 不可含 `?:;"'` 等特殊字元
-- frontmatter 格式（欄位順序須與 `scripts/vault-schema.mjs` 的 `FIELD_ORDER` 一致）：
+- frontmatter 格式（欄位順序須與 `CLAUDE.md` 的「Frontmatter schema」一致）：
   ```
   ---
   title: <影片標題的繁體中文翻譯>（技術名詞與品牌名保留英文）

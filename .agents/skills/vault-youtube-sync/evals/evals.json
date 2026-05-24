@@ -4,7 +4,7 @@
     {
       "id": 0,
       "prompt": "https://www.youtube.com/@Chase-H-AI/videos 幫我把這個頻道的影片建成筆記",
-      "expected_output": "抓取頻道影片清單，用 defuddle 擷取每部影片內容，平行 subagents 建立符合 vault 規則的筆記到 content/Inbox/YouTube/<頻道名>/",
+      "expected_output": "抓取頻道影片清單，用 defuddle 擷取每部影片內容，平行 subagents 建立符合 vault 規則的筆記到 Inbox/YouTube/<頻道名>/",
       "files": [],
       "assertions": [
         {

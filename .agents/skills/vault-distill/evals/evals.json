@@ -4,16 +4,16 @@
     {
       "id": 0,
       "prompt": "/vault-distill（Cards/ 下沒有任何 MOC 檔）",
-      "expected_output": "先問「要整合哪個主題？」，不做任何動作；等用戶給主題名稱後才進步驟 A",
+      "expected_output": "走步驟 F 推薦主題模式：讀 master-index.md 與 Cards/、Inbox/ 的 frontmatter，推薦可整合主題；不詢問主題、不寫任何檔案",
       "files": [],
       "assertions": [
         {
-          "name": "問題前置，不先行動",
-          "description": "呼叫後第一個輸出是詢問主題的問題，不先跑 Glob/Grep、不先讀 master-index.md"
+          "name": "預設走推薦主題",
+          "description": "沒有指定主題時直接進步驟 F，掃描 vault 後輸出推薦主題"
         },
         {
           "name": "不寫任何檔案",
-          "description": "在用戶回答前不對 content/ 做任何 Write/Edit"
+          "description": "推薦模式只讀取 vault，不對 Cards/、Inbox/、Topics/ 做任何 Write/Edit"
         }
       ]
     },
@@ -25,7 +25,7 @@
       "assertions": [
         {
           "name": "偵測到現有 MOC",
-          "description": "掃描 content/Cards/ 找到 Agent-Harness.md，在問題中明確列出該檔名"
+          "description": "掃描 Cards/ 找到 Agent-Harness.md，在問題中明確列出該檔名"
         },
         {
           "name": "列出四個選項",
@@ -49,7 +49,7 @@
         },
         {
           "name": "v0 寫入 Cards/",
-          "description": "產出路徑為 content/Cards/Agent-Harness.md，不寫 Topics/ 或 Inbox/"
+          "description": "產出路徑為 Cards/Agent-Harness.md，不寫 Topics/ 或 Inbox/"
         },
         {
           "name": "結束時提示下一步",
@@ -129,7 +129,7 @@
         },
         {
           "name": "不寫任何檔案",
-          "description": "步驟 F 純輸出建議，不對 content/ 做任何讀寫以外的操作"
+          "description": "步驟 F 純輸出建議，不對 Cards/、Inbox/、Topics/ 做任何讀寫以外的操作"
         },
         {
           "name": "附預估整合工作量",
@@ -144,12 +144,12 @@
     {
       "id": 6,
       "prompt": "有什麼建議的主題可以整合？（vault 中 Topics/Claude-Code/ 已有若干歸檔筆記）",
-      "expected_output": "步驟 F 提前路由，不進狀態偵測；推薦群中 Claude-Code 相關不重複推薦，改列為「已整合主題」",
+      "expected_output": "步驟 F 提前路由，不掃描既有 MOC 選項；推薦群中 Claude-Code 相關不重複推薦，改列為「已整合主題」",
       "files": [],
       "assertions": [
         {
           "name": "F 路由提前攔截",
-          "description": "偵測到「建議主題」關鍵詞後立刻走步驟 F，不先掃 Cards/ MOC 數量、不先列現有 MOC 選項"
+          "description": "偵測到「建議主題」關鍵詞後走步驟 F，不先掃 Cards/ MOC 數量、不先列現有 MOC 選項"
         },
         {
           "name": "Topics/ 已整合主題不重複推薦",
@@ -201,7 +201,7 @@
       "assertions": [
         {
           "name": "偵測 Topics/ 下的 MOC",
-          "description": "狀態偵測掃描 content/Topics/ 找到含 moc tag 的檔案，不只掃 Cards/"
+          "description": "狀態偵測掃描 Topics/ 找到含 moc tag 的檔案，不只掃 Cards/"
         },
         {
           "name": "清單顯示完整路徑含目錄",
