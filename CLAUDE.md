@@ -56,7 +56,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 跨主題靠 `tags` 串連：`Topics/` 第一層不做跨主題巢套（不建「AI-工具/Claude-Code/」這種群組）；單一主題內 Cards 過多時，可在 `Topics/<主題>/` 底下再分子資料夾。
 
-升 Topic 前的品質門檻、退回 Cards 的反指標：見 repo 根 [`topics-review.md`](../topics-review.md)。**已升 Topic 重看時若命中反指標，可隨時退回**。
+升 Topic 前的品質門檻、退回 Cards 的反指標：見 repo 根 [`topics-review.md`](topics-review.md)。**已升 Topic 重看時若命中反指標，可隨時退回**。
 
 ### 防爆量
 
@@ -83,17 +83,11 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 命中 → 移除或告知使用者中止，不寫入。若發現既有筆記含有敏感資料，立即移除並通知用戶。
 
-### 2. Frontmatter schema（寫入當下即合法）
-
-必含 `title` / `created` / `updated` / `tags`；欄位順序、白名單、型別以 [`obsidian-deploy/scripts/vault-schema.mjs`](../obsidian-deploy/scripts/vault-schema.mjs) 為準。**不要產出需要 auditor 事後補 title 或修 YAML 的筆記**——YAML 引號、縮排、wikilink 包雙引號（`parent: "[[01.index]]"`）等在寫入前就確保正確。
-
-細節見下文「Frontmatter Schema（固定）」。
-
-### 3. Tag 沿用既有
+### 2. Tag 沿用既有
 
 寫入前先查現有 tags（`obsidian tags`，或 `rg -A5 '^tags:' content -g '*.md'`），優先沿用，避免製造同義異寫（`claude-code` vs `claudeCode` vs `claude_code`）。真無合適才建新 tag，小寫、`-` 連接。
 
-### 4. 命名
+### 3. 命名
 
 檔名不含空格，空格一律改為 `-`（例：`Obsidian-CLI-整合指南.md`）；wikilink 對應實際檔名（含 `-`）。`title:` 用主題名，不加日期前綴。
 
@@ -106,6 +100,12 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ### Commit
 
 不自動 commit。除非使用者明確要求，否則只彙整變更交使用者審核，不在流程中自動提交。
+
+### 查詢回存（提議，不自動）
+
+查詢或討論結束時，若這次產出了有複利價值的綜合分析（比較、取捨結論、發現的連結），**主動提議「要不要回存成 Card?」**——不自動寫，也不默默讓它蒸發。使用者拍板才寫。判斷節點：這次結論下次會不會被重問?會 → 提議回存；一般唯讀查詢、閒聊不必每次都問。
+
+此規則是「禁止不請自來寫 vault、建檔須使用者授權」的延伸：把「自動回存」降級成「提議回存」，授權權留在使用者手上，agent 只負責偵測「這段值得留」並提醒。
 
 ### Obsidian Bases（.base 檔案）
 
@@ -124,57 +124,6 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ### `updated` 欄位（盡力而為）
 
 修改 `.md` 內容時**盡量**同步 frontmatter 的 `updated` 為今日日期（`YYYY-MM-DD`），但不強制 — 偶爾漂移可接受，不需為此中斷流程或裝 hook。
-
-### Frontmatter Schema（固定）
-
-機器驗證真實來源：[`obsidian-deploy/scripts/vault-schema.mjs`](../obsidian-deploy/scripts/vault-schema.mjs)（欄位清單、順序、必填、型別、strict 白名單皆在那）。本節只記**人類語意**（欄位作用、出現情境）與 Obsidian 特有坑。
-
-```yaml
----
-# ── 核心（必填，所有筆記） ──
-title: <筆記標題>
-created: YYYY-MM-DD
-updated: YYYY-MM-DD
-
-# ── 選填（依筆記類型出現） ──
-source: <URL> # 外部來源
-published: YYYY-MM-DD # 外部來源發佈日
-parent: "[[01.index]]" # 歸屬 index（圖譜用）
-extracted_to: "[[<MOC 名>]]" # 半消化筆記：部分內容已被整合到 MOC
-last_sync_id: <video-id> # 僅 YouTube 頻道 01.index.md
-draft: true # Quartz 不發佈（opt-out）
-
-# ── 必填，固定放最後 ──
-tags:
-  - tag-1
----
-```
-
-**欄位說明：**
-
-| 欄位           | 必填 | 出現於                     | 作用                                                                                                       |
-| -------------- | ---- | -------------------------- | ---------------------------------------------------------------------------------------------------------- |
-| `title`        | ✓    | 全部                       | Quartz 頁面標題來源（正文不用 `# Heading`）                                                                |
-| `created`      | ✓    | 全部                       | 建立日                                                                                                     |
-| `updated`      | ✓    | 全部                       | 最後修改日（盡力而為，見下節）                                                                             |
-| `source`       | 條件 | 有外部來源時               | 外部資料必填，跨階段保留（Inbox → Cards → Topics 都不刪，供回查原文）；純原創 Card 可省略                  |
-| `published`    | —    | 有外部來源發佈日時         | 原文／影片發佈日（YouTube 影片由 `vault-youtube-sync` 帶入、Clipping 由 Web Clipper 帶入）；無法取得可省略 |
-| `parent`       | —    | Inbox/YouTube 影片         | `[[01.index]]`，讓筆記出現在頻道圖譜                                                                       |
-| `extracted_to` | —    | 半消化 Inbox 筆記          | `[[<MOC 名>]]`，指回部分內容已被整合到的 MOC，避免遺忘                                                     |
-| `last_sync_id` | —    | YouTube 頻道 `01.index.md` | `vault-youtube-sync` skill 的同步書籤                                                                      |
-| `draft`        | —    | 草稿                       | `true` = 不發佈到 ob.bugloop.com；完成後移除                                                               |
-| `tags`         | ✓    | 全部                       | 固定放最後                                                                                                 |
-
-**Obsidian 特有注意：**
-
-- `tags` 必須 YAML list（`- tag`），不用 inline array `[a, b]` — Obsidian UI 偶爾會誤寫成 inline
-- Wikilink 值必須用雙引號包：`parent: "[[01.index]]"`（YAML parser 會把 `[[...]]` 當 flow sequence 吃掉）
-
-**白名單制**：schema 以外的欄位一律移除。
-
-- Obsidian Web Clipper 若帶入 `author` / `description` / `cover` / `image` / `banner` 等未列欄位，一律清掉
-- CI 由 `obsidian-deploy/scripts/vault-check.mjs` 自動稽核 `UNKNOWN_FIELD` 並刪除（`Inbox/Clippings/` 為剪下的原料，豁免 schema 檢查；整理進 Cards/ 或 Topics/ 後才走稽核）
-- 新增欄位前需先在 [`obsidian-deploy/scripts/vault-schema.mjs`](../obsidian-deploy/scripts/vault-schema.mjs) 擴充，不可直接寫入未列欄位
 
 ## YouTube 筆記語言規範
 
