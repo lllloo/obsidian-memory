@@ -9,9 +9,7 @@ description: Obsidian vault 操作入口：依使用者需求分派建檔或查�
 
 ## 呼叫前置條件
 
-**cwd 必須是 vault root**（obsidian-memory 目錄，底下直接有 `master-index.md`）。本 skill 與其他 vault skills（vault-distill、vault-youtube-sync 等）共用此契約，所有路徑都是 cwd-relative，不依賴環境變數。
-
-分派前先檢查：
+分派前先檢查 cwd 是 vault root：
 
 ```bash
 [ -f "master-index.md" ] || { echo "ERROR: cwd 不在 vault root，請 cd 到 obsidian-memory 後再呼叫 /ob"; exit 1; }

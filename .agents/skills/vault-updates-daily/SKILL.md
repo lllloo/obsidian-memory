@@ -121,8 +121,6 @@ sync: releases
 [ -f "master-index.md" ] || { echo "ERROR: cwd 不在 repo root"; exit 1; }
 ```
 
-寫入前依 `CLAUDE.md` 的「寫入前 Checklist」自檢。
-
 ## 步驟 1：讀取來源
 
 讀 `Inbox/Updates/01.index.md`：

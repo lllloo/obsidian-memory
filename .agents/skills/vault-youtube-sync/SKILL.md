@@ -23,7 +23,7 @@ disable-model-invocation: true
 [ -f "master-index.md" ] || { echo "ERROR: cwd 不在 repo root"; exit 1; }
 ```
 
-寫入前依 `CLAUDE.md` 的「寫入前 Checklist」自檢。本 skill 高頻踩雷點：defuddle transcript 若含 token / 個資直接跳過該筆；頻道主題 tag 先 grep 既有 vault tags 沿用，避免 `claude-code` vs `claudeCode` drift。
+本 skill 高頻踩雷點：defuddle transcript 若含 token / 個資直接跳過該筆；頻道主題 tag 先 grep 既有 vault tags 沿用，避免 `claude-code` vs `claudeCode` drift。
 
 ## 步驟 0：判斷執行模式
 

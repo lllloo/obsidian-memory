@@ -100,7 +100,7 @@ Read 全部候選筆記，記錄：觀點、關鍵數字、獨特資訊、可能
 
 寫入前，確認 A1 的同義詞衝突掃描已通過，或用戶已確認不合併。
 
-寫入前依 `CLAUDE.md` 的「寫入前 Checklist」自檢，額外注意：
+寫入前額外注意：
 
 - **`moc` tag**：Grep 既有同主題 MOC 習慣，沿用不另創
 - **WebFetch 內容過濾**：事實校正若帶 token / 個資，移除再寫入
@@ -225,14 +225,14 @@ Reviewer 回報**三類問題**（必改 / 應改 / 可選），每項含具體�
 
 ## 產出位置
 
-依 `CLAUDE.md` 卡片盒工作流，AI 整理的產出**一律先進 `Cards/`**：
+AI 整理的產出**一律先進 `Cards/`**：
 
 | 來源 → 產出               | 預設目的地                | 由誰決定                 |
 | ------------------------- | ------------------------- | ------------------------ |
 | Inbox/\* 整理 → MOC       | `Cards/<主題>.md`         | 本 skill                 |
 | Cards/\* 同主題整合 → MOC | `Cards/<主題>.md`         | 本 skill                 |
 
-本 skill 預設**不寫 `Topics/`**；Cards → Topics 升級由使用者人工 `git mv`，規則見 `CLAUDE.md`。使用者明確指示寫 Topics/ 時才例外（同時補 `Topics/<類別>/index.md` 的 wikilink）。
+本 skill 預設**不寫 `Topics/`**；Cards → Topics 升級由使用者人工 `git mv`。使用者明確指示寫 Topics/ 時才例外（同時補 `Topics/<類別>/index.md` 的 wikilink）。
 
 ---
 
@@ -253,7 +253,6 @@ MOC 聚焦**概念與大方向**，經得起時間、跨模型世代重讀仍有
 ## 硬性規則
 
 - 預設寫 `Cards/<主題>.md`（唯一例外：使用者明確指示寫 Topics/）
-- 繁體中文為主，技術名詞保留英文
 
 ## Fallback（無 Agent 工具時）
 
