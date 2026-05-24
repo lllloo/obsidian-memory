@@ -159,7 +159,7 @@ print(m.group(1)[:10] if m else '')
 
 ## 筆記規則（必須嚴格遵守）
 
-`CLAUDE.md` 的「寫入前 Checklist」是真實來源，本檔只列本 subagent 高頻踩到的點。敏感資料零容忍、tag 沿用既有、白名單制等通則詳見 Checklist 本身。
+`CLAUDE.md` 的「寫入前 Checklist」是真實來源——**開工寫檔前先 `Read CLAUDE.md`（cwd 為 repo root，subagent 不保證自動載入 AGENTS.md）逐項自檢**。本檔只列本 subagent 高頻踩到的點；敏感資料零容忍、tag 沿用既有、白名單制等通則以 Checklist 本身為準。
 
 - **語言**：正文內容一律以**繁體中文**撰寫；技術名詞、品牌名、工具名保留英文（例：Claude Code、OpenAI、defuddle）
 - **敏感資料**：defuddle transcript 若含 token / 私鑰 / 個資 → 移除該段或跳過整筆，不寫入

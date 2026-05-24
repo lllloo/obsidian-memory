@@ -231,9 +231,8 @@ Reviewer 回報**三類問題**（必改 / 應改 / 可選），每項含具體�
 | ------------------------- | ------------------------- | ------------------------ |
 | Inbox/\* 整理 → MOC       | `Cards/<主題>.md`         | 本 skill                 |
 | Cards/\* 同主題整合 → MOC | `Cards/<主題>.md`         | 本 skill                 |
-| Cards/ → Topics/ 升級     | `Topics/<類別>/<主題>.md` | **使用者** 人工 `git mv` |
 
-本 skill 預設**不寫 `Topics/`**。使用者明確指示時才例外（同時補 `Topics/<類別>/index.md` 的 wikilink）。
+本 skill 預設**不寫 `Topics/`**；Cards → Topics 升級由使用者人工 `git mv`，規則見 `CLAUDE.md`。使用者明確指示寫 Topics/ 時才例外（同時補 `Topics/<類別>/index.md` 的 wikilink）。
 
 ---
 
@@ -254,9 +253,7 @@ MOC 聚焦**概念與大方向**，經得起時間、跨模型世代重讀仍有
 ## 硬性規則
 
 - 預設寫 `Cards/<主題>.md`（唯一例外：使用者明確指示寫 Topics/）
-- wikilink 必須指向實際存在的檔案，否則改用外部 URL
 - 繁體中文為主，技術名詞保留英文
-- 不自動 commit
 
 ## Fallback（無 Agent 工具時）
 

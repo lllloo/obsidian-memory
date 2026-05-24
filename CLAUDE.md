@@ -99,6 +99,14 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## 規則
 
+### Wikilink
+
+寫入 wikilink 前確認目標檔案實際存在；不存在就改用外部 URL，不留死連結。（語法細節：`.base` 連結加副檔名、值含 `[[...]]` 用雙引號包，見下方對應節。）
+
+### Commit
+
+不自動 commit。除非使用者明確要求，否則只彙整變更交使用者審核，不在流程中自動提交。
+
 ### Obsidian Bases（.base 檔案）
 
 - wikilink 必須加副檔名：`[[02.影片清單.base]]`，不加會找不到檔案
