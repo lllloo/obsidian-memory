@@ -18,6 +18,7 @@
 
 詳見：
 
+- [`vault-model.md`](./vault-model.md) — 系統全貌：模式血緣、核心賭注、刻意不做的事（先看這份建立整體心智模型）
 - [`CLAUDE.md`](./CLAUDE.md) — vault 規則、寫入 Checklist、frontmatter schema
 - [`topics-review.md`](./topics-review.md) — 升 Topic 品質門檻與反指標
 

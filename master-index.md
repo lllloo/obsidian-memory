@@ -1,7 +1,7 @@
 ---
 title: Master Index
 created: 2026-04-15
-updated: 2026-05-15
+updated: 2026-05-25
 tags:
   - index
 ---
@@ -47,10 +47,3 @@ tags:
 | Docker / Laradock / CI3 | `docker` `laradock` `codeigniter` `本機環境` `sop` | `Cards/` |
 | Windows / Git / CLI 工具 | `windows` `git` `cli` `workflow` | `Cards/` |
 | 上版 / 部署 | `deploy` `quartz` | `Topics/部署/` + `Cards/` |
-
-## 查詢策略
-
-- **主題明確** → 先查 `Topics/` 對應子目錄
-- **Agent / workflow 問題** → 先查 `Topics/AI-Agent-工作流/`
-- **找影片摘要** → 依頻道特性選 `Inbox/YouTube/<頻道>/`
-- **跨主題** → Grep 搜尋 tag（`tags:.*<tag名稱>`）
