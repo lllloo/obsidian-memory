@@ -10,7 +10,7 @@ description: 將 Obsidian vault 中多篇相關筆記整合為單一主題 MOC�
 ## 狀態偵測（每次呼叫最先執行）
 
 ```bash
-[ -f "master-index.md" ] || { echo "ERROR: cwd 不在 repo root"; exit 1; }
+[ -f "vault-map.md" ] || { echo "ERROR: cwd 不在 repo root"; exit 1; }
 ```
 
 **Step 0：預設＝推薦主題（F）**
@@ -65,7 +65,7 @@ state.json 的 `round` 與 `candidates` 欄位直接傳給後續步驟（省去�
 
 ### A1. 蒐集候選
 
-先讀 `master-index.md` 了解 vault 結構，再用 Glob / Grep 找候選（pattern / path 為獨立參數）：
+先讀 `vault-map.md` 了解 vault 結構，再用 Glob / Grep 找候選（pattern / path 為獨立參數）：
 
 - 檔名含關鍵字：Glob `pattern="**/*<keyword>*.md"`, `path="."`
 - 內容含關鍵字：Grep `pattern="<keyword>"`, `path="."`
@@ -211,7 +211,7 @@ Reviewer 回報**三類問題**（必改 / 應改 / 可選），每項含具體�
 
 **觸發**：使用者問「有什麼建議的主題」/ 「推薦主題」等。不寫任何檔案。
 
-1. 先讀 `master-index.md` 了解 vault 整體結構與已有主題（包括 Topics/ 下已整合的主題，稍後排除）
+1. 先讀 `vault-map.md` 了解 vault 整體結構與已有主題（包括 Topics/ 下已整合的主題，稍後排除）
 2. 用 `rg` 讀所有 `Cards/**/*.md` + `Inbox/**/*.md` 的 frontmatter，按 tags 分群（排除 frontmatter 含 `moc` tag 的檔案）
 3. **只對 tag 相同筆記數 ≥ 3 的群**，才讀每篇前 30 行做核心問題提煉（其他群直接跳過，不浪費 IO）
 4. 對每個候選群跑內聚度檢驗（同步驟 A2）：能一句話說出「這群共同解的問題」才算強內聚

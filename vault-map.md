@@ -1,5 +1,5 @@
 ---
-title: Master Index
+title: Vault Map
 created: 2026-04-15
 updated: 2026-05-25
 tags:
@@ -23,7 +23,7 @@ tags:
 │   ├── Clippings/ — 網頁剪貼
 │   └── Updates/   — 日常更新彙整（vault-updates-daily skill 產出）
 ├── Cards/         — 未歸屬或待補事實審查的完整概念 Cards
-└── Topics/        — 已歸檔主題，6 個子目錄
+└── Topics/        — 已歸檔主題（子目錄如下）
   ├── AI-Agent-工作流/ — Harness、frameworks、multi-agent workflow
   ├── Claude-Code/    — Skills、permissions、agent packages、日常操作
   ├── Obsidian/       — CLI 整合、Skills、Quartz 部署

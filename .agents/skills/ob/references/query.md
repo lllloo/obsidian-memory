@@ -21,17 +21,17 @@
 
 ## Vault 根目錄前置檢查（必先執行）
 
-本流程的契約是 **cwd 必須是 vault root**（底下直接有 `master-index.md`、`Cards/`、`Topics/`）。所有路徑都是 cwd-relative。
+本流程的契約是 **cwd 必須是 vault root**（底下直接有 `vault-map.md`、`Cards/`、`Topics/`）。所有路徑都是 cwd-relative。
 
 ```bash
-[ -f "master-index.md" ] || exit 1
+[ -f "vault-map.md" ] || exit 1
 ```
 
-若 cwd 不在 vault root，直接輸出未命中 JSON：`hits` 為空，`miss_reason` 寫「cwd 不在 vault root（找不到 `master-index.md`），請 cd 到 obsidian-memory 後重試」。
+若 cwd 不在 vault root，直接輸出未命中 JSON：`hits` 為空，`miss_reason` 寫「cwd 不在 vault root（找不到 `vault-map.md`），請 cd 到 obsidian-memory 後重試」。
 
 ## Vault 佈局
 
-- 入口：`master-index.md` — 資料夾索引與 Tag 查詢指南都在裡面，**實際資料夾清單與 tag 字典以 master-index 為準**，下列只是粗結構
+- 入口：`vault-map.md` — 資料夾索引與 Tag 查詢指南都在裡面，**實際資料夾清單與 tag 字典以 vault-map 為準**，下列只是粗結構
 - 資料夾粗結構：
   - `Cards/` — 未歸屬的完整概念 Cards（工作區）
   - `Topics/<主題>/` — 已歸檔主題，第一層子目錄一個主題一個
@@ -41,11 +41,11 @@
 
 ## 三層搜尋策略
 
-### L1：讀 master-index（必先執行）
+### L1：讀 vault-map（必先執行）
 
-1. Read `master-index.md`
+1. Read `vault-map.md`
 2. 對照「資料夾索引」描述與「Tag 查詢指南」表格，抽出 **候選資料夾** 與 **候選 tag 清單**
-3. 若 master-index 描述直接指出精確檔案（如頻道名稱、主題筆記名），可跳到 L3 直接 Read 該檔
+3. 若 vault-map 描述直接指出精確檔案（如頻道名稱、主題筆記名），可跳到 L3 直接 Read 該檔
 
 ### L2：Tag 與路徑篩選
 

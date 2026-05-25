@@ -8,10 +8,10 @@
 
 ## 1. Vault 根目錄前置檢查（必先執行）
 
-本 skill 的契約是 **cwd 必須是 vault root**（底下直接有 `master-index.md`、`Cards/`、`Topics/`）。所有路徑都是 cwd-relative，不依賴環境變數。
+本 skill 的契約是 **cwd 必須是 vault root**（底下直接有 `vault-map.md`、`Cards/`、`Topics/`）。所有路徑都是 cwd-relative，不依賴環境變數。
 
 ```bash
-[ -f "master-index.md" ] || { echo "ERROR: cwd 不在 vault root，請 cd 到 obsidian-memory 後再呼叫 /ob"; exit 1; }
+[ -f "vault-map.md" ] || { echo "ERROR: cwd 不在 vault root，請 cd 到 obsidian-memory 後再呼叫 /ob"; exit 1; }
 ```
 
 check 失敗就停止，不要猜測寫到別的地方。CLI 與 Write/Edit fallback 都靠 cwd 定位，CLI 可用時 `obsidian create path="Cards/..."` 也是相對 cwd 解析。

@@ -4,7 +4,7 @@
 >
 > **路徑契約**：任務 prompt 會傳入 `NOTES_DIR`（repo root 相對路徑：`Inbox/YouTube/<頻道名>/`）。所有讀寫操作以 `NOTES_DIR` 為 base，cwd 必為 repo root（subagent 預設繼承父 agent cwd）。
 >
-> **NOTES_DIR 自檢**：開工前確認 `NOTES_DIR` 值已被主 skill 展開。若值包含字面 `<`、`>` 或仍是占位符（代表主 skill 未替換），視為傳錯，**立即回報並停止**，不寫入任何檔案。同時確認 cwd 為 repo root（`test -f master-index.md`）。
+> **NOTES_DIR 自檢**：開工前確認 `NOTES_DIR` 值已被主 skill 展開。若值包含字面 `<`、`>` 或仍是占位符（代表主 skill 未替換），視為傳錯，**立即回報並停止**，不寫入任何檔案。同時確認 cwd 為 repo root（`test -f vault-map.md`）。
 
 ## 步驟
 

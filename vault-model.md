@@ -1,7 +1,7 @@
 # 運作模式 — 吸收型卡片盒
 
 > 這份文件給人看，用來建立整體心智模型。  
-> 可執行規則不放這裡：agent 寫入規則看 [`CLAUDE.md`](CLAUDE.md)，升 Topic 門檻看 [`topics-review.md`](topics-review.md)，導航與 tag 查詢看 [`master-index.md`](master-index.md)。
+> 可執行規則不放這裡：agent 寫入規則看 [`CLAUDE.md`](CLAUDE.md)，升 Topic 門檻看 [`topics-review.md`](topics-review.md)，導航與 tag 查詢看 [`vault-map.md`](vault-map.md)。
 
 一句話：**Vault 是腦的延伸，不是倉庫。**
 
@@ -107,6 +107,6 @@ AI 可以承擔重複、瑣碎、容易被延後的維護工作；但不自主�
 |---|---|
 | Agent 寫入規則、寫入前 checklist、frontmatter、tag / 命名 | [`CLAUDE.md`](CLAUDE.md) |
 | Cards → Topics 升級門檻與反指標 | [`topics-review.md`](topics-review.md) |
-| 全域導航與 tag 查詢地圖 | [`master-index.md`](master-index.md) |
+| 全域導航與 tag 查詢地圖 | [`vault-map.md`](vault-map.md) |
 | 專案結構、安裝方式、skill 清單 | [`README.md`](README.md) |
 | 通用 LLM Wiki 概念 | [Karpathy LLM Wiki](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f) |

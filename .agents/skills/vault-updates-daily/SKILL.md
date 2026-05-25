@@ -118,7 +118,7 @@ sync: releases
 ## 前置作業
 
 ```bash
-[ -f "master-index.md" ] || { echo "ERROR: cwd 不在 repo root"; exit 1; }
+[ -f "vault-map.md" ] || { echo "ERROR: cwd 不在 repo root"; exit 1; }
 ```
 
 ## 步驟 1：讀取來源

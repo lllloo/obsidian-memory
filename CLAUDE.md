@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working in this
 
 # Obsidian Memory Vault — Agent 操作規格
 
-本檔只放 agent 必須遵守的執行規則。Vault 心智模型看 [`vault-model.md`](vault-model.md)；Cards -> Topics 升級門檻看 [`topics-review.md`](topics-review.md)；導航與 tag 查詢看 [`master-index.md`](master-index.md)。
+本檔只放 agent 必須遵守的執行規則。Vault 心智模型看 [`vault-model.md`](vault-model.md)；Cards -> Topics 升級門檻看 [`topics-review.md`](topics-review.md)；導航與 tag 查詢看 [`vault-map.md`](vault-map.md)。
 
 ## 基本原則
 
@@ -14,10 +14,10 @@ This file provides guidance to Claude Code (claude.ai/code) when working in this
 
 ## CWD 契約
 
-所有 repo-local vault skills 都要求 cwd 是 vault root，也就是本 repo 根目錄，底下直接有 `master-index.md`。
+所有 repo-local vault skills 都要求 cwd 是 vault root，也就是本 repo 根目錄，底下直接有 `vault-map.md`。
 
 ```bash
-[ -f "master-index.md" ] || { echo "ERROR: cwd 不在 vault root"; exit 1; }
+[ -f "vault-map.md" ] || { echo "ERROR: cwd 不在 vault root"; exit 1; }
 ```
 
 從其他專案呼叫本 repo skill 前，先 `cd C:\code\obsidian-memory`。
@@ -89,7 +89,7 @@ rg -A5 '^tags:' . -g '*.md'
 
 ## 查詢規則
 
-查詢方式看 `master-index.md`（資料夾索引、tag 查詢指南）。
+查詢方式看 `vault-map.md`（資料夾索引、tag 查詢指南）。
 
 若查詢或討論產出有複利價值的綜合分析，只能提議「要不要回存成 Card?」，不得自動寫入。
 

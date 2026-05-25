@@ -1,6 +1,6 @@
 ---
 name: vault-lint
-description: Vault 健檢：掃描孤立頁面、死連結、Inbox 積壓、tag 同義異寫、frontmatter 缺欄位、Topics 缺 index.md、master-index 未收錄、extracted_to 遺留等問題。列出報告後互動確認，等用戶拍板再修。使用時機：使用者說「健檢」、「lint」、「vault 健康檢查」、「掃問題」、「vault 狀態」，或直接呼叫 /vault-lint。
+description: Vault 健檢：掃描孤立頁面、死連結、Inbox 積壓、tag 同義異寫、frontmatter 缺欄位、Topics 缺 index.md、vault-map 未收錄、extracted_to 遺留等問題。列出報告後互動確認，等用戶拍板再修。使用時機：使用者說「健檢」、「lint」、「vault 健康檢查」、「掃問題」、「vault 狀態」，或直接呼叫 /vault-lint。
 ---
 
 # /vault-lint — Vault 健檢
@@ -10,7 +10,7 @@ description: Vault 健檢：掃描孤立頁面、死連結、Inbox 積壓、tag 
 ## 前置條件
 
 ```bash
-[ -f "master-index.md" ] || { echo "ERROR: cwd 不在 vault root"; exit 1; }
+[ -f "vault-map.md" ] || { echo "ERROR: cwd 不在 vault root"; exit 1; }
 ```
 
 check 失敗就停止，告知用戶 cd 到 vault root。
@@ -56,12 +56,12 @@ for d in Topics/*/; do
 done
 ```
 
-### 5. master-index 未收錄的 Topics
+### 5. vault-map 未收錄的 Topics
 
 ```bash
 for d in Topics/*/; do
   name=$(basename "$d")
-  grep -q "$name" master-index.md || echo "$name"
+  grep -q "$name" vault-map.md || echo "$name"
 done
 ```
 
@@ -108,7 +108,7 @@ done
 ### 🟡 警告（N 項）
 - Inbox 積壓：42 篇（> 20）
 - 孤立頁面：Cards/baz.md（無入站連結）
-- master-index 未收錄：SomeTopic
+- vault-map 未收錄：SomeTopic
 - extracted_to 遺留：Inbox/abc.md
 
 ### 🔵 資訊（N 項）
@@ -122,7 +122,7 @@ done
 
 **可自動修補（問用戶是否執行）：**
 - 補 Topics 缺失的 index.md（建含基本 frontmatter 的空白檔）
-- 在 master-index 補收錄缺漏的 Topics
+- 在 vault-map 補收錄缺漏的 Topics
 - 補缺失的 `updated` 欄位（設為今日日期）
 
 **需人工判斷（只列出，不自動動）：**

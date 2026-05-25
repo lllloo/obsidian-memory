@@ -20,7 +20,7 @@ disable-model-invocation: true
 ## 前置作業
 
 ```bash
-[ -f "master-index.md" ] || { echo "ERROR: cwd 不在 repo root"; exit 1; }
+[ -f "vault-map.md" ] || { echo "ERROR: cwd 不在 repo root"; exit 1; }
 ```
 
 本 skill 高頻踩雷點：defuddle transcript 若含 token / 個資直接跳過該筆；頻道主題 tag 先 grep 既有 vault tags 沿用，避免 `claude-code` vs `claudeCode` drift。
@@ -240,7 +240,7 @@ N. <標題> — <URL>
 # 用 Python 更新（跨平台，避免 Windows sed -i 不穩定）。
 python -c "
 import os, re, sys
-if not os.path.isfile('master-index.md'):
+if not os.path.isfile('vault-map.md'):
     sys.exit('ERROR: cwd 不在 repo root，中止 checkpoint 更新')
 path = 'Inbox/YouTube/<頻道名>/01.index.md'
 if not os.path.isfile(path):

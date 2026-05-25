@@ -4,7 +4,7 @@
     {
       "id": 0,
       "prompt": "/vault-distill（Cards/ 下沒有任何 MOC 檔）",
-      "expected_output": "走步驟 F 推薦主題模式：讀 master-index.md 與 Cards/、Inbox/ 的 frontmatter，推薦可整合主題；不詢問主題、不寫任何檔案",
+      "expected_output": "走步驟 F 推薦主題模式：讀 vault-map.md 與 Cards/、Inbox/ 的 frontmatter，推薦可整合主題；不詢問主題、不寫任何檔案",
       "files": [],
       "assertions": [
         {

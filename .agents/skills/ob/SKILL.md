@@ -12,7 +12,7 @@ description: Obsidian vault 操作入口：依使用者需求分派建檔或查�
 分派前先檢查 cwd 是 vault root：
 
 ```bash
-[ -f "master-index.md" ] || { echo "ERROR: cwd 不在 vault root，請 cd 到 obsidian-memory 後再呼叫 /ob"; exit 1; }
+[ -f "vault-map.md" ] || { echo "ERROR: cwd 不在 vault root，請 cd 到 obsidian-memory 後再呼叫 /ob"; exit 1; }
 ```
 
 check 失敗就告知用戶並停止，不要硬猜路徑。
