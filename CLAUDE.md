@@ -10,6 +10,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working in this
 
 - Vault 是「吸收型卡片盒」：筆記寫成已內化的理解版本，不保存整篇原料。
 - 不主動擴大 scope：不自動回存筆記、不自動結構搬移或升 Topic。
+- 刪除筆記（Inbox／Cards／Topics）需使用者拍板；唯 skill（如 `ob`、`vault-youtube-sync`）流程內定義的消化刪原篇依各 skill 流程，不在此限。
 - 執行 `git push` 或任何遠端推送前，必須先取得使用者明確同意。
 
 ## CWD 契約
@@ -35,7 +36,10 @@ This file provides guidance to Claude Code (claude.ai/code) when working in this
 - 自然語言密碼：「密碼是 ...」、「password: ...」後接明文
 - 客戶 / 公司內部資訊、個資：身分證、私人電話、地址、內部 IP / 網址
 
-命中時移除或中止寫入並告知使用者。若發現既有筆記含敏感資料，立即移除並通知使用者。
+命中時依情境處置：
+
+- **本次寫入命中**：剔除敏感片段後再寫入；整篇無法拆解則中止寫入並告知使用者。
+- **既有筆記命中**：停手、回報檔案與行號給使用者，待拍板後才移除——不自動改既有筆記（與基本原則「不主動擴大 scope」一致）。
 
 ### 2. Tag 沿用既有
 
@@ -57,20 +61,24 @@ rg -A5 '^tags:' . -g '*.md'
 
 `.md` frontmatter 欄位採白名單與固定順序；新增欄位前先確認既有筆記是否已使用。
 
-建議順序：
+欄位語意與固定順序（即下表列序）：
 
-1. `title`
-2. `created`
-3. `updated`
-4. `source`
-5. `published`
-6. `parent`
-7. `last_sync_id`
-8. `draft`
-9. `extracted_to`
-10. `tags`
+| 欄位 | 用途 / 何時用 | 值格式 |
+|---|---|---|
+| `title` | 主題名，可含空格與中文；不加日期前綴 | 字串（檔名為其無空格、`-` 連接版） |
+| `created` | 進 vault 日期 | `YYYY-MM-DD` |
+| `updated` | 最後修改日期 | `YYYY-MM-DD` |
+| `source` | 來源 URL（網頁／影片連結；YouTube `index` 為頻道 URL）；回查用，非證據本體 | URL |
+| `published` | 原始內容發佈／上傳日，與 `created`（進 vault 日）區分；不明可留空 | `YYYY-MM-DD` 或空 |
+| `parent` | Obsidian 圖譜用 wikilink，讓筆記出現在圖譜 | `"[[01.index]]"` |
+| `last_sync_id` | youtube-sync 增量同步 checkpoint，僅存於頻道 `01.index.md` | YouTube videoId |
+| `draft` | `true` = 不發佈到 Quartz 公開站（未定稿／含敏感脈絡，或 youtube transcript 抓取失敗的占位待重抓） | `true`（省略 = 已發佈） |
+| `extracted_to` | 多主題 Inbox 筆記內化某切角後指回 MOC（半消化狀態） | `"[[<MOC 名>]]"` |
+| `tags` | 主題分類 + 功能性 tag（如 `moc`） | YAML list |
 
-一般筆記需有 `title`、`created`、`updated`、`tags`。`index.md` 作為公開首頁可不加 `tags`。`tags` 一律用 YAML list，不用 inline array 或字串。
+一般筆記需有 `title`、`created`、`updated`、`tags`。根 `index.md`（Quartz 公開首頁）可不加 `tags`。`tags` 一律用 YAML list，不用 inline array 或字串。
+
+整合頁——Topics 的 `index.md` 與 MOC 型 Cards/筆記——`tags` 須含 `moc`，供 `vault-distill` 與 `vault-lint` 識別；`moc` 是功能性 tag，不替代主題分類 tag。
 
 修改 `.md` 內容時盡量同步 `updated` 為今日日期（`YYYY-MM-DD`），但不為此中斷流程。
 
@@ -91,7 +99,7 @@ rg -A5 '^tags:' . -g '*.md'
 
 查詢方式看 `vault-map.md`（資料夾索引、tag 查詢指南）。
 
-若查詢或討論產出有複利價值的綜合分析，只能提議「要不要回存成 Card?」，不得自動寫入。
+若查詢或討論**整合了 ≥2 篇既有筆記、且產生原文沒有的綜合結論**，可提議「要不要回存成 Card?」，不得自動寫入。未達此門檻不主動提。
 
 ## 可用 Skills
 
@@ -105,7 +113,7 @@ rg -A5 '^tags:' . -g '*.md'
 | `vault-updates-daily` | 日常更新彙整 |
 | `vault-lint` | Vault 結構健檢 |
 
-優先使用 skill，不新增平行流程。新增或修改 skill 時，盡量遵循 Agent Skills 開放標準，讓內容可跨工具移植。
+優先使用 skill，不新增平行流程——現有 skill 能覆蓋的操作一律走 skill，只有 skill 無對應流程時才手動直接操作（即下一段情境）。新增或修改 skill 時，盡量遵循 Agent Skills 開放標準，讓內容可跨工具移植。
 
 未透過 skill 直接操作 Inbox 或 Cards 時，先讀 [`vault-model.md`](vault-model.md) 的「三層流動細節」確認流程（三條清空路徑、`extracted_to` 例外、git mv 步驟）。
 
@@ -129,6 +137,8 @@ rg -A5 '^tags:' . -g '*.md'
 
 ## 成長觀察
 
-討論 vault 內容時，可順手點出成長面觀察，例如概念散在多頁卻沒專屬 Card、兩篇主題相關卻沒互連、某主題有明顯資料空缺。
+討論 vault 內容時，若**明確看到具體的結構缺口**（某概念散在多頁卻沒專屬 Card、兩篇主題相關卻沒互連、某主題有明顯資料空缺），可順手點出。
 
 只提議，不自動執行；不要背景掃描整個 vault 找成長面問題。結構問題交給 `vault-lint`。
+
+成長觀察與查詢規則的「回存提議」同屬討論衍生提議，**單次回應至多提一項**，避免變成噪音。
