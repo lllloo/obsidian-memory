@@ -1,7 +1,7 @@
 ---
 title: Claude Code 完成提示（Windows）— 方案比較
 created: 2026-05-25
-updated: 2026-05-25
+updated: 2026-05-27
 tags:
   - claude-code
   - hooks
@@ -9,31 +9,38 @@ tags:
   - terminal
 ---
 
-同時開多個 Claude Code 視窗時，要能一聲分辨「哪個跑完、哪個在等我」。Windows 上比較過三種做法，只有「鈴聲」穩定可行。
+多視窗時一眼看出哪個 Claude Code 在跑。採用 OSC 9;4 工作列進度條，inline 在 `settings.json`，不需外部腳本。
 
-## 採用：單一 BEL 鈴聲 + 分頁鈴鐺圖示
+## 設定
 
-完成或需要我注意時響一聲，Windows Terminal 會在對應分頁標上鈴鐺圖示，掃一眼就知道是哪個視窗。
+```json
+"hooks": {
+  "SessionStart":    [{"hooks": [{"type": "command", "command": "powershell.exe", "args": ["-NoProfile", "-Command", "$e=[char]27;$b=[char]7;@{terminalSequence=\"$e]9;4;0;0$b\"}|ConvertTo-Json -Compress"]}]}],
+  "UserPromptSubmit":[{"hooks": [{"type": "command", "command": "powershell.exe", "args": ["-NoProfile", "-Command", "$e=[char]27;$b=[char]7;@{terminalSequence=\"$e]9;4;3;0$b\"}|ConvertTo-Json -Compress"]}]}],
+  "Stop":            [{"hooks": [{"type": "command", "command": "powershell.exe", "args": ["-NoProfile", "-Command", "$e=[char]27;$b=[char]7;@{terminalSequence=\"$e]9;4;0;0$b\"}|ConvertTo-Json -Compress"]}]}]
+}
+```
 
-做法：hook 輸出 `terminalSequence` 為單一 BEL（char 7），Claude Code 幫你寫到終端（需 v2.1.141+）。掛兩個事件才完整：
+| event | state | 視覺效果 |
+|---|---|---|
+| `SessionStart` | 0 | 清除 |
+| `UserPromptSubmit` | 3 | 旋轉動畫 |
+| `Stop` | 0 | 清除 |
 
-- `Stop` — 我回完話、等你輸入下一句
-- `Notification`（不設 matcher）— 我中途跳權限確認或問你問題、暫停等你
+**Notification 不加**：包含 `idle_prompt`（閒置自動觸發），會造成工作列莫名變黃。需要的話加 `"matcher": "permission_prompt"` 篩選。
 
-兩個 hook 命令相同。只設 `Stop` 會漏掉掛機時跳出的權限提示。
+OSC 9;4 state 速查：`0` 清除、`1` 綠色、`2` 紅色、`3` 旋轉、`4` 黃色暫停。格式：`ESC]9;4;<state>;<progress>BEL`。
 
-Windows 撰寫兩個坑：①hook 用 args exec form 直接指定 `powershell.exe`（本機沒裝 `pwsh`；`shell:"powershell"` 的實際行為文件與版本說法不一——官方文件稱會 fallback 到 `powershell.exe`，明確指定最保險）；②命令維持純 ASCII（含中文／emoji 會被 Big5 弄壞，需改 `.ps1` + `-File` 並存 UTF-8 BOM）。
+## 需求
 
-## 否決的方案
+- CC ≥ 2.1.141
+- Windows Terminal
 
-- **終端標題顯示進行中／完成** — Windows 上 Claude Code 會覆蓋 hook 設的標題（推測是它自己持續寫 title 序列，未經官方證實）；關閉用的 `CLAUDE_CODE_DISABLE_TERMINAL_TITLE` 在 Windows 失效（issue #16572）、唯一可行工具只支援 macOS。
-- **桌面 toast 通知** — 技術可行（WinRT `ToastNotificationManager`），但每次彈出太吵、不好讀。
+## 備選方案
 
-## 來源
+**分頁標題 emoji（OSC 2）**：double-click rename 後鎖死標題；emoji 不可 inline（cp950 亂碼）；`$Host.UI.RawUI.WindowTitle` 在 hook 子進程讀到 PS 自身路徑而非分頁標題。
 
-- GitHub issue [#4765](https://github.com/anthropics/claude-code/issues/4765)（標題覆蓋）、[#16572](https://github.com/anthropics/claude-code/issues/16572)（`DISABLE_TERMINAL_TITLE` 在 Windows 失效）、#22578 / #23355 / #44590
-- [franzvill/claude-code-tab-title](https://github.com/franzvill/claude-code-tab-title)（macOS-only 工具）
-- [Claude Code hooks reference](https://code.claude.com/docs/en/hooks-guide)（`terminalSequence` 欄位）
+**桌面 toast 通知（OSC 9）**：用 `ESC]9;訊息BEL` 彈出系統通知，切到其他視窗時也看得到。Windows Terminal 原生支援，可與 OSC 9;4 並用。缺點：每次完成都彈出、較吵。
 
 ## 相關
 
