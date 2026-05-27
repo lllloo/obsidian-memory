@@ -9,34 +9,54 @@ tags:
   - terminal
 ---
 
-多視窗時一眼看出哪個 Claude Code 在跑。採用 OSC 9;4 工作列進度條，inline 在 `settings.json`，不需外部腳本。
+多視窗時一眼看出哪個 Claude Code 在跑。採用 OSC 9;4 工作列進度條，inline 在 `settings.json` 的 `hooks`，不需外部腳本。
 
 ## 設定
 
+`command` 用 `printf` 直接吐 JSON 字面字串——ESC、BEL 以 JSON unicode escape 寫進字串原樣輸出，交給 Claude Code 解析成控制字元，省掉每次起 `powershell.exe` 子進程，啟動更快。Windows 走 Git Bash 內建的 `printf`。
+
 ```json
 "hooks": {
-  "SessionStart":    [{"hooks": [{"type": "command", "command": "powershell.exe", "args": ["-NoProfile", "-Command", "$e=[char]27;$b=[char]7;@{terminalSequence=\"$e]9;4;0;0$b\"}|ConvertTo-Json -Compress"]}]}],
-  "UserPromptSubmit":[{"hooks": [{"type": "command", "command": "powershell.exe", "args": ["-NoProfile", "-Command", "$e=[char]27;$b=[char]7;@{terminalSequence=\"$e]9;4;3;0$b\"}|ConvertTo-Json -Compress"]}]}],
-  "Stop":            [{"hooks": [{"type": "command", "command": "powershell.exe", "args": ["-NoProfile", "-Command", "$e=[char]27;$b=[char]7;@{terminalSequence=\"$e]9;4;0;0$b\"}|ConvertTo-Json -Compress"]}]}]
+  "SessionStart":     [{"hooks": [{"type": "command", "command": "printf '%s' '{\"terminalSequence\":\"\\u001b]9;4;0;0\\u0007\"}'"}]}],
+  "UserPromptSubmit": [{"hooks": [{"type": "command", "command": "printf '%s' '{\"terminalSequence\":\"\\u001b]9;4;3;0\\u0007\"}'"}]}],
+  "PostToolUse":      [{"hooks": [{"type": "command", "command": "printf '%s' '{\"terminalSequence\":\"\\u001b]9;4;3;0\\u0007\"}'"}]}],
+  "Notification":     [{"matcher": "permission_prompt", "hooks": [{"type": "command", "command": "printf '%s' '{\"terminalSequence\":\"\\u001b]9;4;4;100\\u0007\"}'"}]}],
+  "Stop":             [{"hooks": [{"type": "command", "command": "printf '%s' '{\"terminalSequence\":\"\\u001b]9;4;0;0\\u0007\"}'"}]}]
 }
 ```
 
-| event | state | 視覺效果 |
-|---|---|---|
-| `SessionStart` | 0 | 清除 |
-| `UserPromptSubmit` | 3 | 旋轉動畫 |
-| `Stop` | 0 | 清除 |
+| event | matcher | state;progress | 視覺效果 |
+|---|---|---|---|
+| `SessionStart` | — | `0;0` | 清除 |
+| `UserPromptSubmit` | — | `3;0` | 旋轉動畫（開始跑） |
+| `PostToolUse` | — | `3;0` | 旋轉（每次工具後重申，避免被覆蓋） |
+| `Notification` | `permission_prompt` | `4;100` | 黃色滿格暫停（等你點頭） |
+| `Stop` | — | `0;0` | 清除（跑完） |
 
-**Notification 不加**：包含 `idle_prompt`（閒置自動觸發），會造成工作列莫名變黃。需要的話加 `"matcher": "permission_prompt"` 篩選。
+**Notification 用 `matcher` 精準篩選**：`Notification` 也含 `idle_prompt`（閒置自動觸發），不篩會造成工作列莫名變黃。`"matcher": "permission_prompt"` 只在等待權限確認時亮黃色暫停，正是想要的「需要你介入」訊號。
 
 OSC 9;4 state 速查：`0` 清除、`1` 綠色、`2` 紅色、`3` 旋轉、`4` 黃色暫停。格式：`ESC]9;4;<state>;<progress>BEL`。
+
+## Esc 清除卡住狀態
+
+如果 Windows Terminal 的 progress 狀態卡住，可在 `$PROFILE` 綁 `Esc` 清掉，同時還原目前輸入行。Windows PowerShell 5.1 要用 `[char]27` / `[char]7` 送 ESC / BEL，不用 PowerShell 7 的 `` `e `` 寫法。
+
+```powershell
+Set-PSReadLineKeyHandler -Key Escape -BriefDescription ClearTerminalProgress -LongDescription "Clear Windows Terminal OSC 9;4 progress indicator and revert the current line." -ScriptBlock {
+    [Console]::Write([char]27 + "]9;4;0;0" + [char]7)
+    [Microsoft.PowerShell.PSConsoleReadLine]::RevertLine()
+}
+```
 
 ## 需求
 
 - CC ≥ 2.1.141
 - Windows Terminal
+- hook `command` 經 `sh` 執行，Windows 用 Git Bash 內建 `printf`
 
 ## 備選方案
+
+**PowerShell 產生序列**：舊版用 `powershell.exe -Command "$e=[char]27;...|ConvertTo-Json"` 產真 ESC 再轉 JSON。可行但每次 hook 都起 PowerShell 子進程，慢。`printf` 版把 escape 當字面字串丟給 CC 自己解析，更輕。
 
 **分頁標題 emoji（OSC 2）**：double-click rename 後鎖死標題；emoji 不可 inline（cp950 亂碼）；`$Host.UI.RawUI.WindowTitle` 在 hook 子進程讀到 PS 自身路徑而非分頁標題。
 
