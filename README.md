@@ -24,7 +24,7 @@
 
 ## Skills
 
-`.agents/skills/` 內提供 vault 操作 skills（`ob` 筆記操作、`vault-distill` 主題整合、`vault-youtube-sync` 影片摘要同步等）。完整清單見 [`CLAUDE.md` § 可用 Skills](./CLAUDE.md#可用-skills)。
+`.agents/skills/` 內提供 vault 操作 skills（`ob` 筆記操作、`vault-youtube-sync` 影片摘要同步、`vault-updates-daily` 日常更新、`vault-lint` 結構健檢等）。完整清單見 [`CLAUDE.md` § 可用 Skills](./CLAUDE.md#可用-skills)。
 
 **使用契約**：cwd 必須是本 repo 根目錄（含 `vault-map.md` 的目錄），所有路徑 cwd-relative，不靠環境變數。從別的專案想呼叫 skill，先 `cd` 進來。
 
