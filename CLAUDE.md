@@ -73,12 +73,12 @@ rg -A5 '^tags:' . -g '*.md'
 | `parent` | Obsidian 圖譜用 wikilink，讓筆記出現在圖譜 | `"[[01.index]]"` |
 | `last_sync_id` | youtube-sync 增量同步 checkpoint，僅存於頻道 `01.index.md` | YouTube videoId |
 | `draft` | `true` = 不發佈到 Quartz 公開站（未定稿／含敏感脈絡，或 youtube transcript 抓取失敗的占位待重抓） | `true`（省略 = 已發佈） |
-| `extracted_to` | 多主題 Inbox 筆記內化某切角後指回 MOC（半消化狀態） | `"[[<MOC 名>]]"` |
-| `tags` | 主題分類 + 功能性 tag（如 `moc`） | YAML list |
+| `extracted_to` | 多主題 Inbox 筆記內化某切角後指回整合頁（半消化狀態） | `"[[<整合頁名>]]"` |
+| `tags` | 主題分類 + 必要的功能性 tag | YAML list |
 
 一般筆記需有 `title`、`created`、`updated`、`tags`。根 `index.md`（Quartz 公開首頁）可不加 `tags`。`tags` 一律用 YAML list，不用 inline array 或字串。
 
-整合頁——Topics 的 `index.md` 與 MOC 型 Cards/筆記——`tags` 須含 `moc`，供結構健檢識別；`moc` 是功能性 tag，不替代主題分類 tag。
+Topics 的 `index.md` 是主題入口；Cards/筆記也可以是整合頁。不要用額外 tag 標記這類結構角色，辨識時依路徑（如 `Topics/*/index.md`）與內容判斷。
 
 修改 `.md` 內容時盡量同步 `updated` 為今日日期（`YYYY-MM-DD`），但不為此中斷流程。
 
@@ -101,20 +101,20 @@ rg -A5 '^tags:' . -g '*.md'
 
 若查詢或討論**整合了 ≥2 篇既有筆記、且產生原文沒有的綜合結論**，可提議「要不要回存成 Card?」，不得自動寫入。未達此門檻不主動提。
 
-## 多筆記整合 / MOC
+## 多筆記整合 / 整合頁
 
-使用者要求「整合筆記」、「合併同主題筆記」、「建立 MOC」或類似任務時，由當前 agent 直接依本檔規則主導，不另走獨立 skill。
+使用者要求「整合筆記」、「合併同主題筆記」、「建立整合頁」或類似任務時，由當前 agent 直接依本檔規則主導，不另走獨立 skill。
 
 整合流程：
 
 1. 先讀 `vault-map.md`，再用 tag、路徑、正文關鍵字搜尋 `Inbox/`、`Cards/`、`Topics/`。
-2. 列出候選筆記與共同主題；排除已含 `moc` tag 的整合頁，避免 MOC 套 MOC。
-3. 只有整合了 ≥2 篇既有筆記、且產生原文沒有的綜合結論時，才建立或改寫 MOC。
-4. MOC 預設寫入 `Cards/<主題>.md`；不自動升入 `Topics/`，升 Topic 仍依 `topics-review.md` 等使用者拍板。
-5. MOC frontmatter 必須含主題 tag 與 `moc` tag，並遵守本檔寫入前 Checklist。
+2. 列出候選筆記與共同主題；排除既有整合頁（例如 `Topics/*/index.md` 或內容明確為整合頁），避免整合頁套整合頁。
+3. 只有整合了 ≥2 篇既有筆記、且產生原文沒有的綜合結論時，才建立或改寫整合頁。
+4. 整合頁預設寫入 `Cards/<主題>.md`；不自動升入 `Topics/`，升 Topic 仍依 `topics-review.md` 等使用者拍板。
+5. 整合頁 frontmatter 必須含主題 tag，不新增結構角色 tag，並遵守本檔寫入前 Checklist。
 6. 原筆記處置只提出建議，不自動刪除或搬移。可選處置為：保留並用 wikilink 連回、整篇刪除、部分抽取並加 `extracted_to`。
 
-MOC 內容應聚焦長期有效的概念、判斷框架與筆記間的共識 / 差異；避免把版本清單、工具流水帳或可由官方文件快速取代的細節塞進主體。
+整合頁內容應聚焦長期有效的概念、判斷框架與筆記間的共識 / 差異；避免把版本清單、工具流水帳或可由官方文件快速取代的細節塞進主體。
 
 ## 可用 Skills
 

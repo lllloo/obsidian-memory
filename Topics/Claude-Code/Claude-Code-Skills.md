@@ -1,11 +1,10 @@
 ---
 title: Claude Code Skills
 created: 2026-03-29
-updated: 2026-05-08
+updated: 2026-05-27
 tags:
   - claude-code
   - ai-tools
-  - moc
 ---
 
 Skills 是把可重用流程、知識、best practices 打包成可延遲載入工作模組的格式——最小單位是含 `SKILL.md` 的資料夾，Claude 依 description 自動觸發或用 `/skill-name` 手動呼叫。官方已把 custom commands 併入 skills 概念，要 supporting files / auto invocation 一律走 skill。

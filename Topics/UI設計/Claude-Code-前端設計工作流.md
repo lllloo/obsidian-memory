@@ -1,12 +1,11 @@
 ---
 title: Claude Code 前端設計工作流
 created: 2026-04-20
-updated: 2026-05-08
+updated: 2026-05-27
 tags:
   - claude-code
   - design
   - frontend
-  - moc
 ---
 
 涵蓋 AI slop（AI 生成 UI 千篇一律）的本質、七層工作流分層、核心原則。

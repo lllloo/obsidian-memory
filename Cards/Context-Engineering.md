@@ -1,7 +1,7 @@
 ---
 title: Context Engineering 與成本優化
 created: 2026-04-20
-updated: 2026-05-05
+updated: 2026-05-27
 tags:
   - claude-code
   - ai-agent
@@ -9,7 +9,7 @@ tags:
   - memory
 ---
 
-> AI Agent 在 demo 表現優異但在生產環境失敗，大多數情況不是模型能力不足，而是 **context engineering 做得不夠好**。本 MOC 整合官方文件、研究與多篇影片摘要；閱讀時要分清楚：哪些是 **Claude Code 官方能力**、哪些是 **社群 workflow**、哪些只是 **經驗法則而非保證**。
+> AI Agent 在 demo 表現優異但在生產環境失敗，大多數情況不是模型能力不足，而是 **context engineering 做得不夠好**。本文整合官方文件、研究與多篇影片摘要；閱讀時要分清楚：哪些是 **Claude Code 官方能力**、哪些是 **社群 workflow**、哪些只是 **經驗法則而非保證**。
 
 ## 為什麼 Context 是 Agent 的核心
 
@@ -362,14 +362,14 @@ AI 系統：不只第 1 輪要通過，**第 10 輪、第 20 輪都要通過**�
 
 ## 延伸閱讀（vault 內其他相關主題）
 
-以下筆記與本主題相關但未整合進 MOC（屬於其他主題的子範圍）：
+以下筆記與本主題相關但未整合進本文（屬於其他主題的子範圍）：
 
 - [[Harness-Engineering]] — Harness 架構、多 Agent 協作拓撲、context 管理演進（已整合 Harness-Engineer / Agent-Teams / Agent-Swarm 等相關內容）
 - [[Claude-Code-Skills]] — Skills 避免佔 context 的機制
 
 ## 外部來源
 
-### 影片摘要（本 MOC 整合來源）
+### 影片摘要（本文整合來源）
 
 - daveebbelaar《AI Agent 有效的 Context Engineering》（2025-12-19）— <https://www.youtube.com/watch?v=nkJXADeI62c>
 - Chase H AI《Claude 1M Context Window 攻克 Context Rot》（2026-03-14）— <https://www.youtube.com/watch?v=dk0QMbsdV8s>

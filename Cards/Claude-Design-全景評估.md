@@ -1,15 +1,14 @@
 ---
 title: Claude Design 全景評估
 created: 2026-04-30
-updated: 2026-04-30
+updated: 2026-05-27
 tags:
   - claude-design
   - claude-code
   - design
-  - moc
 ---
 
-> Claude Design 是 Anthropic Labs 推出的視覺化設計工具，在 `claude.ai/design` 上把 Claude 的生成能力包裝成可互動的 prototype/slide/mock-up 介面，並可一鍵 hand-off 到 Claude Code 接續工程化。但它與 Claude Code 的關係並不對等——對「需要原生 GUI 操作」的人是真補強，對「只要設計成品」的人多半繞得開。本 MOC 整合三派立場：原生使用、繞道用 Claude Code、開源 Skill 替代。
+> Claude Design 是 Anthropic Labs 推出的視覺化設計工具，在 `claude.ai/design` 上把 Claude 的生成能力包裝成可互動的 prototype/slide/mock-up 介面，並可一鍵 hand-off 到 Claude Code 接續工程化。但它與 Claude Code 的關係並不對等——對「需要原生 GUI 操作」的人是真補強，對「只要設計成品」的人多半繞得開。本文整合三派立場：原生使用、繞道用 Claude Code、開源 Skill 替代。
 
 ## 核心問題
 

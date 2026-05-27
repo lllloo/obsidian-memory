@@ -1,12 +1,11 @@
 ---
 title: Harness Engineering
 created: 2026-04-21
-updated: 2026-05-08
+updated: 2026-05-27
 tags:
   - claude-code
   - ai-agent
   - harness
-  - moc
 ---
 
 **Harness Engineering** 是設計、建置、迭代 agent harness 的工程實踐，跟 Prompt Engineering / Context Engineering 並列。

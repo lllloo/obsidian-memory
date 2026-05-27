@@ -1,7 +1,7 @@
 ---
 title: AI Design 三層工作流
 created: 2026-05-26
-updated: 2026-05-26
+updated: 2026-05-27
 source: https://www.youtube.com/watch?v=5lycYTOYbPM
 published: 2026-05-24
 parent: "[[01.index]]"
@@ -69,5 +69,4 @@ AI 產生的設計看起來像客製作品或像 AI 套版，不只取決於模�
 
 - 可併入 [[Claude-Code-前端設計工作流]]：補上 `DESIGN.md` 與視覺 TDD 的分層。
 - 可對照 [[DESIGN.md-官方規格]]：確認本 vault 對 `DESIGN.md` 的命名與內容規則。
-- 可補強 [[動效與互動]] 或 UI 設計 MOC：Level 3 的 visual diff 適合放在「設計驗證」而非單純動效。
-
+- 可補強 [[動效與互動]] 或 UI 設計主題入口：Level 3 的 visual diff 適合放在「設計驗證」而非單純動效。

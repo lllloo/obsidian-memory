@@ -1,10 +1,9 @@
 ---
 title: 部署
 created: 2026-05-08
-updated: 2026-05-17
+updated: 2026-05-27
 tags:
   - deploy
-  - moc
 ---
 
 部署、上版、本機開發環境、CI/CD 相關的工作流與踩坑筆記。

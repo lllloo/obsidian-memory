@@ -1,10 +1,9 @@
 ---
 title: Obsidian
 created: 2026-03-22
-updated: 2026-05-17
+updated: 2026-05-27
 tags:
   - obsidian
-  - moc
 ---
 
 用 Obsidian 搭配 Claude Code 打造個人知識庫的筆記集合。

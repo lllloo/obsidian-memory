@@ -1,10 +1,9 @@
 ---
 title: Claude Code
 created: 2026-04-25
-updated: 2026-04-26
+updated: 2026-05-27
 tags:
   - claude-code
-  - moc
 ---
 
 以 Claude Code 本體能力、skills、agents、permissions 與日常工作流為主的筆記集合。
@@ -23,4 +22,3 @@ tags:
 ## 工具書籤
 
 - [[codex-plugin-cc]] — OpenAI 出的 Claude Code plugin，做跨模型 review / task delegation
-

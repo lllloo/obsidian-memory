@@ -1,10 +1,9 @@
 ---
 title: AI Agent 工作流
 created: 2026-04-25
-updated: 2026-05-17
+updated: 2026-05-27
 tags:
   - ai-agent
-  - moc
 ---
 
 聚焦 harness、multi-agent collaboration、planning / execution / evaluation 迴圈，以及代表性的 agent frameworks。
