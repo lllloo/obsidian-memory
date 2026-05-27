@@ -28,6 +28,10 @@ Skills 是把可重用流程、知識、best practices 打包成可延遲載入�
 - **跨 surface 同步幻覺**：custom skills 不會在 Claude.ai / API / Claude Code 之間自動同步——分發是另一個問題，社群有不同 Meta-Skill 模式可參考但都不是官方內建
 - **`description` 寫太泛 / 太保守**：只寫「做什麼」沒寫「何時該用」→ undertrigger。把使用情境寫進 `description` / `when_to_use`，常見 phrasing 前置
 
+## 相關
+
+- [[Claude-Code-內容自動化-Pipeline]] — 把研究→構思→腳本→分發四階段流程 skill 化的實例
+
 ## 來源
 
 - [Agent Skills Overview](https://platform.claude.com/docs/en/agents-and-tools/agent-skills/overview)

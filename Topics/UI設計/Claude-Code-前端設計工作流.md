@@ -112,6 +112,7 @@ Claude Code 在 agentic coding（自主代理寫程式）表現卓越，但前�
 
 ## 相關
 
+- [[AI-設計品質量化檢測]] — 設計生成後的量化檢測（壞訊號偵測），與本篇生成切角互補
 - [[Impeccable-前端設計Skill]] — Layer 1 工具細節
 - [[Awesome-Design-MD]] — Layer 1 範例庫
 - [[Pencil-讀取規則]] — Layer 5 工具的使用規則

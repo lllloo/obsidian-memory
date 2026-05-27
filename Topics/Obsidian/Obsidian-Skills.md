@@ -1,14 +1,14 @@
 ---
 title: Obsidian Skills
 created: 2026-03-17
-updated: 2026-04-25
+updated: 2026-05-27
 tags:
   - obsidian
   - claude-code
   - skill
 ---
 
-這些 skill 出自 [obsidian-skills](https://github.com/kepano/obsidian-skills)，由 Obsidian 共同創辦人 Steph Ango（GitHub 帳號 kepano）維護，讓 Claude Code 直接讀寫 vault 與處理網頁來源。本篇列目前實際安裝、日常會用到的 skills；其他候選（含未安裝項目）見 [[Obsidian-Skills-候選]]。
+這些 skill 出自 [obsidian-skills](https://github.com/kepano/obsidian-skills)，由 Obsidian 共同創辦人 Steph Ango（GitHub 帳號 kepano）維護，讓 Claude Code 直接讀寫 vault 與處理網頁來源。本篇列目前實際安裝、日常會用到的 skills；其餘未安裝的候選項目見上方 repo。
 
 | Skill | 用途 |
 |-------|------|
@@ -20,4 +20,3 @@ tags:
 ## 相關
 - [[defuddle]]
 - [[Obsidian-CLI-整合指南]]
-- [[Obsidian-Skills-候選]]
