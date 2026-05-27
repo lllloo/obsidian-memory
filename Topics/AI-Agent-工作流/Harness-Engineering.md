@@ -27,7 +27,8 @@ Anthropic 的 long-running app development harness 把複雜任務拆成三個�
 ## 立場
 
 - **Generator 不要自評**：LLM 對自己輸出過度自信，主觀任務（UI / 產品完成度）尤其明顯——把評估獨立出來品質才會穩
-- **通用工具比客製 JSON schema 工具穩**：LLM 對 `grep` / `git` / `npm` 這類通用 CLI 有更豐富訓練先驗，自訂工具 schema 越多越脆；但前提是資料本身已經結構化、命名一致、可被檔案系統與 CLI 讀懂（Vercel 在 text-to-SQL agent 拿掉 80% 工具後速度 / token / 成功率都改善）
+- **通用工具比客製 JSON schema 工具穩**：LLM 對 `grep` / `git` / `npm` 這類通用 CLI 有更豐富訓練先驗，自訂工具 schema 越多越脆；但前提是資料本身已經結構化、命名一致、可被檔案系統與 CLI 讀懂（Vercel 在 text-to-SQL agent 拿掉 80% 工具後速度 / token / 成功率都改善）。延伸手法是**用型別系統當 guardrail**：與其讓 LLM 直接猜 raw JSON，不如讓它產出能編譯的程式碼再轉換——n8n 官方 MCP 讓模型寫 TypeScript、經 type-check / 編譯驗證後才轉成 workflow JSON，型別系統先過濾掉大量結構錯誤
+- **大型 codebase 用 file system 導航勝過 RAG**：把整個 codebase embedding 後 semantic search，容易拿到過期或相似但錯誤的檔案、central index 與實際檔案系統不同步、agent 據此幻覺出不存在的 module / symbol；改用 file system + shell + 精準讀檔逐步縮小範圍（同 [[Production-RAG-架構]] 的 agentic `list/grep/read` 骨架）更穩、更省 context——這是「通用工具勝過客製抽象」在 code navigation 上的體現
 - **狀態外部化才能續跑**：progress 文件、feature checklist、task graph、git commits——把「只存在對話裡」的資訊拉回 repo；compaction 可以降低重開 session 的頻率，但長任務仍需要 handoff artifacts、必要時 reset，以及可被下一輪 agent 接手的外部狀態
 
 ## 命名史與爭議

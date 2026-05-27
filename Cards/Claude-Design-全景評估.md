@@ -28,7 +28,7 @@ Anthropic 把 Claude Design 拆成獨立產品，補的是 Claude Code 長期最
 |---|---|---|
 | **原生派** | Claude Design 真正的價值不在 one-shot，而在 variants + tweaks 的視覺迭代 | Chase H：快速上手、Masterclass |
 | **繞道派** | 同樣的工作流可在 Claude Code 用 Skill + library + parallel agents 複製，且更便宜可控 | AILABS-393：陷阱解析 |
-| **開源替代派** | 用開源 Skill（Huashu Design）把 Claude Design 的設計哲學裝進 Claude Code，不被 weekly usage 卡住 | Chase H：Huashu Design |
+| **開源替代派** | 用開源工具（Huashu Design / Open Design）把 Claude Design 的設計哲學裝進 Claude Code，不被 weekly usage 卡住 | Chase H：Huashu Design、Open Design |
 | **混合派** | Claude Design 做設計決策（80–90%）→ hand off 到 Claude Code 工程化收尾 | Chase H：Seedance 動畫網站、Masterclass |
 
 **三派並非互斥**：實務上多數人會混合——重要 landing page 在 Claude Design 試 variants、日常頁面用 Skill 在 Claude Code 跑。
@@ -114,6 +114,8 @@ Claude Design 最有效的特色之一是**先問 10–15 題澄清需求再開�
 
 實測三輪頭對頭比對中，Test 1（從零生成）與 Test 3（簡報）結果接近；Test 2（套既有 design system）Claude Design 整體略勝（預載 design system 是它的強項）。整體上 Huashu Skill 在不需 GUI 的場景已可替代，且 token 用量低一個數量級。**真空比較 Claude Design 仍勝**（GUI 是 Skill 永遠做不到的），但對「只要拿到設計成品」的人已經夠用。
 
+**Open Design** 是另一個開源克隆，與 Huashu 的關鍵差別在它**帶 GUI**（Huashu 只有 terminal），核心價值同樣在建 prototype / slide deck（與 Claude Design 機制幾乎相同），並可額外掛 media providers 做 image / video 生成（Claude Design 沒有）。但它**無原生上傳 design system 介面**，要繼承既有品牌得繞 Claude Design 出口或讓 agent 讀資料夾仿造——反而比 Huashu「terminal 直接讀整個資料夾繼承風格」綁手。定位取捨：**要 GUI 又被 usage 卡 → Open Design；要更彈性、更快、能直接繼承資料夾 → Huashu**。Image / Video templates 分頁多屬 bloat。
+
 ## 進階工作流：動畫 Hero 網站（混合派代表流）
 
 Chase H 的 Seedance 動畫網站影片給的是當前最務實的混合工作流，固定五步：
@@ -152,13 +154,14 @@ Chase H 的 Seedance 動畫網站影片給的是當前最務實的混合工作�
 
 ## 外部來源
 
-來自 Inbox/YouTube 的五篇影片摘要：
+來自 Inbox/YouTube 的影片摘要：
 
 - Chase H — [Claude Design 快速上手導覽](https://www.youtube.com/watch?v=-tGH2tLwCEw)
 - Chase H — [Claude Design Masterclass 深度指南](https://www.youtube.com/watch?v=iJRq1kLLRmY)
 - Chase H — [Claude Design + Seedance 2.0 動畫網站](https://www.youtube.com/watch?v=7uW1SKmx-Ic)
 - AILABS-393 — [Claude Design 其實是個大坑](https://www.youtube.com/watch?v=GbuwosWEvHo)
 - Chase H — [Huashu Design 開源版實測](https://www.youtube.com/watch?v=Nmk1wxoi6ys)
+- Chase H — [Open Design 開源 Claude Design 替代](https://www.youtube.com/watch?v=BGQ9i3fvNds)
 
 相關主題：
 

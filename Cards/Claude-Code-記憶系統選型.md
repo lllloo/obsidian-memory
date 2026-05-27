@@ -38,6 +38,13 @@ tags:
 
 **本 vault 走的是 L5（Karpathy LLM Wiki）路線**——但做了吸收型調整，消化完刪原料，見 [[vault-model]]。
 
+### L5 落地經驗
+
+實作 L5（Obsidian + Claude Code）的兩條心得：
+
+- **知識庫慢慢長出來、不一次到位**：從最小結構起步（如 projects + 連到生涯主線的 pillars），再按需求逐步加 decisions、日誌、週報、insight。
+- **wikilink 由 AI 按語義代建、人不手動維護**：請 agent「按語義判斷哪些檔案有關係並加雙向連線」，連線夠密，AI 讀任一檔時就能沿連結跨讀相關內容——在恰好的時刻讀到恰好的 context，正是 L5 對抗 context rot 的方式。
+
 ## 相關
 
 - [[Context-Engineering]] — context rot 與 auto memory 的底層概念
