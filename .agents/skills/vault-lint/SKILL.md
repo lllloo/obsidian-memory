@@ -39,13 +39,13 @@ rg 'extracted_to:' Inbox --glob "*.md" -l
 
 ```bash
 # 缺 title（Cards/ Topics/ 正式筆記）
-rg -rL '^title:' Cards Topics --glob "*.md" 2>/dev/null
+rg --files-without-match '^title:' Cards Topics --glob "*.md" 2>/dev/null
 
 # 缺 tags（排除 index.md，index 頁允許不加 tags）
-rg -rL '^tags:' Cards Topics --glob "*.md" --glob "!index.md" 2>/dev/null
+rg --files-without-match '^tags:' Cards Topics --glob "*.md" --glob "!index.md" 2>/dev/null
 
 # 缺 updated
-rg -rL 'updated:' Cards Topics --glob "*.md" 2>/dev/null
+rg --files-without-match '^updated:' Cards Topics --glob "*.md" 2>/dev/null
 ```
 
 ### 4. Topics 資料夾缺 index.md
@@ -68,10 +68,10 @@ done
 ### 6. Tag 同義異寫
 
 ```bash
-rg -oh '^\s+- \S+' . --glob "*/*.md" | sed 's/^[[:space:]]*- //' | sort | uniq -c | sort -rn | head -60
+rg -oI '^\s+- [A-Za-z0-9_-]+\s*$' . --glob "*.md" | sed 's/^[[:space:]]*- //;s/[[:space:]]*$//' | sort | uniq -c | sort -rn | head -60
 ```
 
-輸出 top 60 tag 及使用次數，讓用戶肉眼辨識同義異寫（如 `claude-code` vs `claudeCode`）。
+輸出 top 60 英數 tag 及使用次數，讓用戶肉眼辨識同義異寫（如 `claude-code` vs `claudeCode`）。用 `-oI`（only-matching + no-filename），**勿用 `-oh`**——`-h` 會被當 `--help` 而印出 ripgrep 說明。
 
 ### 7. 孤立頁面（無入站 wikilink）
 
@@ -87,11 +87,20 @@ done
 ### 8. 死連結（wikilink 目標不存在）
 
 ```bash
-rg -oh '\[\[([^\]|#]+)' . --glob "*.md" | sed 's/\[\[//' | sort -u | while IFS= read -r t; do
-  t=$(echo "$t" | xargs)
-  find . \( -name "${t}.md" -o -name "${t}.base" \) 2>/dev/null | grep -q . || echo "[[${t}]]"
+rg -oI '\[\[[^]|#]+' . --glob "*.md" | sed 's/.*\[\[//' | sort -u | while IFS= read -r t; do
+  t="$(echo "$t" | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')"
+  [ -z "$t" ] && continue
+  case "$t" in *"<"*) continue;; esac          # 跳過 schema 佔位符如 [[<整合頁名>]]
+  base="${t##*/}"                                # 取 basename，容許帶路徑 wikilink
+  if [[ "$base" == *.base ]]; then
+    find . -name "$base" 2>/dev/null | grep -q . || echo "[[${t}]]"
+  else
+    find . -name "${base}.md" 2>/dev/null | grep -q . || echo "[[${t}]]"
+  fi
 done
 ```
+
+> 用 `-oI`，**勿用 `-oh`**（`-h` = `--help`）。判定已排除三類誤報：schema 佔位符 `[[<...>]]`、帶路徑 wikilink（取 basename 比對）、`.base` 連結（按副檔名比對）。
 
 ## 報告格式
 
