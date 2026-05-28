@@ -1,7 +1,7 @@
 ---
 title: Claude Code 完成提示（Windows）— 方案比較
 created: 2026-05-25
-updated: 2026-05-27
+updated: 2026-05-28
 tags:
   - claude-code
   - hooks
@@ -37,14 +37,31 @@ tags:
 
 OSC 9;4 state 速查：`0` 清除、`1` 綠色、`2` 紅色、`3` 旋轉、`4` 黃色暫停。格式：`ESC]9;4;<state>;<progress>BEL`。
 
-## Esc 清除卡住狀態
+## 卡住狀態清除
 
-如果 Windows Terminal 的 progress 狀態卡住，可在 `$PROFILE` 綁 `Esc` 清掉，同時還原目前輸入行。Windows PowerShell 5.1 要用 `[char]27` / `[char]7` 送 ESC / BEL，不用 PowerShell 7 的 `` `e `` 寫法。
+`$PROFILE` 綁 `Esc` 目前實測無效，不列入可靠方案。Claude Code 執行時 `Esc` 會先送進 Claude Code 本身，不會觸發 PowerShell 的 PSReadLine key handler，因此下面這種設定不能用來穩定清掉 Windows Terminal 的 OSC 9;4 狀態：
 
 ```powershell
 Set-PSReadLineKeyHandler -Key Escape -BriefDescription ClearTerminalProgress -LongDescription "Clear Windows Terminal OSC 9;4 progress indicator and revert the current line." -ScriptBlock {
     [Console]::Write([char]27 + "]9;4;0;0" + [char]7)
     [Microsoft.PowerShell.PSConsoleReadLine]::RevertLine()
+}
+```
+
+比較實用的補救點是在回到 shell prompt 時清除：如果 Claude Code 已退出或中斷後進度仍卡住，讓 prompt 每次重新顯示時送一次清除序列。
+
+```powershell
+function Clear-WTProgress {
+    [Console]::Write([char]27 + "]9;4;0;0" + [char]7)
+}
+
+if (-not (Test-Path variable:global:__WTProgressOriginalPrompt)) {
+    $global:__WTProgressOriginalPrompt = (Get-Command prompt -CommandType Function).ScriptBlock
+}
+
+function prompt {
+    Clear-WTProgress
+    & $global:__WTProgressOriginalPrompt
 }
 ```
 
