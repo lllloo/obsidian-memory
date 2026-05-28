@@ -48,4 +48,4 @@ Codex 的實驗性 `/goal` 指令把 **RALF loop**（Read-Act-Loop-Feedback，�
 
 - [[Harness-Engineering]] — `/goal` 是長任務 harness 的最低門檻封裝
 - [[Ticket-驅動的-Agent-協作]] — 更高一層的多 ticket 協作拓撲
-- [[codex-plugin-cc]] — Codex 在 Claude Code 內的整合
+- [[bookmark-codex-plugin-cc-Codex整合外掛|codex-plugin-cc]] — Codex 在 Claude Code 內的整合

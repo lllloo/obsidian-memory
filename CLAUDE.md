@@ -11,6 +11,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working in this
 - Vault 是「吸收型卡片盒」：筆記寫成已內化的理解版本，不保存整篇原料。
 - 「已內化」以使用者本人讀過／看過為準。AI 代為摘要、但使用者尚未親自消化的外部原料，**不主動升 Card**——摘要留 Inbox 當「待讀佇列」，待本人消化再內化。已誤升成 Card 的，**搬回 Inbox**，不用 `draft` 等標記在 Cards 充當待讀狀態。
 - 不主動擴大 scope：不自動回存筆記、不自動結構搬移或升 Topic。
+- `Inbox/Clippings/` 例外：agent **不主動掃描、消化或刪除** Clippings 內容。使用者剪藏的網頁原料留作參考，只在使用者明確指名（如「消化 Clippings/X.md」、「處理 Clippings」）才處理。「整理 Inbox」這類掃描動作預設**跳過 Clippings**。
 - 刪除筆記（Inbox／Cards／Topics）需使用者拍板；唯 skill（如 `ob`、`vault-youtube-sync`）流程內定義的消化刪原篇依各 skill 流程，不在此限。
 - 執行 `git push` 或任何遠端推送前，必須先取得使用者明確同意。
 
@@ -66,7 +67,8 @@ rg -A5 '^tags:' . -g '*.md'
 
 | 欄位 | 用途 / 何時用 | 值格式 |
 |---|---|---|
-| `title` | 主題名，可含空格與中文；不加日期前綴 | 字串（檔名為其無空格、`-` 連接版） |
+| `title` | 主題名，可含空格與中文；不加日期前綴（SKILL 範本可例外，如 `vault-updates-daily` 日報 `"<YYYY-MM-DD> Daily Updates"`） | 字串（檔名為其無空格、`-` 連接版） |
+| `description` | 一句話自我介紹，給 Obsidian Bases、Quartz SEO、AI 查詢用。**適用**：Topics `index.md`、Inbox/YouTube 影片摘要、Inbox/Clippings 網頁剪藏（Web Clipper 自動帶 `{{description}}`）；其餘筆記不加（書籤型第一段已是定位段，判斷型靠第一段帶頭） | 字串，30–80 字；不重複 title，避免「這篇 / 本文」自我指涉 |
 | `created` | 進 vault 日期 | `YYYY-MM-DD` |
 | `updated` | 最後修改日期 | `YYYY-MM-DD` |
 | `source` | 來源 URL（網頁／影片連結；YouTube `index` 為頻道 URL）；回查用，非證據本體 | URL |
@@ -77,7 +79,7 @@ rg -A5 '^tags:' . -g '*.md'
 | `extracted_to` | 多主題 Inbox 筆記內化某切角後指回整合頁（半消化狀態） | `"[[<整合頁名>]]"` |
 | `tags` | 主題分類 + 必要的功能性 tag | YAML list |
 
-一般筆記需有 `title`、`created`、`updated`、`tags`。根 `index.md`（Quartz 公開首頁）可不加 `tags`。`tags` 一律用 YAML list，不用 inline array 或字串。
+一般筆記需有 `title`、`created`、`updated`、`tags`。根 `index.md`（Quartz 公開首頁）可不加 `tags`。`tags` 一律用 YAML list，不用 inline array 或字串。下列三類需有 `description`：Topics `index.md`、Inbox/Clippings 網頁剪藏（Web Clipper 自動帶）、Inbox/YouTube 影片摘要（vault-youtube-sync skill 範本帶）。
 
 Topics 的 `index.md` 是主題入口；Cards/筆記也可以是整合頁。不要用額外 tag 標記這類結構角色，辨識時依路徑（如 `Topics/*/index.md`）與內容判斷。
 

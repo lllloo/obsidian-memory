@@ -18,5 +18,5 @@ tags:
 
 ## 相關
 
-- [[DESIGN.md-官方規格]] — 官方 8 段 base spec
-- [[Stitch]] — extended format 提出者
+- [[bookmark-DESIGN.md-設計系統規格|DESIGN.md]] — 官方 8 段 base spec
+- [[bookmark-Stitch-AI設計畫布|Stitch]] — extended format 提出者

@@ -177,6 +177,7 @@ print(m.group(1)[:10] if m else '')
   ```
   ---
   title: <影片標題的繁體中文翻譯>（技術名詞與品牌名保留英文）
+  description: <30–80 字一句話摘要，從 transcript 提取影片核心；不重複 title、避免「這集 / 本片」自我指涉>
   created: <今日 YYYY-MM-DD>
   updated: <今日 YYYY-MM-DD>
   source: <youtube url>
@@ -186,6 +187,7 @@ print(m.group(1)[:10] if m else '')
     - youtube
   ---
   ```
+- description 撰寫要點：給 Obsidian Bases table、Quartz SEO、AI 查詢用；情況 A（有 transcript）依內容寫；情況 B（無 transcript）就描述頁面 description 已知內容，不推測補充
 - 不使用 `#` 標題 heading（Quartz 從 frontmatter 自動產生）
 
 ## 內容品質標準

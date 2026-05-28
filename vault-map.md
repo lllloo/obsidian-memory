@@ -20,7 +20,7 @@ tags:
 │   │   ├── AgentcrewAcademy/      — Claude Code Windows 安裝、MCP 整合、Sub-Agent 與新手教學
 │   │   ├── Chase-H-AI/            — Claude Code 實戰、RAG、Obsidian 整合
 │   │   └── daveebbelaar/          — Python、LLM Evals、API 整合
-│   ├── Clippings/ — 網頁剪貼暫存（消化後清空）
+│   ├── Clippings/ — 網頁剪貼參考庫（agent 不主動消化；使用者明指才處理）
 │   └── Updates/   — 日常更新彙整（vault-updates-daily skill 產出）
 ├── Cards/         — 未歸屬或待補事實審查的完整概念 Cards
 └── Topics/        — 已歸檔主題（子目錄如下）

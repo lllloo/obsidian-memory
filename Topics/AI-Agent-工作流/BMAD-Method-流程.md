@@ -118,4 +118,4 @@ Architecture drives stories — `CE` 必在 `CA` 之後。
 
 ## 相關
 
-- [[BMAD框架]] — 框架定位與 12+ persona 介紹
+- [[bookmark-BMAD-Agent開發框架|BMAD]] — 框架定位與 12+ persona 介紹

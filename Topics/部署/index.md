@@ -1,7 +1,8 @@
 ---
 title: 部署
+description: 上版流程、Quartz 靜態網站發佈、CI/CD 與本機開發環境踩坑
 created: 2026-05-08
-updated: 2026-05-27
+updated: 2026-05-28
 tags:
   - deploy
 ---

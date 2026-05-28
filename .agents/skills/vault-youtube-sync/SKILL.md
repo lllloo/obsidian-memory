@@ -1,7 +1,6 @@
 ---
 name: vault-youtube-sync
 description: 將 YouTube 頻道影片批次轉成 Obsidian 筆記，支援指定頻道 URL（@handle）或一次同步所有既有頻道；每個頻道建立 index + base view 索引，含增量同步（last_sync_id checkpoint）與失敗占位重試（draft 占位）。使用時機：使用者提供 YouTube 頻道 URL（含 @handle）、要求「同步頻道影片」、「整理 YouTube 到 vault」、「抓頻道影片建筆記」、「更新所有頻道」、「yt 全部更新」，或直接呼叫 /vault-youtube-sync。
-disable-model-invocation: true
 ---
 
 # YouTube Channel to Notes
@@ -174,6 +173,8 @@ filters:
     - file.ext == "md"
     - file.name != "01.index"
 properties:
+  description:
+    displayName: 摘要
   published:
     displayName: 上傳日期
   source:
@@ -185,6 +186,7 @@ views:
     name: 影片清單
     order:
       - file.name
+      - description
       - published
       - source
     sort:

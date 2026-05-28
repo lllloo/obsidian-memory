@@ -32,4 +32,4 @@ tags:
 
 ## 靈感來源
 
-Pinterest、Dribbble、Midjourney、[[Awwwards-找前端設計靈感|Awwwards]]
+Pinterest、Dribbble、Midjourney、[[bookmark-Awwwards-前端設計靈感站|Awwwards]]

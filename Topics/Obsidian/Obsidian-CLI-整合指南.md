@@ -28,5 +28,5 @@ CLI 從 Obsidian 1.12.7+ 隨桌面 app 內建，執行檔是 `C:\Program Files\O
 
 ## 相關
 
-- [[defuddle]] — 同 kepano 維護
+- [[bookmark-defuddle-網頁清洗CLI|defuddle]] — 同 kepano 維護
 - [[daily-append-bug]] — `daily:append` 在特定環境失效

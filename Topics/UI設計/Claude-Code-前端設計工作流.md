@@ -29,10 +29,10 @@ Claude Code 在 agentic coding（自主代理寫程式）表現卓越，但前�
 
 最低成本介入，用 Skill 把設計觀念灌進 agent。四種互補方向：
 
-- **[Impeccable](https://impeccable.style)**（[repo](https://github.com/pbakaus/impeccable)）：1 個 skill + 23 個設計命令，用**反模式**（anti-patterns）直接列舉 AI slop。詳見 [[Impeccable-前端設計Skill]]
+- **[Impeccable](https://impeccable.style)**（[repo](https://github.com/pbakaus/impeccable)）：1 個 skill + 23 個設計命令，用**反模式**（anti-patterns）直接列舉 AI slop。詳見 [[bookmark-Impeccable-前端設計Skill|Impeccable]]
 - **[UI UX Pro Max](https://www.uupm.cc/)**（[repo](https://github.com/nextlevelbuilder/ui-ux-pro-max-skill)）：提供 style / color / typography / landing pattern 的設計資料庫與 design-system generation
 - **[Taste Skill](https://www.tasteskill.dev)**（[repo](https://github.com/Leonxlnx/taste-skill)）：用 `DESIGN_VARIANCE`、`MOTION_INTENSITY`、`VISUAL_DENSITY` 三個參數調節風格強度，適合差異化
-- **[awesome-design-md](https://github.com/VoltAgent/awesome-design-md)**：DESIGN.md 範例庫（ElevenLabs / Bugatti 等知名網站設計系統拆解），詳見 [[Awesome-Design-MD]]
+- **[awesome-design-md](https://github.com/VoltAgent/awesome-design-md)**：DESIGN.md 範例庫（ElevenLabs / Bugatti 等知名網站設計系統拆解），詳見 [[bookmark-Awesome-Design-MD-設計範例庫|Awesome-Design-MD]]
 
 **局限**：只解了模型面（給設計觀念），沒解使用者面（品味瓶頸）。
 
@@ -40,7 +40,7 @@ Claude Code 在 agentic coding（自主代理寫程式）表現卓越，但前�
 
 轉策略：不描述，直接給截圖。
 
-- **[Awwwards](https://www.awwwards.com)**（[[Awwwards-找前端設計靈感]]）、Godly.website、Pinterest、Dribbble
+- **[Awwwards](https://www.awwwards.com)**（[[bookmark-Awwwards-前端設計靈感站|Awwwards]]）、Godly.website、Pinterest、Dribbble
 - 操作：截圖 → 拖入 Claude Code → 「風格接近這個」
 
 **瓶頸**：截圖 → 程式碼有天然轉換損失，近似但不精準，反覆截圖迭代效率低。
@@ -74,7 +74,7 @@ Claude Code 在 agentic coding（自主代理寫程式）表現卓越，但前�
 - **Figma MCP + Shadcn MCP**（Vibe Design）：把 Figma frame、元件資訊與 registry 線索交給 agent 落地；若設計稿命名乾淨、元件選型一致，還原會更穩，但不應寫成保證式的像素級還原
   - 若 Figma 稿用 Shadcn 元件且 layer 名對應，Shadcn MCP 自動從 registry 抓元件
   - 第三方 Shadcn registry：Fancy Components、Animate UI、Magic UI、Plate UI
-- **[Stitch](https://stitch.withgoogle.com/)**（[[Stitch]]）：視覺畫布生成 variants，可匯出程式碼或轉入 Claude Code
+- **[Stitch](https://stitch.withgoogle.com/)**（[[bookmark-Stitch-AI設計畫布|Stitch]]）：視覺畫布生成 variants，可匯出程式碼或轉入 Claude Code
 - **[Pencil](https://www.pencil.dev/)**：VS Code / Cursor 側邊的 infinite vector canvas（無限延展向量畫布），邊畫邊生成 React/Tailwind，透過 MCP 與 Claude Code 溝通（[[Pencil-讀取規則]]）
 - **[Figma](https://www.figma.com/)** / **[paper.design](https://paper.design/)**：傳統與新興向量設計工具，截圖或匯出後給 Claude Code 實作
 
@@ -112,11 +112,11 @@ Claude Code 在 agentic coding（自主代理寫程式）表現卓越，但前�
 
 ## 相關
 
-- [[Impeccable-前端設計Skill]] — Layer 1 工具細節
-- [[Awesome-Design-MD]] — Layer 1 範例庫
+- [[bookmark-Impeccable-前端設計Skill|Impeccable]] — Layer 1 工具細節
+- [[bookmark-Awesome-Design-MD-設計範例庫|Awesome-Design-MD]] — Layer 1 範例庫
 - [[Pencil-讀取規則]] — Layer 5 工具的使用規則
-- [[Stitch]] — Layer 5 工具的深度細節
-- [[DESIGN.md-官方規格]] — 設計系統文件格式規範
+- [[bookmark-Stitch-AI設計畫布|Stitch]] — Layer 5 工具的深度細節
+- [[bookmark-DESIGN.md-設計系統規格|DESIGN.md]] — 設計系統文件格式規範
 - [[動效與互動]] — Layer 6 動效深度
 
 ## 來源

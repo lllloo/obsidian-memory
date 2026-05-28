@@ -18,5 +18,5 @@ tags:
 | `defuddle` | 從網頁擷取乾淨 Markdown；`.md` 結尾的 URL 直接用 WebFetch |
 
 ## 相關
-- [[defuddle]]
+- [[bookmark-defuddle-網頁清洗CLI|defuddle]]
 - [[Obsidian-CLI-整合指南]]

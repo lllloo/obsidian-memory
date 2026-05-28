@@ -38,6 +38,57 @@
 
 例：Impeccable / Stitch / Awwwards / Awesome-Design-MD / Obsidian-CLI / defuddle（皆屬 UI設計 / Obsidian 主題）
 
+### 檔名規則
+
+書籤型 Card 統一加 `bookmark-` 前綴方便辨識，加角色尾綴說明用途：
+
+```
+bookmark-<工具/方法論名稱>-<用途說明>.md
+```
+
+- 前綴 `bookmark-`：固定，標角色（書籤型）
+- 中段：工具或方法論的專有名稱，保留原大小寫與標點
+- 尾綴：1-2 個詞描述用途/形態，用 `-` 連接；中英混用看哪個自然
+
+範例：
+
+- `bookmark-Stitch-AI設計畫布.md`
+- `bookmark-defuddle-網頁清洗CLI.md`
+- `bookmark-Impeccable-前端設計Skill.md`
+- `bookmark-BMAD-Agent開發框架.md`
+- `bookmark-Awwwards-前端設計靈感站.md`
+- `bookmark-DESIGN.md-設計系統規格.md`
+
+引用書籤型時用 wikilink alias 保持顯示精簡：`[[bookmark-Stitch-AI設計畫布|Stitch]]`。
+
+### 內容範本
+
+```markdown
+---
+title: <工具/方法論名稱>
+created: <YYYY-MM-DD>
+updated: <YYYY-MM-DD>
+source: <官方主入口 URL>
+tags:
+  - <主題 tag>
+  - <其他必要 tag>
+---
+
+<單段定位：X 是什麼 + 觸發情境/用途 + 必要限制>
+
+## 連結
+
+- 官網：<URL>
+- Repo：<URL>
+- 文件：<URL>
+
+## 相關
+
+- [[<同主題其他筆記>]] — <可選一句註解>
+```
+
+固定三段：定位段（一段話）→ `## 連結`（純條列，用 `<URL>` 寫法）→ `## 相關`（wikilink 清單）。
+
 ## 保留條件（5 條全中才升 Topic）
 
 1. **有「我」**：明確的立場、踩坑、為什麼選這個、什麼時候不該用——而不是「我整理了官方資料」

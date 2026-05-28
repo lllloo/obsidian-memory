@@ -4,6 +4,8 @@ filters:
     - file.ext == "md"
     - file.name != "01.index"
 properties:
+  description:
+    displayName: 摘要
   published:
     displayName: 上傳日期
   source:
@@ -15,6 +17,7 @@ views:
     name: 影片清單
     order:
       - file.name
+      - description
       - published
       - source
     sort:

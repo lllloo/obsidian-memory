@@ -1,7 +1,8 @@
 ---
 title: 前端技術
+description: CSS 排版陷阱、scrollbar/flexbox/padding 等常見 bug、SPA 路由判斷，以及切版時反推魔術數字的檢查習慣
 created: 2026-04-25
-updated: 2026-05-27
+updated: 2026-05-28
 tags:
   - frontend
 ---

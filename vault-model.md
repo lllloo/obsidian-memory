@@ -11,6 +11,7 @@ tags:
 
 > 這份文件給人看，用來建立整體心智模型。  
 > 可執行規則不放這裡：agent 寫入規則看 [`CLAUDE.md`](CLAUDE.md)，升 Topic 門檻看 [`topics-review.md`](topics-review.md)，導航與 tag 查詢看 [`vault-map.md`](vault-map.md)。
+> 執行邊界（刪除筆記需使用者拍板、`git push` 須明確同意、`Inbox/Clippings/` 不主動消化、`extracted_to` 半消化原篇留 Inbox 的合法性）均以 [`CLAUDE.md`](CLAUDE.md) 的基本原則、frontmatter 與整合流程規則為準，本文不重述。
 
 一句話：**Vault 是腦的延伸，不是倉庫。**
 
@@ -66,7 +67,9 @@ Inbox 有三條清空路徑：
 
 路徑 A、B 寫 Card 時，按既有慣例附上來源連結，來源只是回查用，不作為證據本體。
 
-多主題例外：若 Inbox 筆記同時涵蓋多個主題，而本次只內化其中一個切角，可以從原筆記移除已內化段落、保留剩餘段落，並在 frontmatter 加 `extracted_to: "[[<整合頁名>]]"` 指回整合頁。半消化筆記仍是 Inbox 的待消化狀態，鼓勵下次同主題整理時再處理剩餘內容。
+多主題例外：若 Inbox 筆記同時涵蓋多個主題，而本次只內化其中一個切角（不限路徑 A 寫新 Card 或路徑 B 強化既有 Card / Topic），可以從原筆記移除已內化段落、保留剩餘段落，並在 frontmatter 加 `extracted_to: "[[<整合頁名>]]"` 指回整合頁（路徑 B 時即指回被強化的既有頁）。半消化筆記仍是 Inbox 的待消化狀態，鼓勵下次同主題整理時再處理剩餘內容。
+
+**`Inbox/Clippings/` 例外**：剪藏網頁原料**不走上面三條清空路徑**。agent 不主動掃描、不自動消化、不自動刪除 Clippings；「整理 Inbox」這類掃描動作預設跳過此資料夾。只有使用者明確指名（如「消化 Clippings/X.md」、「處理 Clippings」）才處理。Clippings 的角色從「暫存」轉為「使用者參考庫」，可長期保留。
 
 ### Cards → Topics（歸檔）
 

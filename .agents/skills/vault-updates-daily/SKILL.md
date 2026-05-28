@@ -1,7 +1,6 @@
 ---
 name: vault-updates-daily
 description: 每天彙整高信任 developer tooling 更新成一篇 Obsidian daily updates briefing，來源涵蓋官方 changelog / release notes、GitHub releases（含 authenticated user 的 starred repos）、GitHub discussions；專注 coding agent 與 developer workflow 相關變更。追蹤的工具清單由 `Inbox/Updates/01.index.md` 決定，skill 不硬編碼。使用時機：使用者要求「同步 changelog」、「release notes 更新」、「官方變更同步」、「daily updates」，或直接呼叫 /vault-updates-daily。
-disable-model-invocation: true
 ---
 
 # Vault Updates Daily
