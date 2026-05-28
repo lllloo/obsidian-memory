@@ -40,7 +40,6 @@ Symphony 能跑的前提是環境調好，讓 agent 拿到所有需要的東西�
 
 ## 相關
 
-- [[AI開發者商業定位]] — agent 接管工作流的商業 / 職涯視角
 - [[Harness-Engineering]] — 「狀態外部化」被推進成「ticket 系統即 state machine」
 - [[Claude-Code-多-Agent-協作]] — 機制層的子 agent 拆派，與本篇協作拓撲層互補
 - [[Codex-Goals-長任務迴圈]] — 單一長任務的迴圈封裝，ticket 內的 agent 可用它跑

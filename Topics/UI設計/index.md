@@ -14,6 +14,7 @@ tags:
 ## 設計工具與工作流
 
 - [[Claude-Code-前端設計工作流]] — 七層工作流（Skill 注入 → 視覺參考 → 逆向工程 → Flow Engineering → 設計工具整合 → 個人化 → 前端建築師）
+- [[AI-設計品質量化檢測]] — 讓 AI 對生成 UI 自動檢測、修正、重跑的品質閉環
 - [[Pencil-讀取規則]] — Pencil MCP 讀 .pen 節點的遞迴與 ref descendants 規則
 
 ## 工具書籤
