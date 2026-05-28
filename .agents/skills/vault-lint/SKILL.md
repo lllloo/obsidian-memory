@@ -75,6 +75,8 @@ rg -oI '^\s+- [A-Za-z0-9_-]+\s*$' . --glob "*.md" | sed 's/^[[:space:]]*- //;s/[
 
 ### 7. 孤立頁面（無入站 wikilink）
 
+Topics 孤立 = 異常（升級主題理應連成網）；Cards 孤立 = 常態（吸收型卡片盒允許單張存在），僅供新建時補連結參考，**不視為待修問題**。掃描指令對兩者皆跑，但報告時分層標記（見報告格式）。
+
 對 Cards/ 與 Topics/ 下所有 .md（排除 index.md）確認有無被引用：
 
 ```bash
@@ -116,11 +118,12 @@ done
 
 ### 🟡 警告（N 項）
 - Inbox 積壓：42 篇（> 20）
-- 孤立頁面：Cards/baz.md（無入站連結）
+- 孤立 Topics：Topics/foo/bar.md（升級主題卻無入站連結）
 - vault-map 未收錄：SomeTopic
 - extracted_to 遺留：Inbox/abc.md
 
 ### 🔵 資訊（N 項）
+- 孤立 Cards：7 張（吸收型卡片盒，孤立可接受；摺疊成數量，不逐張列）
 - 缺 updated：N 篇
 - tag 同義異寫候選：（列出疑似重複的 tag 對）
 ```
@@ -135,7 +138,7 @@ done
 - 補缺失的 `updated` 欄位（設為今日日期）
 
 **需人工判斷（只列出，不自動動）：**
-- 孤立頁面 — 是否有意孤立？要補 wikilink 還是刪？
+- 孤立頁面 — **Topics 孤立**才需處置（補連結／檢查升級是否成立）；Cards 孤立預設保留，除非用戶主動要連。
 - 死連結 — 改外部 URL？刪 wikilink？補建目標頁？
 - tag 同義異寫 — 哪個是正典？
 - extracted_to 遺留 — 何時消化剩餘段落？
