@@ -32,4 +32,4 @@ tags:
 - **Subagent vs Forked subagent 容易混**：差別只在「要不要繼承當前對話」——要從零開始選 Subagent，要接著聊選 Forked subagent
 - **Agent Teams 不是跨家族 LLM**：teammate 是獨立 Claude Code session（可混搭 Sonnet / Opus / Haiku），但仍是 Claude 家族；想跨家族（GPT / Gemini）獨立視角看 [[codex-plugin-cc]]
 - **worktree 不解決 race condition**：兩個 agent 改不同檔不互踩沒錯，但改同一個邏輯區塊（如 schema migration）還是會撞——分支策略要先想好
-- **單一 session 內的模型分層 ≠ 多 agent**：不想開多 agent、只想讓 Opus 在 Sonnet 卡住時介入，用 [[Advisor-顧問策略]]（顧問↔執行者持續諮詢，非平行 spawn）
+- **單一 session 內的模型分層 ≠ 多 agent**：不想開多 agent、只想讓 Opus 在 Sonnet 卡住時介入，採「顧問↔執行者持續諮詢」模式（非平行 spawn）

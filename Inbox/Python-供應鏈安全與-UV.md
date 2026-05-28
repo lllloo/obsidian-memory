@@ -1,7 +1,7 @@
 ---
 title: Python 供應鏈安全與 UV
 created: 2026-05-27
-updated: 2026-05-27
+updated: 2026-05-28
 source: https://www.youtube.com/watch?v=bw1ZLzdXJn4
 published: 2026-05-21
 tags:

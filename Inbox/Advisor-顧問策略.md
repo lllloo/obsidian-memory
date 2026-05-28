@@ -1,7 +1,7 @@
 ---
 title: Advisor 顧問策略
 created: 2026-05-27
-updated: 2026-05-27
+updated: 2026-05-28
 source: https://www.youtube.com/watch?v=hGYfsvlQ5Ok
 published: 2026-04-09
 tags:

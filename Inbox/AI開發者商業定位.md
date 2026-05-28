@@ -1,7 +1,7 @@
 ---
 title: AI 開發者商業定位
 created: 2026-05-27
-updated: 2026-05-27
+updated: 2026-05-28
 source: https://www.youtube.com/watch?v=g07IBXhCRKc
 published: 2026-04-23
 tags:

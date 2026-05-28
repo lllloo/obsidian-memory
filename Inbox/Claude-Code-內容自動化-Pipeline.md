@@ -1,7 +1,7 @@
 ---
 title: Claude Code 內容自動化 Pipeline
 created: 2026-05-27
-updated: 2026-05-27
+updated: 2026-05-28
 source: https://www.youtube.com/watch?v=7q_rbT1a9dE
 published: 2026-03-30
 tags:

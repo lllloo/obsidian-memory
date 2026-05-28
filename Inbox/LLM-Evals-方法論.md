@@ -1,7 +1,7 @@
 ---
 title: LLM Evals 方法論
 created: 2026-05-27
-updated: 2026-05-27
+updated: 2026-05-28
 source: https://www.youtube.com/watch?v=a3SMraZWNNs
 published: 2025-09-04
 tags:

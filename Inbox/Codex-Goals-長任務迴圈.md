@@ -1,7 +1,7 @@
 ---
 title: Codex Goals 長任務迴圈
 created: 2026-05-27
-updated: 2026-05-27
+updated: 2026-05-28
 source: https://www.youtube.com/watch?v=nOFordZCyzs
 published: 2026-05-09
 tags:

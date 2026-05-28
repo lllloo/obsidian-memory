@@ -9,6 +9,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working in this
 ## 基本原則
 
 - Vault 是「吸收型卡片盒」：筆記寫成已內化的理解版本，不保存整篇原料。
+- 「已內化」以使用者本人讀過／看過為準。AI 代為摘要、但使用者尚未親自消化的外部原料，**不主動升 Card**——摘要留 Inbox 當「待讀佇列」，待本人消化再內化。已誤升成 Card 的，**搬回 Inbox**，不用 `draft` 等標記在 Cards 充當待讀狀態。
 - 不主動擴大 scope：不自動回存筆記、不自動結構搬移或升 Topic。
 - 刪除筆記（Inbox／Cards／Topics）需使用者拍板；唯 skill（如 `ob`、`vault-youtube-sync`）流程內定義的消化刪原篇依各 skill 流程，不在此限。
 - 執行 `git push` 或任何遠端推送前，必須先取得使用者明確同意。

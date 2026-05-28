@@ -1,7 +1,7 @@
 ---
 title: AI 設計品質量化檢測
 created: 2026-05-27
-updated: 2026-05-27
+updated: 2026-05-28
 source: https://www.youtube.com/watch?v=ER4PjxlvVCM
 published: 2026-04-29
 tags:

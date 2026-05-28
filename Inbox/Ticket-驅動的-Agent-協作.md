@@ -1,7 +1,7 @@
 ---
 title: Ticket 驅動的 Agent 協作
 created: 2026-05-27
-updated: 2026-05-27
+updated: 2026-05-28
 source: https://www.youtube.com/watch?v=M_AmPWmkpwA
 published: 2026-05-02
 tags:

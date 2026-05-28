@@ -38,14 +38,8 @@ tags:
 |------|------|------|
 | Claude Code 實作 | `claude-code` | `Topics/Claude-Code/` + `Cards/` + `Inbox/YouTube/` |
 | AI Agent 工作流 | `ai-agent` `agent-framework` `harness` | `Topics/AI-Agent-工作流/` + `Cards/` |
-| Agent 協作 / 長任務 | `advisor` `agentic` `codex` `harness` | `Cards/` + `Topics/Claude-Code/` |
-| RAG / 知識庫 | `rag` `agentic-rag` `hybrid-search` | `Cards/`（Production-RAG-架構） |
-| LLM Evals / 評估 | `eval` | `Cards/`（LLM-Evals-方法論） |
 | 記憶系統 / Context | `memory` `context-engineering` | `Cards/` |
 | MCP | `mcp` | `Cards/` |
-| 內容自動化 | `content-automation` | `Cards/` |
-| 安全 | `security` `python` | `Cards/` |
-| AI 職涯 / 商業 | `career` | `Cards/` |
 | Obsidian 操作 | `obsidian` `cli` | `Topics/Obsidian/` + `Cards/` |
 | UI 設計 / 設計工作流 | `design` `design-system` `frontend` | `Topics/UI設計/` + `Cards/` |
 | 前端 / CSS / 動效實作 | `css` `flexbox` `animation` | `Topics/前端技術/` + `Cards/` |

@@ -1,7 +1,7 @@
 ---
 title: Claude Code 記憶系統選型
 created: 2026-05-27
-updated: 2026-05-27
+updated: 2026-05-28
 source: https://www.youtube.com/watch?v=UHVFcUzAGlM
 published: 2026-04-24
 tags:

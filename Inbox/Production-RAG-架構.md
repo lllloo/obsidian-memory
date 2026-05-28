@@ -1,7 +1,7 @@
 ---
 title: Production RAG 架構
 created: 2026-05-27
-updated: 2026-05-27
+updated: 2026-05-28
 source: https://www.youtube.com/watch?v=XvKiTfd6Xvo
 published: 2026-05-14
 tags:
