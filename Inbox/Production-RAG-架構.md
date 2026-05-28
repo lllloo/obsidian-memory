@@ -50,10 +50,9 @@ Query → [BM25 sparse top-K] + [Dense embeddings top-K]
 ## 跨三種形態的共識
 
 1. **結構化輸出 + citation 是接進產品的基本盤**——前端能渲染答案並點擊跳原文。
-2. **沒有評估指標就沒有優化依據**：用 NDCG（或等價指標）衡量每次改動（換 embedding、換 chunk 策略、換 reranker、調 K），憑感覺優化就是憑感覺退化。建 evaluation set（BEIR 風格 corpus / queries / qrels，可用 LLM 半自動生成）跟建檢索 pipeline 一樣重要。詳見 [[LLM-Evals-方法論]]。
+2. **沒有評估指標就沒有優化依據**：用 NDCG（或等價指標）衡量每次改動（換 embedding、換 chunk 策略、換 reranker、調 K），憑感覺優化就是憑感覺退化。建 evaluation set（BEIR 風格 corpus / queries / qrels，可用 LLM 半自動生成）跟建檢索 pipeline 一樣重要。
 3. **反對「丟給 Claude Code one-shot 出一套 RAG」**——要理解每一塊機制，才能針對自家資料調優。
 
 ## 相關
 
-- [[LLM-Evals-方法論]] — NDCG / evaluation set 是 RAG 優化的前提
 - [[Context-Engineering]] — RAG 作為 context engineering 的一個面向
