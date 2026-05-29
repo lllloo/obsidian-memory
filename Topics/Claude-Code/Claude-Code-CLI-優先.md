@@ -1,7 +1,7 @@
 ---
 title: Claude Code CLI 優先
 created: 2026-04-24
-updated: 2026-05-08
+updated: 2026-05-29
 tags:
   - claude-code
   - cli
@@ -11,7 +11,7 @@ tags:
 
 **架構層**：CLI 與 Claude Code 同住 terminal，呼叫就是直接 spawn process；MCP 通常是常駐 server + IPC，多一層橋接的 overhead 與失敗模式。
 
-**Token 層**：MCP server 啟動時 tool descriptions 就占 context，每次呼叫的 response 也帶 wrapping。同任務下 CLI 通常省下大量上下文。
+**Token 層**：未啟用 Tool Search 時，MCP server 的 tool descriptions 啟動就占 context（多伺服器設定可達數萬 token），每次呼叫的 response 也帶 wrapping。2026 起 Claude Code 預設以 Tool Search 把 MCP 工具設為 deferred、按需載入（官方稱省 85%+），啟動不再全載——但工具被搜出展開後仍占 context，加上 server / IPC 橋接開銷，同任務下 CLI 通常仍較省上下文。
 
 **生態層**：CLI 是工具的主介面，功能最完整；MCP 多半是後補包裝。CLI 通常配套 skill 一起發佈——一行指令同時裝 CLI + skill 到 `.claude/`，比設定 MCP server 啟動參數簡單。
 

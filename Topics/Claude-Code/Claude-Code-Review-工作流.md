@@ -1,7 +1,7 @@
 ---
 title: Claude Code Review 工作流
 created: 2026-04-26
-updated: 2026-05-08
+updated: 2026-05-29
 tags:
   - claude-code
   - code-review
@@ -13,16 +13,17 @@ PR 規模分層跑不同 review 工具，避免「每次都 ultra」浪費 token
 
 | 規模 | 流程 |
 |---|---|
-| 一般 PR | 本地測試 → `/review` → `/security-review` |
-| 大型 / 關鍵 PR（>500 行）| 加 `/simplify`（前）+ `/ultrareview`（後） |
+| 一般 PR | 本地測試 → `/code-review`（找 bug）→ `/security-review` |
+| 大型 / 關鍵 PR（>500 行）| 加 `/simplify`（清理）+ `/code-review ultra`（雲端深審，合併前） |
 | 基礎設施變更（DB migration、auth、permission） | 全跑 + 人工最終確認 |
 
 ## 各指令的角色
 
-- **`/review`**：通用 PR 審查，每個 PR 都跑
-- **`/simplify`**：多 review agent 平行找重用 / 品質 / 效率問題後**自動修**——所以放最前，省得後面 review 還在針對被它修掉的東西
+- **`/code-review`**（每個 PR 主力，自 v2.1.151）：本地審當前 diff，找 correctness bug + 重用 / 簡化 / 效率 cleanup。`--fix` 把修正套進 working tree、`--comment` 貼成 PR inline comment。effort 越高涵蓋越廣（也可能含不確定 finding）
+- **`/review`**：通用 PR 審查，session 內較深的一遍（read-only）
+- **`/simplify`**（自 v2.1.154 改為**純清理**）：4 個平行 agent 找重用 / 簡化 / 效率 / 抽象層級問題後自動修，**不再找 bug**——找 bug 改用 `/code-review`。此指令 v2.1.147 前即現在的 `/code-review`，後被改名分家
 - **`/security-review`**：聚焦當前 branch 待提交變更的安全漏洞（OWASP Top 10、注入、認證 / 授權、權限提升）
-- **`/ultrareview`**：把 branch 交給雲端 specialist agent 群（安全 / 架構 / 正確性 / 風格 / 測試）合併報告。耗時最久，留給大型 / 關鍵 PR 合併前最後關卡——無參數審本地 branch、`/ultrareview <PR#>` 審指定 GitHub PR
+- **`/code-review ultra`**（舊名 `/ultrareview`，現為 alias）：把 branch 交給雲端 specialist agent 群（安全 / 架構 / 正確性 / 風格 / 測試）平行審、各自 reproduce finding 再合併。耗時最久（平均約 20 分、$15–25），留給大型 / 關鍵 PR 合併前最後關卡——無參數審本地 diff、加 PR ref 審指定 PR
 
 ## 立場：自動 review 不能取代人工 finding 確認
 
@@ -32,7 +33,7 @@ PR 規模分層跑不同 review 工具，避免「每次都 ultra」浪費 token
 - 對 generated code / vendor code 給意見
 - 重複指出同一問題多種包裝
 
-讓 review agent 全自動修是 `/simplify` 的特權（且範圍受限），其他模式產出的 finding 應視為「待審核 hint」而非「TODO list」。
+全自動修是 `/simplify`（純清理）與 `/code-review --fix` 的能力（範圍受限），其他模式產出的 finding 應視為「待審核 hint」而非「TODO list」。
 
 ## 跨模型 review 補同模型盲點
 

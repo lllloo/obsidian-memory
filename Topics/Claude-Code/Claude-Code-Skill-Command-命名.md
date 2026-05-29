@@ -1,7 +1,7 @@
 ---
 title: Claude Code Skill/Command 命名
 created: 2026-04-20
-updated: 2026-05-27
+updated: 2026-05-29
 source: https://code.claude.com/docs/en/skills
 tags:
   - claude-code
@@ -10,7 +10,7 @@ tags:
   - slash-command
 ---
 
-skill 與 command 的呼叫名（`name` 欄位 / 資料夾名 / `/` 選單顯示）一律 kebab-case：`<家族前綴>-<動作>`，全小寫。硬性規則（保留字、字元限制、長度、`SKILL.md` 全大寫）以官方 docs 為準。
+skill / command 命名一律 kebab-case：`<家族前綴>-<動作>`，全小寫。先分清兩個「名字」：**呼叫名**（`/` 後輸入的字）來自**資料夾名**（skills）或**檔名**（`.claude/commands/`），不是 frontmatter；frontmatter `name` 只是 skill 清單的**顯示標籤**（預設沿用資料夾名），唯 plugin-root `SKILL.md` 例外才由 `name` 決定呼叫名。kebab-case、保留字（不可用 `anthropic` / `claude`）、64 字元上限等硬性規則是針對 frontmatter `name` 定義，但資料夾 / 檔名沿用同套慣例最省事。`SKILL.md` 全大寫等其餘規則以官方 docs 為準。
 
 ## 命名慣例
 

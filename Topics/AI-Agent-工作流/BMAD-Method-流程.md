@@ -1,7 +1,7 @@
 ---
 title: BMAD Method 流程
 created: 2026-05-13
-updated: 2026-05-15
+updated: 2026-05-29
 source: https://docs.bmad-method.org/llms-full.txt
 tags:
   - claude-code
@@ -10,11 +10,13 @@ tags:
 
 BMAD Method 把 agile lifecycle 切成 4 階段，每階段由特定 agent 主導。Quick Flow 是平行路徑，用 `bmad-quick-dev` 跳過 phase 1-3 處理小型、明確的任務。
 
+> 指令名與 agent roster 以 **BMAD v6** 為準。v4 舊命名（如 `bmad-create-prd`、`bmad-create-ux-design`）在 v6 已縮短為 `bmad-prd`、`bmad-ux`；v4 的 Scrum Master「Bob」persona 在 v6 已併入新 roster，Sprint Planning / Create Story 改由 Amelia（Senior Engineer）負責。
+
 ## 必經 6 節點
 
 | 代號 | 動作                   | Skill                           | 輸出 / 依賴                          |
 | ---- | ---------------------- | ------------------------------- | ------------------------------------ |
-| `CP` | Create PRD             | `bmad-create-prd`               | 輸出 `PRD.md`                        |
+| `CP` | Create PRD             | `bmad-prd`               | 輸出 `PRD.md`                        |
 | `CA` | Create Architecture    | `bmad-create-architecture`      | 輸出 `architecture.md`，需 PRD 就位  |
 | `CE` | Create Epics & Stories | `bmad-create-epics-and-stories` | 輸出 epics / stories；需 PRD + Architecture 同時就位 |
 | `SP` | Sprint Planning        | `bmad-sprint-planning`          | 輸出 `sprint-status.yaml`            |
@@ -34,7 +36,7 @@ BMAD Method 把 agile lifecycle 切成 4 階段，每階段由特定 agent 主�
 ```mermaid
 flowchart TD
     Start([開始]) --> CB["CB · 寫產品簡介<br/>Create Product Brief<br/>Analyst (Mary)<br/>bmad-product-brief"]
-    CB -->|product-brief.md| CP["CP ⭐ 寫產品需求文件<br/>Create PRD<br/>PM (John)<br/>bmad-create-prd"]
+    CB -->|product-brief.md| CP["CP ⭐ 寫產品需求文件<br/>Create PRD<br/>PM (John)<br/>bmad-prd"]
     CP -->|PRD.md| CA["CA ⭐ 設計系統架構<br/>Create Architecture<br/>Architect (Winston)<br/>bmad-create-architecture"]
     CA -->|architecture.md| CE["CE ⭐ 拆 epics + stories<br/>Create Epics and Stories<br/>PM (John)<br/>bmad-create-epics-and-stories"]
     CE -->|epics + stories| SP["SP ⭐ 規劃 sprint<br/>Sprint Planning<br/>Developer (Amelia)<br/>bmad-sprint-planning"]
@@ -73,10 +75,10 @@ flowchart TD
 
 | 代號 | 動作             | Agent       | Skill                   | 必填 | 備註                   |
 | ---- | ---------------- | ----------- | ----------------------- | ---- | ---------------------- |
-| `CP` | Create PRD       | PM          | `bmad-create-prd`       | ⭐   | 輸出 `PRD.md`          |
+| `CP` | Create PRD       | PM          | `bmad-prd`       | ⭐   | 輸出 `PRD.md`          |
 | `VP` | Validate PRD     | PM          | `bmad-validate-prd`     | —    |                        |
 | `EP` | Edit PRD         | PM          | `bmad-edit-prd`         | —    | `VP` 後修訂            |
-| `CU` | Create UX Design | UX-Designer | `bmad-create-ux-design` | —    | Optional；有 UI 才需要 |
+| `CU` | Create UX Design | UX-Designer | `bmad-ux` | —    | Optional；有 UI 才需要 |
 
 ## 階段 3 · 方案設計
 

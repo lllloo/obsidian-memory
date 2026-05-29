@@ -1,7 +1,7 @@
 ---
 title: Spec Kit
 created: 2026-05-08
-updated: 2026-05-27
+updated: 2026-05-29
 source: https://github.com/github/spec-kit
 tags:
   - claude-code
@@ -28,7 +28,7 @@ Spec Kit 是 GitHub 出的 Spec-Driven Development toolkit，把 specification �
 ## 連結
 
 - Repo：<https://github.com/github/spec-kit>
-- Docs：<https://github.github.com/spec-kit/>
+- Docs：<https://github.github.io/spec-kit/>
 
 ## 相關
 

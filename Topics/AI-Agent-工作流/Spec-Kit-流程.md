@@ -1,7 +1,7 @@
 ---
 title: Spec Kit 流程
 created: 2026-05-16
-updated: 2026-05-21
+updated: 2026-05-29
 source: https://github.com/github/spec-kit
 tags:
   - claude-code
@@ -61,16 +61,16 @@ flowchart TD
 
 ## specify init 工作流擴充
 
-跑 `specify init` 會安裝擴充到 `.specify/extensions/<name>/`，並在 agent 端註冊額外 `speckit-<extension>-<verb>` 指令。安裝紀錄寫在專案根的 `init-options.json`。
+跑 `specify init` 會安裝擴充到 `.specify/extensions/<name>/`，並在 agent 端註冊額外 `speckit-<extension>-<verb>` 指令。安裝紀錄寫在 `.specify/init-options.json`。
 
-**git 擴充預設啟用**：截至 v0.9.x，`specify init` 會自動裝 git 擴充（5 個 `speckit-git-*` 指令），**不問**。v0.10.0 起改成明確 opt-in，需 init 後手動 `specify extension add git`。
+**git 擴充預設啟用**：截至 v0.8.x（最新 v0.8.17），`specify init` 會自動裝 git 擴充（一組 `speckit-git-*` 指令），**不問**。v0.10.0（官方規劃中、尚未發行）起將改成明確 opt-in，需 init 後手動 `specify extension add git`。
 
 事後管理：
 
 - 加裝：`specify extension add <name>`
 - 移除：`specify extension remove <name>`，slash commands 一併撤掉
 
-若 agent 端跳出非預期的 `speckit-*` 指令，先看 `.specify/extensions/` 與 `init-options.json` 對帳。
+若 agent 端跳出非預期的 `speckit-*` 指令，先看 `.specify/extensions/` 與 `.specify/init-options.json` 對帳。
 
 ## 相關
 
