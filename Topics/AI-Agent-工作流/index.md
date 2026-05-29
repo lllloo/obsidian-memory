@@ -18,7 +18,7 @@ tags:
 - [[bookmark-Superpowers-Agent開發框架|Superpowers]] — TDD gate / systematic debugging / review loop 為核心的 implementation workflow
 - [[bookmark-GStack-Agent開發框架|GStack]] — planning / design / QA / ship 多 persona workflow pack（CEO / Eng / Design / DevEx 審查）
 - [[bookmark-BMAD-Agent開發框架|BMAD]] — agile lifecycle 為骨架的多 agent 開發框架（PM / Architect / Developer / UX 等 12+ 軟體角色 persona）；[[BMAD-Method-流程]] 速查指令
-- [[Spec-Kit]] — GitHub 出的 Spec-Driven Development toolkit，spec 為 first-class artifact 驅動 agent 生 code（跨 30+ agent host）；[[Spec-Kit-流程]] 速查指令
+- [[bookmark-Spec-Kit-Spec驅動開發框架|Spec-Kit]] — GitHub 出的 Spec-Driven Development toolkit，spec 為 first-class artifact 驅動 agent 生 code（跨 30+ agent host）；[[Spec-Kit-流程]] 速查指令
 - [[bookmark-OpenSpec-Spec驅動開發框架|OpenSpec]] — Fission-AI 出品的輕量 spec-driven development 框架，"Actions not phases" 哲學，支援 25+ AI coding agents；[[OpenSpec-流程]] 速查指令
 
 ## 後續候選（仍在 Cards/ 待消化）

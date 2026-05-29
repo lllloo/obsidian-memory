@@ -1,7 +1,7 @@
 ---
 title: Claude Code 雙帳號設定
 created: 2026-04-09
-updated: 2026-04-09
+updated: 2026-05-29
 tags:
   - claude-code
   - windows
@@ -59,6 +59,13 @@ New-Item -ItemType SymbolicLink -Path "$HOME\.claude-p\commands" -Target "$HOME\
 New-Item -ItemType SymbolicLink -Path "$HOME\.claude-p\skills" -Target "$HOME\.claude\skills"
 New-Item -ItemType SymbolicLink -Path "$HOME\.claude-p\settings.json" -Target "$HOME\.claude\settings.json"
 New-Item -ItemType SymbolicLink -Path "$HOME\.claude-p\statusline.sh" -Target "$HOME\.claude\statusline.sh"
+New-Item -ItemType SymbolicLink -Path "$HOME\.claude-p\projects" -Target "$HOME\.claude\projects"
+```
+
+`projects` symlink 讓兩個帳號共用同一份 AI 記憶（auto memory）。若 `~/.claude-p/projects/` 已存在，需先刪除再建：
+
+```powershell
+Remove-Item "$HOME\.claude-p\projects" -Recurse -Force
 ```
 
 > Windows 需開啟 Developer Mode 或以管理員身份執行才能建立 symlink。

@@ -72,7 +72,25 @@ flowchart TD
 
 若 agent 端跳出非預期的 `speckit-*` 指令，先看 `.specify/extensions/` 與 `.specify/init-options.json` 對帳。
 
+## 何時不該用 / 長期風險
+
+社群普遍認同「先講清楚再寫」方向正確，但多數團隊仍小規模試用觀望，等工具與底層模型更成熟。
+
+保留意見：
+
+- **規格完美 ≠ 產出穩定**：花大量心力寫完美規格，AI 產出的 code 品質仍不一定穩。
+- **小專案太重**：需快速迭代的小型專案，整套立法式流程（constitution → specify → plan → tasks → implement）顯得過重。
+
+長期風險：
+
+- **依賴外部模型穩定性**：底層模型行為一變，整個 workflow 可能失效。
+- **prompt template 脆弱**：核心邏輯深植提示範本，維護它與 30+ agent 的相容性是長期負擔。
+- **失去掌控感**：`/speckit.implement` 這類高抽象指令可能讓開發者對最終 code 失去掌控、不利技能成長。
+
+本質上 spec-kit 是在賭：結構化開發流程的價值，會不會比單純追求更強的模型更高。
+
 ## 相關
 
+- [[bookmark-Spec-Kit-Spec驅動開發框架|Spec Kit]] — 概念定位與來源
 - [[BMAD-Method-流程]] — agentic agile workflow，phase 更完整
 - [github/spec-kit](https://github.com/github/spec-kit)

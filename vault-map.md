@@ -1,7 +1,7 @@
 ---
 title: Vault Map
 created: 2026-04-15
-updated: 2026-05-27
+updated: 2026-05-29
 tags:
   - index
 ---
@@ -39,7 +39,7 @@ tags:
 | Claude Code 實作 | `claude-code` | `Topics/Claude-Code/` + `Cards/` + `Inbox/YouTube/` |
 | AI Agent 工作流 | `ai-agent` `agent-framework` `harness` | `Topics/AI-Agent-工作流/` + `Cards/` |
 | 記憶系統 / Context | `memory` `context-engineering` | `Cards/` |
-| MCP | `mcp` | `Cards/` |
+| MCP | `mcp` | `Topics/UI設計/`（附於 Pencil / Stitch 等 MCP 工具書籤；尚無獨立 MCP 主題筆記） |
 | Obsidian 操作 | `obsidian` `cli` | `Topics/Obsidian/` + `Cards/` |
 | UI 設計 / 設計工作流 | `design` `design-system` `frontend` | `Topics/UI設計/` + `Cards/` |
 | 前端 / CSS / 動效實作 | `css` `flexbox` `animation` | `Topics/前端技術/` + `Cards/` |

@@ -4,6 +4,7 @@ created: 2026-04-26
 updated: 2026-05-29
 tags:
   - claude-code
+  - codex
   - code-review
 ---
 
@@ -38,3 +39,16 @@ PR 規模分層跑不同 review 工具，避免「每次都 ultra」浪費 token
 ## 跨模型 review 補同模型盲點
 
 Claude review 自己生成的 code 時，思路往往跟生成時類似——同樣的判斷、同樣的盲點，跑兩次 `/review` 看不出多少新東西。關鍵 PR 引入 [[bookmark-codex-plugin-cc-Codex整合外掛|codex-plugin-cc]] 讓 Codex 從不同訓練分佈、不同推理路徑切入，比同模型重跑更可能抓到漏掉的盲點。
+
+實務上最乾淨的分工是：**Claude Code 當 builder，Codex 當 adversarial reviewer**。Claude 先實作並跑測試；接著用 `/codex:adversarial-review` 逼 Codex 質疑設計選擇、失敗模式、rollback、race condition、auth / data loss 等高風險點；最後由 Claude 只修「有證據、有測試、或有明確風險」的項目。
+
+```text
+Claude implement
+  -> tests
+  -> /codex:adversarial-review --base main <指定風險>
+  -> Claude fix accepted findings
+  -> tests
+  -> 最多再跑一輪
+```
+
+不要讓兩邊同時改同一個 worktree；要平行探索就拆 git worktree。這個 loop 的價值是讓不同模型互補盲點，不是產生辯論紀錄。超過 2-3 輪仍無法收斂時，通常代表 spec、測試或人類決策不足，應停下來補約束，而不是繼續互相反駁。
