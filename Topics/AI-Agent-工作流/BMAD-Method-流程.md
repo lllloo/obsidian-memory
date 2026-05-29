@@ -16,7 +16,7 @@ BMAD Method 把 agile lifecycle 切成 4 階段，每階段由特定 agent 主�
 
 | 代號 | 動作                   | Skill                           | 輸出 / 依賴                          |
 | ---- | ---------------------- | ------------------------------- | ------------------------------------ |
-| `CP` | Create PRD             | `bmad-prd`               | 輸出 `PRD.md`                        |
+| `CP` | Create PRD             | `bmad-prd`                      | 輸出 `PRD.md`                        |
 | `CA` | Create Architecture    | `bmad-create-architecture`      | 輸出 `architecture.md`，需 PRD 就位  |
 | `CE` | Create Epics & Stories | `bmad-create-epics-and-stories` | 輸出 epics / stories；需 PRD + Architecture 同時就位 |
 | `SP` | Sprint Planning        | `bmad-sprint-planning`          | 輸出 `sprint-status.yaml`            |
@@ -75,10 +75,10 @@ flowchart TD
 
 | 代號 | 動作             | Agent       | Skill                   | 必填 | 備註                   |
 | ---- | ---------------- | ----------- | ----------------------- | ---- | ---------------------- |
-| `CP` | Create PRD       | PM          | `bmad-prd`       | ⭐   | 輸出 `PRD.md`          |
+| `CP` | Create PRD       | PM          | `bmad-prd`              | ⭐   | 輸出 `PRD.md`          |
 | `VP` | Validate PRD     | PM          | `bmad-validate-prd`     | —    |                        |
 | `EP` | Edit PRD         | PM          | `bmad-edit-prd`         | —    | `VP` 後修訂            |
-| `CU` | Create UX Design | UX-Designer | `bmad-ux` | —    | Optional；有 UI 才需要 |
+| `CU` | Create UX Design | UX-Designer | `bmad-ux`               | —    | Optional；有 UI 才需要 |
 
 ## 階段 3 · 方案設計
 

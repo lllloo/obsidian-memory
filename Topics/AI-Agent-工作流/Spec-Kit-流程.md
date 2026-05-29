@@ -63,7 +63,7 @@ flowchart TD
 
 跑 `specify init` 會安裝擴充到 `.specify/extensions/<name>/`，並在 agent 端註冊額外 `speckit-<extension>-<verb>` 指令。安裝紀錄寫在 `.specify/init-options.json`。
 
-**git 擴充預設啟用**：截至 v0.8.x（最新 v0.8.17），`specify init` 會自動裝 git 擴充（一組 `speckit-git-*` 指令），**不問**。v0.10.0（官方規劃中、尚未發行）起將改成明確 opt-in，需 init 後手動 `specify extension add git`。
+**git 擴充預設啟用**：目前 `specify init` 會自動裝 git 擴充（一組 `speckit-git-*` 指令），**不問**。官方規劃後續版本改成明確 opt-in，需 init 後手動 `specify extension add git`——確切切換版本以官方 release notes 為準。
 
 事後管理：
 
