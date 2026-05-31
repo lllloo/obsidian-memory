@@ -57,7 +57,7 @@ bookmark-<工具/方法論名稱>-<用途說明>.md
 - `bookmark-Impeccable-前端設計Skill.md`
 - `bookmark-BMAD-Agent開發框架.md`
 - `bookmark-Awwwards-前端設計靈感站.md`
-- `bookmark-DESIGN.md-設計系統規格.md`
+- `bookmark-DESIGN-md-設計系統規格.md`
 
 引用書籤型時用 wikilink alias 保持顯示精簡：`[[bookmark-Stitch-AI設計畫布|Stitch]]`。
 

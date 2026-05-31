@@ -21,6 +21,6 @@ Google Labs 的 AI-native 軟體設計畫布，把設計發想、設計系統、
 
 ## 相關
 
-- [[bookmark-DESIGN.md-設計系統規格|DESIGN.md]] — Stitch 提出的設計系統格式
+- [[bookmark-DESIGN-md-設計系統規格|DESIGN.md]] — Stitch 提出的設計系統格式
 - [[bookmark-Awesome-Design-MD-設計範例庫|Awesome-Design-MD]] — 各品牌的 DESIGN.md 範例庫
 - [[Claude-Code-前端設計工作流]] — Layer 5 設計工具整合

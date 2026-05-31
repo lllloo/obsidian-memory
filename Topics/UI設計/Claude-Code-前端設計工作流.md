@@ -116,7 +116,7 @@ Claude Code 在 agentic coding（自主代理寫程式）表現卓越，但前�
 - [[bookmark-Awesome-Design-MD-設計範例庫|Awesome-Design-MD]] — Layer 1 範例庫
 - [[Pencil-讀取規則]] — Layer 5 工具的使用規則
 - [[bookmark-Stitch-AI設計畫布|Stitch]] — Layer 5 工具的深度細節
-- [[bookmark-DESIGN.md-設計系統規格|DESIGN.md]] — 設計系統文件格式規範
+- [[bookmark-DESIGN-md-設計系統規格|DESIGN.md]] — 設計系統文件格式規範
 - [[動效與互動]] — Layer 6 動效深度
 
 ## 來源

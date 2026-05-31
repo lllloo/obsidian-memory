@@ -23,4 +23,4 @@ tags:
 - [[bookmark-Awwwards-前端設計靈感站|Awwwards]] — 高品質網站靈感與獎項平台（Layer 2 視覺參考）
 - [[bookmark-Stitch-AI設計畫布|Stitch]] — Google Labs AI-native 設計畫布（Layer 5 設計工具整合）
 - [[bookmark-Awesome-Design-MD-設計範例庫|Awesome-Design-MD]] — 公開網站抽出的 `DESIGN.md` 範例集合（風格研究起點）
-- [[bookmark-DESIGN.md-設計系統規格|DESIGN.md]] — Google Labs 設計系統文件格式 spec（alpha）
+- [[bookmark-DESIGN-md-設計系統規格|DESIGN.md]] — Google Labs 設計系統文件格式 spec（alpha）
