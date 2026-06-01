@@ -1,7 +1,7 @@
 ---
 title: Claude Code 完成提示（Windows）— 方案比較
 created: 2026-05-25
-updated: 2026-05-28
+updated: 2026-06-01
 tags:
   - claude-code
   - hooks
@@ -82,3 +82,4 @@ function prompt {
 ## 相關
 
 - [[Claude-Code-規則系統設計]] — 規則升級到 Hook 的判斷
+- [[Claude-Code-Windows-雙-shell-問題]] — 為何 hook command 要分 PowerShell / Git Bash 寫
