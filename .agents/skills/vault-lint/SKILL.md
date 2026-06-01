@@ -7,191 +7,45 @@ description: Vault 健檢：掃描孤立頁面、死連結、Inbox 積壓、tag 
 
 掃描 → 列分類報告 → 等用戶拍板 → 修。
 
-> **執行 shell**：本 skill 的掃描全是聚合 pipeline（`find`/`rg`/`awk`/`sed`/`uniq`、bash 陣列、here-string），**一律用 Bash 工具（Git Bash）執行，不要在 PowerShell 跑**。這是刻意保留的 shell 聚合，PowerShell 無對等簡潔寫法——與其他 skill「能用 harness-native 就不碰 shell」的取向互補：vault-lint 是聚合例外。
-
 ## 前置條件
 
-```bash
-[ -f "vault-map.md" ] || { echo "ERROR: cwd 不在 vault root"; exit 1; }
+用 `Read vault-map.md` 確認 cwd 為 vault root（harness-native，不經 shell）。讀不到就停止，告知用戶 cd 到 vault root。
+
+## 掃描
+
+所有掃描邏輯收在 `scripts/lint.py`（純 Python stdlib，跨平台，無外部依賴）。cwd 為 vault root，用完整相對路徑執行：
+
+```
+python .agents/skills/vault-lint/scripts/lint.py
 ```
 
-check 失敗就停止，告知用戶 cd 到 vault root。
+`python3` 無效時改 `python`。腳本輸出單一 JSON 物件到 stdout，**不修改任何檔案**；判讀與修補由本流程依下方規則處理。
 
-## 掃描項目（依序執行，全部跑完再統一報告）
+JSON 欄位對應的問題與嚴重度：
 
-### 1. Inbox 積壓
+| JSON 欄位 | 意義 | 報告分類 |
+|---|---|---|
+| `inbox_backlog` | Inbox 篇數（排除 `Inbox/Updates/`） | > 50 🔴；> 20 🟡；≤ 20 不報 |
+| `dead_links` | wikilink 目標不存在（已排除 `[[<佔位符>]]`、帶路徑、`.base`） | 🔴 |
+| `missing_title` | Cards/Topics 缺 `title` | 🔴 |
+| `missing_description` | 規範必填 `description` 缺失（Topics `index.md`、`Inbox/Clippings/*`、YouTube 影片筆記） | 🔴 |
+| `topics_missing_index` | Topics 資料夾無 `index.md` | 🔴 |
+| `missing_tags` | Cards/Topics 缺 `tags`（已排除 `index.md`） | 🟡 |
+| `orphans_topics` | 升級主題卻無入站 wikilink（異常） | 🟡 |
+| `topics_not_in_vaultmap` | Topics 未收錄進 `vault-map.md` | 🟡 |
+| `missing_required_dirs` | 規範常設資料夾遺漏（git 不追蹤空目錄） | 🟡 |
+| `frontmatter_order` | frontmatter 白名單欄位順序錯亂 | 🟡 |
+| `frontmatter_rogue` | 出現白名單外游離欄位（`[路徑, [欄位…]]`） | 🟡 |
+| `extracted_to` | 半消化 Inbox 筆記（仍有剩餘段落） | 🟡 |
+| `orphans_cards` | 孤立 Cards | 🔵（吸收型卡片盒，孤立可接受；摺疊成數量，不逐張列） |
+| `missing_updated` | Cards/Topics 缺 `updated` | 🔵 |
+| `tag_counts` | 純英數 tag 使用次數 top 60 | 🔵（肉眼辨識同義異寫，如 `claude-code` vs `claudeCode`） |
 
-```bash
-find Inbox -name "*.md" ! -path "Inbox/Updates/*" | wc -l
-```
-
-- > 50 → 嚴重
-- > 20 → 警告
-- ≤ 20 → 正常
-
-### 2. extracted_to 遺留
-
-```bash
-rg 'extracted_to:' Inbox --glob "*.md" -l
-```
-
-列出半消化 Inbox 筆記（有 `extracted_to` = 還有剩餘段落）。
-
-### 3. Frontmatter 缺欄位
-
-```bash
-# 缺 title（Cards/ Topics/ 正式筆記）
-rg --files-without-match '^title:' Cards Topics --glob "*.md" 2>/dev/null
-
-# 缺 tags（排除 index.md，index 頁允許不加 tags）
-rg --files-without-match '^tags:' Cards Topics --glob "*.md" --glob "!index.md" 2>/dev/null
-
-# 缺 updated
-rg --files-without-match '^updated:' Cards Topics --glob "*.md" 2>/dev/null
-```
-
-### 4. Topics 資料夾缺 index.md
-
-```bash
-for d in Topics/*/; do
-  [ -f "${d}index.md" ] || echo "$d"
-done
-```
-
-### 5. vault-map 未收錄的 Topics
-
-```bash
-for d in Topics/*/; do
-  name=$(basename "$d")
-  grep -q "$name" vault-map.md || echo "$name"
-done
-```
-
-### 6. Tag 同義異寫
-
-```bash
-rg -oI '^\s+- "?[A-Za-z0-9_-]+"?\s*$' . --glob "*.md" | sed 's/^[[:space:]]*- //;s/^"//;s/"$//;s/[[:space:]]*$//' | sort | uniq -c | sort -rn | head -60
-```
-
-輸出 top 60 英數 tag 及使用次數，讓用戶肉眼辨識同義異寫（如 `claude-code` vs `claudeCode`）。regex 支援帶引號形式（`  - "clippings"`），sed 剝除外層引號後與裸值合併統計。用 `-oI`（only-matching + no-filename），**勿用 `-oh`**——`-h` 會被當 `--help` 而印出 ripgrep 說明。
-
-### 7. 孤立頁面（無入站 wikilink）
-
-Topics 孤立 = 異常（升級主題理應連成網）；Cards 孤立 = 常態（吸收型卡片盒允許單張存在），僅供新建時補連結參考，**不視為待修問題**。掃描指令對兩者皆跑，但報告時分層標記（見報告格式）。
-
-對 Cards/ 與 Topics/ 下所有 .md（排除 index.md）確認有無被引用：
-
-```bash
-for f in $(find Cards Topics -name "*.md" ! -name "index.md" 2>/dev/null); do
-  title=$(basename "$f" .md)
-  rg -ql "\[\[$title" . --glob "*.md" 2>/dev/null || echo "$f"
-done
-```
-
-### 8. 死連結（wikilink 目標不存在）
-
-```bash
-rg -oI '\[\[[^]|#]+' . --glob "*.md" | sed 's/.*\[\[//' | sort -u | while IFS= read -r t; do
-  t="$(echo "$t" | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')"
-  [ -z "$t" ] && continue
-  case "$t" in *"<"*) continue;; esac          # 跳過 schema 佔位符如 [[<整合頁名>]]
-  base="${t##*/}"                                # 取 basename，容許帶路徑 wikilink
-  if [[ "$base" == *.base ]]; then
-    find . -name "$base" 2>/dev/null | grep -q . || echo "[[${t}]]"
-  else
-    find . -name "${base}.md" 2>/dev/null | grep -q . || echo "[[${t}]]"
-  fi
-done
-```
-
-> 用 `-oI`，**勿用 `-oh`**（`-h` = `--help`）。判定已排除三類誤報：schema 佔位符 `[[<...>]]`、帶路徑 wikilink（取 basename 比對）、`.base` 連結（按副檔名比對）。
-
-### 9. 規範資料夾實體存在
-
-`vault-map.md` 列出的常設資料夾必須存在（git 不追蹤空目錄，清空後資料夾會消失）。
-
-```bash
-required_dirs=(
-  "Inbox"
-  "Inbox/Clippings"
-  "Inbox/Updates"
-  "Inbox/YouTube"
-  "Cards"
-  "Topics"
-)
-
-for d in "${required_dirs[@]}"; do
-  [ -d "$d" ] || echo "$d"
-done
-```
-
-報告為 🟡 警告。自動修補：`mkdir -p <dir> && touch <dir>/.gitkeep`。
-
-> 動態子資料夾（`Inbox/YouTube/<頻道>/`、`Topics/<主題>/`）不在此檢查；前者隨 sync 變動，後者已由 #5 vault-map 未收錄檢查覆蓋。
-
-### 10. description 缺失
-
-`CLAUDE.md` schema 規定必有 `description` 的三類筆記，若缺欄位列出（要求由 Web Clipper / vault-youtube-sync skill 範本帶入；漏掉代表手動建檔未補）：
-
-- `Topics/<主題>/index.md` — 全部
-- `Inbox/Clippings/*.md` — 全部
-- `Inbox/YouTube/<頻道>/*.md` — 排除 `01.index.md`
-
-```bash
-{
-  for d in Topics/*/; do echo "${d}index.md"; done
-  ls Inbox/Clippings/*.md 2>/dev/null
-  find Inbox/YouTube -name "*.md" ! -name "01.index.md" 2>/dev/null
-} | while IFS= read -r f; do
-  [ -f "$f" ] && ! grep -q '^description:' "$f" && echo "$f"
-done
-```
-
-報告為 🔴 嚴重（規範必填）。修補需手動寫 30–80 字摘要，不自動產生。
-
-> 書籤型與判斷型 Cards 不在此檢查（規範明訂不加 description，靠第一段定位段）。
-
-### 11. Frontmatter 欄位順序錯亂 / 白名單外游離欄位
-
-`CLAUDE.md` schema 規定欄位採白名單與固定順序：`title` > `description` > `created` > `updated` > `source` > `published` > `parent` > `last_sync_id` > `draft` > `extracted_to` > `tags`。本檢查抓兩類問題：
-1. **ORDER**：實際出現的白名單欄位相對順序不符
-2. **ROGUE**：出現白名單外的欄位（如 `author`、`category`）
-
-```bash
-whitelist="title description created updated source published parent last_sync_id draft extracted_to tags"
-
-find Cards Topics Inbox -name "*.md" 2>/dev/null | while IFS= read -r f; do
-  keys=$(awk '/^---[[:space:]]*$/{c++; if(c==2) exit; next} c==1 && /^[a-zA-Z_][a-zA-Z0-9_]*:/{sub(/:.*/, ""); print}' "$f")
-  [ -z "$keys" ] && continue
-
-  rogue=""
-  inwl=""
-  while IFS= read -r k; do
-    [ -z "$k" ] && continue
-    case " $whitelist " in
-      *" $k "*) inwl="$inwl$k"$'\n' ;;
-      *) rogue="$rogue $k" ;;
-    esac
-  done <<< "$keys"
-  [ -n "$rogue" ] && echo "ROGUE $f:$rogue"
-
-  expected=$(printf '%s' "$inwl")
-  sorted=$(printf '%s' "$inwl" | awk -v wl="$whitelist" '
-    BEGIN{n=split(wl,a," "); for(i=1;i<=n;i++) ord[a[i]]=i}
-    NF{print ord[$0]"\t"$0}
-  ' | sort -n | cut -f2)
-  [ "$expected" != "$sorted" ] && echo "ORDER $f"
-done
-```
-
-報告為 🟡 警告。
-
-- ORDER 修補：手動調整欄位順序，不自動動（順序錯亂常意味手動編輯時失誤，需逐篇確認）
-- ROGUE 修補：白名單外欄位無語意，需人工判斷該補進白名單還是刪除
+> frontmatter 白名單與固定順序（`frontmatter_order`/`rogue` 的判準，與 `CLAUDE.md` schema 同步）：`title` > `description` > `created` > `updated` > `source` > `published` > `parent` > `last_sync_id` > `draft` > `extracted_to` > `tags`。
 
 ## 報告格式
 
-掃描完畢後**統一輸出**分類報告：
+讀完 JSON 後**統一輸出**分類報告：
 
 ```
 ## Vault 健檢報告（YYYY-MM-DD）
@@ -224,7 +78,7 @@ done
 - 補 Topics 缺失的 index.md（建含基本 frontmatter 的空白檔）
 - 在 vault-map 補收錄缺漏的 Topics
 - 補缺失的 `updated` 欄位（設為今日日期）
-- 補回規範資料夾遺漏（`mkdir -p <dir> && touch <dir>/.gitkeep`）
+- 補回規範資料夾遺漏（建立資料夾並放 `.gitkeep` 佔位，讓 git 追蹤）
 
 **需人工判斷（只列出，不自動動）：**
 - 孤立頁面 — **Topics 孤立**才需處置（補連結／檢查升級是否成立）；Cards 孤立預設保留，除非用戶主動要連。
@@ -235,8 +89,4 @@ done
 - Inbox 積壓 — 批次清理時機由用戶自選
 - description 缺失 — 需手動寫 30–80 字摘要，不自動產生
 
-**執行前給用戶看確認，確認後才動檔。一次修一個類別。**
-
-## 執行方式
-
-在主 agent 用 **Bash 工具**（見頂部 shell 註記）執行以上命令，輸出同格式報告，互動確認同規則。
+**執行前給用戶看確認，確認後才動檔。一次修一個類別。** 修補一律用 harness-native 工具（`Write`/`Edit`），不落 shell。

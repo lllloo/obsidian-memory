@@ -121,7 +121,8 @@ def request_text(url: str) -> str:
         try:
             proc = subprocess.run(
                 [gh, "api", path],
-                check=True, capture_output=True, text=True, timeout=25,
+                check=True, capture_output=True, text=True,
+                encoding="utf-8", errors="replace", timeout=25,
             )
             return proc.stdout
         except subprocess.CalledProcessError as e:
@@ -152,7 +153,8 @@ def request_text(url: str) -> str:
                 if "Authorization" in headers:
                     cmd += ["-H", f"Authorization: {headers['Authorization']}"]
                 cmd.append(url)
-                proc = subprocess.run(cmd, check=True, capture_output=True, text=True, timeout=25)
+                proc = subprocess.run(cmd, check=True, capture_output=True, text=True,
+                                      encoding="utf-8", errors="replace", timeout=25)
                 return proc.stdout
             req = urllib.request.Request(url, headers=headers)
             with urllib.request.urlopen(req, timeout=25) as resp:
@@ -210,6 +212,8 @@ query {
             check=True,
             capture_output=True,
             text=True,
+            encoding="utf-8",
+            errors="replace",
             timeout=30,
         )
         payload = json.loads(proc.stdout)
@@ -326,6 +330,8 @@ query($owner:String!, $name:String!) {
             check=True,
             capture_output=True,
             text=True,
+            encoding="utf-8",
+            errors="replace",
             timeout=25,
         )
         payload = json.loads(proc.stdout)
@@ -353,6 +359,47 @@ query($owner:String!, $name:String!) {
         print(f"DISCUSSION:{repo}|||{updated.isoformat()}|||{comments}|||{title}|||{url}|||{body}")
 
 
+DEFAULT_INDEX = "Inbox/Updates/01.index.md"
+
+
+def parse_index(path: str) -> tuple[list[str], list[str], bool]:
+    """Parse Inbox/Updates/01.index.md into (official, repos, starred).
+
+    Replaces the former bash/awk glue in SKILL.md. Sections:
+      ## Official changelogs  → '- name|url|tag' lines → official ('name|url|tag')
+      ## GitHub repositories  → '- owner/name|tag' lines → repo (owner/name)
+      ## GitHub starred       → a 'sync: releases' line → starred=True
+    """
+    official: list[str] = []
+    repos: list[str] = []
+    starred = False
+    try:
+        lines = open(path, encoding="utf-8").read().splitlines()
+    except OSError as exc:
+        print(f"ERROR:index:cannot read {path}: {exc}")
+        return official, repos, starred
+
+    section = None
+    for ln in lines:
+        s = ln.strip()
+        if s.startswith("## "):
+            section = s[3:].strip().lower()
+            continue
+        if section == "official changelogs":
+            if s.startswith("- ") and "|" in s:
+                official.append(s[2:].strip())
+        elif section == "github repositories":
+            if s.startswith("- "):
+                repo = s[2:].split("|", 1)[0].strip()
+                if re.match(r"^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$", repo):
+                    repos.append(repo)
+        elif section == "github starred":
+            compact = s.replace(" ", "").lower()
+            if compact.startswith("sync:") and "releases" in compact:
+                starred = True
+    return official, repos, starred
+
+
 def main() -> int:
     default_since = (dt.datetime.now(dt.timezone.utc) - dt.timedelta(days=7)).date().isoformat()
     parser = argparse.ArgumentParser()
@@ -361,7 +408,21 @@ def main() -> int:
     parser.add_argument("--official", action="append", default=[],
                         help="Official changelog source: 'name|url|tag'; repeatable")
     parser.add_argument("--starred", action="store_true", help="also fetch releases from all starred repos")
+    parser.add_argument("--index", default=None,
+                        help=f"parse sources from this index md (default: {DEFAULT_INDEX} when no explicit "
+                             "--official/--repo/--starred given)")
     args = parser.parse_args()
+
+    # Source resolution: explicit flags win; otherwise parse the index md.
+    # 01.index.md is the single source of truth — the script never hardcodes a tool list.
+    index_path = args.index
+    if index_path is None and not (args.official or args.repo or args.starred):
+        index_path = DEFAULT_INDEX
+    if index_path is not None:
+        idx_official, idx_repos, idx_starred = parse_index(index_path)
+        args.official += idx_official
+        args.repo += idx_repos
+        args.starred = args.starred or idx_starred
 
     try:
         since = _parse_date(args.since)

@@ -19,9 +19,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working in this
 
 所有 repo-local vault skills 都要求 cwd 是 vault root，也就是本 repo 根目錄，底下直接有 `vault-map.md`。
 
-```bash
-[ -f "vault-map.md" ] || { echo "ERROR: cwd 不在 vault root"; exit 1; }
-```
+驗證方式用 harness-native `Read vault-map.md`（不經 shell、跨平台）——讀得到即在 vault root，讀不到就停止並請使用者 cd 過來。不要用 `[ -f vault-map.md ]` 之類 shell gate（在 Windows 預設 PowerShell 會翻車）。
 
 從其他專案呼叫本 repo skill 前，先 `cd C:\code\obsidian-memory`。
 

@@ -132,42 +132,17 @@ sync: releases
 
 預設同步最近 7 天；使用者指定日期時用該日期到今天。
 
-從 index 解析：
+腳本自己解析 `Inbox/Updates/01.index.md` 的三段來源（official changelogs / repositories / starred），`--since` 預設 7 天前。cwd 為 vault root，用完整相對路徑執行：
 
-- `## GitHub repositories` 段：逐行取 `<owner>/<repo>` 傳給 `--repo`
-- `## GitHub starred` 段含 `sync: releases`：加上 `--starred` flag
-
-```bash
-SCRIPT=$(find .agents/skills/vault-updates-daily .claude/skills/vault-updates-daily -name "fetch_updates.py" 2>/dev/null | head -1)
-PY=$(command -v python3 || command -v python)
-INDEX="Inbox/Updates/01.index.md"
-
-# 從 index 解析官方 changelog（awk 確保不跨段）
-OFFICIAL_ARGS=()
-while IFS= read -r official; do
-  [[ -n "$official" ]] && OFFICIAL_ARGS+=("--official" "$official")
-done < <(awk '/^## Official changelogs/{f=1;next} /^## /{f=0} f && /^\- .+\|/' \
-  "$INDEX" | sed 's/^- //')
-
-# 從 index 解析 repos（用 array 避免換行問題）
-REPO_ARGS=()
-while IFS= read -r repo; do
-  [[ -n "$repo" ]] && REPO_ARGS+=("--repo" "$repo")
-done < <(awk '/^## GitHub repositories/{f=1;next} /^## /{f=0} f && /^\- /' \
-  "$INDEX" | grep -E '^\- [A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+' \
-  | sed 's/^- //' | cut -d'|' -f1)
-
-# 檢查是否啟用 starred
-STARRED=()
-grep -A5 '## GitHub starred' "$INDEX" \
-  | grep -q 'sync: releases' && STARRED=("--starred")
-
-# since 日期：7 天前（macOS / Linux 相容）
-SINCE=$(date -v-7d +%Y-%m-%d 2>/dev/null || date -d '7 days ago' +%Y-%m-%d)
-# 使用者指定日期時直接替換 SINCE="<YYYY-MM-DD>"
-
-$PY $SCRIPT --since "$SINCE" "${OFFICIAL_ARGS[@]}" "${REPO_ARGS[@]}" "${STARRED[@]}"
 ```
+python .agents/skills/vault-updates-daily/scripts/fetch_updates.py
+```
+
+- `python3` 無效時改 `python`。
+- 指定日期：加 `--since YYYY-MM-DD`。
+- 自訂 index 路徑：加 `--index <path>`（預設 `Inbox/Updates/01.index.md`）。
+
+> 解析 index 與算 since 的邏輯都在腳本內（`parse_index`），跨平台、零 shell 膠水。SKILL 不再硬編碼工具清單——唯一真實來源是 `01.index.md`。
 
 輸出格式：
 
@@ -212,19 +187,13 @@ CHANGELOG:<name>|||<entry-date>|||<entry-title>|||<url>#<slug>|||<body-snippet>
 
 ### 去重（傳給 subagent 前先做）
 
-日報是合併格式（無 `source:` frontmatter），改用以下兩層去重。**此段用 Bash 工具執行**（`grep -F` fixed-string 比對，避開 URL 裡 `?`/`&` 等 regex metachar；PowerShell 與 Grep 工具無對等簡潔寫法）：
+日報是合併格式（無 `source:` frontmatter），用腳本做兩層 fixed-string 去重（個別筆記 `source: <url>` + 當日日報正文），fixed-string 比對自動避開 URL 裡 `?`/`&` 等 regex metachar。每個候選 URL 跑一次（cwd = repo root）：
 
-```bash
-# 1. 舊個別筆記格式（Cards / Topics / 舊 Inbox 個別檔）
-# 用 -F（fixed string）避免 URL 中的 ?、& 等字元被當成 regex 元字元
-grep -rlF "source: <url>" Inbox/Updates Cards Topics 2>/dev/null
-
-# 2. 當日日報（URL 出現在檔案正文中）
-DAILY="Inbox/Updates/<YYYY-MM-DD>-daily-updates.md"
-[ -f "$DAILY" ] && grep -qF "<url>" "$DAILY"
+```
+python .agents/skills/vault-updates-daily/scripts/dedup_check.py "<url>" <YYYY-MM-DD>
 ```
 
-任一命中則標記 skip，不傳給 subagent。若 changelog entry 沒有獨立 URL，使用該頁 URL 加 heading slug 作為 canonical URL（如 `<url>#<entry-slug>`），避免整頁只能存一次。
+輸出 `DUP:<檔案>` 即命中、標記 skip 不傳給 subagent；`UNIQUE` 則保留。若 changelog entry 沒有獨立 URL，使用該頁 URL 加 heading slug 作為 canonical URL（如 `<url>#<entry-slug>`），避免整頁只能存一次。
 
 ### 分批平行分析
 

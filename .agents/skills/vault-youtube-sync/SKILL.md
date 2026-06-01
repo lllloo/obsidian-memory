@@ -20,7 +20,7 @@ description: 將 YouTube 頻道影片批次轉成 Obsidian 筆記，支援指定
 
 用 `Read vault-map.md` 確認 cwd 為 repo root（harness-native，不經 shell）；讀不到就停止並請使用者 cd 到 repo root。
 
-本 skill 高頻踩雷點：defuddle transcript 若含 token / 個資直接跳過該筆；頻道主題 tag 先 grep 既有 vault tags 沿用，避免 `claude-code` vs `claudeCode` drift。
+本 skill 高頻踩雷點：defuddle transcript 若含 token / 個資直接跳過該筆；頻道主題 tag 先用 `Grep` 查既有 vault tags 沿用，避免 `claude-code` vs `claudeCode` drift。
 
 ## 步驟 0：判斷執行模式
 
@@ -29,16 +29,10 @@ description: 將 YouTube 頻道影片批次轉成 Obsidian 筆記，支援指定
 - **模式 A — 指定頻道**：使用者給 handle 或頻道 URL（例：`@Chase-H-AI`、`https://www.youtube.com/@Chase-H-AI/videos`）→ 直接以該 handle 執行步驟 1-6
 - **模式 B — 同步全部既有頻道**：使用者未指定頻道，或明說「同步全部 / 更新所有頻道 / yt 全部更新」→ 掃 `Inbox/YouTube/*/01.index.md`，從每份 frontmatter 的 `source:` 欄位抽出 handle，**依序**逐頻道跑步驟 1-6（頻道之間順序執行避免 YouTube rate limit；單頻道內步驟 5 仍維持 5-6 部一批平行）
 
-模式 B 取得頻道清單（每行一個 `source:` URL）：
+模式 B 取得頻道清單（每行一個 `source:` URL），cwd = repo root：
 
-```bash
-python -c "
-import re, glob
-for idx in sorted(glob.glob('Inbox/YouTube/*/01.index.md')):
-    text = open(idx, encoding='utf-8').read()
-    m = re.search(r'^source:\s*(https://www\.youtube\.com/@[^/\s]+)', text, re.M)
-    if m: print(m.group(1))
-"
+```
+python .agents/skills/vault-youtube-sync/scripts/list_channels.py
 ```
 
 模式 B 規則：
@@ -49,13 +43,10 @@ for idx in sorted(glob.glob('Inbox/YouTube/*/01.index.md')):
 
 ## 步驟 1：抓取影片清單與頻道簡介
 
-用 `scripts/fetch_videos.py` 一次抓取頻道頁面，同時取出影片清單與頻道簡介：
+用 `fetch_videos.py` 一次抓取頻道頁面，同時取出影片清單與頻道簡介。cwd = repo root，`python3` 無效時改 `python`：
 
-```bash
-SCRIPT=$(find .agents/skills/vault-youtube-sync .claude/skills/vault-youtube-sync -name "fetch_videos.py" 2>/dev/null | head -1)
-[ -z "$SCRIPT" ] && { echo "ERROR: fetch_videos.py not found"; exit 1; }
-PY=$(command -v python3 || command -v python)
-$PY "$SCRIPT" <handle>
+```
+python .agents/skills/vault-youtube-sync/scripts/fetch_videos.py <handle>
 ```
 
 解析輸出：
@@ -75,16 +66,11 @@ $PY "$SCRIPT" <handle>
 
 ## 步驟 2：增量同步檢查 + 內容篩選 + 建立資料夾
 
-先確認是否為更新情境：
-
-```bash
-# 讀取上次同步的 checkpoint ID（從 01.index.md frontmatter）
-grep "^last_sync_id:" "Inbox/YouTube/<頻道名>/01.index.md" 2>/dev/null | sed 's/last_sync_id: //'
-```
+先確認是否為更新情境：用 `Read` 開 `Inbox/YouTube/<頻道名>/01.index.md`，從 frontmatter 取 `last_sync_id` 值（harness-native，不經 shell；檔案不存在即視為首次同步）。
 
 **Checkpoint 過濾邏輯：**
 
-- 若資料夾**不存在**或 `01.index.md` **無 `last_sync_id`**：全部影片都處理，建立資料夾 `mkdir -p "Inbox/YouTube/<頻道名>"`
+- 若 `01.index.md` 不存在或**無 `last_sync_id`**：全部影片都處理。資料夾不需另外 `mkdir`——步驟 3 用 `Write` 建 `01.index.md` 時會自動建立缺失的父資料夾
 - 若有 `last_sync_id`：在步驟 1 抓到的清單中找到該 ID 的位置，**只取它上方（更新）的影片**
   - 若 `last_sync_id` 不在清單中（距上次同步太久）：全部都算新的
   - 若 `last_sync_id` 是清單第一筆：無新影片，輸出「已是最新，無需更新」並結束
@@ -92,24 +78,10 @@ grep "^last_sync_id:" "Inbox/YouTube/<頻道名>/01.index.md" 2>/dev/null | sed 
 
 **Source URL 去重（checkpoint 之後必做）：**
 
-即使通過 checkpoint 篩選，也必須再排除「已有完整筆記的影片」——防止 checkpoint 失效時（如距上次 sync 超過 30 部）產生重複。**`draft: true` 的筆記不算去重命中**——那是先前 transcript 失敗的占位，本次要交給 subagent 覆寫重抓：
+即使通過 checkpoint 篩選，也必須再排除「已有完整筆記的影片」——防止 checkpoint 失效時（如距上次 sync 超過 30 部）產生重複。**`draft: true` 的筆記不算去重命中**——那是先前 transcript 失敗的占位，本次要交給 subagent 覆寫重抓。取得已有非 draft 筆記的 videoId 清單（cwd = repo root）：
 
-```bash
-python3 -c "
-import os, re
-notes_dir = 'Inbox/YouTube/<頻道名>'
-if not os.path.isdir(notes_dir):
-    raise SystemExit(0)
-for f in os.listdir(notes_dir):
-    if not f.endswith('.md') or f == '01.index.md':
-        continue
-    text = open(os.path.join(notes_dir, f), encoding='utf-8').read()
-    if re.search(r'^draft:\s*true', text, re.M):
-        continue  # draft 占位讓 subagent 重抓覆寫，不去重
-    m = re.search(r'^source: https://www\.youtube\.com/watch\?v=([A-Za-z0-9_-]+)', text, re.M)
-    if m:
-        print(m.group(1))
-"
+```
+python .agents/skills/vault-youtube-sync/scripts/noted_ids.py "Inbox/YouTube/<頻道名>"
 ```
 
 將輸出的 ID 集合與待處理清單比對，**移除任何 ID 已出現在「非 draft」筆記 source 欄位的影片**，不論檔名是否相同。
@@ -234,22 +206,10 @@ N. <標題> — <URL>
 | AIJasonZ   | 0 (已是最新) | -          | -                        | -    |
 | ...        | ...          | ...        | ...                      | ...  |
 
-**更新 checkpoint**：所有筆記建立完成後，將 `01.index.md` 的 `last_sync_id` 更新為**步驟 1 清單中第一筆**的 video ID（即目前頻道最新的影片）：
+**更新 checkpoint**：所有筆記建立完成後，將 `01.index.md` 的 `last_sync_id` 更新為**步驟 1 清單中第一筆**的 video ID（即目前頻道最新的影片），cwd = repo root：
 
-```bash
-# 用 Python 更新（跨平台，避免 Windows sed -i 不穩定）。
-python -c "
-import os, re, sys
-if not os.path.isfile('vault-map.md'):
-    sys.exit('ERROR: cwd 不在 repo root，中止 checkpoint 更新')
-path = 'Inbox/YouTube/<頻道名>/01.index.md'
-if not os.path.isfile(path):
-    sys.exit(f'ERROR: 找不到 index 檔：{path}')
-text = open(path, encoding='utf-8').read()
-text = re.sub(r'^last_sync_id: .*', 'last_sync_id: <NEW_ID>', text, flags=re.MULTILINE)
-text = re.sub(r'^updated: .*', 'updated: <TODAY>', text, flags=re.MULTILINE)
-open(path, 'w', encoding='utf-8').write(text)
-"
+```
+python .agents/skills/vault-youtube-sync/scripts/update_checkpoint.py "Inbox/YouTube/<頻道名>/01.index.md" <NEW_ID> <TODAY>
 ```
 
 > 若本次無新影片（早已是最新），不需更新 checkpoint。
@@ -261,9 +221,9 @@ open(path, 'w', encoding='utf-8').write(text)
 - **檔名長度**：超過 40 字元的標題適當縮短，保留關鍵詞
 - **增量同步**：再次執行同一頻道時，Step 2 會用 checkpoint 過濾，只建立新影片的筆記；ytInitialData 一次最多回傳約 30 部，足以涵蓋一般更新週期
 - **往前追溯限制**：ytInitialData 最多回傳約 30 部。若距上次同步超過 30 部新影片，checkpoint 不會出現在清單中，全部都會視為新的。更早的影片需改走 YouTube continuation token API（非本 skill 範圍）
-- **失敗占位機制（draft 重試）**：subagent 任何一支影片抓不到 transcript（defuddle videoId mismatch / youtube-transcript-api 無字幕 / 429 rate limit）但 curl 確認影片可用時，寫一份 `draft: true` 占位筆記（範本見 `references/subagent-note-creator.md` 步驟 2b）。Step 2 的 Source URL 去重會跳過 draft 占位讓它留在待處理清單，subagent Step 0 偵測到 draft 後刪除並覆寫重抓——下次執行 skill 自動補完。**沒有這層占位，失敗影片會永遠落在 last_sync_id 上方被頻道 checkpoint 排除，再也不會補上。**
-- **影片已刪除（不可補）**：subagent curl 拿到 `videoUnavailableRenderer` → 直接跳過，不寫筆記、不寫占位。比 last_sync_id 還新但已刪的影片下次仍會出現在清單，但 source URL 去重不會擋（因為從未寫過）→ subagent 再 curl 一次確認 unavailable → 再次跳過，等於每次重跑都會再驗一次（成本可接受）
-- **published 欄位不穩定**：defuddle 解析 YouTube 頁面時 `published` 欄位常為空，屬正常現象。無論 defuddle 是否成功，只要 `published` 為空都需用 curl 抓 `itemprop="datePublished"` meta tag 補全；若仍為空才留空
-- **Windows Python subprocess 編碼**：若在 skill 外用 Python `subprocess` 抓 YouTube 頁面，必須用 bytes 模式（不加 `text=True`）再手動 `.decode('utf-8', errors='replace')`，否則 Windows 預設 cp950 會解碼失敗
-- **重複筆記**：Step 2 的 Source URL 去重（過濾 draft 後）是主要防線，以 video ID 為準不依賴檔名；subagent Step 0 寫檔前再 grep 一次確認。兩道防線確保同一支影片不會產生兩份完整筆記
+- **失敗占位機制（draft 重試）**：subagent 任何一支影片抓不到 transcript（defuddle videoId mismatch / youtube-transcript-api 無字幕 / 429 rate limit）但 `video_meta.py` 確認影片可用時，寫一份 `draft: true` 占位筆記（範本見 `references/subagent-note-creator.md` 步驟 2b）。Step 2 的 Source URL 去重會跳過 draft 占位讓它留在待處理清單，subagent Step 0 偵測到 draft 後用 `Write` 覆寫該檔重抓——下次執行 skill 自動補完。**沒有這層占位，失敗影片會永遠落在 last_sync_id 上方被頻道 checkpoint 排除，再也不會補上。**
+- **影片已刪除（不可補）**：subagent `video_meta.py` 拿到 `STATUS:unavailable` → 直接跳過，不寫筆記、不寫占位。比 last_sync_id 還新但已刪的影片下次仍會出現在清單，但 source URL 去重不會擋（因為從未寫過）→ subagent 再驗一次 unavailable → 再次跳過，等於每次重跑都會再驗一次（成本可接受）
+- **published 欄位不穩定**：defuddle 解析 YouTube 頁面時 `published` 欄位常為空，屬正常現象。無論 defuddle 是否成功，只要 `published` 為空都需用 `video_meta.py` 補全（取 `DATE:`）；若仍為空才留空
+- **跨平台 / 編碼**：所有抓取與處理都在 `scripts/*.py` 內完成，已統一處理 UTF-8 stdout 與 subprocess 解碼（`encoding="utf-8", errors="replace"`），不需在 skill 流程裡另寫 shell pipeline 或 ad-hoc subprocess
+- **重複筆記**：Step 2 的 Source URL 去重（過濾 draft 後）是主要防線，以 video ID 為準不依賴檔名；subagent Step 0 寫檔前再用 `Grep` 確認一次。兩道防線確保同一支影片不會產生兩份完整筆記
 - **不發佈**：`Inbox/YouTube/` 已在 ignorePatterns，正常筆記無需加 `draft: true`；`draft: true` 在此 skill 中專用於「失敗占位等待重試」語意

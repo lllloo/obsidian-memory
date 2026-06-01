@@ -46,7 +46,11 @@ Mac 不要加（無 pwsh），各 Windows 機器各自設一次；想讓所有 t
 
 ## 落地原則：抽掉 shell 依賴
 
-最穩的不是「把範例改對 shell」，而是**先讓動作不經 shell**：能用 harness-native 工具（`Read`/`Write`/`Glob`/`Grep`/`Edit`）就用，它們不分 PowerShell/bash，沒有「挑錯 shell」失敗點。只有 obsidian CLI、聚合 pipeline、fixed-string 比對這類**真需 shell**才落 shell，且範例直接寫對某一支、標明所屬 shell。
+最穩的不是「把範例改對 shell」，而是**先讓動作不經 shell**，分三層：
+
+- **檔案動作**（讀／寫／搜尋／存在檢查）用 harness-native 工具（`Read`/`Write`/`Glob`/`Grep`/`Edit`），不分 PowerShell/bash，沒有「挑錯 shell」失敗點。
+- **逃不掉的邏輯**（解析、聚合、fixed-string 比對、跑外部程式）**包進 bundled Python 腳本**（純 stdlib、跨平台），SKILL 只留一行 `python <完整相對路徑> args` 呼叫——複雜度藏進 Python，呼叫行無 shell 方言差異。原本以為「聚合 pipeline／fixed-string 比對」非 shell 不可，實證後都改成了腳本（如 vault-lint 的 `lint.py`、daily-updates 的 `dedup_check.py`），shell 趨近零。腳本須 `sys.stdout.reconfigure(encoding="utf-8")`，且 `subprocess.run` 加 `encoding="utf-8", errors="replace"`，否則 Windows cp950 解碼 UTF-8 會崩。
+- **真正逃不掉的**只剩外部 CLI（如 obsidian CLI）：寫對某一支、標明所屬 shell。
 
 具體一坑：**stdin pipe 餵 obsidian CLI（`... | obsidian create --stdin`）在 Windows 經 `.com` redirector 會留 0 bytes 空檔**，PowerShell/bash 皆然——故建檔改用 `Write` 或 `content=` 參數，不走 stdin。
 

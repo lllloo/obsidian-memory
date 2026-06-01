@@ -32,10 +32,10 @@ cwd 不在 vault，只能靠 obsidian CLI 定位與寫入。下列 gate **全部
 2. **vault 身分**：CLI 回傳的 vault path 正規化後（大小寫、分隔符、尾斜線）必須 `== C:\code\obsidian-memory`。不符 → 中止（避免寫進錯的 vault）。
 
 3. **規則讀取**：
-   ```bash
+   ```
    obsidian read file="CLAUDE.md"
    ```
-   成功且內容含錨點（字串「寫入前 Checklist」與「Frontmatter schema」）→ 通過；讀取失敗或缺錨點 → 中止。
+   （shell 差異同上：Git Bash 用 `Obsidian.com read ...`）成功且內容含錨點（字串「寫入前 Checklist」與「Frontmatter schema」）→ 通過；讀取失敗或缺錨點 → 中止。
 
 - 工具策略：**嚴格 CLI，無 Write/Edit 降級**。
 - 無論 §2 的 CLAUDE.md 是否讀到，**§6 的 inline 最小保護一律生效**。
@@ -102,7 +102,7 @@ filesystem 寫入百分百可靠、不經 shell。**直接 `Write "Cards/<標題
 
 cross 不能 Write，只能 CLI，但**避開 stdin pipe**（redirector 透傳不穩）。用 `content=` 帶整段內容（here-string 等實際多行變數，非字面 `\n`）：
 
-- PowerShell：`obsidian create path="Cards/<標題>.md" content=$content`
+- PowerShell：`obsidian create path="Cards/<標題>.md" content="$content"`（**務必加引號**，否則多行 here-string 會被按空白拆成多個參數、內容殘缺）
 - Git Bash：`Obsidian.com create path="Cards/<標題>.md" content="$content"`
 
 省略 `open`（人在他專案，別彈 vault UI）。寫入後必走下方驗證。
@@ -117,8 +117,8 @@ cross 不能 Write，只能 CLI，但**避開 stdin pipe**（redirector 透傳�
 
 cwd 不在 vault，filesystem 既解不到 vault 路徑、又違反本模式「不降級」契約，**只能經 CLI 驗證**：
 
-```bash
-obsidian read file="Cards/<標題>.md"   # file= 為 vault-relative，CLI 自行定位
+```
+obsidian read file="Cards/<標題>.md"   # file= 為 vault-relative，CLI 自行定位（Git Bash 用 Obsidian.com）
 ```
 
 - 回傳內容非空、且含 frontmatter 錨點（開頭 `---` 與 `title:`）→ 通過。
