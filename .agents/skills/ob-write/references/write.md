@@ -100,14 +100,17 @@ filesystem 寫入百分百可靠、不經 shell。**直接 `Write "Cards/<標題
 
 #### MODE=cross 建檔 → 用 `content=` 參數，不用 stdin pipe
 
-cross 不能 Write，只能 CLI，但**避開 stdin pipe**（redirector 透傳不穩）。用 `content=` 帶整段內容（here-string 等實際多行變數，非字面 `\n`）：
+cross 不能 Write，只能 CLI，但**避開 stdin pipe**（redirector 透傳不穩）。用 `content=` 帶整段內容：
 
-- PowerShell：`obsidian create path="Cards/<標題>.md" content="$content"`（**務必加引號**，否則多行 here-string 會被按空白拆成多個參數、內容殘缺）
-- Git Bash：`Obsidian.com create path="Cards/<標題>.md" content="$content"`
+- PowerShell：**直接在字串內用 `` `n `` 換行**，不要先存進多行變數再展開——多行 here-string 變數展開後經 CLI redirector 會丟內容：
+  ```powershell
+  obsidian create path="Cards/<標題>.md" content="---`ntitle: <標題>`ntags:`n  - foo`n---`n正文"
+  ```
+- Git Bash：`Obsidian.com create path="Cards/<標題>.md" content="---\ntitle: <標題>\n---\n正文"`
 
 省略 `open`（人在他專案，別彈 vault UI）。寫入後必走下方驗證。
 
-**寫入後驗證（一律檢查，不可只看「無 error」）**——cross 經 CLI 寫入時，CLI 把「建檔」與「寫內容」當兩步，可能留 0 bytes 空檔。驗證機制**依模式分流**：CLI 的 `file=`/`path=` 一律 vault-relative、跨 cwd 也定位得到；filesystem 路徑只在 cwd=vault root 時才解得到。
+**寫入後驗證（一律檢查，不可只看「無 error」）**——cross 經 CLI 寫入時，驗證才能確認內容有確實寫進去。驗證機制**依模式分流**：CLI 的 `file=`/`path=` 一律 vault-relative、跨 cwd 也定位得到；filesystem 路徑只在 cwd=vault root 時才解得到。
 
 ### MODE=local（cwd=vault root，可用 filesystem）
 
