@@ -18,9 +18,7 @@ description: 將 YouTube 頻道影片批次轉成 Obsidian 筆記，支援指定
 
 ## 前置作業
 
-```bash
-[ -f "vault-map.md" ] || { echo "ERROR: cwd 不在 repo root"; exit 1; }
-```
+用 `Read vault-map.md` 確認 cwd 為 repo root（harness-native，不經 shell）；讀不到就停止並請使用者 cd 到 repo root。
 
 本 skill 高頻踩雷點：defuddle transcript 若含 token / 個資直接跳過該筆；頻道主題 tag 先 grep 既有 vault tags 沿用，避免 `claude-code` vs `claudeCode` drift。
 

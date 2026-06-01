@@ -7,6 +7,8 @@ description: Vault 健檢：掃描孤立頁面、死連結、Inbox 積壓、tag 
 
 掃描 → 列分類報告 → 等用戶拍板 → 修。
 
+> **執行 shell**：本 skill 的掃描全是聚合 pipeline（`find`/`rg`/`awk`/`sed`/`uniq`、bash 陣列、here-string），**一律用 Bash 工具（Git Bash）執行，不要在 PowerShell 跑**。這是刻意保留的 shell 聚合，PowerShell 無對等簡潔寫法——與其他 skill「能用 harness-native 就不碰 shell」的取向互補：vault-lint 是聚合例外。
+
 ## 前置條件
 
 ```bash
@@ -237,4 +239,4 @@ done
 
 ## 執行方式
 
-直接在主 agent 執行以上 bash 命令，輸出同格式報告，互動確認同規則。
+在主 agent 用 **Bash 工具**（見頂部 shell 註記）執行以上命令，輸出同格式報告，互動確認同規則。

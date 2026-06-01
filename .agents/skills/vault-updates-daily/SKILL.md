@@ -116,9 +116,7 @@ sync: releases
 
 ## 前置作業
 
-```bash
-[ -f "vault-map.md" ] || { echo "ERROR: cwd 不在 repo root"; exit 1; }
-```
+用 `Read vault-map.md` 確認 cwd 為 repo root（harness-native，不經 shell）；讀不到就停止並請使用者 cd 到 repo root。
 
 ## 步驟 1：讀取來源
 
@@ -214,7 +212,7 @@ CHANGELOG:<name>|||<entry-date>|||<entry-title>|||<url>#<slug>|||<body-snippet>
 
 ### 去重（傳給 subagent 前先做）
 
-日報是合併格式（無 `source:` frontmatter），改用以下兩層去重：
+日報是合併格式（無 `source:` frontmatter），改用以下兩層去重。**此段用 Bash 工具執行**（`grep -F` fixed-string 比對，避開 URL 裡 `?`/`&` 等 regex metachar；PowerShell 與 Grep 工具無對等簡潔寫法）：
 
 ```bash
 # 1. 舊個別筆記格式（Cards / Topics / 舊 Inbox 個別檔）

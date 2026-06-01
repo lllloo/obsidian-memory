@@ -23,11 +23,7 @@
 
 本流程的契約是 **cwd 必須是 vault root**（底下直接有 `vault-map.md`、`Cards/`、`Topics/`）。所有路徑都是 cwd-relative。
 
-```bash
-[ -f "vault-map.md" ] || exit 1
-```
-
-若 cwd 不在 vault root，直接輸出未命中 JSON：`hits` 為空，`miss_reason` 寫「cwd 不在 vault root（找不到 `vault-map.md`），請 cd 到 obsidian-memory 後重試」。
+用 `Read vault-map.md` 確認存在（harness-native，不經 shell）。若讀不到（cwd 不在 vault root），直接輸出未命中 JSON：`hits` 為空，`miss_reason` 寫「cwd 不在 vault root（找不到 `vault-map.md`），請 cd 到 obsidian-memory 後重試」。
 
 ## Vault 佈局
 

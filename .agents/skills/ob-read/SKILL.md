@@ -9,13 +9,7 @@ description: 在 obsidian-memory vault 查詢既有筆記：找筆記、搜尋�
 
 ## 呼叫前置條件
 
-cwd 必須是 vault root：
-
-```bash
-[ -f "vault-map.md" ] || { echo "ERROR: cwd 不在 vault root，請 cd 到 obsidian-memory 後再呼叫 /ob-read"; exit 1; }
-```
-
-check 失敗就告知用戶並停止，不要硬猜路徑。
+cwd 必須是 vault root——用 `Read vault-map.md` 確認（harness-native，不經 shell）：讀不到就告知用戶 cd 到 obsidian-memory 後再呼叫 `/ob-read`，並停止，不要硬猜路徑。
 
 ## 執行
 

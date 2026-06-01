@@ -9,13 +9,9 @@ description: 把內容「寫進／建立／新增」到 Obsidian vault（obsidia
 
 ## 模式判斷（必先執行）
 
-寫入分兩種模式，先判 cwd：
+寫入分兩種模式，先判 cwd——用 `Read vault-map.md` 確認存在（harness-native，不經 shell、不分 PowerShell/bash）：讀得到 → `MODE=local`；讀不到 → `MODE=cross`。
 
-```bash
-[ -f "vault-map.md" ] && echo "MODE=local" || echo "MODE=cross"
-```
-
-- `MODE=local`：cwd 已是 vault root → 本地模式，不限工具（CLI 優先，CLI 不可用可降級 Write/Edit）。
+- `MODE=local`：cwd 已是 vault root → 本地模式，不限工具（建檔用 Write，其餘 CLI 優先）。
 - `MODE=cross`：cwd 在其他專案 → 跨專案模式，嚴格 CLI + vault 身分硬 gate，不降級。
 
 ## 執行
