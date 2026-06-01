@@ -19,7 +19,7 @@ description: 每天彙整高信任 developer tooling 更新成一篇 Obsidian da
 
 - GitHub issues（訊噪比太差，已移除）
 - YouTube 頻道同步（用 `vault-youtube-sync`）
-- 既有 vault 查詢或單篇筆記建檔（用 `ob`）
+- 既有 vault 查詢（用 `ob-read`）或單篇筆記建檔（用 `ob-write`）
 - 社群日報或輿情 briefing
 
 ## 產出

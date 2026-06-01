@@ -118,11 +118,6 @@
 - 因為 cwd 已是 vault root，Glob/Grep 回的路徑本來就是相對路徑，直接用即可
 - **一律使用 forward slash（`/`）**，不論作業系統。Windows Glob 回 `Cards\foo.md` 時，輸出前需 replace `\` 為 `/`
 
-## 與其他流程的分工
+## 與寫入的分界
 
-- **此流程（query）**：純讀、回 JSON。呼叫來源有三：
-  1. `/ob <查詢關鍵字>` skill 直接分派
-  2. 主 agent 自動並行協議（與 WebSearch 一起跑）
-  3. 其他流程需要唯讀搜尋時
-- **write 流程**：寫入專用（建檔、append、改 frontmatter），不再處理查詢
-- 若查詢後使用者想建筆記，由 orchestrator 再呼叫 write 流程，本流程不跨界
+本流程只讀、只回 JSON，不呼叫 `/ob-write`、不跨界寫入。查詢後若使用者要建筆記，由 orchestrator 另呼叫 `/ob-write`。

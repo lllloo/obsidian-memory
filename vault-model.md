@@ -104,8 +104,8 @@ Card 是完整概念：獨立可讀，不需搭配其他筆記或原文就能理
 
 | 操作 | 做什麼 | 承載 |
 |---|---|---|
-| 擷取 / 消化 | 外部原始資料進 Inbox，內化進 Cards 或 Topics 後刪原篇 | `ob`、`vault-youtube-sync`、`vault-updates-daily` |
-| 查詢 / 回存 | 問 vault；若答案有複利價值，只提議回存，等你拍板 | `ob`、`CLAUDE.md` 查詢回存規則 |
+| 擷取 / 消化 | 外部原始資料進 Inbox，內化進 Cards 或 Topics 後刪原篇 | `ob-write`、`vault-youtube-sync`、`vault-updates-daily` |
+| 查詢 / 回存 | 問 vault；若答案有複利價值，只提議回存，等你拍板 | `ob-read`（查）、`ob-write`（回存）、`CLAUDE.md` 查詢回存規則 |
 | 主題整合 | 多篇相關筆記整合成整合頁或 Topic 入口 | 當前 agent 依 `CLAUDE.md` 多筆記整合規則執行 |
 | 結構健檢 | 掃孤立頁、死連結、tag 漂移、缺欄位等結構問題 | `vault-lint` |
 
