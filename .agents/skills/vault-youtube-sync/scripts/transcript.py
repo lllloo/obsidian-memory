@@ -3,8 +3,8 @@
 取代 subagent 流程裡的 `defuddle ... || npx`、`echo "$JSON" | python3` 驗證、
 `pip install youtube-transcript-api` + 抓字幕三段 shell 膠水，全程無 shell pipe / bash-ism。
 
-用法：
-    python transcript.py <url> <videoId>
+用法（cwd = repo root）：
+    python .agents/skills/vault-youtube-sync/scripts/transcript.py <url> <videoId>
 
 輸出（stdout，固定順序）：
     RESULT:MATCH | MISMATCH:<detail> | UNKNOWN | TRANSCRIPT | FAIL:<reason>
@@ -25,7 +25,7 @@ import sys
 
 try:
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
-except AttributeError:
+except (AttributeError, OSError):
     pass
 
 ID_RE = r'(?:watch\?v=|youtu\.be/|/embed/)([A-Za-z0-9_-]{11})'

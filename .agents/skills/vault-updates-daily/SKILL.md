@@ -123,7 +123,7 @@ sync: releases
 讀 `Inbox/Updates/01.index.md`：
 
 - `## Official changelogs` 段：官方 changelog / release notes。
-- `## GitHub repositories` 段：GitHub release / issue / discussion 來源。
+- `## GitHub repositories` 段：GitHub release / discussion 來源。
 - `## GitHub starred` 段：是否啟用 starred 同步。
 
 若 index 不存在，**停止並請使用者依「Source index」段建立**，不要自動產生預設清單（避免引入未經確認的追蹤源）。若三段皆為空，同樣停止並提示使用者至少加一個來源。單段為空時略過該來源類型，不中止整體流程。
@@ -143,6 +143,8 @@ python .agents/skills/vault-updates-daily/scripts/fetch_updates.py
 - 自訂 index 路徑：加 `--index <path>`（預設 `Inbox/Updates/01.index.md`）。
 
 > 解析 index 與算 since 的邏輯都在腳本內（`parse_index`），跨平台、零 shell 膠水。SKILL 不再硬編碼工具清單——唯一真實來源是 `01.index.md`。
+>
+> **抓取上限（silent cap，避免誤判為已涵蓋全部）**：腳本對各來源有硬上限——starred repos 取前 100、每 repo releases 前 5、explicit repo releases `per_page=30`、discussions 前 20。starred 超過 100 個或單來源超過上限時會靜默漏抓。來源接近上限時，於回覆「各來源抓取數」一併標注可能截斷。
 
 輸出格式：
 

@@ -1,7 +1,7 @@
 """判斷某 source URL 是否已在 vault 出現過（daily updates 去重，fixed-string 比對）。
 
 用法（cwd = repo root）：
-    python dedup_check.py "<url>" [<YYYY-MM-DD>]
+    python .agents/skills/vault-updates-daily/scripts/dedup_check.py "<url>" [<YYYY-MM-DD>]
 
 兩層檢查：
   1. 舊個別筆記格式：Inbox/Updates / Cards / Topics 任一 .md 含 `source: <url>`
@@ -19,8 +19,12 @@ from pathlib import Path
 
 try:
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
-except AttributeError:
+except (AttributeError, OSError):
     pass
+
+# cwd 必為 vault root：cwd 錯時 rglob 會靜默空集合 → 誤回 UNIQUE 放行重複；hard-fail 較安全
+if not Path("vault-map.md").is_file():
+    sys.exit("ERROR: cwd 不在 vault root（找不到 vault-map.md）")
 
 if len(sys.argv) < 2:
     print("UNIQUE")

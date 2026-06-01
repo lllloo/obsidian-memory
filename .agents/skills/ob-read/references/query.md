@@ -6,11 +6,9 @@
 
 此流程**禁止任何寫入**。違反即停止輸出，回報「query 流程不得寫入」。
 
-- **允許工具**：`Read` / `Glob` / `Grep`
-- **允許 Bash 命令**（僅唯讀）：`pwd`、`test`、`ls`、`find`、`rg`、`cat`、`Get-Content`、`realpath`、`git status`、`git diff --stat`
-- **禁止工具**：`Write` / `Edit` / `NotebookEdit`
-- **禁止 Bash 命令**：`mkdir`、`mv`、`cp`、`Move-Item`、`Copy-Item`、`Set-Content`、`Add-Content`、`Out-File`、`Remove-Item`、`rm`、`sed -i`、`tee`、shell redirect（`>`、`>>`）、任何 `npm run` 含 `:fix` / `:write` / `:build` 的 script（特別是 `npm run vault:fix`）、`obsidian create` / `obsidian append` / `obsidian property:set` 等任何寫入子命令
-- **無法確認某命令是否唯讀**：停止並回報「無法確認 `<命令>` 唯讀，已中止」
+- **只用 harness-native 唯讀工具**：`Read` / `Glob` / `Grep`——不經 shell、不分 OS，沒有「挑錯 shell」失敗點。檔案搜尋與讀取一律走這三個。
+- **禁止寫入工具**：`Write` / `Edit` / `NotebookEdit`。
+- **不落 shell**：查詢全程不需要 shell。若情非得已要跑命令，僅限純唯讀（如 `git status`），且絕不執行任何寫入子命令（`obsidian create`/`append`/`property:set`、`npm run *:fix`/`:write`/`:build`、`mv`/`rm`/redirect 等）。無法確認某命令唯讀就停止並回報「無法確認 `<命令>` 唯讀，已中止」。
 
 其他絕對規則：
 

@@ -3,7 +3,7 @@
 
 在 vault root（cwd 有 vault-map.md）執行：
 
-    python scripts/lint.py
+    python .agents/skills/vault-lint/scripts/lint.py
 
 輸出單一 JSON 物件到 stdout，欄位對應 SKILL.md 的 11 個掃描項。
 不修改任何檔案；判讀與互動確認由呼叫端 agent 依 SKILL.md 處理。
@@ -96,12 +96,13 @@ def scan():
     # 3. Frontmatter 缺欄位（Cards/Topics）
     missing_title, missing_tags, missing_updated = [], [], []
     for p in md_files("Cards", "Topics"):
-        t = read(p)
-        if not has_line(t, "title:"):
+        # 用 frontmatter 頂層欄位判定，避免正文行首 `title:` 等造成假陰性
+        keys = frontmatter_keys(read(p))
+        if "title" not in keys:
             missing_title.append(rel(p))
-        if p.name != "index.md" and not has_line(t, "tags:"):
+        if p.name != "index.md" and "tags" not in keys:
             missing_tags.append(rel(p))
-        if not has_line(t, "updated:"):
+        if "updated" not in keys:
             missing_updated.append(rel(p))
     out["missing_title"] = missing_title
     out["missing_tags"] = missing_tags
@@ -178,7 +179,8 @@ def scan():
     if yt.is_dir():
         desc_targets += [p for p in sorted(yt.rglob("*.md")) if p.name != "01.index.md"]
     out["missing_description"] = [
-        rel(p) for p in desc_targets if p.is_file() and not has_line(read(p), "description:")
+        rel(p) for p in desc_targets
+        if p.is_file() and "description" not in frontmatter_keys(read(p))
     ]
 
     # 11. Frontmatter 欄位順序錯亂 / 白名單外游離欄位

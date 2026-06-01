@@ -1,8 +1,8 @@
 """
 Fetch high-trust developer tooling updates for vault-updates-daily.
 
-Inputs:
-    python fetch_updates.py --since YYYY-MM-DD \
+Inputs (cwd = repo root):
+    python .agents/skills/vault-updates-daily/scripts/fetch_updates.py --since YYYY-MM-DD \
         --official "OpenAI Codex|https://developers.openai.com/codex/changelog|codex" \
         --repo openai/codex [--starred]
 
@@ -41,7 +41,7 @@ import xml.etree.ElementTree as ET
 
 try:
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
-except AttributeError:
+except (AttributeError, OSError):
     pass
 
 HEADERS = {

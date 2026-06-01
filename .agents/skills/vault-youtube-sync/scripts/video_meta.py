@@ -1,7 +1,7 @@
 """抓 YouTube 影片頁面的可用性與上傳日期（取代 subagent 流程裡的 curl|python）。
 
-用法：
-    python video_meta.py <videoId>
+用法（cwd = repo root）：
+    python .agents/skills/vault-youtube-sync/scripts/video_meta.py <videoId>
 
 輸出（每行一條）：
     STATUS:available | STATUS:unavailable
@@ -16,7 +16,7 @@ import urllib.request
 # Windows 預設 stdout cp950，遇 emoji / 非 cp950 字元會炸，強制 UTF-8
 try:
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
-except AttributeError:
+except (AttributeError, OSError):
     pass
 
 HEADERS = {

@@ -1,8 +1,8 @@
 """
 抓取 YouTube 頻道影片清單與頻道簡介。
 
-用法：
-    python fetch_videos.py <handle>
+用法（cwd = repo root）：
+    python .agents/skills/vault-youtube-sync/scripts/fetch_videos.py <handle>
 
 輸出格式（每行一條）：
     DESC:<頻道簡介前 300 字>
@@ -12,7 +12,7 @@
 輸出筆數：ytInitialData 一次 HTTP 請求能拿到幾筆就幾筆（YouTube 上限約 30）。
 
 範例：
-    python fetch_videos.py Chase-H-AI
+    python .agents/skills/vault-youtube-sync/scripts/fetch_videos.py Chase-H-AI
 """
 
 import sys
@@ -22,10 +22,10 @@ import urllib.request
 import html as html_module
 
 # Windows 預設 stdout 是 cp950，遇到 emoji（如 🚀）print 會炸 UnicodeEncodeError
-# 強制 UTF-8 輸出，主 skill bash heredoc 才不會收到 partial output。
+# 強制 UTF-8 輸出，主 skill 讀 stdout 才不會收到 partial output。
 try:
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
-except AttributeError:
+except (AttributeError, OSError):
     pass  # Python <3.7 沒有 reconfigure，但本 repo 要求 3.7+
 
 def main():
