@@ -1,7 +1,7 @@
 ---
 title: Vault 運作模式
 created: 2026-05-25
-updated: 2026-05-29
+updated: 2026-06-02
 tags:
   - vault
   - meta
@@ -10,7 +10,7 @@ tags:
 # 運作模式 — 吸收型卡片盒
 
 > 這份文件給人看，用來建立整體心智模型。  
-> 可執行規則不放這裡：agent 寫入規則看 [`CLAUDE.md`](CLAUDE.md)，升 Topic 門檻看 [`card-review.md`](card-review.md)，導航與 tag 查詢看 [`vault-map.md`](vault-map.md)。
+> 可執行規則不放這裡：agent 寫入規則與 Cards -> Topics 升級門檻看 [`CLAUDE.md`](CLAUDE.md)，單張 Card 品質標準看 [`card-quality.md`](card-quality.md)，導航與 tag 查詢看 [`vault-map.md`](vault-map.md)。
 > 執行邊界（刪除筆記需使用者拍板、`git push` 須明確同意、`Inbox/Clippings/` 不主動消化、`extracted_to` 半消化原篇留 Inbox 的合法性）均以 [`CLAUDE.md`](CLAUDE.md) 的基本原則、frontmatter 與整合流程規則為準，本文不重述。
 
 一句話：**Vault 是腦的延伸，不是倉庫。**
@@ -98,7 +98,7 @@ Card 是完整概念：獨立可讀，不需搭配其他筆記或原文就能理
 
 跨主題靠 `tags` 串連。`Topics/` 第一層不做跨主題巢套；不要建「AI-工具/Claude-Code/」這種群組。單一主題內 Cards 過多時，才考慮在 `Topics/<主題>/` 底下再分子資料夾。
 
-升 Topic 前的品質門檻與退回 Cards 的反指標看 [`card-review.md`](card-review.md)。已升 Topic 重看時若命中反指標，可退回 Cards，但仍需使用者拍板。
+升 Topic 的決策門檻看 [`CLAUDE.md`](CLAUDE.md)「Cards -> Topics 升級限制」，單張卡品質標準與反指標看 [`card-quality.md`](card-quality.md)。已升 Topic 重看時若命中反指標，可退回 Cards，但仍需使用者拍板。
 
 主要操作由 skills 承載：
 
@@ -130,7 +130,7 @@ AI 可以承擔重複、瑣碎、容易被延後的維護工作；但不自主�
 | 要找 | 看 |
 |---|---|
 | Agent 寫入規則、寫入前 checklist、frontmatter、tag / 命名 | [`CLAUDE.md`](CLAUDE.md) |
-| Cards → Topics 升級門檻與反指標 | [`card-review.md`](card-review.md) |
+| Cards → Topics 升級門檻（決策準則 + 執行流程） | [`CLAUDE.md`](CLAUDE.md) |
+| 單張 Card 品質標準與反指標 | [`card-quality.md`](card-quality.md) |
 | 全域導航與 tag 查詢地圖 | [`vault-map.md`](vault-map.md) |
-| 專案結構、安裝方式、skill 清單 | [`README.md`](README.md) |
 | 通用 LLM Wiki 概念 | [Karpathy LLM Wiki](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f) |

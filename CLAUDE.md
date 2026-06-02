@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working in this
 
 # Obsidian Memory Vault — Agent 操作規格
 
-本檔只放 agent 必須遵守的執行規則。Vault 心智模型看 [`vault-model.md`](vault-model.md)；Cards -> Topics 升級門檻看 [`card-review.md`](card-review.md)；導航與 tag 查詢看 [`vault-map.md`](vault-map.md)。
+本檔只放 agent 必須遵守的執行規則。單張 Card 品質標準看 [`card-quality.md`](card-quality.md)；Cards -> Topics 升級門檻見本檔「Cards -> Topics 升級限制」；導航與 tag 查詢看 [`vault-map.md`](vault-map.md)。
 
 ## 基本原則
 
@@ -27,7 +27,11 @@ This file provides guidance to Claude Code (claude.ai/code) when working in this
 
 任何 agent 在寫入 `.md` 前都必須自檢。Vault 內容會公開發佈，敏感資料零容忍。
 
-### 1. 敏感資料
+### 1. 語言
+
+正文一律繁體中文，技術名詞／品牌名／工具名保留英文。
+
+### 2. 敏感資料
 
 正文與 frontmatter 不得包含：
 
@@ -41,23 +45,17 @@ This file provides guidance to Claude Code (claude.ai/code) when working in this
 - **本次寫入命中**：剔除敏感片段後再寫入；整篇無法拆解則中止寫入並告知使用者。
 - **既有筆記命中**：停手、回報檔案與行號給使用者，待拍板後才移除——不自動改既有筆記（與基本原則「不主動擴大 scope」一致）。
 
-### 2. Tag 沿用既有
+### 3. Tag 沿用既有
 
-寫入前先查現有 tags，優先沿用，避免同義異寫。
+寫入前先用 Grep 工具搜 `^tags:`（glob `*.md`，加 5 行上下文）查現有 tags，優先沿用，避免同義異寫。真無合適才建新 tag；新 tag 使用小寫、`-` 連接。
 
-```bash
-rg -A5 '^tags:' . -g '*.md'
-```
-
-真無合適才建新 tag；新 tag 使用小寫、`-` 連接。
-
-### 3. 命名
+### 4. 命名
 
 - 檔名不含空格；空格一律改為 `-`。
 - Wikilink 必須對應實際存在的檔案名稱。
 - `title:` 用主題名，不加日期前綴。
 
-### 4. Frontmatter schema
+### 5. Frontmatter schema
 
 `.md` frontmatter 欄位採白名單與固定順序；新增欄位前先確認既有筆記是否已使用。
 
@@ -113,11 +111,11 @@ Topics 的 `index.md` 是主題入口；Cards/筆記也可以是整合頁。不�
 1. 先讀 `vault-map.md`，再用 tag、路徑、正文關鍵字搜尋 `Inbox/`、`Cards/`、`Topics/`。
 2. 列出候選筆記與共同主題；排除既有整合頁（例如 `Topics/*/index.md` 或內容明確為整合頁），避免整合頁套整合頁。
 3. 只有整合了 ≥2 篇既有筆記、且產生原文沒有的綜合結論時，才建立或改寫整合頁。
-4. 整合頁預設寫入 `Cards/<主題>.md`；不自動升入 `Topics/`，升 Topic 仍依 `card-review.md` 等使用者拍板。
+4. 整合頁預設寫入 `Cards/<主題>.md`；不自動升入 `Topics/`，升 Topic 仍須使用者拍板（見「Cards -> Topics 升級限制」）。
 5. 整合頁 frontmatter 必須含主題 tag，不新增結構角色 tag，並遵守本檔寫入前 Checklist。
 6. 原筆記處置只提出建議，不自動刪除或搬移。可選處置為：保留並用 wikilink 連回、整篇刪除、部分抽取並加 `extracted_to`。
 
-整合頁內容應聚焦長期有效的概念、判斷框架與筆記間的共識 / 差異；避免把版本清單、工具流水帳或可由官方文件快速取代的細節塞進主體。精確版本號的處理（淡化易變版本、保留行為約束）見 [`vault-model.md`](vault-model.md) 的「版本抗性」，此原則適用所有 Topics / Cards，不限整合頁。
+整合頁內容應聚焦長期有效的概念、判斷框架與筆記間的共識 / 差異；避免把版本清單、工具流水帳或可由官方文件快速取代的細節塞進主體。精確版本號的處理原則：描述行為怎麼變、別釘死版本號，確切切換版本指向官方 changelog 由讀者回查；版本號只在它是行為關鍵分水嶺、讀者必須知道時才留並標來源；與版本耦合度低的行為約束（如某功能需特定 model / API）仍要留，別一起淡化。此原則適用所有 Topics / Cards，不限整合頁。
 
 ## 可用 Skills
 
@@ -133,7 +131,7 @@ Topics 的 `index.md` 是主題入口；Cards/筆記也可以是整合頁。不�
 
 優先使用 skill，不新增平行流程——現有 skill 能覆蓋的操作一律走 skill，只有 skill 無對應流程時才手動直接操作（即下一段情境）。新增或修改 skill 時，盡量遵循 Agent Skills 開放標準，讓內容可跨工具移植。
 
-未透過 skill 直接操作 Inbox 或 Cards 時，先讀 [`vault-model.md`](vault-model.md) 的「三層流動細節」確認流程（三條清空路徑、`extracted_to` 例外、git mv 步驟）。
+未透過 skill 直接操作 Inbox 或 Cards 時，依三層流動流程：Inbox 三條清空路徑（寫新 Card／強化既有 Card 或 Topic／直接刪，三者都刪 Inbox 原篇）、多主題只內化部分切角時用 `extracted_to` 指回整合頁並保留剩餘段落、升 Topic 一次 `git mv` 整組搬到 `Topics/<主題>/` 後在 `index.md` 補 wikilink。
 
 ## YouTube 筆記
 
@@ -144,10 +142,21 @@ Topics 的 `index.md` 是主題入口；Cards/筆記也可以是整合頁。不�
 
 ## Cards -> Topics 升級限制
 
-升 Topic 不由 agent 自主執行。流程：
+升 Topic 不由 agent 自主執行，須使用者拍板。判斷分兩件事：**單張卡夠不夠格**（品質）交給 [`card-quality.md`](card-quality.md) 的品質標準；**這群卡該不該收成一個資料夾**（數量成群）是下面的決策準則。
+
+### 升級決策準則
+
+只看數量是否成群——單張卡品質交給 `card-quality.md`，這裡不重判。
+
+- **建立新 Topic（vault 還沒這主題）**：同主題的判斷型卡（各自符合品質標準）累積到 2-3 張，或單張裂變成多張（裂變 = 一張卡的內容撐到該拆成 2 張以上獨立卡），就一起搬建立 Topic。單張新主題無夥伴 → 留 Cards 等累積。
+- **升入既有 Topic（`Topics/<主題>/` 已建）**：單張判斷型卡符合品質標準即可升入。書籤型 / 萃取型卡隨時可放進去當該主題的資源檔。
+- **即便如此也不升**：跟個人實務脈絡不直接相關的，即使數量夠、品質標準全中，平常翻不到就是占位——這是去向判斷，非品質瑕疵（例：使用者不是 Supabase / Stripe 重度用戶就不該升 Vibe-Coded 工程實踐型筆記）。
+- **退回（Topic -> Cards）**：罕見動作，僅在主題重新審核命中反指標時才做，亦須使用者拍板；退回不是淘汰，是降級到「待消化 / 改寫 / 拆分」的暫存區。
+
+### 執行流程
 
 1. 列出候選 Cards。
-2. 對照 `card-review.md` 的升 Topic 決策（品質＋數量）、Card 品質尺條件與反指標。
+2. 對照上方決策準則 + [`card-quality.md`](card-quality.md) 的品質標準條件與反指標。
 3. 給出傾向與理由。
 4. 等使用者拍板後才執行 `git mv`。
 

@@ -16,15 +16,11 @@
 
 ## 規則與工作流
 
-詳見：
-
-- [`vault-model.md`](./vault-model.md) — 系統全貌：模式血緣、核心賭注、刻意不做的事（先看這份建立整體心智模型）
-- [`CLAUDE.md`](./CLAUDE.md) — vault 規則、寫入 Checklist、frontmatter schema
-- [`card-review.md`](./card-review.md) — 升 Topic 品質門檻與反指標
+先看 [`SYSTEM-DESIGN.md`](./SYSTEM-DESIGN.md)——系統全貌：模式血緣、核心賭注、刻意不做的事，建立整體心智模型。各份規則文件（agent 規則、Card 品質標準、導航）由它的「細節在哪」往下索引，這裡不重列。
 
 ## Skills
 
-`.agents/skills/` 內提供 vault 操作 skills（`ob-write` 筆記建立、`ob-read` 查詢、`vault-youtube-sync` 影片摘要同步、`vault-updates-daily` 日常更新、`vault-lint` 結構健檢等）。完整清單見 [`CLAUDE.md` § 可用 Skills](./CLAUDE.md#可用-skills)。
+`.agents/skills/` 內提供 vault 操作 skills（`ob-write` 筆記建立、`ob-read` 查詢、`vault-youtube-sync` 影片摘要同步、`vault-updates-daily` 日常更新、`vault-lint` 結構健檢等）。
 
 **使用契約**：cwd 必須是本 repo 根目錄（含 `vault-map.md` 的目錄），所有路徑 cwd-relative，不靠環境變數。從別的專案想呼叫 skill，先 `cd` 進來。**例外**：`ob-write` 為 global skill（symlink/junction 到 `~/.claude/skills/`），任何專案皆可呼叫——cwd 不在 vault 時自動走跨專案模式（嚴格 CLI 定位 vault）。
 
