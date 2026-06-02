@@ -133,13 +133,6 @@ Topics 的 `index.md` 是主題入口；Cards/筆記也可以是整合頁。不�
 
 未透過 skill 直接操作 Inbox 或 Cards 時，依三層流動流程：Inbox 三條清空路徑（寫新 Card／強化既有 Card 或 Topic／直接刪，三者都刪 Inbox 原篇）、多主題只內化部分切角時用 `extracted_to` 指回整合頁並保留剩餘段落、升 Topic 一次 `git mv` 整組搬到 `Topics/<主題>/` 後在 `index.md` 補 wikilink。
 
-## YouTube 筆記
-
-所有 YouTube 影片筆記正文一律以繁體中文撰寫。
-
-- 技術名詞、品牌名、工具名保留英文。
-- 若 defuddle 取得英文 transcript，需翻譯整理為繁體中文後再寫入筆記。
-
 ## Cards -> Topics 升級限制
 
 升 Topic 不由 agent 自主執行，須使用者拍板。判斷分兩件事：**單張卡夠不夠格**（品質）交給 [`card-quality.md`](card-quality.md) 的品質標準；**這群卡該不該收成一個資料夾**（數量成群）是下面的決策準則。
