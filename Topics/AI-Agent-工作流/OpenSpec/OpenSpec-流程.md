@@ -13,19 +13,19 @@ OpenSpec 是 Fission-AI 出品的輕量 spec 框架（npm）。OPSX 是目前的
 
 ## 核心節點
 
-| 代號 | 指令 | Profile | 動作 | 輸出 / 備註 |
-| ---- | ---- | ------- | ---- | ----------- |
-| `EX` | `/opsx:explore` | core | 發散思考，釐清需求與選項 | 無固定輸出；propose 前用 |
-| `PR` | `/opsx:propose` | core ⭐ | 一步建立完整 change | proposal + specs + design + tasks |
-| `AP` | `/opsx:apply` | core ⭐ | 依 tasks.md 執行實作 | 過程可隨時更新 artifact |
-| `SY` | `/opsx:sync` | core（v1.3.1 npm 未含） | 同步 delta specs 進主規格 | `archive` 執行時自動詢問是否 sync；npm 版本暫缺此 skill，可用 `archive` 代勞 |
-| `AR` | `/opsx:archive` | core ⭐ | 合併 delta specs 並封存 change | change 移至 `changes/archive/`；含 sync 確認步驟 |
-| `NW` | `/opsx:new` | expanded ⭐ | 建立 change scaffold（只搭架） | — |
-| `CT` | `/opsx:continue` | expanded ⭐ | 依相依圖逐步建立下一個 artifact | 與 `FF` 擇一；每次一個 |
-| `FF` | `/opsx:ff` | expanded ⭐ | 一次產出所有 planning artifacts | 與 `CT` 擇一；目標清楚時用 |
-| `VF` | `/opsx:verify` | expanded ⭐ | 對照 specs 驗收實作 | — |
-| `BA` | `/opsx:bulk-archive` | expanded | 批次封存多個 changes | — |
-| `ON` | `/opsx:onboard` | expanded | 引導走完整一次 OPSX 流程（end-to-end walkthrough） | — |
+| 代號   | 指令                   | Profile             | 動作                                      | 輸出 / 備註                                                  |
+| ---- | -------------------- | ------------------- | --------------------------------------- | -------------------------------------------------------- |
+| `EX` | `/opsx:explore`      | core                | 發散思考，釐清需求與選項                            | 無固定輸出；propose 前用                                         |
+| `PR` | `/opsx:propose`      | core ⭐              | 一步建立完整 change                           | proposal + specs + design + tasks                        |
+| `AP` | `/opsx:apply`        | core ⭐              | 依 tasks.md 執行實作                         | 過程可隨時更新 artifact                                         |
+| `SY` | `/opsx:sync`         | core（v1.3.1 npm 未含） | 同步 delta specs 進主規格                     | `archive` 執行時自動詢問是否 sync；npm 版本暫缺此 skill，可用 `archive` 代勞 |
+| `AR` | `/opsx:archive`      | core ⭐              | 合併 delta specs 並封存 change               | change 移至 `changes/archive/`；含 sync 確認步驟                 |
+| `NW` | `/opsx:new`          | expanded ⭐          | 建立 change scaffold（只搭架）                 | —                                                        |
+| `CT` | `/opsx:continue`     | expanded ⭐          | 依相依圖逐步建立下一個 artifact                    | 與 `FF` 擇一；每次一個                                           |
+| `FF` | `/opsx:ff`           | expanded ⭐          | 一次產出所有 planning artifacts               | 與 `CT` 擇一；目標清楚時用                                         |
+| `VF` | `/opsx:verify`       | expanded ⭐          | 對照 specs 驗收實作                           | —                                                        |
+| `BA` | `/opsx:bulk-archive` | expanded            | 批次封存多個 changes                          | —                                                        |
+| `ON` | `/opsx:onboard`      | expanded            | 引導走完整一次 OPSX 流程（end-to-end walkthrough） | —                                                        |
 
 Expanded profile 需 `openspec config profile` 啟用，再跑 `openspec update`。
 
