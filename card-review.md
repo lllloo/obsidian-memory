@@ -1,5 +1,5 @@
 ---
-title: Topics 審核條件
+title: Card 審核條件
 created: 2026-05-07
 updated: 2026-06-02
 tags:
@@ -7,7 +7,7 @@ tags:
   - meta
 ---
 
-# Topics 審核條件
+# Card 審核條件
 
 兩件事分開，別混：
 

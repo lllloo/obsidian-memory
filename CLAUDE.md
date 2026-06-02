@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working in this
 
 # Obsidian Memory Vault — Agent 操作規格
 
-本檔只放 agent 必須遵守的執行規則。Vault 心智模型看 [`vault-model.md`](vault-model.md)；Cards -> Topics 升級門檻看 [`topics-review.md`](topics-review.md)；導航與 tag 查詢看 [`vault-map.md`](vault-map.md)。
+本檔只放 agent 必須遵守的執行規則。Vault 心智模型看 [`vault-model.md`](vault-model.md)；Cards -> Topics 升級門檻看 [`card-review.md`](card-review.md)；導航與 tag 查詢看 [`vault-map.md`](vault-map.md)。
 
 ## 基本原則
 
@@ -113,7 +113,7 @@ Topics 的 `index.md` 是主題入口；Cards/筆記也可以是整合頁。不�
 1. 先讀 `vault-map.md`，再用 tag、路徑、正文關鍵字搜尋 `Inbox/`、`Cards/`、`Topics/`。
 2. 列出候選筆記與共同主題；排除既有整合頁（例如 `Topics/*/index.md` 或內容明確為整合頁），避免整合頁套整合頁。
 3. 只有整合了 ≥2 篇既有筆記、且產生原文沒有的綜合結論時，才建立或改寫整合頁。
-4. 整合頁預設寫入 `Cards/<主題>.md`；不自動升入 `Topics/`，升 Topic 仍依 `topics-review.md` 等使用者拍板。
+4. 整合頁預設寫入 `Cards/<主題>.md`；不自動升入 `Topics/`，升 Topic 仍依 `card-review.md` 等使用者拍板。
 5. 整合頁 frontmatter 必須含主題 tag，不新增結構角色 tag，並遵守本檔寫入前 Checklist。
 6. 原筆記處置只提出建議，不自動刪除或搬移。可選處置為：保留並用 wikilink 連回、整篇刪除、部分抽取並加 `extracted_to`。
 
@@ -147,7 +147,7 @@ Topics 的 `index.md` 是主題入口；Cards/筆記也可以是整合頁。不�
 升 Topic 不由 agent 自主執行。流程：
 
 1. 列出候選 Cards。
-2. 對照 `topics-review.md` 的升 Topic 決策（品質＋數量）、Card 品質尺條件與反指標。
+2. 對照 `card-review.md` 的升 Topic 決策（品質＋數量）、Card 品質尺條件與反指標。
 3. 給出傾向與理由。
 4. 等使用者拍板後才執行 `git mv`。
 
