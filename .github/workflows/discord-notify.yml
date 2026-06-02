@@ -1,0 +1,29 @@
+name: Discord PR Merged Notify
+
+on:
+  pull_request:
+    types: [closed]
+
+jobs:
+  notify:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send Discord notification
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+        run: |
+          curl -s -H "Content-Type: application/json" \
+            -d "{
+              \"embeds\": [{
+                \"title\": \"✅ PR Merged — obsidian-memory\",
+                \"description\": \"**${{ github.event.pull_request.title }}**\",
+                \"color\": 5763719,
+                \"fields\": [
+                  { \"name\": \"Merged by\", \"value\": \"${{ github.event.pull_request.merged_by.login }}\", \"inline\": true },
+                  { \"name\": \"Branch\", \"value\": \"`${{ github.event.pull_request.head.ref }}`\", \"inline\": true }
+                ],
+                \"url\": \"${{ github.event.pull_request.html_url }}\"
+              }]
+            }" \
+            "$DISCORD_WEBHOOK_URL"
