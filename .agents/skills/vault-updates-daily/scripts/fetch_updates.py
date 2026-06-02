@@ -1,14 +1,21 @@
 """
 Fetch high-trust developer tooling updates for vault-updates-daily.
 
-Inputs (cwd = repo root):
-    python3 .agents/skills/vault-updates-daily/scripts/fetch_updates.py --since YYYY-MM-DD \
+Usage (cwd = repo root):
+
+    # 一般用法：自動讀 Inbox/Updates/01.index.md
+    python3 .agents/skills/vault-updates-daily/scripts/fetch_updates.py
+
+    # 指定日期範圍
+    python3 .agents/skills/vault-updates-daily/scripts/fetch_updates.py --since YYYY-MM-DD
+
+    # 進階：手動傳入來源（略過 01.index.md）
+    python3 .agents/skills/vault-updates-daily/scripts/fetch_updates.py \
         --official "OpenAI Codex|https://developers.openai.com/codex/changelog|codex" \
         --repo openai/codex [--starred]
 
-At least one of --official / --repo / --starred is required. The script does
-NOT hardcode any tool list — sources come from Inbox/Updates/01.index.md, which
-the skill parses and passes in.
+Sources come from Inbox/Updates/01.index.md by default.
+When no --official / --repo / --starred flags are given, the script parses the index automatically.
 
 Outputs:
     META:since|||<YYYY-MM-DD>
