@@ -1,7 +1,7 @@
 ---
 title: Claude Code 完成提示（Windows）— 方案比較
 created: 2026-05-25
-updated: 2026-06-01
+updated: 2026-06-02
 tags:
   - claude-code
   - hooks
@@ -13,15 +13,63 @@ tags:
 
 ## 設定
 
-`command` 用 `printf` 直接吐 JSON 字面字串——ESC、BEL 以 JSON unicode escape 寫進字串原樣輸出，交給 Claude Code 解析成控制字元，省掉每次起 `powershell.exe` 子進程，啟動更快。Windows 走 Git Bash 內建的 `printf`。
+Windows 版直接把 hook 指定成 PowerShell。`command` 用 PowerShell 組出 OSC 9;4 escape sequence，再用 `ConvertTo-Json` 回傳 `terminalSequence`；Claude Code 會代為輸出控制序列，不需要 `/dev/tty`，也不依賴 Git Bash 的 `printf`。
 
 ```json
 "hooks": {
-  "SessionStart":     [{"hooks": [{"type": "command", "command": "printf '%s' '{\"terminalSequence\":\"\\u001b]9;4;0;0\\u0007\"}'"}]}],
-  "UserPromptSubmit": [{"hooks": [{"type": "command", "command": "printf '%s' '{\"terminalSequence\":\"\\u001b]9;4;3;0\\u0007\"}'"}]}],
-  "PostToolUse":      [{"hooks": [{"type": "command", "command": "printf '%s' '{\"terminalSequence\":\"\\u001b]9;4;3;0\\u0007\"}'"}]}],
-  "Notification":     [{"matcher": "permission_prompt", "hooks": [{"type": "command", "command": "printf '%s' '{\"terminalSequence\":\"\\u001b]9;4;4;100\\u0007\"}'"}]}],
-  "Stop":             [{"hooks": [{"type": "command", "command": "printf '%s' '{\"terminalSequence\":\"\\u001b]9;4;0;0\\u0007\"}'"}]}]
+  "SessionStart": [{
+    "hooks": [{
+      "type": "command",
+      "shell": "powershell",
+      "command": "$seq=[char]27+']9;4;0;0'+[char]7; @{terminalSequence=$seq}|ConvertTo-Json -Compress"
+    }]
+  }],
+  "UserPromptSubmit": [{
+    "hooks": [{
+      "type": "command",
+      "shell": "powershell",
+      "command": "$seq=[char]27+']9;4;3;0'+[char]7; @{terminalSequence=$seq}|ConvertTo-Json -Compress"
+    }]
+  }],
+  "PostToolBatch": [{
+    "hooks": [{
+      "type": "command",
+      "shell": "powershell",
+      "command": "$seq=[char]27+']9;4;3;0'+[char]7; @{terminalSequence=$seq}|ConvertTo-Json -Compress"
+    }]
+  }],
+  "Notification": [
+    {
+      "matcher": "permission_prompt",
+      "hooks": [{
+        "type": "command",
+        "shell": "powershell",
+        "command": "$seq=[char]27+']9;4;4;100'+[char]7; @{terminalSequence=$seq}|ConvertTo-Json -Compress"
+      }]
+    },
+    {
+      "matcher": "elicitation_dialog",
+      "hooks": [{
+        "type": "command",
+        "shell": "powershell",
+        "command": "$seq=[char]27+']9;4;4;100'+[char]7; @{terminalSequence=$seq}|ConvertTo-Json -Compress"
+      }]
+    }
+  ],
+  "Stop": [{
+    "hooks": [{
+      "type": "command",
+      "shell": "powershell",
+      "command": "$seq=[char]27+']9;4;0;0'+[char]7; @{terminalSequence=$seq}|ConvertTo-Json -Compress"
+    }]
+  }],
+  "StopFailure": [{
+    "hooks": [{
+      "type": "command",
+      "shell": "powershell",
+      "command": "$seq=[char]27+']9;4;0;0'+[char]7; @{terminalSequence=$seq}|ConvertTo-Json -Compress"
+    }]
+  }]
 }
 ```
 
@@ -29,26 +77,20 @@ tags:
 |---|---|---|---|
 | `SessionStart` | — | `0;0` | 清除 |
 | `UserPromptSubmit` | — | `3;0` | 旋轉動畫（開始跑） |
-| `PostToolUse` | — | `3;0` | 旋轉（每次工具後重申，避免被覆蓋） |
-| `Notification` | `permission_prompt` | `4;100` | 黃色滿格暫停（等你點頭） |
+| `PostToolBatch` | — | `3;0` | 每批工具後重申旋轉，避免被覆蓋 |
+| `Notification` | `permission_prompt` / `elicitation_dialog` | `4;100` | 黃色滿格暫停（等你介入） |
 | `Stop` | — | `0;0` | 清除（跑完） |
+| `StopFailure` | — | `0;0` | 清除（API error 等失敗結束） |
 
-**Notification 用 `matcher` 精準篩選**：`Notification` 也含 `idle_prompt`（閒置自動觸發），不篩會造成工作列莫名變黃。`"matcher": "permission_prompt"` 只在等待權限確認時亮黃色暫停，正是想要的「需要你介入」訊號。
+**Notification 用 `matcher` 精準篩選**：`Notification` 也含 `idle_prompt`（閒置自動觸發），不篩會造成工作列莫名變黃。`permission_prompt` 對應權限確認；`elicitation_dialog` 對應 Claude Code 主動詢問使用者。兩者都算「需要你介入」。
 
 OSC 9;4 state 速查：`0` 清除、`1` 綠色、`2` 紅色、`3` 旋轉、`4` 黃色暫停。格式：`ESC]9;4;<state>;<progress>BEL`。
 
 ## 卡住狀態清除
 
-`$PROFILE` 綁 `Esc` 目前實測無效，不列入可靠方案。Claude Code 執行時 `Esc` 會先送進 Claude Code 本身，不會觸發 PowerShell 的 PSReadLine key handler，因此下面這種設定不能用來穩定清掉 Windows Terminal 的 OSC 9;4 狀態：
+`$PROFILE` 綁 `Esc` 幾乎沒用：Claude Code 執行時 `Esc` 會先送進 Claude Code 本身，不會觸發 PowerShell 的 PSReadLine key handler；真正能觸發時通常已經退出 Claude Code、回到 shell prompt。它不能拿來處理 Claude Code 還開著時的卡住狀態。
 
-```powershell
-Set-PSReadLineKeyHandler -Key Escape -BriefDescription ClearTerminalProgress -LongDescription "Clear Windows Terminal OSC 9;4 progress indicator and revert the current line." -ScriptBlock {
-    [Console]::Write([char]27 + "]9;4;0;0" + [char]7)
-    [Microsoft.PowerShell.PSConsoleReadLine]::RevertLine()
-}
-```
-
-比較實用的補救點是在回到 shell prompt 時清除：如果 Claude Code 已退出或中斷後進度仍卡住，讓 prompt 每次重新顯示時送一次清除序列。
+唯一還算實用的補救點，是退出 Claude Code 或中斷回到 PowerShell prompt 時自動清一次，避免 Windows Terminal 工作列狀態殘留：
 
 ```powershell
 function Clear-WTProgress {
@@ -69,11 +111,11 @@ function prompt {
 
 - CC ≥ 2.1.141
 - Windows Terminal
-- hook `command` 經 `sh` 執行，Windows 用 Git Bash 內建 `printf`
+- hook command 支援 `"shell": "powershell"`
 
 ## 備選方案
 
-**PowerShell 產生序列**：舊版用 `powershell.exe -Command "$e=[char]27;...|ConvertTo-Json"` 產真 ESC 再轉 JSON。可行但每次 hook 都起 PowerShell 子進程，慢。`printf` 版把 escape 當字面字串丟給 CC 自己解析，更輕。
+**Git Bash `printf` 版**：可用 `printf '%s' '{"terminalSequence":"\u001b]9;4;3;0\u0007"}'` 直接吐 JSON 字面字串。優點是短；缺點是綁 Git Bash，且和 Windows PowerShell-first 的設定方向相反。
 
 **分頁標題 emoji（OSC 2）**：double-click rename 後鎖死標題；emoji 不可 inline（cp950 亂碼）；`$Host.UI.RawUI.WindowTitle` 在 hook 子進程讀到 PS 自身路徑而非分頁標題。
 

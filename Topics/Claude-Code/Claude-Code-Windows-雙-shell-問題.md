@@ -1,7 +1,7 @@
 ---
 title: Claude Code Windows 雙 shell 問題
 created: 2026-06-01
-updated: 2026-06-01
+updated: 2026-06-02
 tags:
   - claude-code
   - windows
@@ -9,7 +9,7 @@ tags:
   - shell
 ---
 
-Claude Code 在 Windows（platform=win32）上，模型常反射性吐 bash/Unix 語法——`printf`、`$_`、`[ -f ]`、extglob、`/dev/null` 照抄進 PowerShell 就失敗；拿到「不是 cmdlet」錯誤後還常不自我糾正，反覆重試同一條壞指令。這是官方 repo 大量 open issue 的已知問題（見來源），不是個案。
+Claude Code 在 Windows（platform=win32）上，模型常反射性吐 bash/Unix 語法——`printf`、`$_`、`[ -f ]`、extglob、`/dev/null` 照抄進 PowerShell 就失敗；拿到「不是 cmdlet」錯誤後還常不自我糾正，反覆重試同一條壞指令。這是官方 repo 多個公開 issue 都踩到的已知問題（見來源），不是個案。
 
 ## 為什麼會有兩個 shell
 
@@ -26,7 +26,7 @@ Windows 特有坑：obsidian CLI 實際是 `Obsidian.com` 這個 `.com` terminal
 
 ## 解法
 
-最直接——在 `~/.claude/settings.json` 設這兩項（近期版本皆有；PowerShell 當 primary 約 v2.1.126 起），重開 Claude Code 生效：
+最直接——在 `~/.claude/settings.json` 設這兩項；官方文件已支援 PowerShell tool，啟用後 Claude 會把 PowerShell 當主要 shell。重開 Claude Code 生效：
 
 ```json
 "env": { "CLAUDE_CODE_USE_POWERSHELL_TOOL": "1" },
@@ -48,7 +48,7 @@ Mac/Linux 要先裝 `pwsh` 上 PATH；env 變數要全域生效得設 Windows �
 - **逃不掉的邏輯**（解析、聚合、fixed-string 比對、跑外部程式）**包進 bundled Python 腳本**（純 stdlib、跨平台），SKILL 只留一行 `python <完整相對路徑> args` 呼叫，shell 方言差異藏進 Python。腳本須 `sys.stdout.reconfigure(encoding="utf-8")`、`subprocess.run` 加 `encoding="utf-8", errors="replace"`，否則 Windows cp950 解碼 UTF-8 會崩。
 - **真正逃不掉的**只剩外部 CLI（如 obsidian CLI）：寫對某一支、標明所屬 shell。
 
-具體一坑：**stdin pipe 餵 obsidian CLI（`... | obsidian create --stdin`）在 Windows 經 `.com` redirector 會留 0 bytes 空檔**，PowerShell/bash 皆然——故建檔改用 `Write` 或 `content=` 參數，不走 stdin。
+具體一坑：**用 shell 管線或多行參數餵 obsidian CLI 在 Windows 容易 silent fail，甚至留下 0 bytes 空檔**；官方 `create` 沒有 `--stdin`，建檔後要驗 size，失敗就改用 harness-native `Write` 或 CLI 的 `content=` 參數，不靠 stdin。
 
 ## 相關
 

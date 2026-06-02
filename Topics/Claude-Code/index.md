@@ -2,7 +2,7 @@
 title: Claude Code
 description: Claude Code 本體能力的長期筆記：規則系統、權限、skills、多 agent 協作與日常操作慣例
 created: 2026-04-25
-updated: 2026-05-28
+updated: 2026-06-02
 tags:
   - claude-code
 ---
@@ -15,6 +15,7 @@ tags:
 - [[Claude-Code-雙帳號設定]] — 用 `CLAUDE_CONFIG_DIR` 在同機切換多帳號
 - [[Claude-Code-CLI-優先]] — 工具整合優先選 CLI 退而選 MCP（架構 / Token / 生態三層論述）
 - [[Claude-Code-Dangerously-Skip-Permissions]] — `--dangerously-skip-permissions` 該用 / 不該用 / 替代決策
+- [[Claude-Code-Windows-雙-shell-問題]] — Windows 下 PowerShell / Git Bash 雙 shell 差異、設定鎖定與抽掉 shell 依賴的落地原則
 - [[Claude-Code-Skill-Command-命名]] — kebab-case + 同家族前綴 + 動名詞偏好
 - [[Claude-Code-Review-工作流]] — PR 規模分層跑 review 工具的決策表
 - [[Claude-Code-多-Agent-協作]] — Subagent / Agent Teams / Forked subagent / worktrees 該怎麼選
