@@ -8,22 +8,29 @@ jobs:
   notify:
     if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
+    permissions: {}
     steps:
       - name: Send Discord notification
         env:
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          PR_TITLE: ${{ github.event.pull_request.title }}
+          PR_AUTHOR: ${{ github.event.pull_request.merged_by.login }}
+          PR_BRANCH: ${{ github.event.pull_request.head.ref }}
+          PR_URL: ${{ github.event.pull_request.html_url }}
         run: |
-          curl -s -H "Content-Type: application/json" \
-            -d "{
-              \"embeds\": [{
-                \"title\": \"✅ PR Merged — obsidian-memory\",
-                \"description\": \"**${{ github.event.pull_request.title }}**\",
-                \"color\": 5763719,
-                \"fields\": [
-                  { \"name\": \"Merged by\", \"value\": \"${{ github.event.pull_request.merged_by.login }}\", \"inline\": true },
-                  { \"name\": \"Branch\", \"value\": \"`${{ github.event.pull_request.head.ref }}`\", \"inline\": true }
-                ],
-                \"url\": \"${{ github.event.pull_request.html_url }}\"
-              }]
-            }" \
-            "$DISCORD_WEBHOOK_URL"
+          payload=$(jq -n \
+            --arg title "$PR_TITLE" \
+            --arg author "$PR_AUTHOR" \
+            --arg branch "$PR_BRANCH" \
+            --arg url "$PR_URL" \
+            '{embeds:[{
+              title: "✅ PR Merged — obsidian-memory",
+              description: ("**" + $title + "**"),
+              color: 5763719,
+              url: $url,
+              fields: [
+                {name: "Merged by", value: $author, inline: true},
+                {name: "Branch", value: ("`" + $branch + "`"), inline: true}
+              ]
+            }]}')
+          curl -fsS -H "Content-Type: application/json" -d "$payload" "$DISCORD_WEBHOOK_URL"
