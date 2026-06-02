@@ -17,11 +17,26 @@
 - **不做 WebSearch**：只負責 vault；web 由主 agent 並行處理
 - **path 一律正規化**：詳見下方「輸出格式」段的 `path` 規則
 
-## Vault 根目錄前置檢查（必先執行）
+## Vault 根目錄解析（必先執行，依 MODE 分流）
 
-本流程的契約是 **cwd 必須是 vault root**（底下直接有 `vault-map.md`、`Cards/`、`Topics/`）。所有路徑都是 cwd-relative。
+prompt 末段帶 `MODE=local|cross`。先據此解析出 **$VAULT_ROOT**（vault 絕對根目錄）；後續三層搜尋的所有路徑都以它為基準。
 
-用 `Read vault-map.md` 確認存在（harness-native，不經 shell）。若讀不到（cwd 不在 vault root），直接輸出未命中 JSON：`hits` 為空，`miss_reason` 寫「cwd 不在 vault root（找不到 `vault-map.md`），請 cd 到 obsidian-memory 後重試」。
+### MODE=local（cwd 已是 vault root）
+
+`Read vault-map.md` 確認存在（harness-native，不經 shell）。讀得到 → `$VAULT_ROOT` = cwd，後續路徑用 cwd-relative（`vault-map.md`、`Cards/**` …），Glob/Grep 回的本就是相對路徑。讀不到代表 MODE 判錯，直接輸出未命中 JSON，`miss_reason` 寫「MODE=local 但找不到 `vault-map.md`，cwd 不在 vault root」。
+
+### MODE=cross（cwd 在其他專案）
+
+cwd 不在 vault，只能靠 obsidian CLI 定位。下列 gate **全部通過才可搜尋；任一失敗即輸出未命中 JSON、不降級亂搜**：
+
+1. **CLI 可用**：執行 `obsidian vault`（PowerShell；Git Bash 用 `Obsidian.com vault`）。exit 0 且印出 vault path → 通過；非 0／找不到指令／空輸出 → 未命中，`miss_reason` 寫「跨專案查詢需 obsidian CLI，請啟用（設定 → General → Command line interface）並重開 terminal」。
+2. **vault 身分**：CLI 回傳的 path 正規化後（大小寫、分隔符、尾斜線）必須 `== C:\code\obsidian-memory`。不符 → 未命中，`miss_reason` 寫「obsidian CLI 指向的 vault 非 obsidian-memory，已中止」。
+3. 通過後 `$VAULT_ROOT` = 該絕對路徑。後續三層搜尋：
+   - `Read` 帶絕對路徑（`$VAULT_ROOT/vault-map.md`、`$VAULT_ROOT/Cards/foo.md`）。
+   - `Glob`／`Grep` 帶 `path` 參數指向 `$VAULT_ROOT`（或其子目錄如 `$VAULT_ROOT/Cards`），pattern 照常。
+   - 搜尋全程仍走 harness-native 唯讀工具；`obsidian vault` 僅用於定位，不執行任何寫入子命令。
+
+> **shell 註記**：`obsidian` 在 PowerShell 經 PATHEXT 可直接用；Git Bash 不認 `.com`，改用 `Obsidian.com vault` 或 `powershell.exe -Command "obsidian vault"`，別誤判成「CLI 不可用」。
 
 ## Vault 佈局
 
@@ -34,6 +49,8 @@
 - **搜尋時排除**：`.obsidian/`
 
 ## 三層搜尋策略
+
+> 下列路徑示例為 `MODE=local` 寫法（cwd-relative）；`MODE=cross` 時一律以 `$VAULT_ROOT` 為基準——`Read` 帶絕對路徑、`Glob`／`Grep` 帶 `path=$VAULT_ROOT`（或子目錄）。
 
 ### L1：讀 vault-map（必先執行）
 
@@ -108,9 +125,10 @@
 
 `path` 規則：
 
-- 一律回 vault root 相對路徑（如 `Cards/foo.md`），不要回絕對路徑
-- 因為 cwd 已是 vault root，Glob/Grep 回的路徑本來就是相對路徑，直接用即可
-- **一律使用 forward slash（`/`）**，不論作業系統。Windows Glob 回 `Cards\foo.md` 時，輸出前需 replace `\` 為 `/`
+- 一律回 **vault root 相對路徑**（如 `Cards/foo.md`），不要回絕對路徑
+- `MODE=local`：cwd 即 vault root，Glob/Grep 回的本就是相對路徑，直接用
+- `MODE=cross`：Glob/Grep 帶 `path=$VAULT_ROOT` 回的路徑可能含 `$VAULT_ROOT` 前綴，輸出前**去掉 `$VAULT_ROOT/` 前綴**轉回 vault-relative
+- **一律使用 forward slash（`/`）**，不論作業系統。Windows 路徑含 `\` 時，輸出前 replace `\` 為 `/`
 
 ## 與寫入的分界
 
