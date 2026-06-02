@@ -1,7 +1,7 @@
 """模式 B：列出所有已建 index 的頻道 source URL（每行一個 @handle URL）。
 
 用法（cwd = repo root）：
-    python .agents/skills/vault-youtube-sync/scripts/list_channels.py
+    python3 .agents/skills/vault-youtube-sync/scripts/list_channels.py
 
 掃 Inbox/YouTube/*/01.index.md，從 frontmatter 的 source: 抽 @handle 頻道 URL。
 """

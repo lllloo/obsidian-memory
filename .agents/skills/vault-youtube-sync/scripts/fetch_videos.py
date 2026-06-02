@@ -2,7 +2,7 @@
 抓取 YouTube 頻道影片清單與頻道簡介。
 
 用法（cwd = repo root）：
-    python .agents/skills/vault-youtube-sync/scripts/fetch_videos.py <handle>
+    python3 .agents/skills/vault-youtube-sync/scripts/fetch_videos.py <handle>
 
 輸出格式（每行一條）：
     DESC:<頻道簡介前 300 字>
@@ -12,7 +12,7 @@
 輸出筆數：ytInitialData 一次 HTTP 請求能拿到幾筆就幾筆（YouTube 上限約 30）。
 
 範例：
-    python .agents/skills/vault-youtube-sync/scripts/fetch_videos.py Chase-H-AI
+    python3 .agents/skills/vault-youtube-sync/scripts/fetch_videos.py Chase-H-AI
 """
 
 import sys

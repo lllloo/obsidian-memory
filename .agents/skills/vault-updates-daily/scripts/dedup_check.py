@@ -1,7 +1,7 @@
 """判斷某 source URL 是否已在 vault 出現過（daily updates 去重，fixed-string 比對）。
 
 用法（cwd = repo root）：
-    python .agents/skills/vault-updates-daily/scripts/dedup_check.py "<url>" [<YYYY-MM-DD>]
+    python3 .agents/skills/vault-updates-daily/scripts/dedup_check.py "<url>" [<YYYY-MM-DD>]
 
 兩層檢查：
   1. 舊個別筆記格式：Inbox/Updates / Cards / Topics 任一 .md 含 `source: <url>`

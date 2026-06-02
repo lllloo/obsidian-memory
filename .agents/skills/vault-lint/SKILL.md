@@ -16,10 +16,10 @@ description: Vault 健檢：掃描孤立頁面、死連結、Inbox 積壓、tag 
 所有掃描邏輯收在 `scripts/lint.py`（純 Python stdlib，跨平台，無外部依賴）。cwd 為 vault root，用完整相對路徑執行：
 
 ```
-python .agents/skills/vault-lint/scripts/lint.py
+python3 .agents/skills/vault-lint/scripts/lint.py
 ```
 
-`python3` 無效時改 `python`。腳本輸出單一 JSON 物件到 stdout，**不修改任何檔案**；判讀與修補由本流程依下方規則處理。
+腳本輸出單一 JSON 物件到 stdout，**不修改任何檔案**；判讀與修補由本流程依下方規則處理。
 
 JSON 欄位對應的問題與嚴重度：
 

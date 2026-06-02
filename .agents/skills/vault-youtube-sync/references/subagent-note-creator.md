@@ -4,7 +4,7 @@
 >
 > **NOTES_DIR 自檢**：開工前確認 `NOTES_DIR` 已被主 skill 展開。若含字面 `<`、`>` 或仍是占位符，視為傳錯，**立即回報並停止**，不寫入任何檔案。用 `Read vault-map.md` 確認 cwd 為 repo root。
 >
-> **工具取向**：搜尋／讀檔／寫檔一律用 harness-native 工具（`Grep`/`Read`/`Write`），不落 shell。抓取／處理外部內容（defuddle、transcript、影片頁面）走下方 Python 腳本，腳本內部已處理跨平台與編碼。`python3` 無效時改 `python`。
+> **工具取向**：搜尋／讀檔／寫檔一律用 harness-native 工具（`Grep`/`Read`/`Write`），不落 shell。抓取／處理外部內容（defuddle、transcript、影片頁面）走下方 Python 腳本，腳本內部已處理跨平台與編碼。
 
 ## 步驟
 
@@ -23,7 +23,7 @@
 一支腳本完成 defuddle 抓取、videoId 兩階段硬驗證、與 youtube-transcript-api fallback：
 
 ```
-python .agents/skills/vault-youtube-sync/scripts/transcript.py "<url>" <videoId>
+python3 .agents/skills/vault-youtube-sync/scripts/transcript.py "<url>" <videoId>
 ```
 
 讀 stdout（`RESULT:` / `PUBLISHED:` / `---CONTENT---` 後接內容）：
@@ -37,7 +37,7 @@ python .agents/skills/vault-youtube-sync/scripts/transcript.py "<url>" <videoId>
 **published 補抓**：若 `PUBLISHED` 為空（defuddle 常回空，屬正常），用 video_meta 取上傳日：
 
 ```
-python .agents/skills/vault-youtube-sync/scripts/video_meta.py <videoId>
+python3 .agents/skills/vault-youtube-sync/scripts/video_meta.py <videoId>
 ```
 
 讀 `DATE:` 行（`YYYY-MM-DD`，空則 `published` 留空）。
@@ -45,7 +45,7 @@ python .agents/skills/vault-youtube-sync/scripts/video_meta.py <videoId>
 ### 步驟 2：影片狀態確認（步驟 1 失敗時）
 
 ```
-python .agents/skills/vault-youtube-sync/scripts/video_meta.py <videoId>
+python3 .agents/skills/vault-youtube-sync/scripts/video_meta.py <videoId>
 ```
 
 - `STATUS:unavailable` → **跳過，不建筆記、不寫占位**，回報「⚠ 影片已刪除，跳過」

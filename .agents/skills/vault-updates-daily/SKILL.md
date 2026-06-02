@@ -135,10 +135,9 @@ sync: releases
 腳本自己解析 `Inbox/Updates/01.index.md` 的三段來源（official changelogs / repositories / starred），`--since` 預設 7 天前。cwd 為 vault root，用完整相對路徑執行：
 
 ```
-python .agents/skills/vault-updates-daily/scripts/fetch_updates.py
+python3 .agents/skills/vault-updates-daily/scripts/fetch_updates.py
 ```
 
-- `python3` 無效時改 `python`。
 - 指定日期：加 `--since YYYY-MM-DD`。
 - 自訂 index 路徑：加 `--index <path>`（預設 `Inbox/Updates/01.index.md`）。
 
@@ -192,7 +191,7 @@ CHANGELOG:<name>|||<entry-date>|||<entry-title>|||<url>#<slug>|||<body-snippet>
 日報是合併格式（無 `source:` frontmatter），用腳本做兩層 fixed-string 去重（個別筆記 `source: <url>` + 當日日報正文），fixed-string 比對自動避開 URL 裡 `?`/`&` 等 regex metachar。每個候選 URL 跑一次（cwd = repo root）：
 
 ```
-python .agents/skills/vault-updates-daily/scripts/dedup_check.py "<url>" <YYYY-MM-DD>
+python3 .agents/skills/vault-updates-daily/scripts/dedup_check.py "<url>" <YYYY-MM-DD>
 ```
 
 輸出 `DUP:<檔案>` 即命中、標記 skip 不傳給 subagent；`UNIQUE` 則保留。若 changelog entry 沒有獨立 URL，使用該頁 URL 加 heading slug 作為 canonical URL（如 `<url>#<entry-slug>`），避免整頁只能存一次。

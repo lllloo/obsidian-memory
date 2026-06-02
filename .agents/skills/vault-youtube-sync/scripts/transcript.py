@@ -4,7 +4,7 @@
 `pip install youtube-transcript-api` + 抓字幕三段 shell 膠水，全程無 shell pipe / bash-ism。
 
 用法（cwd = repo root）：
-    python .agents/skills/vault-youtube-sync/scripts/transcript.py <url> <videoId>
+    python3 .agents/skills/vault-youtube-sync/scripts/transcript.py <url> <videoId>
 
 輸出（stdout，固定順序）：
     RESULT:MATCH | MISMATCH:<detail> | UNKNOWN | TRANSCRIPT | FAIL:<reason>

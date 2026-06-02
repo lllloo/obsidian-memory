@@ -32,7 +32,7 @@ description: 將 YouTube 頻道影片批次轉成 Obsidian 筆記，支援指定
 模式 B 取得頻道清單（每行一個 `source:` URL），cwd = repo root：
 
 ```
-python .agents/skills/vault-youtube-sync/scripts/list_channels.py
+python3 .agents/skills/vault-youtube-sync/scripts/list_channels.py
 ```
 
 模式 B 規則：
@@ -43,10 +43,10 @@ python .agents/skills/vault-youtube-sync/scripts/list_channels.py
 
 ## 步驟 1：抓取影片清單與頻道簡介
 
-用 `fetch_videos.py` 一次抓取頻道頁面，同時取出影片清單與頻道簡介。cwd = repo root，`python3` 無效時改 `python`：
+用 `fetch_videos.py` 一次抓取頻道頁面，同時取出影片清單與頻道簡介。cwd = repo root：
 
 ```
-python .agents/skills/vault-youtube-sync/scripts/fetch_videos.py <handle>
+python3 .agents/skills/vault-youtube-sync/scripts/fetch_videos.py <handle>
 ```
 
 解析輸出：
@@ -81,7 +81,7 @@ python .agents/skills/vault-youtube-sync/scripts/fetch_videos.py <handle>
 即使通過 checkpoint 篩選，也必須再排除「已有完整筆記的影片」——防止 checkpoint 失效時（如距上次 sync 超過 30 部）產生重複。**`draft: true` 的筆記不算去重命中**——那是先前 transcript 失敗的占位，本次要交給 subagent 覆寫重抓。取得已有非 draft 筆記的 videoId 清單（cwd = repo root）：
 
 ```
-python .agents/skills/vault-youtube-sync/scripts/noted_ids.py "Inbox/YouTube/<頻道名>"
+python3 .agents/skills/vault-youtube-sync/scripts/noted_ids.py "Inbox/YouTube/<頻道名>"
 ```
 
 將輸出的 ID 集合與待處理清單比對，**移除任何 ID 已出現在「非 draft」筆記 source 欄位的影片**，不論檔名是否相同。
@@ -173,7 +173,7 @@ views:
 1. **序列裝一次 transcript 依賴**：平行 subagent 會各自呼叫 `transcript.py`，若套件未裝，多支同時首裝 `youtube-transcript-api` 會競態（半裝狀態 → 整批 transcript 失敗、全走 draft 占位）。送出前主 skill 端先序列裝一次（已裝則 no-op）：
 
    ```
-   python -m pip install -q youtube-transcript-api
+   python3 -m pip install -q youtube-transcript-api
    ```
 
 2. 主 skill 端先 `Read` `references/subagent-note-creator.md` 取得全文，存為 `NOTE_CREATOR_CONTENT`，再嵌入下方 prompt 的 `<NOTE_CREATOR_CONTENT>` 位置。**不要叫 subagent 自己 Read**——跨工具環境中 subagent 不一定能存取檔案系統。
@@ -217,7 +217,7 @@ N. <標題> — <URL>
 **更新 checkpoint**：所有筆記建立完成後，將 `01.index.md` 的 `last_sync_id` 更新為**步驟 1 清單中第一筆**的 video ID（即目前頻道最新的影片），cwd = repo root：
 
 ```
-python .agents/skills/vault-youtube-sync/scripts/update_checkpoint.py "Inbox/YouTube/<頻道名>/01.index.md" <NEW_ID> <TODAY>
+python3 .agents/skills/vault-youtube-sync/scripts/update_checkpoint.py "Inbox/YouTube/<頻道名>/01.index.md" <NEW_ID> <TODAY>
 ```
 
 > 若本次無新影片（早已是最新），不需更新 checkpoint。

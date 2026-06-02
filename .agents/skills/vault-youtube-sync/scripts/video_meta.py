@@ -1,7 +1,7 @@
 """抓 YouTube 影片頁面的可用性與上傳日期（取代 subagent 流程裡的 curl|python）。
 
 用法（cwd = repo root）：
-    python .agents/skills/vault-youtube-sync/scripts/video_meta.py <videoId>
+    python3 .agents/skills/vault-youtube-sync/scripts/video_meta.py <videoId>
 
 輸出（每行一條）：
     STATUS:available | STATUS:unavailable

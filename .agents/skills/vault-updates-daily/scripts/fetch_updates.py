@@ -2,7 +2,7 @@
 Fetch high-trust developer tooling updates for vault-updates-daily.
 
 Inputs (cwd = repo root):
-    python .agents/skills/vault-updates-daily/scripts/fetch_updates.py --since YYYY-MM-DD \
+    python3 .agents/skills/vault-updates-daily/scripts/fetch_updates.py --since YYYY-MM-DD \
         --official "OpenAI Codex|https://developers.openai.com/codex/changelog|codex" \
         --repo openai/codex [--starred]
 

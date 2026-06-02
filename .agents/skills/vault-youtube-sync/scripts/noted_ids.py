@@ -1,7 +1,7 @@
 """列出某頻道資料夾中「已有非 draft 完整筆記」的 videoId（每行一個）。
 
 用法（cwd = repo root）：
-    python .agents/skills/vault-youtube-sync/scripts/noted_ids.py "Inbox/YouTube/<頻道名>"
+    python3 .agents/skills/vault-youtube-sync/scripts/noted_ids.py "Inbox/YouTube/<頻道名>"
 
 供 SKILL 步驟 2 的 Source URL 去重用：把輸出的 ID 集合與待處理清單比對，
 移除已出現在非 draft 筆記 source 欄位的影片。draft 占位**不算**去重命中

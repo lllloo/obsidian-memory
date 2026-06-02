@@ -3,7 +3,7 @@
 
 在 vault root（cwd 有 vault-map.md）執行：
 
-    python .agents/skills/vault-lint/scripts/lint.py
+    python3 .agents/skills/vault-lint/scripts/lint.py
 
 輸出單一 JSON 物件到 stdout，欄位對應 SKILL.md 的 11 個掃描項。
 不修改任何檔案；判讀與互動確認由呼叫端 agent 依 SKILL.md 處理。
