@@ -1,9 +1,10 @@
 ---
 title: 確認 OpenSpec 狀態
 created: 2026-05-21
-updated: 2026-05-21
+updated: 2026-06-02
 tags:
-  - openspec
+  - claude-code
+  - agent-framework
   - workflow
   - debugging
 ---

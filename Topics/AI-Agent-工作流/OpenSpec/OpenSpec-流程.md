@@ -73,6 +73,7 @@ flowchart LR
 
 ## 相關
 
+- [[確認-OpenSpec-狀態]] — specs/changes 狀態確認指令分工與 `requirements 0` parser 除錯
 - [[Spec-Kit-流程]] — 類似 SDD 工具，GitHub 出品，phase 更嚴格
 - [Fission-AI/OpenSpec](https://github.com/Fission-AI/OpenSpec)
 

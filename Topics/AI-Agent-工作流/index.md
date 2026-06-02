@@ -26,6 +26,7 @@ tags:
 
 - [[bookmark-OpenSpec-Spec驅動開發框架|書籤]]
 - [[OpenSpec-流程]] — 流程速查指令
+- [[確認-OpenSpec-狀態]] — 狀態確認指令分工與 `requirements 0` parser 除錯
 
 **BMAD** — agile lifecycle 為骨架的多 agent 開發框架（PM / Architect / Developer / UX 等 12+ 軟體角色 persona）
 
