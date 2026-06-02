@@ -147,7 +147,7 @@ Topics 的 `index.md` 是主題入口；Cards/筆記也可以是整合頁。不�
 升 Topic 不由 agent 自主執行。流程：
 
 1. 列出候選 Cards。
-2. 對照 `topics-review.md` 的 5 條保留條件與反指標。
+2. 對照 `topics-review.md` 的升 Topic 決策（品質＋數量）、Card 品質尺條件與反指標。
 3. 給出傾向與理由。
 4. 等使用者拍板後才執行 `git mv`。
 
