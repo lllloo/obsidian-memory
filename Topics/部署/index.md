@@ -2,7 +2,7 @@
 title: 部署
 description: 上版流程、Quartz 靜態網站發佈、CI/CD 與本機開發環境踩坑
 created: 2026-05-08
-updated: 2026-05-28
+updated: 2026-06-02
 tags:
   - deploy
 ---
@@ -13,3 +13,10 @@ tags:
 
 - [[git-archive-打包異動檔]] — 把 commit 之間的異動打包成 zip 交付給沒 Git 的環境
 - [[Quartz-部署筆記]] — Obsidian vault 透過 Quartz 4 發佈靜態網站的個人設定紀錄（GitHub Actions → ob.bugloop.com）
+
+## GitHub Actions / CI
+
+- [[GitHub-Actions-Secrets-與-Variables]] — Secrets/Variables × Repository/Environment 四象限與 fork PR 信任邊界
+- [[環境變數-Secret-命名規範]] — `<服務>_<資源>_<型別>` UPPER_SNAKE_CASE 命名慣例
+- [[GitHub-Actions-PR-merge-Discord-通知]] — PR merge 觸發 Discord 通知，含 script injection 防護
+- [[bookmark-Discord-Webhook-CI通知用|Discord Webhook]] — Webhook 通知原理與設定（書籤）
