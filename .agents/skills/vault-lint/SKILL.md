@@ -38,7 +38,7 @@ JSON 欄位對應的問題與嚴重度：
 | `frontmatter_order` | frontmatter 白名單欄位順序錯亂 | 🟡 |
 | `frontmatter_rogue` | 出現白名單外游離欄位（`[路徑, [欄位…]]`） | 🟡 |
 | `extracted_to` | 半消化 Inbox 筆記（仍有剩餘段落） | 🟡 |
-| `orphans_cards` | 孤立 Cards | 🔵（吸收型卡片盒，孤立可接受；摺疊成數量，不逐張列） |
+| `orphans_cards` | 孤立 Cards | 🔵（半自動卡片盒，孤立可接受；摺疊成數量，不逐張列） |
 | `missing_updated` | Cards/Topics 缺 `updated` | 🔵 |
 | `tag_counts` | 純英數 tag 使用次數 top 60 | 🔵（肉眼辨識同義異寫，如 `claude-code` vs `claudeCode`） |
 
@@ -67,7 +67,7 @@ JSON 欄位對應的問題與嚴重度：
 - extracted_to 遺留：Inbox/abc.md
 
 ### 🔵 資訊（N 項）
-- 孤立 Cards：7 張（吸收型卡片盒，孤立可接受；摺疊成數量，不逐張列）
+- 孤立 Cards：7 張（半自動卡片盒，孤立可接受；摺疊成數量，不逐張列）
 - 缺 updated：N 篇
 - tag 同義異寫候選：（列出疑似重複的 tag 對）
 ```

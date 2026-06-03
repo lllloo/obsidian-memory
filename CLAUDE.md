@@ -8,7 +8,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working in this
 
 ## 基本原則
 
-- Vault 是「吸收型卡片盒」：筆記寫成已內化的理解版本，不保存整篇原料。
+- Vault 是「半自動卡片盒」：整理、改寫成卡片與升級分類（Inbox → Cards → Topics）由 agent 協助、人工拍板半自動推進；筆記寫成已內化的理解版本，不保存整篇原料。
 - 「已內化」以使用者本人讀過／看過為準。AI 代為摘要、但使用者尚未親自消化的外部原料，**不主動升 Card**——摘要留 Inbox 當「待讀佇列」，待本人消化再內化。已誤升成 Card 的，**搬回 Inbox**，不用 `draft` 等標記在 Cards 充當待讀狀態。
 - 不主動擴大 scope：不自動回存筆記、不自動結構搬移或升 Topic。
 - `Inbox/Clippings/` 例外：agent **不主動掃描、消化或刪除** Clippings 內容。使用者剪藏的網頁原料留作參考，只在使用者明確指名（如「消化 Clippings/X.md」、「處理 Clippings」）才處理。「整理 Inbox」這類掃描動作預設**跳過 Clippings**。

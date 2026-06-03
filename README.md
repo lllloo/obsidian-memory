@@ -1,6 +1,6 @@
 # Obsidian Memory Vault
 
-個人 Obsidian vault，採「吸收型卡片盒」工作流。公開版本在 [ob.bugloop.com](https://ob.bugloop.com)。
+個人 Obsidian vault，採「半自動卡片盒」工作流。公開版本在 [ob.bugloop.com](https://ob.bugloop.com)。
 
 ## 結構
 

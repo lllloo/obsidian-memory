@@ -7,7 +7,7 @@ tags:
   - meta
 ---
 
-# 運作模式 — 吸收型卡片盒
+# 運作模式 — 半自動卡片盒
 
 > 這份文件給人看，用來建立整體心智模型。  
 > 可執行規則不放這裡：agent 寫入規則與 Cards -> Topics 升級門檻看 [`CLAUDE.md`](CLAUDE.md)，單張 Card 品質標準看 [`card-quality.md`](card-quality.md)，導航與 tag 查詢看 [`vault-map.md`](vault-map.md)。
@@ -21,7 +21,7 @@ tags:
 
 - **卡片盒筆記法（Zettelkasten）**：底層方法。把知識拆成獨立可讀、彼此連結的卡片。
 - **Karpathy 的 LLM Wiki 變體**：在 markdown wiki 上加一層 LLM 維護能力，讓摘要、交叉引用、歸檔這些維護工作成本大幅下降。原始概念見 [LLM Wiki](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f)。
-- **本 vault 的吸收型調整**：消化完就刪原始資料，只留下可覆寫、可更新的理解版本。
+- **本 vault 的半自動策展調整**：整理與升級分類由 agent 協助、人工拍板；消化完就刪原始資料，只留下可覆寫、可更新的理解版本。
 
 這不是 RAG。RAG 是查詢時臨時從原始資料重抓、重拼；這個 vault 則是讓 LLM 漸進維護一套相互連結的 markdown，作為你和外部資料之間的複利知識層。
 
