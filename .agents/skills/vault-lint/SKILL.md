@@ -30,6 +30,7 @@ JSON 欄位對應的問題與嚴重度：
 | `missing_title` | Cards/Topics 缺 `title` | 🔴 |
 | `missing_description` | 規範必填 `description` 缺失（Topics `index.md`、`Inbox/Clippings/*`、YouTube 影片筆記） | 🔴 |
 | `topics_missing_index` | Topics 資料夾無 `index.md` | 🔴 |
+| `schema_drift` | `lint.py` 的 `WHITELIST` 與 `CLAUDE.md` schema 表格不一致（`null` = 一致） | 🔴 |
 | `missing_tags` | Cards/Topics 缺 `tags`（已排除 `index.md`） | 🟡 |
 | `orphans_topics` | 升級主題卻無入站 wikilink（異常） | 🟡 |
 | `topics_not_in_vaultmap` | Topics 未收錄進 `vault-map.md` | 🟡 |
@@ -41,7 +42,7 @@ JSON 欄位對應的問題與嚴重度：
 | `missing_updated` | Cards/Topics 缺 `updated` | 🔵 |
 | `tag_counts` | 純英數 tag 使用次數 top 60 | 🔵（肉眼辨識同義異寫，如 `claude-code` vs `claudeCode`） |
 
-> frontmatter 白名單與固定順序（`frontmatter_order`/`rogue` 的判準，與 `CLAUDE.md` schema 同步）：`title` > `description` > `created` > `updated` > `source` > `published` > `parent` > `last_sync_id` > `draft` > `extracted_to` > `tags`。
+> `frontmatter_order`/`rogue` 的判準依 `lint.py` 的 `WHITELIST` 常數，它是 `CLAUDE.md` frontmatter schema 的機器執行副本。兩者格式不可互通、無法合成一份；`schema_drift` 項即用來校驗兩者一字不差，漂移時報 🔴。判準不在此重抄，避免成為第三份會漂的副本。
 
 ## 報告格式
 
@@ -55,11 +56,12 @@ JSON 欄位對應的問題與嚴重度：
 - 缺 title：Cards/foo.md
 - 缺 description：Inbox/Clippings/foo.md
 - Topics/bar/ 無 index.md
+- schema 漂移：lint.py WHITELIST 與 CLAUDE.md schema 不一致（列出兩邊欄位差異）
 
 ### 🟡 警告（N 項）
 - Inbox 積壓：42 篇（> 20）
 - 孤立 Topics：Topics/foo/bar.md（升級主題卻無入站連結）
-- vault-map 未收錄：SomeTopic
+- vault-map 未收錄：Topics/AI-Agent-工作流/BMAD（含巢狀子目錄）
 - 規範資料夾遺漏：Inbox/Clippings
 - frontmatter 欄位順序 / 白名單外欄位：ORDER Cards/foo.md、ROGUE Cards/bar.md: author
 - extracted_to 遺留：Inbox/abc.md
@@ -88,5 +90,6 @@ JSON 欄位對應的問題與嚴重度：
 - extracted_to 遺留 — 何時消化剩餘段落？
 - Inbox 積壓 — 批次清理時機由用戶自選
 - description 缺失 — 需手動寫 30–80 字摘要，不自動產生
+- schema 漂移 — 判斷 `CLAUDE.md` schema 與 `lint.py` 的 `WHITELIST` 哪邊才是正確意圖，再同步另一邊（規範變更通常以 `CLAUDE.md` 為準）
 
 **執行前給用戶看確認，確認後才動檔。一次修一個類別。** 修補一律用 harness-native 工具（`Write`/`Edit`），不落 shell。

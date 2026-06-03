@@ -25,6 +25,11 @@ tags:
 ├── Cards/         — 未歸屬或待補事實審查的完整概念 Cards
 └── Topics/        — 已歸檔主題（子目錄如下）
   ├── AI-Agent-工作流/ — Harness、frameworks、multi-agent workflow
+  │   ├── Spec-Kit/    — GitHub spec-driven toolkit，spec 驅動生 code
+  │   ├── OpenSpec/    — Fission-AI 輕量 spec-driven，"Actions not phases"
+  │   ├── BMAD/        — agile lifecycle 多 agent persona（PM／Architect／Dev…）
+  │   ├── GStack/      — planning／design／QA／ship 多 persona workflow
+  │   └── Superpowers/ — TDD gate／系統化除錯／review loop
   ├── Claude-Code/    — Skills、permissions、agent packages、日常操作
   ├── Obsidian/       — CLI 整合、Skills、Quartz 部署
   ├── UI設計/         — 設計工具、DESIGN.md 系統、視覺靈感

@@ -5,7 +5,7 @@
 
     python3 .agents/skills/vault-lint/scripts/lint.py
 
-輸出單一 JSON 物件到 stdout，欄位對應 SKILL.md 的 11 個掃描項。
+輸出單一 JSON 物件到 stdout，欄位對應 SKILL.md 的 12 個掃描項。
 不修改任何檔案；判讀與互動確認由呼叫端 agent 依 SKILL.md 處理。
 """
 import datetime
@@ -77,6 +77,47 @@ def frontmatter_keys(text: str):
     return keys
 
 
+def claude_schema_order():
+    """解析 CLAUDE.md frontmatter schema 表格第一欄，回傳欄位順序 list；解析不到回 None。
+
+    識別表頭為含「欄位 / 用途 / 值格式」的那一列，其後逐列抽 `| `field` |` 第一欄，
+    遇空行或非表格列即視為表格結束。
+    """
+    lines = read(ROOT / "CLAUDE.md").splitlines()
+    fields, in_table = [], False
+    for ln in lines:
+        if not in_table:
+            # 表頭須是 `|` 開頭的表格列，避免散文句同時含這三詞被誤判
+            if ln.lstrip().startswith("|") and "欄位" in ln and "用途" in ln and "值格式" in ln:
+                in_table = True
+            continue
+        s = ln.strip()
+        if not s:
+            break
+        if set(s) <= set("|-: "):  # header 下的分隔列
+            continue
+        m = re.match(r"^\|\s*`([a-zA-Z_][a-zA-Z0-9_]*)`", ln)
+        if m:
+            fields.append(m.group(1))
+        else:
+            break
+    return fields or None
+
+
+def schema_drift():
+    """校驗 lint.py 的 WHITELIST 是否與 CLAUDE.md schema 表格一字不差。
+
+    WHITELIST 是 CLAUDE.md frontmatter schema 的機器執行副本（格式不可互通、無法消除）；
+    此檢查讓兩者一旦漂移即被 lint 抓到，不靠人工同步。一致回 None。
+    """
+    declared = claude_schema_order()
+    if declared is None:
+        return {"error": "無法解析 CLAUDE.md frontmatter schema 表格"}
+    if declared == WHITELIST:
+        return None
+    return {"claude_md": declared, "lint_whitelist": list(WHITELIST)}
+
+
 def scan():
     out = {"date": datetime.date.today().isoformat()}
 
@@ -115,9 +156,15 @@ def scan():
         rel(d) + "/" for d in topic_dirs if not (d / "index.md").is_file()
     ]
 
-    # 5. vault-map 未收錄的 Topics（子字串比對，與既有行為一致）
+    # 5. vault-map 未收錄的 Topics（含巢狀子目錄；子字串比對目錄名）
+    #    遞迴到子目錄，否則 Topics/X/Y/ 這類第二層漏收 vault-map 抓不到
     vmap = read(ROOT / "vault-map.md")
-    out["topics_not_in_vaultmap"] = [d.name for d in topic_dirs if d.name not in vmap]
+    all_topic_dirs = (
+        sorted(d for d in topics.rglob("*") if d.is_dir() and not _hidden(d))
+        if topics.is_dir() else []
+    )
+    # 比對帶尾斜線的目錄名（樹狀條目皆為 `<name>/`），避免散文中同字串（如描述裡的「部署」）造成假陰性
+    out["topics_not_in_vaultmap"] = [rel(d) for d in all_topic_dirs if (d.name + "/") not in vmap]
 
     # 6. Tag 同義異寫：統計純英數 YAML list 項，取 top 60
     tag_re = re.compile(r'^\s+-\s*"?([A-Za-z0-9_-]+)"?\s*$')
@@ -197,6 +244,9 @@ def scan():
             order.append(rel(p))
     out["frontmatter_rogue"] = rogue
     out["frontmatter_order"] = order
+
+    # 12. WHITELIST 與 CLAUDE.md schema 漂移校驗（None = 一致）
+    out["schema_drift"] = schema_drift()
 
     return out
 

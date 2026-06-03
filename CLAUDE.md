@@ -12,7 +12,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working in this
 - 「已內化」以使用者本人讀過／看過為準。AI 代為摘要、但使用者尚未親自消化的外部原料，**不主動升 Card**——摘要留 Inbox 當「待讀佇列」，待本人消化再內化。已誤升成 Card 的，**搬回 Inbox**，不用 `draft` 等標記在 Cards 充當待讀狀態。
 - 不主動擴大 scope：不自動回存筆記、不自動結構搬移或升 Topic。
 - `Inbox/Clippings/` 例外：agent **不主動掃描、消化或刪除** Clippings 內容。使用者剪藏的網頁原料留作參考，只在使用者明確指名（如「消化 Clippings/X.md」、「處理 Clippings」）才處理。「整理 Inbox」這類掃描動作預設**跳過 Clippings**。
-- 刪除筆記（Inbox／Cards／Topics）需使用者拍板；唯 skill（如 `ob-write`、`vault-youtube-sync`）流程內定義的消化刪原篇依各 skill 流程，不在此限。
+- 刪除筆記（Inbox／Cards／Topics）的授權一律來自使用者，agent 不自主刪除、skill 也不在自身流程內自動刪（現有 skill 只把原料帶進 Inbox）。授權有兩種形式：逐次拍板，或已含在使用者「消化某篇／清空 Inbox」的指示內——此時消化完刪該 Inbox 原篇屬該指示的一部分（見下方三層流動流程）。
 - 執行 `git push` 或任何遠端推送前，必須先取得使用者明確同意。
 
 ## CWD 契約
@@ -131,7 +131,7 @@ Topics 的 `index.md` 是主題入口；Cards/筆記也可以是整合頁。不�
 
 優先使用 skill，不新增平行流程——現有 skill 能覆蓋的操作一律走 skill，只有 skill 無對應流程時才手動直接操作（即下一段情境）。新增或修改 skill 時，盡量遵循 Agent Skills 開放標準，讓內容可跨工具移植。
 
-未透過 skill 直接操作 Inbox 或 Cards 時，依三層流動流程：Inbox 三條清空路徑（寫新 Card／強化既有 Card 或 Topic／直接刪，三者都刪 Inbox 原篇）、多主題只內化部分切角時用 `extracted_to` 指回整合頁並保留剩餘段落、升 Topic 一次 `git mv` 整組搬到 `Topics/<主題>/` 後在 `index.md` 補 wikilink。
+未透過 skill 直接操作 Inbox 或 Cards 時，依三層流動流程：Inbox 三條清空路徑（寫新 Card／強化既有 Card 或 Topic／直接刪，三者都刪 Inbox 原篇）；多主題只內化部分切角時用 `extracted_to` 指回整合頁並保留剩餘段落（用法見〈多筆記整合 / 整合頁〉）；升 Topic 的門檻、`git mv` 與「須使用者拍板」見〈Cards -> Topics 升級限制〉，此處不重述。
 
 ## Cards -> Topics 升級限制
 
