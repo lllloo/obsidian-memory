@@ -43,4 +43,4 @@ tags:
 
 ## 後續候選（仍在 Cards/ 待消化）
 
-`Context-Engineering`、`GAN-Style-Harness`、`dotLLM-AI-輔助開發方法論`——改寫消化後再升回 Topic。
+`Context-Engineering`、`GAN-Style-Harness`——改寫消化後再升回 Topic。

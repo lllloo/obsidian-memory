@@ -68,4 +68,3 @@ flowchart LR
 ## 相關
 
 - [[Context-Engineering]] — wiki 是長期 context 的外部化載體
-- [[dotLLM-AI-輔助開發方法論]] — schema 層（CLAUDE.md/AGENTS.md）的方法論延伸
