@@ -1,7 +1,7 @@
 ---
 title: Claude Code 完成提示（Windows）— 方案比較
 created: 2026-05-25
-updated: 2026-06-02
+updated: 2026-06-03
 tags:
   - claude-code
   - hooks
@@ -85,27 +85,6 @@ Windows 版直接把 hook 指定成 PowerShell。`command` 用 PowerShell 組出
 **Notification 用 `matcher` 精準篩選**：`Notification` 也含 `idle_prompt`（閒置自動觸發），不篩會造成工作列莫名變黃。`permission_prompt` 對應權限確認；`elicitation_dialog` 對應 Claude Code 主動詢問使用者。兩者都算「需要你介入」。
 
 OSC 9;4 state 速查：`0` 清除、`1` 綠色、`2` 紅色、`3` 旋轉、`4` 黃色暫停。格式：`ESC]9;4;<state>;<progress>BEL`。
-
-## 卡住狀態清除
-
-`$PROFILE` 綁 `Esc` 幾乎沒用：Claude Code 執行時 `Esc` 會先送進 Claude Code 本身，不會觸發 PowerShell 的 PSReadLine key handler；真正能觸發時通常已經退出 Claude Code、回到 shell prompt。它不能拿來處理 Claude Code 還開著時的卡住狀態。
-
-唯一還算實用的補救點，是退出 Claude Code 或中斷回到 PowerShell prompt 時自動清一次，避免 Windows Terminal 工作列狀態殘留：
-
-```powershell
-function Clear-WTProgress {
-    [Console]::Write([char]27 + "]9;4;0;0" + [char]7)
-}
-
-if (-not (Test-Path variable:global:__WTProgressOriginalPrompt)) {
-    $global:__WTProgressOriginalPrompt = (Get-Command prompt -CommandType Function).ScriptBlock
-}
-
-function prompt {
-    Clear-WTProgress
-    & $global:__WTProgressOriginalPrompt
-}
-```
 
 ## 需求
 
