@@ -87,7 +87,7 @@ tags:
 Vault 內容會公開發佈，敏感資料零容忍。以下為本 subagent 必守規則（自包含，不依賴外部檔案）：
 
 - **語言**：正文一律**繁體中文**；技術名詞、品牌名、工具名保留英文（例：Claude Code、OpenAI、defuddle）。defuddle 取得英文 transcript 須翻譯整理為繁中再寫入。
-- **敏感資料**：正文與 frontmatter 不得含 token / key（`sk-`、`sk-ant-`、`ghp_`、`gho_`、`AKIA`、`AIza`、`xox`、JWT `eyJ`）、`-----BEGIN ... PRIVATE KEY-----`、明文密碼、個資（身分證、私人電話、地址、內部 IP/網址）。transcript 命中 → 移除該段或跳過整筆，不寫入。
+- **敏感資料**：正文與 frontmatter 不得含 token / key（`sk-`、`sk-ant-`、`ghp_`、`gho_`、`AKIA`、`AIza`、`xox[baprs]-`、JWT `eyJ`）、`-----BEGIN ... PRIVATE KEY-----`、明文密碼、個資（身分證、私人電話、地址、內部 IP/網址）。transcript 命中 → 移除該段或跳過整筆，不寫入。
 - **tag 沿用既有**：寫入前優先沿用既有 tag（用 `Grep '^tags:' -A5` 查），避免同義異寫；真無合適才建新 tag（小寫、`-` 連接）。本類筆記固定含 `youtube`。
 - **`#` 開頭內容**：hex 色碼（`#57F287`）或其他 `#` 開頭字串在 Obsidian 會被當 tag，**必須用反引號包住**（寫成 `` `#57F287` ``）；前端/設計類影片易踩。
 - **不主動加 wikilink**：Inbox/ 是「消化完刪除」的暫存，筆記彼此 `[[wikilink]]` 沒意義（會一起被刪）。即使主題重疊也**不要**掃 `NOTES_DIR` 找兄弟筆記補連結——wikilink 長出來的時機是使用者把 Cards/ 歸檔到 Topics/，由人決定。例外：`parent: "[[01.index]]"` 是 schema 必填，照寫。

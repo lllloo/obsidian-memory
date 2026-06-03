@@ -36,7 +36,7 @@
 
 ### 2. 敏感資料
 
-若 Body 含 token / key（`sk-`、`ghp_`、`AKIA`、`eyJ`、`-----BEGIN`），移除該段後繼續；若核心內容依賴敏感段落則 skip。
+若 Body 含 token / key（`sk-`、`sk-ant-`、`ghp_`、`gho_`、`AKIA`、`AIza`、`xox[baprs]-`、`eyJ`、`-----BEGIN`），移除該段後繼續；若核心內容依賴敏感段落則 skip。
 
 ## 回傳格式
 

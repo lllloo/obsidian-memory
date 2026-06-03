@@ -17,6 +17,8 @@
     TRANSCRIPT → defuddle 不可信但 transcript-api 成功，用 CONTENT（時間戳）當來源
     FAIL:*     → 三層皆失敗，走 curl/video_meta 確認狀態 + draft 占位（步驟 2/2b）
 """
+from __future__ import annotations
+
 import json
 import re
 import shutil

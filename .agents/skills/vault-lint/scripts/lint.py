@@ -5,7 +5,7 @@
 
     python3 .agents/skills/vault-lint/scripts/lint.py
 
-輸出單一 JSON 物件到 stdout，欄位對應 SKILL.md 的 12 個掃描項。
+輸出單一 JSON 物件到 stdout，欄位對應 SKILL.md 的掃描項表。
 不修改任何檔案；判讀與互動確認由呼叫端 agent 依 SKILL.md 處理。
 """
 import datetime
@@ -30,6 +30,21 @@ WL_ORDER = {k: i for i, k in enumerate(WHITELIST)}
 
 REQUIRED_DIRS = [
     "Inbox", "Inbox/Clippings", "Inbox/Updates", "Inbox/YouTube", "Cards", "Topics",
+]
+
+# 敏感資料 token 前綴正典：CLAUDE.md「### 2. 敏感資料」的機器執行副本，正規化為比對用 stem
+# （`xox[baprs]-`→`xox`、`-----BEGIN ... PRIVATE KEY-----`→`-----BEGIN`）。
+# 與 WHITELIST 同理：格式與 CLAUDE.md 散文不可互通，靠 sensitive_drift() 校驗不漂移。
+SENSITIVE_PREFIXES = [
+    "sk-", "sk-ant-", "ghp_", "gho_", "AKIA", "AIza", "xox", "eyJ", "-----BEGIN",
+]
+
+# 各 skill 中「自包含複製」這份黑名單的 subagent reference（執行時不保證載入 CLAUDE.md，故各自列全）。
+# 新增含敏感黑名單的 reference 時加入此清單，sensitive_drift() 會校驗它們涵蓋正典每個前綴。
+SENSITIVE_REFERENCE_FILES = [
+    ".agents/skills/ob-write/references/write.md",
+    ".agents/skills/vault-youtube-sync/references/subagent-note-creator.md",
+    ".agents/skills/vault-updates-daily/references/item-analyzer.md",
 ]
 
 
@@ -116,6 +131,62 @@ def schema_drift():
     if declared == WHITELIST:
         return None
     return {"claude_md": declared, "lint_whitelist": list(WHITELIST)}
+
+
+def claude_sensitive_prefixes():
+    """解析 CLAUDE.md「敏感資料」段落的 token 前綴，正規化為比對用 stem list；解析不到回 None。
+
+    取該 `###` 段落內所有反引號 token，截斷到第一個 `[`（字元類）與空白之前，
+    使 `xox[baprs]-`→`xox`、`-----BEGIN ... PRIVATE KEY-----`→`-----BEGIN`。
+    """
+    lines = read(ROOT / "CLAUDE.md").splitlines()
+    start = None
+    for i, ln in enumerate(lines):
+        if ln.lstrip().startswith("#") and "敏感資料" in ln:
+            start = i
+            break
+    if start is None:
+        return None
+    seg = []
+    for ln in lines[start + 1:]:
+        if ln.lstrip().startswith("#"):
+            break
+        seg.append(ln)
+    stems = []
+    for tok in re.findall(r"`([^`]+)`", "\n".join(seg)):
+        stem = tok.split("[")[0].split()[0]
+        if stem and stem not in stems:
+            stems.append(stem)
+    return stems or None
+
+
+def sensitive_drift():
+    """校驗敏感資料 token 黑名單未漂移，分兩層（一致回 None）：
+
+    1. CLAUDE.md 正典 vs lint.py 的 SENSITIVE_PREFIXES（機器執行副本）。
+    2. 各 subagent reference（自包含複製）是否涵蓋正典每個前綴。
+
+    類比 schema_drift()，補上「高後果（公開發佈洩密）＋ 多處手抄 ＋ 原本零校驗」的盲點。
+    """
+    canon = claude_sensitive_prefixes()
+    if canon is None:
+        return {"error": "無法解析 CLAUDE.md 敏感資料段落"}
+    result = {}
+    if canon != SENSITIVE_PREFIXES:
+        result["canon_vs_lint"] = {"claude_md": canon, "lint_const": list(SENSITIVE_PREFIXES)}
+    refs = {}
+    for relpath in SENSITIVE_REFERENCE_FILES:
+        p = ROOT / relpath
+        if not p.is_file():
+            refs[relpath] = ["<檔案不存在>"]
+            continue
+        text = read(p)
+        lack = [s for s in SENSITIVE_PREFIXES if s not in text]
+        if lack:
+            refs[relpath] = lack
+    if refs:
+        result["references"] = refs
+    return result or None
 
 
 def scan():
@@ -247,6 +318,9 @@ def scan():
 
     # 12. WHITELIST 與 CLAUDE.md schema 漂移校驗（None = 一致）
     out["schema_drift"] = schema_drift()
+
+    # 13. 敏感資料 token 黑名單漂移校驗（None = 一致）
+    out["sensitive_drift"] = sensitive_drift()
 
     return out
 

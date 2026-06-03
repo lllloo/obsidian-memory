@@ -2,6 +2,20 @@
 
 個人 Obsidian vault，採「半自動卡片盒」工作流。公開版本在 [ob.bugloop.com](https://ob.bugloop.com)。
 
+## 安裝與使用
+
+```bash
+git clone <repo-url> obsidian-memory
+```
+
+**Prerequisites**：
+
+- [Obsidian](https://obsidian.md/) — 編輯與圖譜瀏覽
+- Python 3（純 stdlib）— skill 腳本執行所需
+- [Obsidian CLI](https://help.obsidian.md/cli)（選用）— 跨專案呼叫 `ob-write` / `ob-read` 時用來定位 vault
+
+在 Obsidian 直接「Open folder as vault」開啟本 repo 即可閱讀編輯；skill 由 Claude Code 在 repo 根目錄喚起。
+
 ## 結構
 
 - `Inbox/` — 待消化暫存（AI 抄錄外部原料，消化完刪除）
@@ -20,7 +34,15 @@
 
 ## Skills
 
-`.agents/skills/` 內提供 vault 操作 skills（`ob-write` 筆記建立、`ob-read` 查詢、`vault-youtube-sync` 影片摘要同步、`vault-updates-daily` 日常更新、`vault-lint` 結構健檢等）。
+`.agents/skills/` 內提供 vault 操作 skills，在 Claude Code 以 `/<skill>` 喚起：
+
+| 指令 | 用途 |
+|---|---|
+| `/ob-write` | 建立筆記 |
+| `/ob-read` | 查詢 vault |
+| `/vault-youtube-sync` | 同步 YouTube 影片摘要至 Inbox |
+| `/vault-updates-daily` | 彙整日常更新 |
+| `/vault-lint` | Vault 結構健檢 |
 
 **使用契約**：cwd 必須是本 repo 根目錄（含 `vault-map.md` 的目錄），所有路徑 cwd-relative，不靠環境變數。從別的專案想呼叫 skill，先 `cd` 進來。**例外**：`ob-write` 為 global skill（symlink/junction 到 `~/.claude/skills/`），任何專案皆可呼叫——cwd 不在 vault 時自動走跨專案模式（嚴格 CLI 定位 vault）。
 

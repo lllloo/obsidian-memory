@@ -31,6 +31,7 @@ JSON 欄位對應的問題與嚴重度：
 | `missing_description` | 規範必填 `description` 缺失（Topics `index.md`、`Inbox/Clippings/*`、YouTube 影片筆記） | 🔴 |
 | `topics_missing_index` | Topics 資料夾無 `index.md` | 🔴 |
 | `schema_drift` | `lint.py` 的 `WHITELIST` 與 `CLAUDE.md` schema 表格不一致（`null` = 一致） | 🔴 |
+| `sensitive_drift` | 敏感資料 token 黑名單漂移：`CLAUDE.md` 正典 vs `lint.py` 的 `SENSITIVE_PREFIXES`（`canon_vs_lint`）、各 subagent reference 是否涵蓋正典每個前綴（`references`）；`null` = 一致 | 🔴 |
 | `missing_tags` | Cards/Topics 缺 `tags`（已排除 `index.md`） | 🟡 |
 | `orphans_topics` | 升級主題卻無入站 wikilink（異常） | 🟡 |
 | `topics_not_in_vaultmap` | Topics 未收錄進 `vault-map.md` | 🟡 |
@@ -42,7 +43,7 @@ JSON 欄位對應的問題與嚴重度：
 | `missing_updated` | Cards/Topics 缺 `updated` | 🔵 |
 | `tag_counts` | 純英數 tag 使用次數 top 60 | 🔵（肉眼辨識同義異寫，如 `claude-code` vs `claudeCode`） |
 
-> `frontmatter_order`/`rogue` 的判準依 `lint.py` 的 `WHITELIST` 常數，它是 `CLAUDE.md` frontmatter schema 的機器執行副本。兩者格式不可互通、無法合成一份；`schema_drift` 項即用來校驗兩者一字不差，漂移時報 🔴。判準不在此重抄，避免成為第三份會漂的副本。
+> `frontmatter_order`/`rogue` 的判準依 `lint.py` 的 `WHITELIST` 常數，它是 `CLAUDE.md` frontmatter schema 的機器執行副本。兩者格式不可互通、無法合成一份；`schema_drift` 項即用來校驗兩者一字不差，漂移時報 🔴。判準不在此重抄，避免成為第三份會漂的副本。`sensitive_drift` 同模式：校驗敏感 token 黑名單的 `CLAUDE.md` 正典、`lint.py` 的 `SENSITIVE_PREFIXES` 常數、各 subagent reference（自包含複製）三者一致，補上比 schema 更高後果（公開發佈洩密）卻原本零校驗的盲點。
 
 ## 報告格式
 
@@ -57,6 +58,7 @@ JSON 欄位對應的問題與嚴重度：
 - 缺 description：Inbox/Clippings/foo.md
 - Topics/bar/ 無 index.md
 - schema 漂移：lint.py WHITELIST 與 CLAUDE.md schema 不一致（列出兩邊欄位差異）
+- 敏感黑名單漂移：reference 缺前綴或 lint 常數與 CLAUDE.md 不一致（列出哪份缺哪些）
 
 ### 🟡 警告（N 項）
 - Inbox 積壓：42 篇（> 20）
@@ -91,5 +93,6 @@ JSON 欄位對應的問題與嚴重度：
 - Inbox 積壓 — 批次清理時機由用戶自選
 - description 缺失 — 需手動寫 30–80 字摘要，不自動產生
 - schema 漂移 — 判斷 `CLAUDE.md` schema 與 `lint.py` 的 `WHITELIST` 哪邊才是正確意圖，再同步另一邊（規範變更通常以 `CLAUDE.md` 為準）
+- 敏感黑名單漂移 — `references` 缺漏：把該 reference 的 token 清單補齊到涵蓋正典；`canon_vs_lint` 不一致：先定 `CLAUDE.md` 正典，再同步 `lint.py` 的 `SENSITIVE_PREFIXES`
 
 **執行前給用戶看確認，確認後才動檔。一次修一個類別。** 修補一律用 harness-native 工具（`Write`/`Edit`），不落 shell。
