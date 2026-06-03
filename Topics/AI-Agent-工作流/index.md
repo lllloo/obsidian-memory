@@ -2,7 +2,7 @@
 title: AI Agent 工作流
 description: Harness 設計、多 agent 協作、planner/generator/evaluator 三角，與 BMAD/GStack/Spec-Kit 等主流 agent framework 取徑
 created: 2026-04-25
-updated: 2026-06-02
+updated: 2026-06-03
 tags:
   - ai-agent
 ---
@@ -12,6 +12,7 @@ tags:
 ## 概念入口
 
 - [[Harness-Engineering]] — Planner / Generator / Evaluator 三角 + 立場（Generator 不要自評 / 通用工具優於客製 / 狀態外部化）；連結各框架實作
+- [[GAN-Style-Harness]] — 三角的具體實作：generator / evaluator 分離 + rubric 打分門檻，適合 UI / 主觀品質任務
 
 ## 框架速查
 
@@ -43,4 +44,4 @@ tags:
 
 ## 後續候選（仍在 Cards/ 待消化）
 
-`Context-Engineering`、`GAN-Style-Harness`——改寫消化後再升回 Topic。
+`Context-Engineering`——改寫消化後再升回 Topic。
