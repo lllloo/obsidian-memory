@@ -16,7 +16,7 @@ from pathlib import Path
 
 # Windows console 預設 cp950，強制 UTF-8 才能正確輸出中文檔名 / JSON
 try:
-    sys.stdout.reconfigure(encoding="utf-8")
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 except (AttributeError, OSError):
     pass
 
