@@ -1,7 +1,7 @@
 ---
 title: Claude Code 前端設計工作流
 created: 2026-04-20
-updated: 2026-05-27
+updated: 2026-06-03
 tags:
   - claude-code
   - design
@@ -85,7 +85,7 @@ Claude Code 在 agentic coding（自主代理寫程式）表現卓越，但前�
 從複製轉向創作。
 
 - **元件**：[21st.dev](https://21st.dev/)、[CodePen](https://codepen.io/) 找高品質元件，直接複製 prompt
-- **自製素材**：Midjourney / Nano Banana Pro 生成品牌藝術圖，配 Kling / Veo 做細微動態 Hero（首屏主視覺）背景影片（[[Nano-Banana-動態-Hero-Section]]）
+- **自製素材**：Midjourney / Nano Banana Pro 生成品牌藝術圖，配 Kling / Veo 做細微的 hero section 背景影片（首屏主視覺）（[[Hero-Section-動態背景]]）
 - **視覺說故事**：素材與應用主題連結（例：Argus 情報 App → 千眼神意象 → 「See what's next」）
 - **排版**：主動指定 Google Fonts（Claude Code 預設偏 Inter，不會主動換字體）
 - **質感細節**：頁面載入動畫、計數器跳升、高光掃過、捲動進度條、GSAP + Lenis 捲動動畫（[[GSAP-與-Lenis-捲動動畫分工]]）
@@ -117,7 +117,8 @@ Claude Code 在 agentic coding（自主代理寫程式）表現卓越，但前�
 - [[Pencil-讀取規則]] — Layer 5 工具的使用規則
 - [[bookmark-Stitch-AI設計畫布|Stitch]] — Layer 5 工具的深度細節
 - [[bookmark-DESIGN-md-設計系統規格|DESIGN.md]] — 設計系統文件格式規範
-- [[動效與互動]] — Layer 6 動效深度
+- [[Hero-Section-動態背景]] — 首屏動態背景素材流程
+- [[GSAP-與-Lenis-捲動動畫分工]] — scroll animation 與 smooth scroll 分工
 
 ## 來源
 

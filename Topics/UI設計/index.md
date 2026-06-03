@@ -2,7 +2,7 @@
 title: UI設計
 description: Claude Code 前端設計工作流、設計系統文件規格，與 Impeccable / Awwwards / Stitch 等工具書籤
 created: 2026-04-25
-updated: 2026-05-28
+updated: 2026-06-03
 tags:
   - design
   - design-system
