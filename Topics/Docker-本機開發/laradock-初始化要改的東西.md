@@ -1,7 +1,7 @@
 ---
 title: laradock 初始化要改的東西
 created: 2026-05-19
-updated: 2026-05-19
+updated: 2026-06-03
 tags:
   - laradock
   - docker
@@ -50,3 +50,7 @@ gitignore 已涵蓋 `*.conf`（`.conf.example` 例外），新增的 vhost 不�
 | `REDIS_PASSWORD` | `null` | `secret_redis` |
 
 理由：Laravel container 走 Docker 內部網路，hostname 是 service 名；`root/root` 與 `secret_redis` 都是 laradock 容器的預設帳密。
+
+## 相關
+
+- [[Laradock-多專案架構]] — 為什麼一份 laradock 能服務多專案、加專案動什麼不動什麼、PHP 版本共用限制

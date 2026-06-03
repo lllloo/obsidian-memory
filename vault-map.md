@@ -39,6 +39,7 @@ tags:
   │   ├── GStack/      — planning／design／QA／ship 多 persona workflow
   │   └── Superpowers/ — TDD gate／系統化除錯／review loop
   ├── Claude-Code/    — Skills、permissions、agent packages、日常操作
+  ├── Docker-本機開發/ — Laradock 本機啟動 SOP、初始化踩坑
   ├── Obsidian/       — CLI 整合、Skills、Quartz 部署
   ├── UI設計/         — 設計工具、DESIGN.md 系統、視覺靈感
   ├── 前端技術/       — CSS、動效、捲動互動實作
@@ -56,7 +57,7 @@ tags:
 | Obsidian 操作 | `obsidian` `cli` | `Topics/Obsidian/` + `Cards/` |
 | UI 設計 / 設計工作流 | `design` `design-system` `frontend` | `Topics/UI設計/` + `Cards/` |
 | 前端 / CSS / 動效實作 | `css` `flexbox` `animation` | `Topics/前端技術/` + `Cards/` |
-| Docker / Laradock / CI3 | `docker` `laradock` `codeigniter` `本機環境` `sop` | `Cards/` |
+| Docker / Laradock / CI3 | `docker` `laradock` `codeigniter` `本機環境` `sop` | `Topics/Docker-本機開發/` + `Cards/` |
 | Windows / Git / CLI 工具 | `windows` `git` `cli` `workflow` | `Cards/` |
 | 上版 / 部署 | `deploy` `quartz` | `Topics/部署/` + `Cards/` |
 | GitHub Actions / CI 通知 | `github-actions` `discord` | `Topics/部署/` |

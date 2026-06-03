@@ -1,8 +1,7 @@
 ---
 title: Laradock + CodeIgniter 3.x 本機啟動模板
 created: 2026-04-24
-updated: 2026-04-24
-draft: true
+updated: 2026-06-03
 tags:
   - docker
   - laradock
@@ -14,14 +13,18 @@ tags:
 
 去識別化範本，下個專案照抄，把填空清單的值換掉即可。
 
-> 假設：Windows + Docker Desktop + Laradock clone 在 `D:\docker\laradock`，專案放 `D:\docker\<PROJECT_DIR>\` 同層。
+> 假設：Windows + Docker Desktop + Laradock clone 在 `C:\code\laradock`，專案放 `C:\code\<PROJECT_DIR>\` 同層。
+
+## 架構：多專案
+
+這張是 Laradock multiple projects 模式下的**單一專案啟動流程**——laradock 與各專案在 `C:\code\` 同層，`APP_CODE_PATH_HOST=../` 讓每個專案都掛進 `/var/www/<PROJECT_DIR>`。為什麼一份 laradock 能服務多專案、加第 N 個專案動什麼、PHP 版本共用限制，見 [[Laradock-多專案架構]]。下面填空清單的 `<PROJECT_DIR>` / `<LOCAL_DOMAIN>` / `<LOG_PREFIX>` 就是各專案的分流鍵。
 
 ## 填空清單
 
 | 占位符 | 範例 | 說明 |
 |---|---|---|
 | `<PROJECT_DIR>` | `my-project` | 專案資料夾，對應 container 內 `/var/www/<PROJECT_DIR>` |
-| `<LOCAL_DOMAIN>` | `myapp.local` | 本機開發網址，加到 hosts |
+| `<LOCAL_DOMAIN>` | `myapp.test` | 本機開發網址，加到 hosts（TLD 用 `.test`，別用 `.dev` / `.local`，原因見 [[Laradock-多專案架構]]） |
 | `<SITE_CONF>` | `myapp.conf` | nginx site 設定檔名 |
 | `<DB_NAME>` | `myapp_dev` | DB 名（沿用開發站方便匯 dump） |
 | `<LOG_PREFIX>` | `myapp` | nginx log 檔名前綴 |
@@ -29,23 +32,23 @@ tags:
 
 ## 1. 啟動 Laradock
 
-Laradock `.env` 關鍵值（不需改）：`APP_CODE_PATH_HOST=../`、`PHP_VERSION=7.4`。對應後 `D:\docker\<PROJECT_DIR>` ↔ container `/var/www/<PROJECT_DIR>`。
+Laradock `.env` 關鍵值（不需改）：`APP_CODE_PATH_HOST=../`、`PHP_VERSION=7.4`。對應後 `C:\code\<PROJECT_DIR>` ↔ container `/var/www/<PROJECT_DIR>`。
 
 ```bash
-cd D:\docker\laradock
+cd C:\code\laradock
 docker-compose up -d nginx mariadb php-fpm phpmyadmin workspace
 ```
 
 ## 2. 取得程式碼
 
 ```bash
-cd D:\docker
+cd C:\code
 git clone <repo-url> <PROJECT_DIR>
 ```
 
 ## 3. 建立 nginx site 設定
 
-新增 `D:\docker\laradock\nginx\sites\<SITE_CONF>`：
+新增 `C:\code\laradock\nginx\sites\<SITE_CONF>`：
 
 ```nginx
 server {
@@ -107,7 +110,7 @@ CI 3.x 多半沒 migration，從開發站撈 dump。phpMyAdmin：`http://localho
 CI 3.x 慣例：`application/config/database.php` 被 `.gitignore` 排除。範本通常在 `remote/database.develop.php` 之類的位置。
 
 ```bash
-cd D:\docker\<PROJECT_DIR>
+cd C:\code\<PROJECT_DIR>
 copy remote\database.develop.php application\config\database.php
 ```
 
