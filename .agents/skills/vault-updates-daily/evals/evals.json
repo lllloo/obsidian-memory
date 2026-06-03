@@ -52,8 +52,8 @@
       "files": [],
       "assertions": [
         {
-          "name": "使用 --starred GraphQL 路徑",
-          "description": "透過 fetch_updates.py --starred 用單一 GraphQL call 抓，而非逐 repo REST call"
+          "name": "starred 由 index 驅動，單一 GraphQL call",
+          "description": "01.index.md 的 ## GitHub starred 段啟用 sync: releases 後，預設呼叫 fetch_updates.py（不帶 flag）即用單一 GraphQL call 抓 starred releases，而非逐 repo REST call 或手動 --starred"
         },
         {
           "name": "篩選 AI tooling 相關 release",

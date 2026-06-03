@@ -1,11 +1,19 @@
 ---
 title: Vault Map
 created: 2026-04-15
-updated: 2026-05-29
+updated: 2026-06-03
 tags:
   - index
 ---
 
+
+## 根層治理檔
+
+| 檔案 | 職責 |
+|---|---|
+| `CLAUDE.md` | agent 執行規則：寫入前 checklist、frontmatter schema、Cards -> Topics 升級門檻（`AGENTS.md` 為其 symlink） |
+| `SYSTEM-DESIGN.md` | 運作總綱：模式血緣、核心賭注、刻意不做的事（給人建立心智模型） |
+| `card-quality.md` | 單張 Card 品質標準與反指標 |
 
 ## 資料夾索引
 
@@ -22,7 +30,7 @@ tags:
 │   │   └── daveebbelaar/          — Python、LLM Evals、API 整合
 │   ├── Clippings/ — 網頁剪貼參考庫（agent 不主動消化；使用者明指才處理）
 │   └── Updates/   — 日常更新彙整（vault-updates-daily skill 產出）
-├── Cards/         — 未歸屬或待補事實審查的完整概念 Cards
+├── Cards/         — 未歸屬的完整概念 Cards
 └── Topics/        — 已歸檔主題（子目錄如下）
   ├── AI-Agent-工作流/ — Harness、frameworks、multi-agent workflow
   │   ├── Spec-Kit/    — GitHub spec-driven toolkit，spec 驅動生 code
