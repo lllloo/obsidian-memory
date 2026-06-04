@@ -11,7 +11,7 @@ tags:
 ## 1. 調整 `docker-compose.yml`
 
 - 主要調 networks 設定
-- 確認 port 有無對外開放到本機 localhost（ports 對應 / expose 設定）
+- 確認 port 有用 `ports` 發佈到本機 localhost（`expose` 只在容器間可見，host 連不到）
 - 把這個專案用不上的容器關掉（精簡 stack）
 
 ## 2. 新增 `.env` 檔案
