@@ -1,7 +1,7 @@
 ---
 title: 安全使用 target="_blank" 的方式
 created: 2026-06-03
-updated: 2026-06-03
+updated: 2026-06-04
 source: https://bugloop.com/notes/security/target-blank-security
 tags:
   - security
@@ -55,11 +55,11 @@ tags:
 
 ## 安全的解決方案
 
-::: tip 現代瀏覽器已預設保護
-Chrome 88+、Firefox 79+、Safari 12.1+ 等現代瀏覽器已將 `target="_blank"` 的預設行為改為自動套用 `rel="noopener"`，不再讓新頁面存取 `window.opener`。
-
-仍建議明確寫出 `rel="noopener"`，以確保在舊版瀏覽器的相容性，並讓程式碼意圖更清楚。
-:::
+> **💡 現代瀏覽器已預設保護**
+>
+> Chrome 88+、Firefox 79+、Safari 12.1+ 等現代瀏覽器已將 `target="_blank"` 的預設行為改為自動套用 `rel="noopener"`，不再讓新頁面存取 `window.opener`。
+>
+> 仍建議明確寫出 `rel="noopener"`，以確保在舊版瀏覽器的相容性，並讓程式碼意圖更清楚。
 
 ### 方案一：使用 rel="noopener"
 

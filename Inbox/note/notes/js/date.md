@@ -1,7 +1,7 @@
 ---
 title: Date
 created: 2026-06-03
-updated: 2026-06-03
+updated: 2026-06-04
 source: https://bugloop.com/notes/js/date
 tags:
   - javascript
@@ -13,21 +13,20 @@ tags:
 
 這份文件說明 JavaScript 原生 Date、Moment.js、Day.js 的常用日期操作方法，包含初始化、格式化、驗證等，適用於前端開發常見情境。
 
-::: tip 資料儲存建議
-建議所有日期時間資料（無論是 API 傳輸、資料庫儲存、JSON 欄位等）都統一使用 `toISOString()` 格式（如：`2025-08-15T12:34:56.789Z`）。
-
-- 標準化：符合 ISO 8601 標準，易於跨系統交換。
-- 時區明確：預設為 UTC，避免本地時區混淆。
-- JSON 友好：Date 物件可以直接轉換為 JSON 字串會變成 ISO 格式。
-
-範例：
-
-```js
-const now = new Date()
-const isoString = now.toISOString() // "2025-08-15T12:34:56.789Z"
-```
-
-:::
+> **💡 資料儲存建議**
+>
+> 建議所有日期時間資料（無論是 API 傳輸、資料庫儲存、JSON 欄位等）都統一使用 `toISOString()` 格式（如：`2025-08-15T12:34:56.789Z`）。
+>
+> - 標準化：符合 ISO 8601 標準，易於跨系統交換。
+> - 時區明確：預設為 UTC，避免本地時區混淆。
+> - JSON 友好：Date 物件可以直接轉換為 JSON 字串會變成 ISO 格式。
+>
+> 範例：
+>
+> ```js
+> const now = new Date()
+> const isoString = now.toISOString() // "2025-08-15T12:34:56.789Z"
+> ```
 
 ## 基本操作
 
@@ -68,9 +67,9 @@ dayjsObj.format('MM')
 // '01'
 ```
 
-::: warning Date 物件提醒
-原生 Date 物件的月份是從 **0** 開始計算（0-11），而 Moment.js 與 Day.js 則回傳正常月份（01-12）。
-:::
+> **⚠️ Date 物件提醒**
+>
+> 原生 Date 物件的月份是從 **0** 開始計算（0-11），而 Moment.js 與 Day.js 則回傳正常月份（01-12）。
 
 ### 取得日期
 
@@ -173,9 +172,9 @@ dayjsObj.format('YYYY-MM-DD')
 // '2023-01-01'
 ```
 
-::: info 格式化比較
-使用 Moment.js 或 Day.js 可以更方便地獲得標準格式的日期字串，不必手動處理月份的 +1 問題，且自動補零保持格式一致性。
-:::
+> **ℹ️ 格式化比較**
+>
+> 使用 Moment.js 或 Day.js 可以更方便地獲得標準格式的日期字串，不必手動處理月份的 +1 問題，且自動補零保持格式一致性。
 
 ### 年月取得天數
 
@@ -240,9 +239,9 @@ dayjs.extend(customParseFormat)
 dayjs().isAfter(dayjs('09:00', 'HH:mm'), 'minute')
 ```
 
-::: info 外掛使用說明
-Day.js 需要先載入 `customParseFormat` 外掛才能使用自訂格式解析時間。
-:::
+> **ℹ️ 外掛使用說明**
+>
+> Day.js 需要先載入 `customParseFormat` 外掛才能使用自訂格式解析時間。
 
 ### 日期轉 ISO 字串
 
@@ -278,9 +277,9 @@ dayjs('2023-02-30').isValid() // false (2月沒有30日)
 dayjs('2023-01-15').isValid() // true
 ```
 
-::: warning 注意
-原生 Date 物件對無效日期的處理較寬鬆，建議使用 Moment.js 或 Day.js 進行日期有效性驗證。
-:::
+> **⚠️ 注意**
+>
+> 原生 Date 物件對無效日期的處理較寬鬆，建議使用 Moment.js 或 Day.js 進行日期有效性驗證。
 
 ### 獲取當月第一天和最後一天
 
@@ -296,9 +295,9 @@ dayjs().startOf('month').format('YYYY-MM-DD') // 當月第一天
 dayjs().endOf('month').format('YYYY-MM-DD') // 當月最後一天
 ```
 
-::: tip 應用場景
-這個功能在開發月報表、財務統計或行事曆應用時特別有用。
-:::
+> **💡 應用場景**
+>
+> 這個功能在開發月報表、財務統計或行事曆應用時特別有用。
 
 ## 參考資料
 

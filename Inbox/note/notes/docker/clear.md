@@ -1,7 +1,7 @@
 ---
 title: Docker 資源清理指令彙整
 created: 2026-06-03
-updated: 2026-06-03
+updated: 2026-06-04
 source: https://bugloop.com/notes/docker/clear
 tags:
   - docker
@@ -81,9 +81,9 @@ docker system prune --force
 docker system prune --volumes
 ```
 
-::: warning 注意
-`--volumes` 會一併移除未被任何容器掛載的資料卷，請確認資料卷內無重要資料再執行。
-:::
+> **⚠️ 注意**
+>
+> `--volumes` 會一併移除未被任何容器掛載的資料卷，請確認資料卷內無重要資料再執行。
 
 更徹底加上 `-a`，額外刪除所有**未使用**的映像檔（包括已經建構但未被執行的）：
 
@@ -91,9 +91,9 @@ docker system prune --volumes
 docker system prune -a
 ```
 
-::: warning 注意
-此指令會移除所有未被任何容器使用的映像檔，請確認無需保留再執行。
-:::
+> **⚠️ 注意**
+>
+> 此指令會移除所有未被任何容器使用的映像檔，請確認無需保留再執行。
 
 ## 移除已停止的容器
 
@@ -125,9 +125,9 @@ docker container prune
 docker container prune --force
 ```
 
-::: tip 提醒
-正在執行（`Up`）的容器不會受此指令影響。
-:::
+> **💡 提醒**
+>
+> 正在執行（`Up`）的容器不會受此指令影響。
 
 ## 移除未使用的映像檔
 
@@ -147,9 +147,9 @@ docker image prune
 docker image prune -a
 ```
 
-::: warning 注意
-`-a` 參數會移除所有未被任何容器使用的映像檔，請確認無需保留再執行。
-:::
+> **⚠️ 注意**
+>
+> `-a` 參數會移除所有未被任何容器使用的映像檔，請確認無需保留再執行。
 
 使用 `--filter` 只移除特定條件的映像檔，例如移除 24 小時前建立的：
 
@@ -171,19 +171,19 @@ docker image prune -a --filter "until=168h"
 docker network prune
 ```
 
-::: tip 提醒
-以下三個 Docker 內建預設網路不受此指令影響，永遠不會被移除：
-
-- `bridge`：容器預設使用的橋接網路
-- `host`：直接使用宿主機網路
-- `none`：完全隔離，無網路
-:::
+> **💡 提醒**
+>
+> 以下三個 Docker 內建預設網路不受此指令影響，永遠不會被移除：
+>
+> - `bridge`：容器預設使用的橋接網路
+> - `host`：直接使用宿主機網路
+> - `none`：完全隔離，無網路
 
 ## 移除未使用的資料卷
 
-::: danger 警告
-資料卷（Volume）通常用於儲存持久化資料，例如資料庫的資料檔案。移除後**無法恢復**，請務必謹慎操作。
-:::
+> **🚨 警告**
+>
+> 資料卷（Volume）通常用於儲存持久化資料，例如資料庫的資料檔案。移除後**無法恢復**，請務必謹慎操作。
 
 先確認目前存在哪些資料卷及其使用狀況：
 

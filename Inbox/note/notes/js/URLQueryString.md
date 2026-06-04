@@ -1,7 +1,7 @@
 ---
 title: URLSearchParams 為主的查詢字串處理
 created: 2026-06-03
-updated: 2026-06-03
+updated: 2026-06-04
 source: https://bugloop.com/notes/js/URLQueryString
 tags:
   - javascript
@@ -39,12 +39,11 @@ params.toString() // 'foo=100&baz=3'
 Object.fromEntries(params) // { foo: '100', baz: '3' }
 ```
 
-::: warning 限制
-
-- 只支援一層 key-value 結構，不支援巢狀物件與陣列。
-- 參數值一律為字串。
-- 陣列參數需重複 key，例如 `a=1&a=2`，無法自訂格式。
-  :::
+> **⚠️ 限制**
+>
+> - 只支援一層 key-value 結構，不支援巢狀物件與陣列。
+> - 參數值一律為字串。
+> - 陣列參數需重複 key，例如 `a=1&a=2`，無法自訂格式。
 
 ---
 
@@ -114,9 +113,9 @@ queryString.parse('a=1+2') // { a: '1 2' }
 
 - 組裝查詢字串時，若要將空白轉為 `+`，可用 `encodeURIComponent(str).replace(/%20/g, '+')`。
 
-::: warning 注意
-跨系統整合時，請務必確認查詢字串的 `+` 處理方式，避免資料解析錯誤。
-:::
+> **⚠️ 注意**
+>
+> 跨系統整合時，請務必確認查詢字串的 `+` 處理方式，避免資料解析錯誤。
 
 ---
 

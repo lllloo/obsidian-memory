@@ -1,7 +1,7 @@
 ---
 title: Git 指令
 created: 2026-06-03
-updated: 2026-06-03
+updated: 2026-06-04
 source: https://bugloop.com/notes/git/command
 tags:
   - git
@@ -35,9 +35,9 @@ git remote set-url origin <url>
 git pull -f origin develop:develop
 ```
 
-::: warning 注意
-此指令會強制以遠端分支覆蓋本地分支，可能導致本地未提交的變更遺失。請謹慎使用。
-:::
+> **⚠️ 注意**
+>
+> 此指令會強制以遠端分支覆蓋本地分支，可能導致本地未提交的變更遺失。請謹慎使用。
 
 ## 分支管理
 

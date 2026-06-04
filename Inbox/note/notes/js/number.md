@@ -1,7 +1,7 @@
 ---
 title: 數字計算與格式化
 created: 2026-06-03
-updated: 2026-06-03
+updated: 2026-06-04
 source: https://bugloop.com/notes/js/number
 tags:
   - javascript
@@ -37,11 +37,11 @@ JavaScript 使用 IEEE 754 雙精度浮點數，直接運算可能產生誤差�
 npm i big.js
 ```
 
-::: warning 關於 toNumber 的注意事項
-`big.js` 的計算結果若最後轉回 JavaScript 的 `number`，仍會受到浮點數與安全整數範圍的限制（例如超過 $2^{53}-1$，或需要保留很多小數位）。
-
-如果你希望「精度從頭到尾都不要回到浮點數」，可以改回傳字串，例如使用 `.toString()` 或 `.toFixed(dp)`；只有在確定結果落在安全範圍且允許以 `number` 表示時，才使用 `.toNumber()`。
-:::
+> **⚠️ 關於 toNumber 的注意事項**
+>
+> `big.js` 的計算結果若最後轉回 JavaScript 的 `number`，仍會受到浮點數與安全整數範圍的限制（例如超過 $2^{53}-1$，或需要保留很多小數位）。
+>
+> 如果你希望「精度從頭到尾都不要回到浮點數」，可以改回傳字串，例如使用 `.toString()` 或 `.toFixed(dp)`；只有在確定結果落在安全範圍且允許以 `number` 表示時，才使用 `.toNumber()`。
 
 ```js
 import Big from 'big.js'
@@ -77,25 +77,24 @@ round(1.005, 0)  // 1
 | `num` | 要四捨五入的數字 | — |
 | `dp` | 保留小數位數 | `2` |
 
-::: tip 與原生 toFixed 的差異
-原生 `(1.005).toFixed(2)` 因浮點數精度問題會回傳 `'1.00'`，而 `round(1.005)` 使用 big.js 計算，能正確回傳 `1.01`。
-:::
+> **💡 與原生 toFixed 的差異**
+>
+> 原生 `(1.005).toFixed(2)` 因浮點數精度問題會回傳 `'1.00'`，而 `round(1.005)` 使用 big.js 計算，能正確回傳 `1.01`。
 
-::: info 其他捨入模式
-`big.js` 預設使用四捨五入（`ROUND_HALF_UP`，`Big.RM = 1`）。若有其他需求，可在使用前修改全域設定：
-
-| `Big.RM` | 模式 | 說明 |
-| --- | --- | --- |
-| `0` | `ROUND_DOWN` | 無條件捨去 |
-| `1` | `ROUND_HALF_UP` | 四捨五入（預設） |
-| `2` | `ROUND_HALF_EVEN` | 銀行家捨入（四捨六入五取偶） |
-| `3` | `ROUND_UP` | 無條件進位 |
-
-```js
-Big.RM = 2 // 改為銀行家捨入
-```
-
-:::
+> **ℹ️ 其他捨入模式**
+>
+> `big.js` 預設使用四捨五入（`ROUND_HALF_UP`，`Big.RM = 1`）。若有其他需求，可在使用前修改全域設定：
+>
+> | `Big.RM` | 模式 | 說明 |
+> | --- | --- | --- |
+> | `0` | `ROUND_DOWN` | 無條件捨去 |
+> | `1` | `ROUND_HALF_UP` | 四捨五入（預設） |
+> | `2` | `ROUND_HALF_EVEN` | 銀行家捨入（四捨六入五取偶） |
+> | `3` | `ROUND_UP` | 無條件進位 |
+>
+> ```js
+> Big.RM = 2 // 改為銀行家捨入
+> ```
 
 ## 數字格式化
 
