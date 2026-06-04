@@ -5,7 +5,9 @@
 
 兩層檢查：
   1. 舊個別筆記格式：Inbox/Updates / Cards / Topics 任一 .md 含 `source: <url>`
-  2. 當日日報：Inbox/Updates/<date>-daily-updates.md 正文含 <url>（日期參數提供時）
+  2. 所有日報正文：Inbox/Updates/*-daily-updates.md 任一含 <url>（日報是合併格式、無
+     source: 欄位，改以 inline URL 比對；掃全部日報而非當天，否則前幾天已報過的條目對
+     去重隱形 → 重複寫入）。日期參數現為相容保留，不再用來限制掃描範圍。
 
 輸出：
     DUP:<命中檔案相對路徑>   （第一個命中即印出）
@@ -31,7 +33,6 @@ if len(sys.argv) < 2:
     raise SystemExit(0)
 
 url = sys.argv[1]
-date = sys.argv[2] if len(sys.argv) > 2 else ""
 needle = f"source: {url}"
 
 # 1. 個別筆記格式
@@ -47,15 +48,15 @@ for base in ("Inbox/Updates", "Cards", "Topics"):
         except OSError:
             continue
 
-# 2. 當日日報正文
-if date:
-    daily = Path(f"Inbox/Updates/{date}-daily-updates.md")
-    if daily.is_file():
+# 2. 所有日報正文（合併格式，inline URL 比對；掃全部日報而非當天，否則前幾天已報過的條目會重複）
+updates_dir = Path("Inbox/Updates")
+if updates_dir.is_dir():
+    for p in sorted(updates_dir.glob("*-daily-updates.md")):
         try:
-            if url in daily.read_text(encoding="utf-8", errors="replace"):
-                print(f"DUP:{daily.as_posix()}")
+            if url in p.read_text(encoding="utf-8", errors="replace"):
+                print(f"DUP:{p.as_posix()}")
                 raise SystemExit(0)
         except OSError:
-            pass
+            continue
 
 print("UNIQUE")

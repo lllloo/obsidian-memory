@@ -188,7 +188,7 @@ CHANGELOG:<name>|||<entry-date>|||<entry-title>|||<url>#<slug>|||<body-snippet>
 
 ### 去重（傳給 subagent 前先做）
 
-日報是合併格式（無 `source:` frontmatter），用腳本做兩層 fixed-string 去重（個別筆記 `source: <url>` + 當日日報正文），fixed-string 比對自動避開 URL 裡 `?`/`&` 等 regex metachar。每個候選 URL 跑一次（cwd = repo root）：
+日報是合併格式（無 `source:` frontmatter），用腳本做兩層 fixed-string 去重（個別筆記 `source: <url>` + 所有日報正文，含前幾天的日報），fixed-string 比對自動避開 URL 裡 `?`/`&` 等 regex metachar。每個候選 URL 跑一次（cwd = repo root）：
 
 ```
 python3 .agents/skills/vault-updates-daily/scripts/dedup_check.py "<url>" <YYYY-MM-DD>

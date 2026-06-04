@@ -11,7 +11,7 @@ tags:
 
 ## Claude Code
 
-### v2.1.162 · 2026-06-03（[Update 2.1.162](https://code.claude.com/docs/en/changelog#2116)）
+### v2.1.162 · 2026-06-03（[Update 2.1.162](https://code.claude.com/docs/en/changelog#21162)）
 
 > **繁中摘要**：2.1.162 包含多項 agents 可觀測性改進、工具路由修正、slash command UX 調整，以及多個影響 Windows、SDK、MCP、LSP 的 bug fix。
 
@@ -40,37 +40,6 @@ tags:
 - Windows 用戶的路徑匹配問題修正後，permission rules 才能正確運作
 - MCP timeout 修正影響所有設定低於 1 秒超時的 server 配置
 - SDK/stream-json 用戶的 Esc interrupt 現在可靠
-
----
-
-### v2.1.161 · 2026-06-02（[Update 2.1.161](https://code.claude.com/docs/en/changelog#21161)）
-
-> **繁中摘要**：2.1.161 帶來 OTEL 自訂標籤切分指標、agents 進度顯示改進、平行工具呼叫失敗隔離，以及多個影響 managed-policy、背景 agent、Windows 的 bug fix。
-
-**變更重點**
-- `OTEL_RESOURCE_ATTRIBUTES` 的值現在作為 metric datapoint 的 label，可依 team/repo 等自訂維度切分使用量指標
-- `claude agents` 列表顯示 `done/total` 進度；peek 顯示最長執行項目
-- `/mcp` 折疊未登入的 claude.ai connector，改以「Show unused connectors」收納
-- 平行工具呼叫：單一 Bash 指令失敗不再取消同 batch 的其他呼叫，各自回傳獨立結果
-- Linux fullscreen 剪貼簿改進（wl-copy/xclip/xsel），同時寫入 clipboard 與 PRIMARY selection 以支援 middle-click paste
-
-**Bug Fixes（影響日常使用）**
-- 修正 `forceLoginOrgUUID`/`forceLoginMethod` managed-settings policies 封鎖第三方 provider session（Bedrock、Vertex、Foundry、Mantle）
-- 修正背景 subagent 輸出污染 `claude -p` stdout（`--output-format text/json` 模式）
-- 修正 `/autofix-pr` 在 git worktree 內誤報「cannot run on the default branch」
-- 修正 `--resume` picker 在當前目錄不是 git worktree 時不顯示該目錄的 session
-- 修正 Windows hooks 明確呼叫 bash 時失敗
-- 修正 OpenTelemetry log events 在 telemetry 初始化前靜默丟棄
-- 修正 `claude mcp list/get/add` 將 secrets 印至終端（`${VAR}` 不再展開，credential headers 與 URL secrets 自動遮蔽）
-- 修正 Workflow agents 在 `isolation: "worktree"` 模式下被阻擋編輯自己 worktree 內的檔案
-- 修正背景 session 使用 daemon 環境中的過時 model 啟動
-- 修正 Write tool 結果在 resume session 後渲染時可能 crash
-
-**實務影響**
-- OTEL label 切分對多團隊共用 Claude Code 的組織有直接用途，可做成本歸因
-- MCP secrets 不再外洩至終端 log，安全性提升
-- Bedrock/Vertex/Foundry 用戶若使用 managed-settings policy 需確認此修正是否解除封鎖
-- 平行工具失敗隔離改善多工具並發的穩定性
 
 ---
 
@@ -105,83 +74,6 @@ tags:
 
 ---
 
-### v2.1.158 · 2026-05-30（[Update 2.1.158](https://code.claude.com/docs/en/changelog#21158)）
-
-> **繁中摘要**：Auto mode 現在可在 Bedrock、Vertex、Foundry 上用於 Opus 4.7 與 Opus 4.8，需透過環境變數 opt-in。
-
-**變更重點**
-- Auto mode 擴展至 Bedrock、Vertex、Foundry，支援 Opus 4.7 與 Opus 4.8
-- 需設定 `CLAUDE_CODE_ENABLE_AUTO_MODE=1` 才能啟用
-
-**實務影響**
-- 在 AWS/GCP 等托管環境使用 Opus 4.7/4.8 的團隊現在可使用 Auto mode 的動態 effort 調整
-- 需手動設定環境變數，不會自動啟用
-
----
-
-### v2.1.157 · 2026-05-29（[Update 2.1.157](https://code.claude.com/docs/en/changelog#21157)）
-
-> **繁中摘要**：Plugins 現在從 `.claude/skills` 自動載入，不需 marketplace；新增 `claude plugin init` scaffold 指令與 autocomplete；agents 設定、worktree 管理與 OTEL tool 遙測均有改進。
-
-**變更重點**
-- `.claude/skills` 目錄下的 plugin 自動載入，不需透過 marketplace
-- 新增 `claude plugin init <name>` 指令，在 `.claude/skills` scaffold 新 plugin
-- Plugin autocomplete 支援 subcommands、已安裝 plugin 名稱、已知 marketplace plugin
-- `settings.json` 的 `agent` 欄位現在對 dispatched session 生效；可用 `--agent <name>` 覆蓋
-- `EnterWorktree` 可在 session 中途切換 Claude-managed worktrees
-- `tool_decision` 遙測事件在 `OTEL_LOG_TOOL_DETAILS=1` 時包含 `tool_parameters`（bash 指令、MCP/skill 名稱）
-- Claude 管理的 worktree 完成後不再鎖定，`git worktree remove/prune` 可正常清理
-- Plugins 可宣告 `defaultEnabled: false`
-- Stdio MCP server subprocess 現在收到 `CLAUDE_CODE_SESSION_ID` 與 `CLAUDECODE=1` 環境變數
-- `claude mcp list/get` 顯示未批准的 `.mcp.json` server 為「Pending approval」
-
-**Bug Fixes**
-- 修正無效圖片（零位元組、損毀）透過 paste/MCP/dialog 附加時使 request crash
-- 修正 desktop app/IDE/SDK 的沙箱 network permission prompt 在 auto/bypass 模式下不應出現卻出現
-- 修正 `claude agents` 已完成 session 因有 idle subagent 未 retire
-- 修正 `.claude/worktrees/` 下的背景 agent worktree 在 30 天 retention sweep 後孤立
-- 修正背景 session sleep/wake 後重連時模型收到錯誤日期
-
-**實務影響**
-- `.claude/skills` 自動載入讓本地 plugin 開發流程更直接，不需 marketplace 審核
-- `OTEL_LOG_TOOL_DETAILS=1` 對需要細粒度 tool 追蹤的 CI/監控場景有用
-- MCP server 現在可讀取 `CLAUDE_CODE_SESSION_ID`，適合需要 session 隔離的 server 設計
-- `/terminal-setup` 在 VS Code/Cursor/Windsurf integrated terminal 中停用 GPU 加速
-
----
-
-### v2.1.154 · 2026-05-28（[Update 2.1.154](https://code.claude.com/docs/en/changelog#21154)）
-
-> **繁中摘要**：Opus 4.8 正式推出，預設 high effort，Fast mode 大幅降價；Dynamic workflows 讓 Claude 可協調數十至數百個背景 agent；lean system prompt 成為多數 model 的預設。
-
-**變更重點**
-- **Opus 4.8** 發布，預設 high effort；`/effort xhigh` 適用最難任務
-- **Dynamic workflows**：可要求 Claude 建立 workflow，在背景協調數十至數百個 agent；`/workflows` 查看執行狀態
-- Opus 4.8 Fast mode 降至標準費率 2x（速度 2.5x），相比前一版本大幅降價
-- Lean system prompt 成為除 Haiku、Sonnet、Opus 4.7 及更早版本以外所有 model 的預設
-- Claude 保留 multiple-choice prompt 僅用於真正無法自行決定的情況（減少不必要的確認）
-- `/simplify` 現在執行 cleanup-only review（reuse、simplification、efficiency、altitude）並自動套用
-- `/effort` slider 標籤從 Speed/Intelligence 改為 Faster/Smarter
-- `claude agents`：`! <command>` 以背景 session 執行 shell 指令
-- Streaming tool execution 永遠啟用，包括 Bedrock/Vertex/Foundry
-- Stdio MCP server subprocess 收到 `CLAUDE_CODE_SESSION_ID` 與 `CLAUDECODE=1`
-- `claude mcp list/get` 顯示未批准 server 為「Pending approval」
-- 棄用 `CLAUDE_CODE_OPUS_4_6_FAST_MODE_OVERRIDE`（已於 06/01 移除）
-
-**Bug Fixes**
-- 修正 `rm -rf $HOME` 在 HOME 有尾斜線時未被 dangerous path 攔截
-- 修正背景 session 中的 subagent 繞過 worktree-isolation guard
-- 修正孤立 `claude --bg-pty-host` process 100% CPU 佔用
-- 修正 `worktree.baseRef: "head"` 解析到錯誤 HEAD
-
-**實務影響**
-- Dynamic workflows 是此版本最大功能變更，適合需要大規模平行 agent 的複雜任務；`/workflows` 是新的監控入口
-- Opus 4.8 Fast mode 降價讓高速推理的成本門檻顯著降低
-- Lean system prompt 預設化可能影響現有依賴詳細系統 prompt 行為的 workflow，需測試
-- `ultracode` 關鍵字取代 `workflow` 避免意外觸發，現有 prompt 若含「workflow」字詞需留意
-
----
-
 ## GitHub Changelog
 
 ### v1.120–v1.123 · 2026-06-03（[GitHub Copilot in Visual Studio Code, May releases](https://github.blog/changelog/2026-06-03-github-copilot-in-visual-studio-code-may-releases)）
@@ -204,117 +96,16 @@ tags:
 
 ---
 
-### 2026-06-02（[GPT-4.1 deprecated](https://github.blog/changelog/2026-06-02-gpt-4-1-deprecated)）
+### 2026-06-02（[GitHub Copilot code review for Azure Repos is now in technical preview](https://github.blog/changelog/2026-06-02-github-copilot-code-review-for-azure-repos-is-now-in-technical-preview)）
 
-> **繁中摘要**：GitHub Copilot 已於 2026 年 6 月 1 日在所有體驗（Chat、inline edits、ask/agent mode、code completions）中棄用 GPT-4.1，官方建議改用 gpt-4o 或 o4-mini。
-
-**變更重點**
-- GPT-4.1 deprecation 日期：2026-06-01
-- 影響範圍：所有 Copilot 體驗（Chat、inline edits、ask/agent mode、code completions）
-- 建議替代模型：gpt-4o 或 o4-mini
-
-**實務影響**
-- 若工作流程或設定中明確指定 GPT-4.1，需立即切換至 gpt-4o 或 o4-mini
-- 現有 agent/automation 若依賴 GPT-4.1 的行為特性，需重新評估 o4-mini 的適用性（cost vs capability tradeoff）
-
----
-
-### 2026-06-02（[Expanded technical preview availability for the GitHub Copilot app](https://github.blog/changelog/2026-06-02-expanded-technical-preview-availability-for-the-github-copilot-app)）
-
-> **繁中摘要**：GitHub Copilot 桌面 app technical preview 現向所有 Copilot Pro、Pro+、Business、Enterprise 訂閱用戶開放，支援 Windows、macOS、Linux，讓 Copilot 可在瀏覽器與 IDE 之外獨立運作。
+> **繁中摘要**：Copilot code review 擴展至 Azure Repos（technical preview），可在 Azure DevOps 工作流中直接對 pull request 觸發 on-demand 審查。
 
 **變更重點**
-- Technical preview 擴大至所有現有 Copilot 付費方案用戶（Pro / Pro+ / Business / Enterprise）
-- 支援平台：Windows、macOS、Linux
+- Copilot code review 進入 Azure Repos technical preview
+- 支援在 Azure DevOps PR 上按需觸發審查，無需離開既有工作流
 
 **實務影響**
-- 訂閱用戶可立即下載並在 IDE 外使用 Copilot，適合 terminal-centric 或多視窗工作流
-
-**待追蹤**
-- Technical preview 轉 GA 的時程未公告
-
----
-
-### 2026-06-02（[Copilot SDK is now generally available](https://github.blog/changelog/2026-06-02-copilot-sdk-is-now-generally-available)）
-
-> **繁中摘要**：GitHub Copilot SDK 正式 GA，開發者可將 Copilot agentic engine 嵌入自製應用程式、服務與開發工具，提供穩定 API 與生產環境支援。
-
-**變更重點**
-- Copilot SDK 從 preview 升至 GA
-- 用途：將 Copilot agentic engine 嵌入自訂 app、服務、developer tools
-- 提供 stable API 與 production-ready 支援
-
-**實務影響**
-- 可用 Copilot SDK 在自建工具中整合 agentic 能力，不再受 preview 不穩定性限制
-
----
-
-### 2026-06-02（[Copilot CLI: Improved UI, rubber duck, prompt scheduling, and voice input](https://github.blog/changelog/2026-06-02-copilot-cli-improved-ui-rubber-duck-prompt-scheduling-and-voice-input)）
-
-> **繁中摘要**：GitHub Copilot CLI 大改版：rubber duck 模式與 voice input 今日 GA，prompt scheduling 與新 terminal UI 進入 public preview；rubber duck 模式讓 Copilot CLI 只討論不執行，適合 codebase 探索與問題釐清。
-
-**變更重點**
-- **Rubber duck mode（GA）**：與 Copilot CLI 對話但不執行任何指令，用於 codebase 探索或思路整理
-- **Voice input（GA）**：語音輸入 prompt 取代打字
-- **Prompt scheduling（Public Preview）**：排程 prompt，讓任務在離開時自動執行
-- **新 terminal UI（Public Preview）**：重新設計的實驗性終端介面
-
-**實務影響**
-- Rubber duck mode 提供低風險的 CLI 互動情境，適合在敏感環境下思考問題而不誤觸指令
-- Prompt scheduling 讓長跑任務可排程執行，減少人工守候
-
-**待追蹤**
-- 新 terminal UI 仍為實驗性，功能完整度與穩定性待觀察
-
----
-
-### 2026-06-02（[Cloud and local sandboxes for GitHub Copilot now in public preview](https://github.blog/changelog/2026-06-02-cloud-and-local-sandboxes-for-github-copilot-now-in-public-preview)）
-
-> **繁中摘要**：GitHub Copilot 的工具執行現可在隔離 sandbox 中進行，本地用 Docker container、雲端用 GitHub Actions，目前為 public preview，可降低 agentic 任務的副作用風險。
-
-**變更重點**
-- 本地 sandbox：使用 Docker container 隔離 Copilot 工具執行環境
-- 雲端 sandbox：使用 GitHub Actions 隔離雲端執行環境
-- 目前為 public preview
-
-**實務影響**
-- Agentic 任務（如 file edit、shell 指令）可在隔離環境執行，降低對本地系統的意外影響
-- 與 GitHub Actions 整合讓 CI/CD 場景的 agentic workflow 更安全
-
-**待追蹤**
-- Public preview 轉 GA 的時程與 sandbox 功能限制未公告
-
----
-
-### 2026-06-02（[Shape Copilot code review around your team](https://github.blog/changelog/2026-06-02-shape-copilot-code-review-around-your-team)）
-
-> **繁中摘要**：Copilot code review 新增兩項 public preview：agent skills 讓 Copilot 在回饋前執行指定工具（linter、type-checker、test runner），MCP servers 讓外部服務提供審查 context，使 code review 更貼近團隊實際工具鏈。
-
-**變更重點**
-- **Agent skills for code review（Public Preview）**：設定 Copilot 在給意見前執行特定工具（如 linter、type-checker、test runner）
-- **MCP servers for code review（Public Preview）**：連接外部服務以取得更豐富的審查 context
-- 審查深度會根據變更複雜度自動調整
-
-**實務影響**
-- 可將既有 CI 工具的輸出納入 Copilot 審查流程，減少人工補充 context 的成本
-- MCP 整合讓 code review 可存取外部知識庫（如 issue tracker、文件）
-
-**待追蹤**
-- 兩項功能均為 public preview，API 與設定方式可能調整
-
----
-
-### 2026-06-02（[Extend GitHub with agent apps](https://github.blog/changelog/2026-06-02-extend-github-with-agent-apps)）
-
-> **繁中摘要**：GitHub 推出 Agent apps，可從 Marketplace 安裝 AI agent，整合至 Copilot Chat、PR reviewer、issue assignee 及 comment mention，擴展 GitHub 原生 agentic 能力。
-
-**變更重點**
-- Agent apps 可從 GitHub Marketplace 安裝，安裝方式與 GitHub App 相同
-- 安裝後可在以下場景呼叫：Copilot Chat 中調用、PR 加入為 reviewer、指派給 issue、在 comment 中 mention
-
-**實務影響**
-- 第三方 AI agent 可深度整合 GitHub 原生工作流（PR review、issue triage、chat）
-- 對建立或使用 GitHub-native automation 的團隊是重要擴充點
+- 使用 Azure DevOps 的團隊現可把 Copilot 審查納入 PR 流程
 
 ---
 
@@ -329,6 +120,24 @@ tags:
 **實務影響**
 - JetBrains 使用者可在 IDE 內直接使用 Copilot CLI，不需切換到獨立終端
 - Multi-file editing 與 custom instructions 讓 JetBrains agentic workflow 與 VS Code 功能對齊
+
+---
+
+## GitHub Copilot CLI
+
+### v1.0.57–v1.0.59 · 2026-06-02（[Copilot CLI releases](https://github.com/github/copilot-cli/releases/tag/v1.0.59)）
+
+> **繁中摘要**：Copilot CLI 連續多版：Rubber Duck 與 Remote JSON RPC 改為預設開啟，新增 `/voice` 語音輸入與 `/experimental` 排程 prompt（`/every`、`/after`），Ctrl+C 改為終止整個進程樹。
+
+**變更重點**
+- v1.0.59：新增 `/voice`，用本地 speech-to-text 模型口述 prompt
+- v1.0.58：Rubber Duck、Remote JSON RPC 改為預設啟用；`/experimental` 加入 `/every`／`/after` 排程 prompt、`/theme`、新 UI（issues／PR／gists 快捷）
+- v1.0.57：取消執行中 shell 指令（Ctrl+C／中止 agent 指令）現在終止整個進程樹，不再留孤兒進程；plugin slash command 顯示即時進度；Azure DevOps-only repo 的內建 GitHub MCP 只暴露 `web_search`
+- v1.0.57-4：preToolUse hook 錯誤改為 deny 工具呼叫（原本靜默放行）；tmux 內 Ctrl+C 等修飾鍵正確運作
+
+**實務影響**
+- Ctrl+C 進程樹清理修正避免背景／sandbox shell 留孤兒進程
+- preToolUse hook 從「靜默放行」改成「擋下」，安全行為更符合預期
 
 ---
 
@@ -352,32 +161,72 @@ tags:
 
 ---
 
-### 2026-06-01（[Use Codex with Amazon Bedrock](https://developers.openai.com/codex/changelog#use-codex-with-amazon-bedrock)）
+### Codex CLI 0.137.0 · 2026-06-04（[Codex CLI 0.137.0](https://developers.openai.com/codex/changelog#codex-cli-01370)）
 
-> **繁中摘要**：Codex 現在可透過 Amazon Bedrock 使用 AWS-managed OpenAI 模型，認證、帳號管理、計費由 AWS 負責，本地 Codex 執行流程不變。
+> **繁中摘要**：Codex CLI 0.137.0：TUI 支援 F13-F24 鍵與在搜尋選單貼上，plugin 工作流提供機器可讀 JSON 輸出與快取的遠端 catalog 建議，multi-agent v2 改進每 thread 的 runtime 選擇與 follow-up 預設。
 
 **變更重點**
-- 整合 Amazon Bedrock，支援 AWS-managed OpenAI 模型
-- 認證與計費走 AWS 側，不需另外管理 OpenAI API key
-- 本地 Codex 執行方式維持不變
+- TUI 支援 F13-F24 keybinding，並可在可搜尋選單中貼上
+- Enterprise／admin 工作流顯示每月 credit 上限、套用 cloud-managed 設定 bundle
+- Remote-control client 可透過 app-server RPC 發起配對與管理 controller 授權
+- Plugin 工作流提供機器可讀 JSON 輸出與快取的遠端 catalog 建議
+- Hosted web／image 工具支援更多 code-mode 流程，含平行獨立 web 搜尋
+- Multi-agent v2 維持每 thread 的 runtime 選擇，改進 follow-up 預設
 
 **實務影響**
-- 已在 AWS 生態系的團隊可統一帳號與計費，降低多供應商管理成本
-- 適合需要 AWS 合規（VPC、IAM、CloudTrail）環境的企業用戶
+- Plugin JSON 輸出便於把 Codex plugin 狀態接進自動化腳本
+- Multi-agent v2 的 per-thread runtime 對多代理協調工作流有用
 
 ---
 
-### 2026-05-29（[Computer use and mobile access on Windows 26.527](https://developers.openai.com/codex/changelog#computer-use-and-mobile-access-on-windows-26527)）
+## Spec Kit
 
-> **繁中摘要**：Computer Use 功能擴展至 Windows 桌面應用程式，可從 ChatGPT iOS/Android 或 Mac Codex 遠端操控 Windows 裝置；新增 threading 改進支援背景任務協調。
+### v0.8.18–v0.9.3 · 2026-06-03（[Spec Kit releases](https://github.com/github/spec-kit/releases/tag/v0.9.3)）
+
+> **繁中摘要**：Spec Kit 連續多版：新增 `specify self upgrade`、把 agent context 更新遷移到 agent-context extension（舊 fallback 將於 v0.12.0 移除），並修多項 Windows UTF-8 編碼與 workflow resume 問題。
 
 **變更重點**
-- Computer Use 擴展至 Windows，可操作桌面應用程式
-- Remote control 支援 Windows 裝置，入口為 ChatGPT iOS/Android 或 Mac Codex
-- Profile 區段顯示用戶資訊與使用統計
-- Threading 改進：本地 projects 與 worktrees 可在獨立 thread 中協調背景任務
+- v0.9.0：agent context 更新遷移到 agent-context extension，現自動啟用以維持相容；此 fallback 已棄用，將於 v0.12.0 移除
+- 新增 `specify self upgrade`（CLI 自我升級）；workflow resume 可接受更新後的 inputs
+- 多項 Windows 修正：強制 UTF-8 stdout/stderr 防 UnicodeEncodeError、init-options／`.extensionignore` I/O 釘 UTF-8 編碼
+- 新增 `continue_on_error` step 欄位（非中止式失敗）；native Cline 整合
 
 **實務影響**
-- Windows 用戶現在也能使用 Computer Use 進行桌面自動化
-- 行動裝置遠端控制覆蓋 Windows，適合跨平台 remote agent 工作流程
-- Worktree 背景任務協調改進有助於平行開發流程
+- 既有依賴自動 agent context 更新的專案需在 v0.12.0 前明確啟用 agent-context extension
+- Windows 用戶的 UTF-8 編碼崩潰問題在此系列集中修正
+
+---
+
+## Vercel Skills
+
+### v1.5.10 · 2026-06-03（[vercel-labs/skills v1.5.10](https://github.com/vercel-labs/skills/releases/tag/v1.5.10)）
+
+> **繁中摘要**：新增 `run` 指令可不安裝直接執行 skill，加入一批 agent 整合（含 kimi-code-cli、Antigravity CLI），並修 GitHub clone 認證 fallback 與全域 skill 歸屬。
+
+**變更重點**
+- 新增 `run` 指令：不安裝即執行 skill
+- 新增多個 agent 整合：kimi-code-cli、Antigravity CLI
+- 修正：clone 時 fall back 到 `gh` 與 ssh 認證；global skill 歸屬到 universal agents
+
+**實務影響**
+- `run` 讓一次性試用 skill 不必先安裝
+
+---
+
+## Nuxt
+
+### v4.4.7 / v3.21.7 · 2026-06-02（[Nuxt v4.4.7](https://github.com/nuxt/nuxt/releases/tag/v4.4.7)）
+
+> **繁中摘要**：Nuxt 安全 hotfix（4.x 與 3.x 同步），修補 test component wrapper 的 sibling-directory traversal、buildCache 路徑邊界檢查，以及 Vite `allowDirs` 共享前綴過濾問題。
+
+**變更重點**
+- 安全 hotfix：修 test component wrapper 的 sibling-directory traversal
+- `buildCache` 路徑邊界檢查改用 `pathe` 的 resolve
+- Vite：避免把共享前綴的目錄從 `allowDirs` 過濾掉
+- Nitro：`noSSR` 在決定 payload extraction 前先指派
+
+**實務影響**
+- 屬安全釋出，建議查 nuxt security advisories 確認受影響範圍並升級
+
+**待追蹤**
+- 詳見 [nuxt security advisories](https://github.com/nuxt/nuxt/security/advisories)
