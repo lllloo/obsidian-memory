@@ -1,16 +1,22 @@
 ---
-title: 公司 Docker Compose 啟動步驟
+title: Docker Compose Laravel 啟動步驟
 created: 2026-04-02
-updated: 2026-04-25
-draft: true
+updated: 2026-06-04
 tags:
   - deploy
   - docker
+  - sop
 ---
 
 ## 1. 調整 `docker-compose.yml`
 
+- 主要調 networks 設定
+- 確認 port 有無對外開放到本機 localhost（ports 對應 / expose 設定）
+- 把這個專案用不上的容器關掉（精簡 stack）
+
 ## 2. 新增 `.env` 檔案
+
+- 複製 `.env.example` 為 `.env`，再改連線設定
 
 ## 3. 啟動容器
 

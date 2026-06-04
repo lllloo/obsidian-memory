@@ -2,7 +2,7 @@
 title: Docker 本機開發
 description: 用 Laradock 在 Windows + Docker Desktop 跑既有專案的本機開發環境，啟動模板與初始化踩坑
 created: 2026-06-03
-updated: 2026-06-03
+updated: 2026-06-04
 tags:
   - docker
   - laradock
@@ -26,4 +26,4 @@ tags:
 
 ## 相關
 
-- [[公司-Docker-Compose-啟動步驟]] — 非 Laradock 的公司專案 Docker Compose 流程（留 Cards，待定稿）
+- [[Docker-Compose-Laravel-啟動步驟]] — 非 Laradock 的 Docker Compose 流程，Laravel artisan migrate/seed

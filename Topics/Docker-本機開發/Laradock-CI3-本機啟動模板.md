@@ -136,4 +136,4 @@ copy remote\database.develop.php application\config\database.php
 
 ## 相關筆記
 
-- [[公司-Docker-Compose-啟動步驟]] — Laravel/Artisan 流程，同為 Docker 本機開發情境
+- [[Docker-Compose-Laravel-啟動步驟]] — Laravel/Artisan 流程，同為 Docker 本機開發情境
