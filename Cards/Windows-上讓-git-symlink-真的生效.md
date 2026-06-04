@@ -1,7 +1,7 @@
 ---
 title: Windows 上讓 git symlink 真的生效
 created: 2026-05-19
-updated: 2026-05-19
+updated: 2026-06-04
 tags:
   - windows
   - git
@@ -10,6 +10,8 @@ tags:
 ---
 
 跨平台 repo 用 symlink 維護「單一來源」（例如本 vault 的 `.claude/skills` 與 `.codex/skills` 同時指向 `.agents/skills`，讓 Claude Code 與 Codex 共用同一份 skill），Windows 上 clone 完常變成 17 bytes 文字檔，內容是字串 `../.agents/skills`，驗證腳本直接 fail。每個指向同一目標的 symlink 都會踩到，要逐個還原。
+
+> symlink 的概念與「一份內容、多入口」用途見 [[symlink-讓一份內容多個入口]]。
 
 ## 兩層根因
 
