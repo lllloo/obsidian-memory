@@ -1,8 +1,7 @@
 ---
 title: 怎麼把文字複製到剪貼簿
 created: 2026-06-03
-updated: 2026-06-03
-source: https://bugloop.com/notes/frontend/clipboard
+updated: 2026-06-04
 tags:
   - frontend
   - javascript

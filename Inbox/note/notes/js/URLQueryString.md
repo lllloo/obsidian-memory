@@ -2,7 +2,6 @@
 title: URLSearchParams 為主的查詢字串處理
 created: 2026-06-03
 updated: 2026-06-04
-source: https://bugloop.com/notes/js/URLQueryString
 tags:
   - javascript
   - frontend

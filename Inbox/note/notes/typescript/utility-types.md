@@ -1,8 +1,7 @@
 ---
 title: TypeScript 工具型別 Utility Types
 created: 2026-06-03
-updated: 2026-06-03
-source: https://bugloop.com/notes/typescript/utility-types
+updated: 2026-06-04
 tags:
   - typescript
 ---

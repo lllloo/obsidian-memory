@@ -1,8 +1,7 @@
 ---
 title: Awesome Copilot
 created: 2026-06-03
-updated: 2026-06-03
-source: https://bugloop.com/ai/awesome-copilot
+updated: 2026-06-04
 tags:
   - copilot
   - ai-tools

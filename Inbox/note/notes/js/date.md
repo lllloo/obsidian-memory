@@ -2,7 +2,6 @@
 title: Date
 created: 2026-06-03
 updated: 2026-06-04
-source: https://bugloop.com/notes/js/date
 tags:
   - javascript
   - frontend

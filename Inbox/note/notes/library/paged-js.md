@@ -1,8 +1,7 @@
 ---
 title: Paged.js
 created: 2026-06-03
-updated: 2026-06-03
-source: https://bugloop.com/notes/library/paged-js
+updated: 2026-06-04
 tags:
   - library
   - css

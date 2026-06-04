@@ -1,8 +1,7 @@
 ---
 title: Sticky Table Header 的邊框穿透問題
 created: 2026-06-03
-updated: 2026-06-03
-source: https://bugloop.com/issues/sticky-table-header
+updated: 2026-06-04
 tags:
   - bug
   - frontend

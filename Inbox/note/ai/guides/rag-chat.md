@@ -1,8 +1,7 @@
 ---
 title: "QA 系統的聊天回覆"
 created: 2026-06-03
-updated: 2026-06-03
-source: https://bugloop.com/ai/guides/rag-chat
+updated: 2026-06-04
 tags:
   - rag
   - ai-agent

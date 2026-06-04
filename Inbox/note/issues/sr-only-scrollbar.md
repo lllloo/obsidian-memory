@@ -1,8 +1,7 @@
 ---
 title: Tailwind sr-only 造成多餘 scrollbar
 created: 2026-06-03
-updated: 2026-06-03
-source: https://bugloop.com/issues/sr-only-scrollbar
+updated: 2026-06-04
 tags:
   - bug
   - frontend

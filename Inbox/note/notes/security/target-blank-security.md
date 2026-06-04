@@ -2,7 +2,6 @@
 title: 安全使用 target="_blank" 的方式
 created: 2026-06-03
 updated: 2026-06-04
-source: https://bugloop.com/notes/security/target-blank-security
 tags:
   - security
   - frontend

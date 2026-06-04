@@ -17,7 +17,7 @@ tags:
 - **發佈層**：獨立 repo [obsidian-deploy](https://github.com/lllloo/obsidian-deploy)，存放 `quartz.config.ts`、`quartz.layout.ts`、CI 與稽核腳本。
 - **串接方式**：發佈 repo 的 CI 用 `actions/checkout` 把 `obsidian-memory` 整個 clone 進 `content/`（**獨立 checkout，非 submodule**），Quartz 把 `content/` 當 vault 根目錄讀取。
 - **發佈範圍**：`ignorePatterns`（定義在發佈 repo 的 `quartz.config.ts`）排除 `.obsidian`、整個 `Inbox/`（含 YouTube 與 Clippings）、根目錄治理檔（`CLAUDE.md`、`AGENTS.md`、`README.md`、`card-quality.md`、`vault-map.md`、`SYSTEM-DESIGN.md`）與 CI checkout 後落在 `content/` 的工程檔；實際只發佈 `Cards/`、`Topics/` 與根 `index.md`。完整清單以發佈 repo 的 `quartz.config.ts` 為準。
-- **部署網址**：[ob.bugloop.com](https://ob.bugloop.com)（GitHub Pages + 自訂網域）。
+- **部署網址**：[bugloop.com](https://bugloop.com)（GitHub Pages + 自訂網域）。
 
 ## 部署流程
 
@@ -34,7 +34,7 @@ tags:
 
 ```ts
 pageTitle: "Memory Pieces"
-baseUrl: "ob.bugloop.com"
+baseUrl: "bugloop.com"
 locale: "zh-TW"
 enableSPA: true
 defaultDateType: "created"   // 用 created 當顯示日期

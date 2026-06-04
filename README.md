@@ -1,6 +1,6 @@
 # Obsidian Memory Vault
 
-個人 Obsidian vault，採「半自動卡片盒」工作流。公開版本在 [ob.bugloop.com](https://ob.bugloop.com)。
+個人 Obsidian vault，採「半自動卡片盒」工作流。公開版本在 [bugloop.com](https://bugloop.com)。
 
 ## 安裝與使用
 
@@ -50,5 +50,5 @@ git clone <repo-url> obsidian-memory
 
 | 檔案 | 給誰看 | 內容 |
 |---|---|---|
-| `index.md` | 真人讀者（Quartz 訪客） | ob.bugloop.com 首頁，挑感興趣的主題逛 |
+| `index.md` | 真人讀者（Quartz 訪客） | bugloop.com 首頁，挑感興趣的主題逛 |
 | `vault-map.md` | AI / agent | Vault 結構地圖、tag 索引、查詢用地形圖 |

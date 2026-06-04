@@ -1,8 +1,7 @@
 ---
 title: Docker 與 PM2：用或不用的取捨
 created: 2026-06-03
-updated: 2026-06-03
-source: https://bugloop.com/notes/docker/pm2
+updated: 2026-06-04
 tags:
   - docker
   - pm2

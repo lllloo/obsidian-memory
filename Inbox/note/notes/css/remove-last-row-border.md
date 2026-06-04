@@ -1,8 +1,7 @@
 ---
 title: 最後一行移除下邊框
 created: 2026-06-03
-updated: 2026-06-03
-source: https://bugloop.com/notes/css/remove-last-row-border
+updated: 2026-06-04
 tags:
   - css
   - frontend

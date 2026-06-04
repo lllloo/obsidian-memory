@@ -2,7 +2,6 @@
 title: 數字計算與格式化
 created: 2026-06-03
 updated: 2026-06-04
-source: https://bugloop.com/notes/js/number
 tags:
   - javascript
   - frontend

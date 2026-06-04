@@ -1,8 +1,7 @@
 ---
 title: "登入系統 Token 機制：Access Token 與 Refresh Token"
 created: 2026-06-03
-updated: 2026-06-03
-source: https://bugloop.com/notes/security/token-refresh
+updated: 2026-06-04
 tags:
   - security
   - frontend

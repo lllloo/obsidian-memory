@@ -1,8 +1,7 @@
 ---
 title: input 只能輸入數字且小數點最多兩位
 created: 2026-06-03
-updated: 2026-06-03
-source: https://bugloop.com/notes/frontend/input-number
+updated: 2026-06-04
 tags:
   - frontend
   - javascript

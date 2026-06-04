@@ -1,8 +1,7 @@
 ---
 title: Volta 簡易使用教學
 created: 2026-06-03
-updated: 2026-06-03
-source: https://bugloop.com/notes/npm/volta
+updated: 2026-06-04
 tags:
   - volta
   - npm

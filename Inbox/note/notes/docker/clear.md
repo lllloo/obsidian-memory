@@ -2,7 +2,6 @@
 title: Docker 資源清理指令彙整
 created: 2026-06-03
 updated: 2026-06-04
-source: https://bugloop.com/notes/docker/clear
 tags:
   - docker
   - cli

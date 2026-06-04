@@ -1,8 +1,7 @@
 ---
 title: JSDoc 型別註解
 created: 2026-06-03
-updated: 2026-06-03
-source: https://bugloop.com/notes/typescript/jsdoc
+updated: 2026-06-04
 tags:
   - javascript
   - typescript

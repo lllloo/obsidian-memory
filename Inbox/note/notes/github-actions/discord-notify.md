@@ -1,8 +1,7 @@
 ---
 title: GitHub Actions 寄送 Discord 通知
 created: 2026-06-03
-updated: 2026-06-03
-source: https://bugloop.com/notes/github-actions/discord-notify
+updated: 2026-06-04
 tags:
   - github-actions
   - discord

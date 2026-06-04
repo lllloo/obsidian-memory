@@ -1,8 +1,7 @@
 ---
 title: "符號連結:讓 AGENTS.md 與 CLAUDE.md 互相使用"
 created: 2026-06-03
-updated: 2026-06-03
-source: https://bugloop.com/ai/guides/symbolic-link
+updated: 2026-06-04
 tags:
   - cli
   - claude-code

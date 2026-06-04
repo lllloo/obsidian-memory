@@ -1,8 +1,7 @@
 ---
 title: scroll 相關的 css
 created: 2026-06-03
-updated: 2026-06-03
-source: https://bugloop.com/notes/css/scroller
+updated: 2026-06-04
 tags:
   - css
   - frontend

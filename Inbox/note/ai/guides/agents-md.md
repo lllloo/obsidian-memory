@@ -1,8 +1,7 @@
 ---
 title: "AGENTS.md：AI 編碼工具的統一指令標準"
 created: 2026-06-03
-updated: 2026-06-03
-source: https://bugloop.com/ai/guides/agents-md
+updated: 2026-06-04
 tags:
   - claude-code
   - copilot

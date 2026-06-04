@@ -1,8 +1,7 @@
 ---
 title: 拿不到 Content-Disposition 的原因與解決方式
 created: 2026-06-03
-updated: 2026-06-03
-source: https://bugloop.com/issues/content-disposition
+updated: 2026-06-04
 tags:
   - bug
   - frontend

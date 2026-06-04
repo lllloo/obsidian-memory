@@ -1,8 +1,7 @@
 ---
 title: Docker 網路隔離：只暴露 Nginx
 created: 2026-06-03
-updated: 2026-06-03
-source: https://bugloop.com/notes/docker/network
+updated: 2026-06-04
 tags:
   - docker
   - nginx

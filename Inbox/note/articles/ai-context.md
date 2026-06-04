@@ -1,8 +1,7 @@
 ---
 title: 從模型到上下文
 created: 2026-06-03
-updated: 2026-06-03
-source: https://bugloop.com/articles/ai-context
+updated: 2026-06-04
 tags:
   - ai-agent
   - context-engineering

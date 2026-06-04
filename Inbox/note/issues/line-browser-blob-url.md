@@ -1,8 +1,7 @@
 ---
 title: LINE 付款頁面 redirect 處理
 created: 2026-06-03
-updated: 2026-06-03
-source: https://bugloop.com/issues/line-browser-blob-url
+updated: 2026-06-04
 tags:
   - bug
   - frontend

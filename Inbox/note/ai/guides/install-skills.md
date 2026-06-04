@@ -1,8 +1,7 @@
 ---
 title: "Skills 安裝指南"
 created: 2026-06-03
-updated: 2026-06-03
-source: https://bugloop.com/ai/guides/install-skills
+updated: 2026-06-04
 tags:
   - skill
   - claude-code

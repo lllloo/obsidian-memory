@@ -1,8 +1,7 @@
 ---
 title: iOS image 高度錯誤問題
 created: 2026-06-03
-updated: 2026-06-03
-source: https://bugloop.com/issues/image-height
+updated: 2026-06-04
 tags:
   - bug
   - frontend

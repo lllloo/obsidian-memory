@@ -1,8 +1,7 @@
 ---
 title: 深拷貝（Deep clone）快速參考
 created: 2026-06-03
-updated: 2026-06-03
-source: https://bugloop.com/notes/js/deep-clone
+updated: 2026-06-04
 tags:
   - javascript
   - frontend

@@ -1,8 +1,7 @@
 ---
 title: 前端檔案下載
 created: 2026-06-03
-updated: 2026-06-03
-source: https://bugloop.com/notes/frontend/file-download
+updated: 2026-06-04
 tags:
   - frontend
   - javascript

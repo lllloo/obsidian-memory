@@ -1,8 +1,7 @@
 ---
 title: npm 套件更新與檢查指令
 created: 2026-06-03
-updated: 2026-06-03
-source: https://bugloop.com/notes/npm/update
+updated: 2026-06-04
 tags:
   - npm
   - cli

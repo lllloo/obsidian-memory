@@ -1,8 +1,7 @@
 ---
 title: CSS 換行
 created: 2026-06-03
-updated: 2026-06-03
-source: https://bugloop.com/notes/css/newline
+updated: 2026-06-04
 tags:
   - css
   - frontend
