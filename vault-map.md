@@ -41,11 +41,13 @@ tags:
   │   ├── GStack/      — planning／design／QA／ship 多 persona workflow
   │   └── Superpowers/ — TDD gate／系統化除錯／review loop
   ├── Claude-Code/    — Skills、permissions、agent packages、日常操作
-  ├── Docker-本機開發/ — Laradock 本機啟動 SOP、初始化踩坑
   ├── Obsidian/       — CLI 整合、Skills、Quartz 部署
   ├── UI設計/         — 設計工具、DESIGN.md 系統、視覺靈感
   ├── 前端技術/       — CSS、動效、捲動互動實作
-  └── 部署/           — 上版工作流、本機環境、CI/CD 踩坑
+  └── 環境與部署/      — 本機開發環境 → 上版發佈 → CI/CD 整條交付鏈
+      ├── 本機開發環境/ — Laradock / Docker Compose 把專案在本機跑起來
+      ├── 上版發佈/     — git-archive 交付、靜態站發佈
+      └── CI-CD/        — GitHub Actions secrets、Discord CI 通知
 ```
 
 ## Tag 查詢指南
@@ -56,10 +58,10 @@ tags:
 | AI Agent 工作流 | `ai-agent` `agent-framework` `harness` | `Topics/AI-Agent-工作流/` + `Cards/` |
 | 記憶系統 / Context | `memory` `context-engineering` | `Cards/` |
 | MCP | `mcp` | `Topics/UI設計/`（附於 Pencil / Stitch 等 MCP 工具書籤；尚無獨立 MCP 主題筆記） |
-| Obsidian 操作 | `obsidian` `cli` | `Topics/Obsidian/` + `Cards/` |
+| Obsidian 操作 | `obsidian` `cli` `quartz` | `Topics/Obsidian/` + `Cards/` |
 | UI 設計 / 設計工作流 | `design` `design-system` `frontend` | `Topics/UI設計/` + `Cards/` |
 | 前端 / CSS / 動效實作 | `css` `flexbox` `animation` | `Topics/前端技術/` + `Cards/` |
-| Docker / Laradock / CI3 | `docker` `laradock` `codeigniter` `本機環境` `sop` | `Topics/Docker-本機開發/` + `Cards/` |
+| Docker / Laradock / CI3 | `docker` `laradock` `codeigniter` `本機環境` `sop` | `Topics/環境與部署/` + `Cards/` |
 | Windows / Git / CLI 工具 | `windows` `git` `cli` `workflow` | `Cards/` |
-| 上版 / 部署 | `deploy` `quartz` | `Topics/部署/` + `Cards/` |
-| GitHub Actions / CI 通知 | `github-actions` `discord` | `Topics/部署/` |
+| 上版 / 部署 | `deploy` | `Topics/環境與部署/` + `Cards/` |
+| GitHub Actions / CI 通知 | `github-actions` `discord` | `Topics/環境與部署/` |
