@@ -1,7 +1,7 @@
 ---
 title: Laradock + CodeIgniter 3.x 本機啟動模板
 created: 2026-04-24
-updated: 2026-06-03
+updated: 2026-06-05
 tags:
   - docker
   - laradock
@@ -90,6 +90,14 @@ server {
 ```bash
 docker-compose restart nginx
 ```
+
+修改 Nginx 設定後，不需重啟容器，直接 reload 即可：
+
+```bash
+docker exec -it laradock-nginx-1 nginx -s reload
+```
+
+> 容器名稱依實際環境而定，可用 `docker ps` 查看正確名稱。
 
 以系統管理員編輯 `C:\Windows\System32\drivers\etc\hosts`：
 

@@ -12,6 +12,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working in this
 - 「已內化」以使用者本人讀過／看過為準。AI 代為摘要、但使用者尚未親自消化的外部原料，**不主動升 Card**——摘要留 Inbox 當「待讀佇列」，待本人消化再內化。已誤升成 Card 的，**搬回 Inbox**，不用 `draft` 等標記在 Cards 充當待讀狀態。
 - 不主動擴大 scope：不自動回存筆記、不自動結構搬移或升 Topic。
 - `Inbox/Clippings/` 例外：agent **不主動掃描、消化或刪除** Clippings 內容。使用者剪藏的網頁原料留作參考，只在使用者明確指名（如「消化 Clippings/X.md」、「處理 Clippings」）才處理。「整理 Inbox」這類掃描動作預設**跳過 Clippings**。
+- `Inbox/Archive/` 例外：封存區，放**已內化但保留備查**的原料（不夠格升 Card、又捨不得刪、留作回查）。agent **不主動掃描、消化或刪除** Archive 內容，「整理 Inbox」掃描動作預設**跳過 Archive**；只在使用者明確指名才處理。與 Clippings 的差別：Clippings 是未消化的待讀剪藏，Archive 是已消化的留底。
 - 刪除筆記（Inbox／Cards／Topics）的授權一律來自使用者，agent 不自主刪除、skill 也不在自身流程內自動刪（現有 skill 只把原料帶進 Inbox）。授權有兩種形式：逐次拍板，或已含在使用者「消化某篇／清空 Inbox」的指示內——此時消化完刪該 Inbox 原篇屬該指示的一部分（見下方三層流動流程）。
 - 執行 `git push` 或任何遠端推送前，必須先取得使用者明確同意。
 
