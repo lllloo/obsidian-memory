@@ -1,13 +1,13 @@
 ---
-title: input 只能輸入數字且小數點最多兩位
+title: input 限制數字與小數位
 created: 2026-06-03
-updated: 2026-06-04
+updated: 2026-06-08
 tags:
   - frontend
   - javascript
 ---
 
-# input 只能輸入數字且小數點最多兩位
+# input 限制數字與小數位
 
 這份文件說明如何在前端限制 `<input>` 欄位只能輸入數字，並且小數點後最多兩位，適用於表單驗證與資料輸入場景。
 
@@ -20,7 +20,7 @@ tags:
     e.target.value = formatDecimal(e.target.value)
   })
 
-  const formatDecimal = (value: string) => {
+  const formatDecimal = (value) => {
     return value
       .replace(/[^\d.-]/g, '')
       .replace(/(?!^)-/g, '')
