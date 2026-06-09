@@ -40,32 +40,31 @@
 
 ## 回傳格式
 
-每個候選回傳一條，save 必須附帶 CONTENT（主 agent 用來組裝日報 section）：
+每個候選回傳一條，save 必須附帶 CONTENT（主 agent 用來組裝日報 section）。CONTENT 精簡為「摘要 + 少量重點」，不逐條搬原文：
 
 ```text
 SAVE <url>
 TOOL: <工具名（依工具名稱正規表）>
 META: <版本或日期，如 v1.5.0 · 2025-01-01 或 2025-01-01；用 · 分隔多個欄位>
 CONTENT:
-> **繁中摘要**：<一到兩句說明這個變更對實務的影響。技術名詞保留英文。>
+**繁中摘要**：<一到兩句，點出這個變更最該知道的重點與實務影響。技術名詞保留英文。>
 
-**變更重點**
-- <只整理 Body 可支持的事實>
-
-**實務影響**
-- <對 workflow / CLI / API / model / agent setup 的影響>
-
-**待追蹤**（若有，否則省略）
-- <未定狀態、open issue、未確認 workaround>
+- **<變更名>**：<一句話；能帶出對 workflow / CLI / API / model / agent setup 的影響就併進同一句>
+- **<變更名>**：<...>
 END_CONTENT
 
 SKIP <url> <一行原因>
 ```
 
-Rules：
+精簡原則（讓筆記是「已內化的理解」而非 changelog 流水帳）：
 
-- CONTENT 不含 `## heading` 或 `### heading`（由主 agent 加 heading）。
+- 控制在「摘要 + 3–6 條重點」。挑使用者真的會因此調整行為的變更，把「是什麼 + 影響」併進同一句——不要再拆「變更重點 / 實務影響」兩段。
+- 不逐條列 bug fix：除非某個 bug 是重大安全修補或 regression，否則用一句帶過數量並點名 1–2 個關鍵（如「另修復 20+ bug，值得注意的是 X 與 Y」）。
+- 待追蹤只在真有未定狀態時併進重點或末尾加一條，至多 1 條，否則省略；不另立 `**待追蹤**` 區段。
+- 只整理 Body 可支持的事實，不大段引用原文、不補無 Body 支持的猜測。
+
+格式約束：
+
+- CONTENT 不含 `#` / `##` / `###` heading（由主 agent 加 heading）。
 - META 缺版本時填日期；日期也不確定時填 `unknown`。
-- 不大段引用原文，不補充無 Body 支持的猜測。
-- 不使用 `# ` heading。
-- 若同一 TOOL 下有多個 save item，各自回一條完整的 SAVE 區塊。
+- 同一 TOOL 下有多個 save item 時，各自回一條完整的 SAVE 區塊。

@@ -45,20 +45,17 @@ tags:
 
 ### 筆記結構
 
+每個工具一個 `##` section，底下每個 release / changelog entry 一個 `###` 子標題。entry 內精簡為「摘要 + 少量重點」，不逐條搬原文：
+
 ```markdown
 ## <工具名>
 
 ### <版本或日期>（[release 標題](url)）
 
-> **繁中摘要**：...
+**繁中摘要**：一到兩句，點出這版最該知道的變更與影響。
 
-**變更重點**
-
-- ...
-
-**實務影響**
-
-- ...
+- **<變更名>**：一句話，能帶出對 workflow / CLI / API 的影響就一起寫
+- **<變更名>**：...
 
 ---
 
@@ -69,7 +66,13 @@ tags:
 ...
 ```
 
-每個工具一個 `##` section，底下每個 release / changelog entry 一個 `###` 子標題。跳過無使用者可見變更的項目。
+精簡原則（讓筆記是「已內化的理解」而非 changelog 流水帳）：
+
+- 摘要必留；重點 bullet 控制在 3–6 條，挑使用者真的會因此調整行為的變更。
+- 「是什麼」與「影響」併在同一句，不再拆成「變更重點 / 實務影響」兩段。
+- 不逐條列 bug fix：除非某個 bug 是重大安全修補或 regression，否則一句帶過數量並點名 1–2 個關鍵。
+- 待追蹤只在真有未定狀態時保留，至多 1 條，否則省略。
+- 跳過無使用者可見變更的項目。
 
 ## Source index
 
@@ -162,7 +165,7 @@ python3 .agents/skills/vault-updates-daily/scripts/fetch_updates.py
 CHANGELOG:<name>|||<entry-date>|||<entry-title>|||<url>#<slug>|||<body-snippet>
 ```
 
-其中 `<body-snippet>` 從段落提取純文字，截斷至 800 字元。無法取得個別 entry URL 時，用頁面 URL 加 heading slug（`<url>#<slug>`）作為 canonical URL，確保後續去重可識別。
+其中 `<body-snippet>` 從段落提取純文字，截斷至 800 字元。無法取得個別 entry URL 時，用頁面 URL 加 heading slug（`<url>#<slug>`）作為日報連結用的顯示 URL 即可；anchor 只是讓讀者能跳到該段，**不作為去重依據**（去重改用步驟 4 的 `--tool`/`--key` 穩定鍵，anchor 漂掉也不影響）。
 
 ## 步驟 3：高精度粗篩
 
@@ -188,13 +191,24 @@ CHANGELOG:<name>|||<entry-date>|||<entry-title>|||<url>#<slug>|||<body-snippet>
 
 ### 去重（傳給 subagent 前先做）
 
-日報是合併格式（無 `source:` frontmatter），用腳本做兩層 fixed-string 去重（個別筆記 `source: <url>` + 所有日報正文，含前幾天的日報），fixed-string 比對自動避開 URL 裡 `?`/`&` 等 regex metachar。每個候選 URL 跑一次（cwd = repo root）：
+日報是合併格式（無 `source:` frontmatter），用腳本掃個別筆記 `source: <url>` + 所有日報正文（含前幾天的日報）做 fixed-string 去重，自動避開 URL 裡 `?`/`&` 等 regex metachar。每個候選跑一次（cwd = repo root），依候選類型給參數：
+
+**Release / discussion**（有穩定 URL）只傳 URL：
 
 ```
-python3 .agents/skills/vault-updates-daily/scripts/dedup_check.py "<url>" <YYYY-MM-DD>
+python3 .agents/skills/vault-updates-daily/scripts/dedup_check.py "<url>"
 ```
 
-輸出 `DUP:<檔案>` 即命中、標記 skip 不傳給 subagent；`UNIQUE` 則保留。若 changelog entry 沒有獨立 URL，使用該頁 URL 加 heading slug 作為 canonical URL（如 `<url>#<entry-slug>`），避免整頁只能存一次。
+**官方網頁 changelog 條目**（單條沒有獨立 URL，頁面 anchor 每次跑 slug 會漂、比 URL 會漏抓重報）改傳穩定鍵 `--tool` + `--key`，不靠 anchor：
+
+```
+python3 .agents/skills/vault-updates-daily/scripts/dedup_check.py "<頁面url>" --tool "<工具名>" --key "<版本或標題關鍵字>"
+```
+
+- `--tool`：對應日報的 `## <工具名>`，限縮比對範圍避免跨工具撞版本號；工具名用 item-analyzer 的工具名稱正規表（如 `Claude Code`、`OpenAI Codex`）。
+- `--key`：該條的穩定識別——有版本號就用版本（如 `2.1.169`），無版本用標題的distinctive關鍵字（如 `Sites`）。腳本只在 `### ` 標題行比對，不會被內文順帶提及的版本誤判。
+
+輸出 `DUP:<檔案>` 即命中、標記 skip 不傳給 subagent；`UNIQUE` 則保留。
 
 ### 分批平行分析
 
@@ -253,7 +267,9 @@ tags:
 
 ### <META>（[標題](url)）
 
-<CONTENT block>
+**繁中摘要**：...
+
+- **<變更名>**：...
 
 ---
 
