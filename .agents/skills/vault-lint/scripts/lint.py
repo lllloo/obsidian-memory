@@ -92,6 +92,13 @@ def frontmatter_keys(text: str):
     return keys
 
 
+def strip_markdown_code(text: str) -> str:
+    """移除 fenced code blocks 與 inline code，避免程式範例被當成 wikilink。"""
+    text = re.sub(r"(?ms)^```.*?^```", "", text)
+    text = re.sub(r"`[^`\n]*`", "", text)
+    return text
+
+
 def claude_schema_order():
     """解析 CLAUDE.md frontmatter schema 表格第一欄，回傳欄位順序 list；解析不到回 None。
 
@@ -268,6 +275,7 @@ def scan():
     link_re = re.compile(r"\[\[([^\]|#]+)")
     targets = set()
     for body in texts.values():
+        body = strip_markdown_code(body)
         for m in link_re.finditer(body):
             targets.add(m.group(1).strip())
     # 建立檔名索引（basename → 存在），同樣略過隱藏目錄
