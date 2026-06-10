@@ -26,15 +26,13 @@ Windows 特有坑：obsidian CLI 實際是 `Obsidian.com` 這個 `.com` terminal
 
 ## 解法
 
-最直接——在 `~/.claude/settings.json` 設這兩項；官方文件已支援 PowerShell tool，啟用後 Claude 會把 PowerShell 當主要 shell。重開 Claude Code 生效：
+最直接——在 `~/.claude/settings.json` 設這項；官方文件已支援 PowerShell tool，啟用後 Claude 會把 PowerShell 當主要 shell。重開 Claude Code 生效：
 
 ```json
-"env": { "CLAUDE_CODE_USE_POWERSHELL_TOOL": "1" },
-"defaultShell": "powershell"
+"env": { "CLAUDE_CODE_USE_POWERSHELL_TOOL": "1" }
 ```
 
 - `CLAUDE_CODE_USE_POWERSHELL_TOOL=1`（**核心**）：啟用 PowerShell 工具，鎖定 Claude 走 PowerShell，不被 Git Bash rollout 翻掉。
-- `defaultShell: "powershell"`：把輸入框 `!` 互動指令也導到 PowerShell，依賴上一項。
 
 Mac/Linux 要先裝 `pwsh` 上 PATH；env 變數要全域生效得設 Windows 使用者環境變數（工具不載入 profile）。**hook 另有捷徑**：`"shell": "powershell"` 寫在單一 command hook 上會直接 spawn PowerShell，**不依賴上面的環境變數**——這是 hook 踩 shell 差異的最乾淨解（見相關卡）。
 
