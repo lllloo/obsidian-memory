@@ -1,7 +1,7 @@
 ---
 title: Context Engineering 與成本優化
 created: 2026-04-20
-updated: 2026-05-27
+updated: 2026-06-11
 tags:
   - claude-code
   - ai-agent
@@ -366,6 +366,7 @@ AI 系統：不只第 1 輪要通過，**第 10 輪、第 20 輪都要通過**�
 
 - [[Harness-Engineering]] — Harness 架構、多 Agent 協作拓撲、context 管理演進（已整合 Harness-Engineer / Agent-Teams / Agent-Swarm 等相關內容）
 - [[Claude-Code-Skills]] — Skills 避免佔 context 的機制
+- [[LLM-Wiki-方法論]] — wiki 作為長期 context 外部化載體的原典
 
 ## 外部來源
 

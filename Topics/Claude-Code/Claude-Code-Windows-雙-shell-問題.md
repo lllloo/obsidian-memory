@@ -1,7 +1,7 @@
 ---
 title: Claude Code Windows 雙 shell 問題
 created: 2026-06-01
-updated: 2026-06-02
+updated: 2026-06-11
 tags:
   - claude-code
   - windows
@@ -51,6 +51,7 @@ Mac/Linux 要先裝 `pwsh` 上 PATH；env 變數要全域生效得設 Windows �
 ## 相關
 
 - [[Claude-Code-完成提示-Windows-方案比較]] — 同為 Windows + Claude Code 主題，hook 寫法同樣踩 PowerShell vs Git Bash 差異
+- [[Python-直譯器指令名跨平台選擇]] — bundled Python 腳本在不同平台上的指令名 fallback
 
 ## 來源
 
