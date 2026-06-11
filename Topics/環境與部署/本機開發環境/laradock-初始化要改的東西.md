@@ -1,7 +1,7 @@
 ---
 title: laradock 初始化要改的東西
 created: 2026-05-19
-updated: 2026-06-03
+updated: 2026-06-11
 tags:
   - laradock
   - docker
@@ -23,6 +23,15 @@ laradock clone 完不是 just works，至少有三件事要先處理才跑得起
 | `PMA_PORT` | `8081` | `8088` | 避免跟本機其他服務 8081 衝突 |
 
 前兩項是長期值（跟著手上專案綁），第三項看本機其他服務佔用情況再決定。
+
+注意：`PHP_VERSION` 這類 build-time 設定改完**必須重新建構才生效**，重啟容器沒用：
+
+```bash
+docker-compose build php-fpm workspace
+docker-compose up -d php-fpm workspace
+```
+
+build 完要 `up -d` 重建容器才會用到新 image——`restart` 是同一個容器 stop/start，跑的仍是舊 image。
 
 ## 2. `nginx/sites/` 加自訂 vhost
 

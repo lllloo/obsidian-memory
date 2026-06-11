@@ -1,7 +1,7 @@
 ---
 title: Docker Compose Laravel 啟動步驟
 created: 2026-04-02
-updated: 2026-06-04
+updated: 2026-06-11
 tags:
   - deploy
   - docker
@@ -53,3 +53,9 @@ docker-compose exec web php artisan db:seed --force
 ## 8. 確認
 
 訪問 http://localhost/ 確認網站正常運作
+
+## 相關
+
+- [[Docker-網路隔離只暴露-Nginx]] — §1 networks 設定的進階版：只暴露 Nginx、DB 走 internal 網路
+- [[Nuxt-Docker-多階段構建]] — 同為 Docker 本機/部署情境的 Node (Nuxt) 版模板
+- [[Docker-與-PM2-取捨]] — 容器內程序管理的取捨；本篇 web 容器內的 supervisord 即同類角色

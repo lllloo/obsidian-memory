@@ -1,7 +1,7 @@
 ---
 title: Laradock 多專案架構
 created: 2026-06-03
-updated: 2026-06-03
+updated: 2026-06-11
 tags:
   - laradock
   - docker
@@ -34,7 +34,7 @@ laradock 容器（nginx / php-fpm / db…）只起一組，多專案**不是靠�
 
 ## 限制：共用同一組 container
 
-各專案的 DB、網域、log 互不干擾，但**共用同一組容器與同一個 `PHP_VERSION`**。多專案的 PHP 版本需求衝突時（例如一個要 7.4、一個要 8.x），這套單一 laradock 就不適用——得各自獨立 laradock，或切換 `PHP_VERSION` 重啟（無法同時跑）。
+各專案的 DB、網域、log 互不干擾，但**共用同一組容器與同一個 `PHP_VERSION`**。多專案的 PHP 版本需求衝突時（例如一個要 7.4、一個要 8.x），這套單一 laradock 就不適用——得各自獨立 laradock，或切換 `PHP_VERSION` 後重新 build（build-time 設定，只重啟不生效；見 [[laradock-初始化要改的東西]]），無法同時跑。
 
 ## 相關
 

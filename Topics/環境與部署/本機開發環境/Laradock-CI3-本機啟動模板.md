@@ -1,7 +1,7 @@
 ---
 title: Laradock + CodeIgniter 3.x 本機啟動模板
 created: 2026-04-24
-updated: 2026-06-05
+updated: 2026-06-11
 tags:
   - docker
   - laradock
@@ -38,6 +38,8 @@ Laradock `.env` 關鍵值（不需改）：`APP_CODE_PATH_HOST=../`、`PHP_VERSI
 cd C:\code\laradock
 docker-compose up -d nginx mariadb php-fpm phpmyadmin workspace
 ```
+
+workspace 是開發用容器，內含 PHP CLI / Composer / Node.js——`docker-compose exec workspace bash` 進去跑 composer / npm 等指令。
 
 ## 2. 取得程式碼
 
