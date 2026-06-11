@@ -1,7 +1,7 @@
 ---
 title: Claude Code 多 Agent 協作
 created: 2026-04-24
-updated: 2026-05-27
+updated: 2026-06-11
 tags:
   - claude-code
   - workflow
@@ -33,3 +33,7 @@ tags:
 - **Agent Teams 不是跨家族 LLM**：teammate 是獨立 Claude Code session（可混搭 Sonnet / Opus / Haiku），但仍是 Claude 家族；想跨家族（GPT / Gemini）獨立視角看 [[bookmark-codex-plugin-cc-Codex整合外掛|codex-plugin-cc]]
 - **worktree 不解決 race condition**：兩個 agent 改不同檔不互踩沒錯，但改同一個邏輯區塊（如 schema migration）還是會撞——分支策略要先想好
 - **單一 session 內的模型分層 ≠ 多 agent**：不想開多 agent、只想讓 Opus 在 Sonnet 卡住時介入，採「顧問↔執行者持續諮詢」模式（非平行 spawn）
+
+## 相關
+
+- [[Ticket-驅動的-Agent-協作]] — 比機制層高一層的協作拓撲：人管 ticket 而非管 session，agent 在 ticket 層工作回報

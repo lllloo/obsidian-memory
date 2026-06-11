@@ -1,7 +1,7 @@
 ---
 title: Harness Engineering
 created: 2026-04-21
-updated: 2026-05-27
+updated: 2026-06-11
 tags:
   - claude-code
   - ai-agent
@@ -48,7 +48,7 @@ Anthropic 的 long-running app development harness 把複雜任務拆成三個�
 - [[bookmark-BMAD-Agent開發框架|BMAD]] — 偏 agile lifecycle / 12+ 軟體角色 persona 接力
 - [[bookmark-Spec-Kit-Spec驅動開發框架|Spec-Kit]] — 偏 Spec-Driven Development，以 spec 為 first-class artifact 驅動 code 生成
 
-多 agent 協作機制（Subagent / Agent Teams / Forked subagent / worktrees）見 [[Claude-Code-多-Agent-協作]]。
+多 agent 協作機制（Subagent / Agent Teams / Forked subagent / worktrees）見 [[Claude-Code-多-Agent-協作]]；再往上一層的協作拓撲（人管 ticket、agent 在 ticket 層工作回報，「狀態外部化」推進成 ticket 系統即 state machine）見 [[Ticket-驅動的-Agent-協作]]。
 
 ## 來源
 
