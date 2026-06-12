@@ -1,7 +1,7 @@
 ---
 title: scroll 相關的 css
 created: 2026-06-03
-updated: 2026-06-10
+updated: 2026-06-12
 tags:
   - css
   - frontend
@@ -50,12 +50,8 @@ tags:
 .scroller {
     --scrollbar-color-thumb: rgba(0, 0, 0, 0.2);
     --scrollbar-color-track: rgba(0, 0, 0, 0.2);
-    --scrollbar-width: thin;
     --scrollbar-width-legacy: 10px;
     --scrollbar-border-radius: 7px;
-
-    scrollbar-color: var(--scrollbar-color-thumb) var(--scrollbar-color-track);
-    scrollbar-width: var(--scrollbar-width);
 
     &::-webkit-scrollbar-thumb {
         background: var(--scrollbar-color-thumb);

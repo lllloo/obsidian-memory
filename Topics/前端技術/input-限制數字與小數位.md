@@ -1,7 +1,7 @@
 ---
 title: input 限制數字與小數位
 created: 2026-06-03
-updated: 2026-06-10
+updated: 2026-06-12
 tags:
   - frontend
   - javascript
@@ -38,7 +38,7 @@ tags:
 ### 1. 使用 pattern 屬性（僅前端驗證）
 
 ```html
-<input type="text" pattern="^-?\\d*(\\.\\d{0,2})?$" inputmode="decimal" />
+<input type="text" pattern="^-?\d*(\.\d{0,2})?$" inputmode="decimal" />
 ```
 
 - 這種方式僅在表單送出時驗證，無法即時限制輸入，也無法防止貼上不符格式的內容。
