@@ -133,6 +133,14 @@ Topics 的 `index.md` 是主題入口；Cards/筆記也可以是整合頁。不�
 
 優先使用 skill，不新增平行流程——現有 skill 能覆蓋的操作一律走 skill，只有 skill 無對應流程時才手動直接操作（即下一段情境）。新增或修改 skill 時，盡量遵循 Agent Skills 開放標準，讓內容可跨工具移植。
 
+### 新增 / 修改 skill 的本 repo 約束
+
+- subagent 一律 `Agent` + `subagent_type: "general-purpose"`，prompt = `references/*.md` 全文 + 本次需求（不要叫 subagent 自己 Read）
+- 工具限制等規則寫在 references 正文，自包含、不引用命名 agent
+- 補 fallback 條款：「無 Agent 工具時主 agent 直接 Read references 跑同一流程」
+- SKILL.md 主流程不寫憲法級規則（不自動 commit、通用 wikilink/frontmatter、卡片盒升級流程等）——這些在本檔 `CLAUDE.md`，不重述也不寫「見 CLAUDE.md」指回
+- 但 subagent 經 `references/*.md` 執行時要遵守的寫作規則（繁中、時間抗性等）必須在該 prompt 內可達（inline 或叫它先讀 AGENTS.md），不能只靠 AGENTS.md
+
 未透過 skill 直接操作 Inbox 或 Cards 時，依三層流動流程：Inbox 三條清空路徑（寫新 Card／強化既有 Card 或 Topic／直接刪，三者都刪 Inbox 原篇）；多主題只內化部分切角時用 `extracted_to` 指回整合頁並保留剩餘段落（用法見〈多筆記整合 / 整合頁〉）；升 Topic 的門檻、`git mv` 與「須使用者拍板」見〈Cards -> Topics 升級限制〉，此處不重述。
 
 ## Cards -> Topics 升級限制
