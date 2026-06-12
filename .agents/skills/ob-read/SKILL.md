@@ -1,5 +1,6 @@
 ---
 name: ob-read
+disable-model-invocation: true
 description: 在 obsidian-memory vault 查詢既有筆記：找筆記、搜尋、查一下 vault 有沒有記過某主題、vault 裡關於 X 的筆記、之前記過什麼、查我的筆記。唯讀三層搜尋（vault-map → tag/路徑 → 正文 grep），回結構化命中清單。需要橫跨多篇、靠 tag/正文比對才找得到的實質查詢時用本 skill，不要自己零散 grep。寫入／建立／記一下新內容請改用 ob-write；查詢不寫入。任何專案可呼叫，skill 內部判 cwd 決定查詢模式（本地直接搜／跨專案經 obsidian CLI 定位 vault 後唯讀搜尋）。
 ---
 

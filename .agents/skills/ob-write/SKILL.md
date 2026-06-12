@@ -1,5 +1,6 @@
 ---
 name: ob-write
+disable-model-invocation: true
 description: 把內容「寫進／建立／新增」到 Obsidian vault（obsidian-memory）。用於：使用者要記下想法或結論、剪貼摘要、寫一篇筆記、追加內容或改 frontmatter，常見說法如「記一下」「筆記關於…」「寫一篇」「日記」「存進 vault」「記到 ob」「寫進 obsidian」。即使沒明說「寫」，只要意圖是把某段內容留存進 vault 就用本 skill。任何專案皆可呼叫，skill 內部判 cwd 決定寫入模式（本地不限工具 / 跨專案嚴格 CLI）。純查詢／搜尋既有筆記（找、有沒有、搜）請改用 ob-read，本 skill 不查詢；「daily updates 變更彙整」走 vault-updates-daily。
 ---
 
