@@ -44,3 +44,6 @@ python3 script.py || python script.py
 因為這會把「腳本本身執行失敗」也當成 interpreter 問題，導致同一個腳本被跑第二次。fallback 應該由人根據錯誤訊息判斷，而不是無條件自動重跑。
 
 這個規則讓 macOS / Linux 多數情境一次過；Windows 若沒有 `python3`，也能用常見的 `python` 手動補跑。
+
+
+相關：[[Python Windows stdout UTF-8 亂碼]]——同屬跨平台 Python 執行的踩坑。
