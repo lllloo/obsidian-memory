@@ -1,7 +1,7 @@
 ---
 title: Laradock + CodeIgniter 3.x 本機啟動模板
 created: 2026-04-24
-updated: 2026-06-11
+updated: 2026-06-16
 tags:
   - docker
   - laradock
@@ -47,6 +47,22 @@ workspace 是開發用容器，內含 PHP CLI / Composer / Node.js——`docker-
 cd C:\code
 git clone <repo-url> <PROJECT_DIR>
 ```
+
+## 2.5 安裝 Composer 依賴（接 Eloquent 的 CI3 才需要）
+
+專案 `composer.json` 若 `require` 含 `illuminate/database`（接了 Laravel Eloquent），`application/third_party/eloquent.php` 會 `require vendor/autoload.php`；clone 後沒裝依賴就缺 `vendor/`，開首頁直接 Fatal error（非框架白屏）：
+
+```
+require(.../vendor/autoload.php): failed to open stream: No such file or directory
+```
+
+必須在 **workspace 容器內**跑（依賴要對應容器 PHP 版本，不是 Windows 本機）：
+
+```bash
+docker-compose exec workspace bash -c "cd /var/www/<PROJECT_DIR> && composer install"
+```
+
+驗證 `vendor/autoload.php` 出現即可。沒接 Eloquent（純 CI3）跳過此節。
 
 ## 3. 建立 nginx site 設定
 
@@ -142,6 +158,7 @@ copy remote\database.develop.php application\config\database.php
 
 - **首頁正常** → 成功
 - **Error 1146 Table doesn't exist** → nginx / php-fpm / DB 都通，只是 dump 沒匯完，回 §5
+- **白屏 + Fatal `vendor/autoload.php` failed to open** → 沒裝 Composer 依賴，回 §2.5
 - **白屏 / 502 / Database Error** → 看 log：`application/logs/log-YYYY-MM-DD.php`、`docker-compose logs -f nginx php-fpm`
 
 ## 相關筆記
