@@ -1,7 +1,7 @@
 ---
 title: Vault Map
 created: 2026-04-15
-updated: 2026-06-11
+updated: 2026-06-18
 tags:
   - index
 ---
@@ -44,6 +44,7 @@ tags:
   ├── Obsidian/       — CLI 整合、Skills、Quartz 部署
   ├── UI設計/         — 設計工具、DESIGN.md 系統、視覺靈感
   ├── 前端技術/       — CSS、動效、捲動互動實作
+  │   └── issues/      — 跨瀏覽器／裝置的前端疑難（iOS Safari、LINE WebView、EXIF…）
   └── 環境與部署/      — 本機開發環境 → 上版發佈 → CI/CD 整條交付鏈
       ├── 本機開發環境/ — Laradock / Docker Compose 把專案在本機跑起來
       ├── 上版發佈/     — git-archive 交付、靜態站發佈
