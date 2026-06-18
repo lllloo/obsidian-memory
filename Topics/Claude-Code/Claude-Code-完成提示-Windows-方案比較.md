@@ -103,4 +103,3 @@ OSC 9;4 state 速查：`0` 清除、`1` 綠色、`2` 紅色、`3` 旋轉、`4` �
 ## 相關
 
 - [[Claude-Code-規則系統設計]] — 規則升級到 Hook 的判斷
-- [[Claude-Code-Windows-雙-shell-問題]] — 為何 hook command 要分 PowerShell / Git Bash 寫
