@@ -1,7 +1,7 @@
 ---
 title: Python 直譯器指令名跨平台選擇
 created: 2026-06-02
-updated: 2026-06-02
+updated: 2026-06-18
 tags:
   - python
   - cross-platform
@@ -46,4 +46,4 @@ python3 script.py || python script.py
 這個規則讓 macOS / Linux 多數情境一次過；Windows 若沒有 `python3`，也能用常見的 `python` 手動補跑。
 
 
-相關：[[Python Windows stdout UTF-8 亂碼]]——同屬跨平台 Python 執行的踩坑。
+相關：[[Python-Windows-stdout-UTF-8-亂碼]]——同屬跨平台 Python 執行的踩坑。

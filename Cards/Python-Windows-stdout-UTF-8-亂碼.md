@@ -1,7 +1,7 @@
 ---
 title: Python Windows stdout UTF-8 亂碼
 created: 2026-06-12
-updated: 2026-06-12
+updated: 2026-06-18
 tags:
   - python
   - windows
@@ -47,6 +47,6 @@ sys.stdout.reconfigure(encoding='utf-8')
 
 本機已設 `PYTHONUTF8=1`，決定移除腳本內逐支 reconfigure、統一靠環境變數。此決定與全域規則 `~/.claude/rules/python.md`（要求「所有 Python 腳本開頭一律加 reconfigure」）有出入，後續再調整該規則。
 
-相關：[[Python 直譯器指令名跨平台選擇]]——同屬跨平台 Python 執行的踩坑。
+相關：[[Python-直譯器指令名跨平台選擇]]——同屬跨平台 Python 執行的踩坑。
 
 回查線索：原專案 tenpai（C:/code/tenpai）；相關檔 `src/*.py`、`src/status.py`；全域規則 `~/.claude/rules/python.md`。
