@@ -1,7 +1,7 @@
 ---
 title: TypeScript 工具型別 Utility Types
 created: 2026-06-03
-updated: 2026-06-04
+updated: 2026-06-22
 tags:
   - typescript
 ---
@@ -91,6 +91,18 @@ type Extracted = Extract<T, 'a' | 'b'> // 'a' | 'b'
 type T = string | null | undefined
 type NonNull = NonNullable<T> // string
 ```
+
+## 常見場景選型
+
+挑工具型別前先分清楚：要操作的是「物件的屬性」還是「聯集的成員」——兩類名字相似但作用層次不同。
+
+- **改屬性可選性**：表單／PATCH 更新型別用 `Partial<T>`（欄位都可選傳）；反向把可選補成必填用 `Required<T>`。
+- **取屬性子集**：要「只留某幾個」用 `Pick<T, K>`；要「去掉某幾個」用 `Omit<T, K>`。欄位多、只排除少數時 `Omit` 較省；只需少數欄位時 `Pick` 較清楚。
+- **建字典／對照表**：`Record<K, V>` 取代手寫 index signature，`K` 用聯集字串可限定鍵範圍。
+- **操作聯集成員**：從聯集「拿掉」某些成員用 `Exclude<U, M>`、「只留」某些用 `Extract<U, M>`。
+- **收斂 null/undefined**：`NonNullable<T>`，常接在 API 回傳或可選鏈型別後。
+
+> **關鍵分辨**：`Pick`／`Omit` 作用於「物件的鍵」，`Exclude`／`Extract` 作用於「聯集的成員」，別互相套用。
 
 ## 參考資料
 

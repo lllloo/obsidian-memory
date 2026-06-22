@@ -2,7 +2,7 @@
 title: Claude Code
 description: Claude Code 本體能力的長期筆記：規則系統、權限、skills、多 agent 協作與日常操作慣例
 created: 2026-04-25
-updated: 2026-06-03
+updated: 2026-06-22
 tags:
   - claude-code
 ---
@@ -24,3 +24,4 @@ tags:
 ## 工具書籤
 
 - [[bookmark-codex-plugin-cc-Codex整合外掛|codex-plugin-cc]] — OpenAI 出的 Claude Code plugin，做跨模型 review / task delegation
+- [[Skills-跨工具安裝]] — vercel-labs/skills：一份 skill 經 symlink 多工具共用（Claude Code／Copilot／OpenCode），暫放 Cards 待累積

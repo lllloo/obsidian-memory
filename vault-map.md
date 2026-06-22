@@ -30,8 +30,7 @@ tags:
 │   │   └── daveebbelaar/          — Python、LLM Evals、API 整合
 │   ├── Clippings/ — 網頁剪貼參考庫（agent 不主動消化；使用者明指才處理）
 │   ├── Archive/   — 封存區：已內化但保留備查的原料（agent 不主動掃描/消化/刪除；使用者明指才處理）
-│   ├── Updates/   — 日常更新彙整（vault-updates-daily skill 產出）
-│   └── note/      — 從 note 站遷入的技術文章待讀佇列（CSS/JS/TS/Git/npm/security/AI 等；待本人讀過再升 Card）
+│   └── Updates/   — 日常更新彙整（vault-updates-daily skill 產出）
 ├── Cards/         — 未歸屬的完整概念 Cards
 └── Topics/        — 已歸檔主題（子目錄如下）
   ├── AI-Agent-工作流/ — Harness、frameworks、multi-agent workflow

@@ -34,11 +34,14 @@ tags:
 - [[前端-Cookie-操作]] — js-cookie 操作與 `SameSite`／`Secure` 安全預設，SSR 場景改用 universal-cookie
 - [[JavaScript-日期處理]] — 原生 Date／Moment／Day.js 操作對比，統一以 `toISOString()` 儲存
 - [[深拷貝快速參考]] — structuredClone／JSON／`_.cloneDeep` 取捨與各自的型別失真風險
+- [[數字計算與格式化]] — 浮點精度陷阱與 big.js 精確運算／捨入，及 `Intl.NumberFormat` 千分位、`padStart` 補零
+- [[FullCalendar-教學]] — Vue 3 日曆元件安裝、常用設定與 `getApi()` 只能在掛載後呼叫的時機坑
 
 ## TypeScript / JSDoc
 
 - [[JSDoc-型別註解]] — 用 JSDoc 為 JS 加型別（@type／@param／@typedef／@template／import 型別），不寫 `.ts` 也有型別檢查
 - [[Vue-JSDoc-型別註解]] — Vue 3 Composition API 的 JSDoc 註解（ref／computed／defineProps／defineEmits），含 emit 型別的可靠寫法
+- [[TypeScript-工具型別]] — Partial／Pick／Omit／Record／Exclude 等 utility types，含「物件屬性 vs 聯集成員」的選型判斷
 
 ## 動效實作
 
