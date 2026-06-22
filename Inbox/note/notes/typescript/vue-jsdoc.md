@@ -1,7 +1,7 @@
 ---
 title: Vue 的 JSDoc 型別註解
 created: 2026-06-03
-updated: 2026-06-04
+updated: 2026-06-22
 tags:
   - vue
   - javascript
@@ -28,13 +28,13 @@ const name = ref('')
 const user = ref({ id: 0, name: '' })
 ```
 
-搭配型別斷言，常見於純 JS 專案中需要強制指定型別的情境：
+搭配型別斷言，常見於純 JS 專案中需要強制指定型別的情境。注意斷言語法：型別要放在大括號內，且被斷言的運算式必須用括號包住，斷言才會生效（缺括號會被忽略、缺大括號則不合法）：
 
 ```ts
-/** @type any */
+/** @type {any} */
 let x = ''
-const y = ref(/** @type {string} */ x)
-// y.value 型別會被推斷為 string
+const y = ref(/** @type {string} */ (x))
+// y.value 型別為 string
 ```
 
 ## reactive
@@ -83,22 +83,29 @@ const props = defineProps({
 
 ## defineEmits
 
-```ts
-/** @type {(e: 'update', value: string) => void} */
-const emit = defineEmits(['update'])
-```
-
-多個事件：
+`defineEmits` 是 `<script setup>` 的編譯期巨集。傳入陣列時，emit 型別由引數推斷（payload 約為 `...args: any[]`）：
 
 ```ts
-/**
- * @type {{
- *   (e: 'update', value: string): void
- *   (e: 'delete', id: number): void
- * }}
- */
 const emit = defineEmits(['update', 'delete'])
 ```
+
+> **⚠️ 別把 `@type` 函式簽名掛在 `const emit` 上**
+>
+> 下列寫法把 `@type` 放在 `const emit` 宣告上，屬「宣告變數型別」而非覆寫巨集推斷的回傳型別；它並非官方支援機制，行為依編譯器／Volar 版本而異，不保證如預期生效：
+>
+> ```ts
+> /** @type {(e: 'update', value: string) => void} */
+> const emit = defineEmits(['update'])
+> ```
+>
+> 若需要完整、可靠的事件型別檢查，建議改用 TypeScript 的 type-only 泛型：
+>
+> ```ts
+> const emit = defineEmits<{
+>   (e: 'update', value: string): void
+>   (e: 'delete', id: number): void
+> }>()
+> ```
 
 ## provide / inject
 

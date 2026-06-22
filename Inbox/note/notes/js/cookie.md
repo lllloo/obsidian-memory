@@ -1,7 +1,7 @@
 ---
 title: Cookie
 created: 2026-06-03
-updated: 2026-06-04
+updated: 2026-06-22
 tags:
   - javascript
   - frontend
@@ -39,9 +39,13 @@ import Cookies from 'js-cookie'
 Cookies.set('name', 'value')
 // 設定過期時間（天數）
 Cookies.set('name', 'value', { expires: 7 })
-// 設定路徑
-Cookies.set('name', 'value', { path: '' })
+// 設定路徑（path 預設為 '/'，站台全域可見）
+Cookies.set('name', 'value', { path: '/' })
 ```
+
+> **ℹ️ `path` 的預設與 `''` 的特殊語意**
+>
+> `path` 預設為 `'/'`（整個站台可見）。設成 `''` 並非「設定某個路徑」的一般寫法，其語意是讓 cookie 僅在目前頁面路徑可見，且移除時必須帶相同的 `{ path: '' }`，否則 `Cookies.remove('name')` 會失敗。
 
 ### 讀取 Cookie
 
@@ -54,8 +58,8 @@ Cookies.get() // 取得所有 Cookie（物件）
 
 ```js
 Cookies.remove('name')
-// 若設定 path，刪除時也需指定相同 path
-Cookies.remove('name', { path: '' })
+// 若設定時指定了 path，刪除時也需指定相同的 path
+Cookies.remove('name', { path: '/' })
 ```
 
 ### withAttributes 用法
@@ -93,7 +97,7 @@ safeCookies.set('token', 'abc')
 
 ## 如果有 node.js 需求可以考慮 universal-cookie
 
-雖然 js-cookie 已能滿足大多數前端需求，但若你的專案有以下情境，建議改用 [universal-cookie](https://github.com/reactivestack/cookies) ：
+雖然 js-cookie 已能滿足大多數前端需求，但若你的專案有以下情境，建議改用 [universal-cookie](https://www.npmjs.com/package/universal-cookie) ：
 
 - 需要同時在伺服器端（Node.js）與瀏覽器端操作 Cookie，例如 Next.js、Nuxt.js、SSR 等同構應用。
 - 需於 React 等框架的伺服器端取得或設定 Cookie。
@@ -104,5 +108,5 @@ universal-cookie 提供更彈性的 API，適合現代全端應用場景。
 ## 參考資料
 
 - [js-cookie 官方文件](https://github.com/js-cookie/js-cookie)
-- [universal-cookie 官方文件](https://github.com/reactivestack/cookies)
+- [universal-cookie（npm）](https://www.npmjs.com/package/universal-cookie)
 - [MDN Cookie](https://developer.mozilla.org/en-US/docs/Web/API/Document/cookie)

@@ -1,7 +1,7 @@
 ---
 title: 數字計算與格式化
 created: 2026-06-03
-updated: 2026-06-04
+updated: 2026-06-22
 tags:
   - javascript
   - frontend
@@ -84,15 +84,17 @@ round(1.005, 0)  // 1
 >
 > `big.js` 預設使用四捨五入（`ROUND_HALF_UP`，`Big.RM = 1`）。若有其他需求，可在使用前修改全域設定：
 >
-> | `Big.RM` | 模式 | 說明 |
+> | `Big.RM` | 常數 | 說明 |
 > | --- | --- | --- |
-> | `0` | `ROUND_DOWN` | 無條件捨去 |
-> | `1` | `ROUND_HALF_UP` | 四捨五入（預設） |
-> | `2` | `ROUND_HALF_EVEN` | 銀行家捨入（四捨六入五取偶） |
-> | `3` | `ROUND_UP` | 無條件進位 |
+> | `0` | `Big.roundDown` | 無條件捨去 |
+> | `1` | `Big.roundHalfUp` | 四捨五入（預設） |
+> | `2` | `Big.roundHalfEven` | 銀行家捨入（四捨六入五取偶） |
+> | `3` | `Big.roundUp` | 無條件進位 |
+>
+> 這些 camelCase 靜態常數自 big.js v6.1.0 起提供；舊版或需相容時直接用數值。`ROUND_DOWN`／`ROUND_HALF_UP` 等大寫名是 bignumber.js 慣例，big.js 並不存在（存取會得到 `undefined`）。
 >
 > ```js
-> Big.RM = 2 // 改為銀行家捨入
+> Big.RM = 2 // 改為銀行家捨入（等同 Big.roundHalfEven）
 > ```
 
 ## 數字格式化

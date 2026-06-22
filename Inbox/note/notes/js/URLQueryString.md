@@ -1,7 +1,7 @@
 ---
 title: URLSearchParams 為主的查詢字串處理
 created: 2026-06-03
-updated: 2026-06-04
+updated: 2026-06-22
 tags:
   - javascript
   - frontend
@@ -65,8 +65,8 @@ Object.fromEntries(params) // { foo: '100', baz: '3' }
 
 ### 3. 特殊編碼需求
 
-- `URLSearchParams` 會自動進行 URI 編碼，無法自訂。
-- 若需自訂編碼行為，可考慮第三方套件。
+- `URLSearchParams.toString()` 採 `application/x-www-form-urlencoded` 序列化（空白編成 `+` 而非 `%20`），編碼規則固定、無法自訂。
+- 若需 RFC 3986 風格（空白為 `%20`）或自訂編碼行為，需自行處理或改用第三方套件。
 
 ---
 
@@ -84,37 +84,45 @@ Object.fromEntries(params) // { foo: '100', baz: '3' }
 
 ---
 
-## 注意：遇到 + 可能有的問題
+## 注意：`+` 與空白的編碼
 
-在查詢字串中，`+` 依 RFC 3986 標準應視為字元加號（`+`），但部分舊系統或瀏覽器會將 `+` 解讀為空白（space）。這會導致以下問題：
+查詢字串中 `+` 的語意取決於採用哪套規則：
 
-- `URLSearchParams` 會將 `+` 當作字元加號，不會自動轉為空白。
-- `qs` 與 `query-string` 會自動將 `+` 解析為空白（預設行為，模仿傳統表單編碼）。
-- 若後端或第三方 API 將 `+` 當作空白，前端用 `URLSearchParams` 組裝的查詢字串可能出現資料不一致。
+- **`application/x-www-form-urlencoded`**（HTML 表單編碼，也是 WHATWG URL 標準的 urlencoded parser）：解析時把 `+` 還原為空白，序列化時把空白寫成 `+`、把字面 `+` 編成 `%2B`。
+- **RFC 3986** 通用 URI 語法：`+` 只是普通合法字元，空白應編成 `%20`。
+
+`URLSearchParams` 走的是前者，**解析時會自動把 `+` 轉成空白**——與 `qs`、`query-string` 行為一致，三者並無差異。這是標準行為（主流瀏覽器與 Node.js 皆然），並非舊系統或瀏覽器的偏差。
 
 ### 範例
 
 ```js
-// 解析 a=1+2
-new URLSearchParams('a=1+2').get('a') // '1+2'
+// 三者解析時都會把 + 解成空白
+new URLSearchParams('a=1+2').get('a') // '1 2'
 qs.parse('a=1+2') // { a: '1 2' }
 queryString.parse('a=1+2') // { a: '1 2' }
 ```
 
-### 解法建議
+### 真正的陷阱：保留字面的 `+`
 
-- 若需與後端或第三方 API 相容，建議統一使用 `qs` 或 `query-string` 處理。
-- 若必須用 `URLSearchParams`，遇到 `+` 需手動轉換：
+問題不在「三者解析行為不同」，而在「想保留字面的 `+`」（例如傳遞含 `+` 的 base64 字串）時會被誤轉成空白。解法是組裝時用 `append()` / `set()`，它們會把 `+` 編成 `%2B`：
 
-  ```js
-  const val = params.get('a').replace(/\+/g, ' ')
-  ```
+```js
+const params = new URLSearchParams()
+params.append('a', '1+2')
+params.toString() // 'a=1%2B2'
+params.get('a') // '1+2'
+```
 
-- 組裝查詢字串時，若要將空白轉為 `+`，可用 `encodeURIComponent(str).replace(/%20/g, '+')`。
+### 跨系統不一致的來源
+
+不一致來自「序列化端與解析端採用不同標準」，而非 `URLSearchParams` 本身：
+
+- 後端依 RFC 3986 把 `+` 當字面加號時，前端用 `URLSearchParams` 把空白序列化成的 `+` 會被後端解成字面 `+`。
+- 前端改用 `encodeURIComponent`（空白編成 `%20`、`+` 編成 `%2B`）時，與預期 `+` 代表空白的後端對不上。
 
 > **⚠️ 注意**
 >
-> 跨系統整合時，請務必確認查詢字串的 `+` 處理方式，避免資料解析錯誤。
+> 整合時務必在兩端統一約定 `+` 的處理方式，避免資料解析錯誤。
 
 ---
 

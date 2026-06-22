@@ -1,7 +1,7 @@
 ---
 title: FullCalendar 教學
 created: 2026-06-03
-updated: 2026-06-04
+updated: 2026-06-22
 tags:
   - library
   - javascript
@@ -73,13 +73,17 @@ const calendarOptions = {
   //   此值可為任何能被 Date 解析的格式，例如 ISO8601 字串 '2014-02-01'
   initialDate: '2023-01-01',
 
-  // allDayContent：自訂「全天」欄位顯示文字（僅 timeGridPlugin 有效）
-  //   預設為 'All-day'，可改成任何字串
-  allDayContent: '全天',
+  // allDayText：自訂「全天」欄位顯示文字（僅 timeGridPlugin 有效）
+  //   預設為小寫 'all-day'（隨 locale 變動）；只需改文字用這個
+  allDayText: '全天',
 
-  slotLabelContent: (date) => {
-    return date.toLocaleDateString('zh-TW', { weekday: 'long' })
-  },
+  // dayHeaderFormat：自訂星期表頭格式（要顯示「星期幾」用這個）
+  dayHeaderFormat: { weekday: 'long' },
+
+  // slotLabelContent：自訂 timeGrid/timeline「時間軸刻度」標籤（如 9am 那一欄）
+  //   它是 render hook，參數為物件，需透過 arg.date 取 Date、arg.text 取預設文字
+  //   （不是用來顯示星期；顯示星期請用上面的 dayHeaderFormat / dayHeaderContent）
+  // slotLabelContent: (arg) => arg.text,
 
   // editable：是否允許拖曳、編輯事件（需 interactionPlugin）
   //   true 可拖曳、調整事件時間；
@@ -99,8 +103,9 @@ const calendarOptions = {
   //   預設 false（不限制），可設數字如 6
   dayMaxEventRows: 6,
 
-  // eventMaxStack：每一天最多堆疊幾個事件（僅 dayGridMonth 有效）
-  //   超過會顯示「更多」連結
+  // eventMaxStack：timeGrid / timeline 視圖中每個時間欄最多堆疊幾個事件
+  //   超過顯示「更多」；預設 null（不限制）
+  //   不適用 dayGrid 月視圖（月視圖請改用 dayMaxEventRows / dayMaxEvents）
   eventMaxStack: 6,
 
   // dayMaxEvents：是否啟用「更多」事件顯示（true 則超過自動摺疊）
@@ -135,7 +140,7 @@ const calendarOptions = {
 
 ```vue
 <template>
-  <FullCalendar>
+  <FullCalendar :options="calendarOptions">
     <template v-slot:eventContent="arg">
       <b>{{ arg.event.title }}</b>
     </template>
@@ -147,15 +152,31 @@ const calendarOptions = {
 
 ```vue
 <template>
-  <FullCalendar ref="fullCalendar" />
+  <FullCalendar ref="fullCalendar" :options="calendarOptions" />
+  <button @click="goNext">下一個</button>
 </template>
 
 <script setup>
+import { ref, onMounted } from 'vue'
+
 const fullCalendar = ref(null)
-let calendarApi = fullCalendar.value.getApi()
-calendarApi.next()
+
+function goNext() {
+  const calendarApi = fullCalendar.value.getApi()
+  calendarApi.next()
+}
+
+// 若需在掛載後立即操作：
+onMounted(() => {
+  const calendarApi = fullCalendar.value.getApi()
+  // calendarApi.gotoDate(...) 等
+})
 </script>
 ```
+
+> **⚠️ 注意**
+>
+> `getApi()` 只能在元件掛載後（`onMounted` 或使用者事件觸發的方法內）呼叫。在 `<script setup>` 頂層同步執行時 `fullCalendar.value` 仍為 `null`，會拋 `Cannot read properties of null`。
 
 ---
 

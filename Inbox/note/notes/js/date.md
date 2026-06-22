@@ -1,7 +1,7 @@
 ---
 title: Date
 created: 2026-06-03
-updated: 2026-06-04
+updated: 2026-06-22
 tags:
   - javascript
   - frontend
@@ -38,6 +38,15 @@ const dateObj = new Date('2023/01/01 08:01:02')
 const momentObj = moment('2023/01/01 08:01:02', 'YYYY-MM-DD HH:mm:ss')
 const dayjsObj = dayjs('2023/01/01 08:01:02', 'YYYY-MM-DD HH:mm:ss')
 ```
+
+> **ℹ️ Day.js 自訂格式需外掛**
+>
+> Day.js 以第二參數傳入自訂格式字串解析（`dayjs(str, format)`）需先載入 `customParseFormat` 外掛，否則格式參數會被忽略、退回原生解析：
+>
+> ```js
+> import customParseFormat from 'dayjs/plugin/customParseFormat'
+> dayjs.extend(customParseFormat)
+> ```
 
 ### 取得年分
 
@@ -103,7 +112,7 @@ dayjsObj.format('d')
 // '日'
 ```
 
-Day.js：載入台灣中文語系，取得星期縮寫
+Day.js：載入台灣中文語系，以 `dd` 取得星期的最短名稱（min name），如「日」「一」「二」
 
 ```js
 import dayjs from 'dayjs';
@@ -111,8 +120,12 @@ import 'dayjs/locale/zh-tw'; // 載入台灣中文語系
 dayjs.locale('zh-tw');       // 設定為台灣中文語系
 
 const weekDayText = dayjs().format('dd')
-// 取得當前星期的縮寫
+// 取得當前星期的最短名稱（如「日」）
 ```
+
+> **ℹ️ dd / ddd / dddd 的差異**
+>
+> Day.js（與 moment）的星期 token：`dd` 是最短名（min name，zh-tw 為「日」「一」）、`ddd` 才是一般所稱的縮寫（short name，如「週日」）、`dddd` 是完整名（「星期日」）。別把 `dd` 籠統稱作「縮寫」，以免與 `ddd` 混淆。
 
 ### 取得時
 
@@ -267,18 +280,23 @@ dayjs('2023/01/01 08:01:02').toISOString()
 檢查日期字串是否為有效的日期格式，用於表單驗證或資料處理前的檢查。
 
 ```js
-// 使用 moment
+// 使用 moment（moment 有 overflow 檢查，預設即可擋無效日期）
 moment('2023-02-30').isValid() // false (2月沒有30日)
 moment('2023-01-15').isValid() // true
 
-// 使用 dayjs
-dayjs('2023-02-30').isValid() // false (2月沒有30日)
+// 使用 dayjs：核心預設為「非嚴格」，會把溢位日期滾到合法日，不擋無效日期
+dayjs('2023-02-30').isValid() // true（溢位被接受，解析成 3 月初）
 dayjs('2023-01-15').isValid() // true
+
+// 要讓 dayjs 嚴格檢查無效日期，需載入 customParseFormat 外掛並用嚴格模式（第三參數 true）
+import customParseFormat from 'dayjs/plugin/customParseFormat'
+dayjs.extend(customParseFormat)
+dayjs('2023-02-30', 'YYYY-MM-DD', true).isValid() // false
 ```
 
 > **⚠️ 注意**
 >
-> 原生 Date 物件對無效日期的處理較寬鬆，建議使用 Moment.js 或 Day.js 進行日期有效性驗證。
+> 原生 Date 與 Day.js 核心（非嚴格模式）對無效日期都很寬鬆，會把溢位日期滾到下一個合法日。moment 預設即偵測 overflow 回傳 false；Day.js 則需搭配 `customParseFormat` 外掛的嚴格模式才能擋。
 
 ### 獲取當月第一天和最後一天
 
