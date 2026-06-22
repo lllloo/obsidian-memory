@@ -1,5 +1,5 @@
 ---
-title: Cookie
+title: 前端 Cookie 操作
 created: 2026-06-03
 updated: 2026-06-22
 tags:
@@ -9,7 +9,7 @@ tags:
   - security
 ---
 
-# Cookie
+# 前端 Cookie 操作
 
 這份文件說明如何在前端專案中使用 [js-cookie](https://github.com/js-cookie/js-cookie) 套件進行 Cookie 操作，包含安裝、基本用法、常見情境與注意事項，適合日常前端開發參考。
 

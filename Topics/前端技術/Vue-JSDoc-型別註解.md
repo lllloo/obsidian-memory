@@ -12,7 +12,7 @@ tags:
 
 在 Vue 3 Composition API 中使用 JSDoc 為 `ref`、`computed`、`props`、`emit` 等加上型別註解，不需要寫 TypeScript 也能獲得完整的型別提示。
 
-> 通用 JSDoc 語法請參閱 [JSDoc 型別註解](https://bugloop.com/notes/typescript/jsdoc)。
+> 通用 JSDoc 語法請參閱 [[JSDoc-型別註解]]。
 
 ## ref
 

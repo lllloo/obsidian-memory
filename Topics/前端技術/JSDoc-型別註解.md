@@ -1,7 +1,7 @@
 ---
 title: JSDoc 型別註解
 created: 2026-06-03
-updated: 2026-06-04
+updated: 2026-06-22
 tags:
   - javascript
   - typescript
@@ -11,7 +11,7 @@ tags:
 
 JSDoc 可用於 JavaScript/TypeScript 進行型別註解，提升編輯器提示與型別安全。適用於不想寫 `.ts` 但仍需要型別檢查的 JS 專案，或在 `.ts` 中補充額外型別說明。
 
-> Vue 專案的 JSDoc 用法請參閱 [Vue 的 JSDoc 型別註解](https://bugloop.com/notes/typescript/vue-jsdoc)。
+> Vue 專案的 JSDoc 用法請參閱 [[Vue-JSDoc-型別註解]]。
 
 ## @type
 

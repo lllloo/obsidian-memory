@@ -1,5 +1,5 @@
 ---
-title: URLSearchParams 為主的查詢字串處理
+title: URLSearchParams 查詢字串處理
 created: 2026-06-03
 updated: 2026-06-22
 tags:
@@ -7,7 +7,7 @@ tags:
   - frontend
 ---
 
-# URLSearchParams 為主的查詢字串處理
+# URLSearchParams 查詢字串處理
 
 這份文件以 JavaScript 原生 `URLSearchParams` 為主，說明其用法、限制與常見情境。若遇到 `URLSearchParams` 無法處理的需求，才推薦使用 `qs`、`query-string` 等第三方套件。
 

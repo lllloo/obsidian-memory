@@ -1,5 +1,5 @@
 ---
-title: Date
+title: JavaScript 日期處理
 created: 2026-06-03
 updated: 2026-06-22
 tags:
@@ -8,7 +8,7 @@ tags:
   - library
 ---
 
-# Date
+# JavaScript 日期處理
 
 這份文件說明 JavaScript 原生 Date、Moment.js、Day.js 的常用日期操作方法，包含初始化、格式化、驗證等，適用於前端開發常見情境。
 

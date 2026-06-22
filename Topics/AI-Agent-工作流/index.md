@@ -2,7 +2,7 @@
 title: AI Agent 工作流
 description: Harness 設計、多 agent 協作、planner/generator/evaluator 三角，與 BMAD/GStack/Spec-Kit 等主流 agent framework 取徑
 created: 2026-04-25
-updated: 2026-06-03
+updated: 2026-06-22
 tags:
   - ai-agent
 ---
@@ -44,4 +44,5 @@ tags:
 
 ## 後續候選（仍在 Cards/ 待消化）
 
-`Context-Engineering`——改寫消化後再升回 Topic。
+- `Context-Engineering`——改寫消化後再升回 Topic。
+- [[QA-系統聊天回覆方案]]——RAG / QA 回覆六種方案選型，單篇暫放 Cards，待同主題累積再升 Topic。

@@ -1,7 +1,7 @@
 ---
 title: Paged.js
 created: 2026-06-03
-updated: 2026-06-04
+updated: 2026-06-22
 tags:
   - library
   - css

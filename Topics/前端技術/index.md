@@ -2,7 +2,7 @@
 title: 前端技術
 description: CSS 排版陷阱、scrollbar/flexbox/padding 等常見 bug、SPA 路由判斷，以及切版時反推魔術數字的檢查習慣
 created: 2026-04-25
-updated: 2026-06-18
+updated: 2026-06-22
 tags:
   - frontend
 ---
@@ -19,6 +19,7 @@ tags:
 - [[Img-相關-css]] — object-fit／background-size 的 cover vs contain、aspect-ratio
 - [[CSS-換行]] — overflow-wrap／word-break／white-space 差異、單行與多行省略號
 - [[最後一行移除下邊框]] — 三欄佈局用 nth-last-child + nth-child(3n) 去除多餘分隔線
+- [[Paged-js-分頁印刷排版]] — Paged.js 做 PDF／印刷分頁：`@page` margin box 頁首頁尾、running 元素、`break-inside` 避免切斷
 
 ## JavaScript 與框架
 
@@ -26,6 +27,18 @@ tags:
 - [[複製文字到剪貼簿]] — navigator.clipboard.writeText 用法與 HTTPS／使用者手勢限制
 - [[前端檔案下載]] — a download 同源限制與 AJAX Blob 下載（CORS／記憶體釋放）
 - [[input-限制數字與小數位]] — input 事件即時 regex 格式化 vs pattern／type=number 取捨
+
+## JavaScript 原生 API 與工具庫
+
+- [[URLSearchParams-查詢字串處理]] — `URLSearchParams` 用法／限制，何時改用 qs／query-string，及 `+` 與空白編碼陷阱
+- [[前端-Cookie-操作]] — js-cookie 操作與 `SameSite`／`Secure` 安全預設，SSR 場景改用 universal-cookie
+- [[JavaScript-日期處理]] — 原生 Date／Moment／Day.js 操作對比，統一以 `toISOString()` 儲存
+- [[深拷貝快速參考]] — structuredClone／JSON／`_.cloneDeep` 取捨與各自的型別失真風險
+
+## TypeScript / JSDoc
+
+- [[JSDoc-型別註解]] — 用 JSDoc 為 JS 加型別（@type／@param／@typedef／@template／import 型別），不寫 `.ts` 也有型別檢查
+- [[Vue-JSDoc-型別註解]] — Vue 3 Composition API 的 JSDoc 註解（ref／computed／defineProps／defineEmits），含 emit 型別的可靠寫法
 
 ## 動效實作
 

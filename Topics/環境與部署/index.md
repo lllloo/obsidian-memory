@@ -2,7 +2,7 @@
 title: 環境與部署
 description: 從本機把專案跑起來到上版發佈的整條鏈：Laradock 開發環境、Quartz 靜態站發佈、GitHub Actions CI/CD 與踩坑
 created: 2026-05-08
-updated: 2026-06-05
+updated: 2026-06-22
 tags:
   - deploy
   - docker
@@ -11,6 +11,12 @@ tags:
 ---
 
 從「本機把專案跑起來」到「上線發佈」整條工程交付鏈的 SOP 與踩坑筆記。以目的地分組：先讓程式碼在本機跑起來（Docker / Laradock 開發環境），再走上版、發佈與 CI/CD。
+
+## 開發工具與設定
+
+- [[Git-設定]] — 常用 `git config`、alias（含 `git lg` graph log）、`core.autocrlf` 換行轉換與暫存區重設
+- [[npm-套件更新與檢查]] — `npm outdated`／`update` 的 semver 範圍行為，與 npm-check-updates（ncu）拉高版本範圍
+- [[Volta-使用教學]] — Node.js 版本管理：`install`／`pin` 專案綁定版本與 `package.json` volta 欄位
 
 ## 本機開發環境
 

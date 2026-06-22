@@ -1,7 +1,7 @@
 ---
 title: Volta 簡易使用教學
 created: 2026-06-03
-updated: 2026-06-04
+updated: 2026-06-22
 tags:
   - volta
   - npm
