@@ -81,7 +81,3 @@ Claude Code **只讀 CLAUDE.md，不讀 AGENTS.md**。若 repo 已有 AGENTS.md�
 - [How Claude remembers your project](https://code.claude.com/docs/en/memory) — 4 類 scope、Rules、200 行上限
 - [Best practices for Claude Code](https://code.claude.com/docs/en/best-practices)
 - [Hooks guide](https://code.claude.com/docs/en/hooks-guide)
-
-## 相關
-
-- [[Context-Engineering]] — context window 角度的 CLAUDE.md 精簡原則

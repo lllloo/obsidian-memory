@@ -1,7 +1,7 @@
 ---
 title: OpenSpec 流程
 created: 2026-05-16
-updated: 2026-06-02
+updated: 2026-06-23
 source: https://github.com/Fission-AI/OpenSpec/blob/main/docs/getting-started.md
 tags:
   - claude-code
@@ -80,6 +80,6 @@ flowchart LR
 
 ## 版本備註
 
-- 安裝：`npm install -g @fission-ai/openspec`（最新 1.4.0）
+- 安裝：`npm install -g @fission-ai/openspec`（版本見官方 releases）
 - `/opsx:sync` 在 GitHub 文件中屬 core，但 npm 交付未含；`openspec config list` 的 workflows 可驗證
 - Core profile 實際 4 個 skill：`explore` / `propose` / `apply` / `archive`（skills delivery 下指令為 `/openspec-explore`、`/openspec-propose`、`/openspec-apply-change`、`/openspec-archive-change`）

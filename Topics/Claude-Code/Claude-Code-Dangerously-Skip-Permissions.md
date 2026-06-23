@@ -1,7 +1,7 @@
 ---
 title: "claude --dangerously-skip-permissions"
 created: 2026-04-09
-updated: 2026-05-29
+updated: 2026-06-23
 tags:
   - claude-code
   - cli
@@ -19,14 +19,16 @@ tags:
 | 場景 | 用 |
 |---|---|
 | 想少按確認，但還要看大多數 Bash / network 提示 | `acceptEdits` |
-| 想盡量無提示但要 background safety checks 攔危險操作 | `auto mode`（需較新版本、Opus 4.6 / Sonnet 4.6 以上、僅 Anthropic API） |
+| 想盡量無提示但要 background safety checks 攔危險操作 | `auto mode`（需較新版本、Opus 4.6 / Sonnet 4.6 以上；預設僅 Anthropic API，其他 provider 需設 `CLAUDE_CODE_ENABLE_AUTO_MODE=1` 開啟） |
 | CI / 鎖死環境，只跑 pre-approved 工具與唯讀 Bash | `dontAsk` |
 | 大多數安全操作免問、危險操作問或封鎖 | fine-grained `permissions.allow / ask / deny` |
 
 ## 還沒被 bypass 的東西
 
-注意：bypass 會略過**整個權限層**（含 `deny` / `allow` / `ask` 規則），近期版本起連受保護路徑（`.git`、`.vscode`、`.idea`、`.husky`、`.claude` 等）在 bypass 下也一併放行（更早版本仍會提示，確切切換以官方 release notes 為準）。所以 deny rule 與受保護路徑在 bypass 下**都不是硬邊界**。真正擋得住的只剩這幾道：
+注意：bypass 略過的是 **`allow` 規則與受保護路徑保護**——`allow` 規則在此模式失效（因一切已預設核可），近期版本起連受保護路徑（`.git`、`.vscode`、`.idea`、`.husky`、`.claude` 等）也一併放行（更早版本仍會提示，確切切換以官方 release notes 為準）。所以**受保護路徑在 bypass 下不是硬邊界**。但 `deny` 與顯式 `ask` 規則並沒有被略過，真正擋得住的有這幾道：
 
+- **`deny` 規則**——在每個模式（含 bypass）都生效，會直接封鎖，是真正的硬邊界
+- **顯式 `ask` 規則**——在 bypass 下仍強制跳提示
 - **`rm -rf /` / `rm -rf ~` circuit breaker**——刪檔案系統根目錄或家目錄仍會提示，防模型誤刪
 - **root / sudo 拒啟動**——Linux / macOS 下以 root 或 `sudo` 啟動會被拒（除非在受認可的 sandbox，如 dev container）
 - **sandbox OS-level 隔離**——容器 / VM 的檔案系統與網路隔離才是真正的邊界

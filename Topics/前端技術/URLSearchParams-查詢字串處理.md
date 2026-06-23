@@ -1,7 +1,7 @@
 ---
 title: URLSearchParams 查詢字串處理
 created: 2026-06-03
-updated: 2026-06-22
+updated: 2026-06-23
 tags:
   - javascript
   - frontend
@@ -51,7 +51,7 @@ Object.fromEntries(params) // { foo: '100', baz: '3' }
 ### 1. 巢狀物件/陣列
 
 - `URLSearchParams` 僅支援單層 key-value，無法正確處理巢狀物件或陣列（如 `a[0]=1&a[1]=2`、`foo[bar]=1`）。
-- 若需處理巢狀結構，建議使用 `qs` 或 `query-string`。
+- 若需處理巢狀結構，建議使用 `qs`（`query-string` 刻意不支援巢狀物件，巢狀需自行 `JSON.stringify`）。
 
 ### 2. 陣列格式自訂
 
@@ -79,7 +79,7 @@ Object.fromEntries(params) // { foo: '100', baz: '3' }
 
 ### query-string
 
-- [query-string](https://github.com/sindresorhus/query-string) 語法簡潔，支援巢狀物件、陣列、格式自訂。
+- [query-string](https://github.com/sindresorhus/query-string) 語法簡潔，支援陣列與多種 `arrayFormat`（bracket / index / comma / separator）、格式自訂；**刻意不支援巢狀物件**（巢狀需自行 `JSON.stringify` 後放入），巢狀結構請改用 `qs`。
 - 適合前端專案、簡單易用。
 
 ---

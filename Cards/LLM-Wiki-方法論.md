@@ -64,7 +64,3 @@ flowchart LR
 ## 淵源
 
 精神上承接 Vannevar Bush 1945 年的 **Memex**：私人、主動策管、文件間的聯想路徑與文件本身同等重要。Bush 無法解決「誰來做維護」——LLM 解決了。
-
-## 相關
-
-- [[Context-Engineering]] — wiki 是長期 context 的外部化載體
