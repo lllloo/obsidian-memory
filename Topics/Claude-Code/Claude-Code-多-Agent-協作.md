@@ -1,7 +1,7 @@
 ---
 title: Claude Code 多 Agent 協作
 created: 2026-04-24
-updated: 2026-06-11
+updated: 2026-06-23
 tags:
   - claude-code
   - workflow
@@ -20,7 +20,7 @@ tags:
 
 ## 怎麼啟用 / 觸發
 
-- **Subagent**：Claude 依 description 自動 delegate；`/agents` 管理或建立自訂；`claude agents` CLI 列出所有
+- **Subagent**：Claude 依 description 自動 delegate；用 session 內 `/agents` slash command 列出、管理或建立自訂（`claude agents` CLI 則是開 agent view 監控／派發背景 session，不是列 subagent 定義）
 - **Agent Teams**：experimental，需先在 settings 啟用；之後自然語言告訴 Claude「create an agent team」即可
 - **Forked subagent**：experimental，需啟用 fork mode；用 `/fork <directive>` 觸發（未啟用時 `/fork` = `/branch` 只分對話不 spawn）
 - **Git worktrees**：`claude --worktree <name>` CLI flag，或 subagent frontmatter `isolation: worktree`

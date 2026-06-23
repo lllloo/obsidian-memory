@@ -1,7 +1,7 @@
 ---
 title: Claude Code Review 工作流
 created: 2026-04-26
-updated: 2026-05-29
+updated: 2026-06-23
 tags:
   - claude-code
   - codex
@@ -24,7 +24,7 @@ PR 規模分層跑不同 review 工具，避免「每次都 ultra」浪費 token
 - **`/review`**：通用 PR 審查，session 內較深的一遍（read-only）
 - **`/simplify`**（近期改為**純清理**）：4 個平行 agent 找重用 / 簡化 / 效率 / 抽象層級問題後自動修，**不再找 bug**——找 bug 改用 `/code-review`。此指令早期即現在的 `/code-review`，後被改名分家
 - **`/security-review`**：聚焦當前 branch 待提交變更的安全漏洞（OWASP Top 10、注入、認證 / 授權、權限提升）
-- **`/code-review ultra`**（舊名 `/ultrareview`，現為 alias）：把 branch 交給雲端 specialist agent 群（安全 / 架構 / 正確性 / 風格 / 測試）平行審、各自 reproduce finding 再合併。耗時最久（平均約 20 分、$15–25），留給大型 / 關鍵 PR 合併前最後關卡——無參數審本地 diff、加 PR ref 審指定 PR
+- **`/code-review ultra`**（舊名 `/ultrareview`，現為 alias）：把 branch 交給雲端 specialist agent 群（安全 / 架構 / 正確性 / 風格 / 測試）平行審、各自 reproduce finding 再合併。耗時最久（約 5–10 分、超出免費額度後每次約 $5–20），留給大型 / 關鍵 PR 合併前最後關卡——無參數審本地 diff、加 PR ref 審指定 PR
 
 ## 立場：自動 review 不能取代人工 finding 確認
 

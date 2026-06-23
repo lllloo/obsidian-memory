@@ -1,7 +1,7 @@
 ---
 title: input 限制數字與小數位
 created: 2026-06-03
-updated: 2026-06-12
+updated: 2026-06-23
 tags:
   - frontend
   - javascript
@@ -53,7 +53,7 @@ tags:
 
 ### 3. 使用第三方套件
 
-- 例如 cleave-zen (Cleave.js) 等，可快速套用格式化規則，適合複雜需求。
+- 例如 cleave-zen（Cleave.js 的後繼套件，不再綁定 DOM input、僅提供格式化函式，需自行接進 input handler）等，可快速套用格式化規則，適合複雜需求。
 
 ## 其他注意事項
 

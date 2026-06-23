@@ -1,7 +1,7 @@
 ---
 title: 圖片上傳後畫面會旋轉
 created: 2026-06-03
-updated: 2026-06-04
+updated: 2026-06-23
 tags:
   - bug
   - frontend
@@ -17,7 +17,7 @@ tags:
 造成此問題的原因如下：
 
 - 手機拍照時，圖片會記錄 EXIF 方向資訊，手機端能正確解析並顯示。
-- 部分瀏覽器或裝置不支援 EXIF 方向資訊，導致顯示異常。
+- 現代瀏覽器以 `<img>` / `background-image` 直接顯示 JPEG 時，已預設依 EXIF 方向轉正（`image-orientation: from-image`，Chrome 81+、Firefox、Safari 皆然），通常不會顯示異常。方向問題主要出現在**不套用 EXIF 的處理路徑**——如用 canvas `drawImage`、`FileReader` + canvas 做預覽，或 EXIF 被剝除／未保留時。
 - 圖片上傳後若 EXIF 資訊被移除或未正確處理，也會造成方向錯誤。
 
 ## 前端處理方式

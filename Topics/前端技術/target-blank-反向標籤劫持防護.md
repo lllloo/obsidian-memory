@@ -1,7 +1,7 @@
 ---
 title: 安全使用 target="_blank" 的方式
 created: 2026-06-03
-updated: 2026-06-04
+updated: 2026-06-23
 tags:
   - security
   - frontend
@@ -83,17 +83,13 @@ tags:
 
 ### 方案二：JavaScript 安全開啟新視窗
 
-當需要用 JavaScript 開啟新視窗時，確保清除 `opener` 參考：
+當需要用 JavaScript 開啟新視窗時，於 features 字串帶上 `noopener`，防護即由此達成：
 
 ```javascript
 // ✅ 安全的 JavaScript 寫法
 function openSafeWindow(url) {
-  const newWindow = window.open(url, '_blank', 'noopener,noreferrer')
-
-  // 額外保護：手動清除 opener 參考
-  if (newWindow) {
-    newWindow.opener = null
-  }
+  // noopener 切斷新視窗對 opener 的存取；帶 noopener 時 window.open 回傳 null（不給呼叫端 window 參考）
+  window.open(url, '_blank', 'noopener,noreferrer')
 }
 
 // 使用範例
