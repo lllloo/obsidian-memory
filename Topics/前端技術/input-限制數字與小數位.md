@@ -41,7 +41,7 @@ tags:
 <input type="text" pattern="^-?\d*(\.\d{0,2})?$" inputmode="decimal" />
 ```
 
-- 這種方式僅在表單送出時驗證，無法即時限制輸入，也無法防止貼上不符格式的內容。
+- 這種方式不限制鍵入：約束驗證本身是即時的（CSS `:invalid`/`:valid`、`checkValidity()` 隨時反映），但只在表單送出時阻擋提交，無法即時限制輸入，也無法防止貼上不符格式的內容。
 
 ### 2. 使用 type="number" 搭配 step、min、max
 

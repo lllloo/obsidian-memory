@@ -22,7 +22,7 @@ tags:
 
 ## 前端處理方式
 
-- 使用 exif-js 讀取 EXIF 資訊，判斷圖片原始方向，並使用 JavaScript 修正圖片方向。
+- 讀取 EXIF 資訊判斷圖片原始方向，再用 JavaScript（canvas）修正。注意 exif-js 已長年停止維護，現代可改用 exifr、blueimp-load-image，或瀏覽器原生 `createImageBitmap(blob, { imageOrientation: 'from-image' })`。
 
 ### 實作步驟
 

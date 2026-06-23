@@ -1,7 +1,7 @@
 ---
 title: Ticket 驅動的 Agent 協作
 created: 2026-05-27
-updated: 2026-05-28
+updated: 2026-06-23
 source: https://www.youtube.com/watch?v=M_AmPWmkpwA
 published: 2026-05-02
 tags:
@@ -34,12 +34,12 @@ coding agent 用法演進：auto-complete → 單一互動式 session → 同時
 ## 架構三元件
 
 - **Scheduler**：背景程序定期掃 board，發現 to-do ticket 就建 isolated workspace、起 agent session、管 lifecycle。
-- **workflow.md**：repo 內版控的單一設定檔
+- **`WORKFLOW.md`**：repo 內版控的單一設定檔
     - YAML frontmatter = scheduler 設定（撿哪種 status、平行上限、workspace 建好跑哪些 programmatic hook 把環境備好）
     - Markdown body = 每回合渲染給 agent 的 system prompt（此 repo 的 ticket SOP、如何驗證、何謂完成、何時找人）
 - **外部 state machine**：Linear / Jira / Trello 等，承載 ticket 狀態流轉。
 
-設計刻意保持彈性：不綁 Linear、不綁特定 agent，官方用 `spec.md` 描述設計，可丟給任何 coding agent 改寫到別的 tracker 或語言。
+設計刻意保持彈性：不綁 Linear、不綁特定 agent，官方用 `SPEC.md` 描述設計，可丟給任何 coding agent 改寫到別的 tracker 或語言。
 
 ### 為何優於自建 admin panel / UI
 
@@ -69,7 +69,7 @@ Symphony 能跑的前提是環境調好，讓 agent 拿到所有需要的東西�
 
 - MCP 在 context 常駐、不用也吃 token
 - CLI 是按需呼叫的 skill
-- 內建 `video start/stop` 把 session 錄成影片，直接 upload 到 ticket 供人驗證
+- 內建 `video-start` / `video-stop` 把 session 錄成影片，直接 upload 到 ticket 供人驗證
 
 這呼應 vault 反覆出現的立場——**通用 CLI / skill 按需呼叫優於常駐 MCP**（見 [[Harness-Engineering]]）。
 

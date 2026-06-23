@@ -1,7 +1,7 @@
 ---
 title: JavaScript 日期處理
 created: 2026-06-03
-updated: 2026-06-22
+updated: 2026-06-23
 tags:
   - javascript
   - frontend
@@ -199,7 +199,7 @@ new Date(year, month, 0).getDate()
 
 // Moment.js
 moment(`${year}/${month}`).daysInMonth()
-// '31'
+// 31
 
 // Day.js
 dayjs(`${year}/${month}`).daysInMonth()

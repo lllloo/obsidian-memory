@@ -1,7 +1,7 @@
 ---
 title: laradock 初始化要改的東西
 created: 2026-05-19
-updated: 2026-06-11
+updated: 2026-06-23
 tags:
   - laradock
   - docker
@@ -39,7 +39,7 @@ laradock 預設 `nginx/sites/` 底下只有 `default.conf` 跟一堆 `*.conf.exa
 
 做法：複製對應的 `.conf.example` 改名成 `<專案>.conf`，按專案實際需求改 `server_name`、`root`、`fastcgi_pass` 等欄位。
 
-gitignore 已涵蓋 `*.conf`（`.conf.example` 例外），新增的 vhost 不會被 commit，每台機器各自管理。
+`nginx/sites/.gitignore` 為 `*.conf` + `!default.conf`：新增的 `<專案>.conf` 因符合 `*.conf` 被忽略、不會 commit；`.conf.example` 因副檔名不是 `.conf`、本就不被 `*.conf` 命中（非 gitignore 特地例外）。每台機器各自管理 vhost。
 
 ## 3. Laravel 專案 `.env` 只要改 5 處連線設定
 

@@ -1,7 +1,7 @@
 ---
 title: Harness Engineering
 created: 2026-04-21
-updated: 2026-06-11
+updated: 2026-06-23
 tags:
   - claude-code
   - ai-agent
@@ -34,7 +34,7 @@ Anthropic 的 long-running app development harness 把複雜任務拆成三個�
 
 ## 命名史與爭議
 
-詞很新、業界尚無嚴格定義，公認起點是 2026-02-05 Mitchell Hashimoto《My AI Adoption Journey》——他自陳「不知道業界有沒有公認叫法，姑且叫它 Harness Engineering」，核心理念是 agent 一犯錯就改造系統讓它絕不再犯。隨後 OpenAI 那篇標題帶 Harness Engineering 的文章正文其實只提了一次 Harness，被推測是受 Hashimoto 啟發後才把詞放進標題；LangChain《The Anatomy of an Agent Harness》則把公式定調為 `Harness = Agent − Model`。
+詞很新、業界尚無嚴格定義，公認起點是 2026-02-05 Mitchell Hashimoto《My AI Adoption Journey》——他自陳「不知道業界有沒有公認叫法，姑且叫它 Harness Engineering」，核心理念是 agent 一犯錯就改造系統讓它絕不再犯。隨後 OpenAI 那篇標題帶 Harness Engineering 的文章正文其實只提了一次 Harness，被推測是受 Hashimoto 啟發後才把詞放進標題；LangChain《The Anatomy of an Agent Harness》則把公式定調為 `Agent = Model + Harness`（「If you're not the model, you're the harness」），與本文開頭一致。
 
 **是不是噱頭**：它用到的技術沒一個是新的——linter、任務拆解規劃、品質評估機制早就存在，Harness Engineering 只是把它們重組到一個新詞下，提供的是系統思維框架而非顛覆性新技術。懷疑論的兩個攻擊點：(1) 新瓶裝舊酒還造詞宣傳；(2) 隨模型能力增強，今天的 Harness 設計遲早被模型自身吸收而不再需要。
 
@@ -56,4 +56,4 @@ Anthropic 的 long-running app development harness 把複雜任務拆成三個�
 - [Harness design for long-running application development (Anthropic)](https://www.anthropic.com/engineering/harness-design-long-running-apps)
 - [We removed 80% of our agent's tools (Vercel)](https://vercel.com/blog/we-removed-80-percent-of-our-agents-tools)
 - [My AI Adoption Journey (Mitchell Hashimoto)](https://mitchellh.com/writing/my-ai-adoption-journey) — 詞源
-- [The Anatomy of an Agent Harness (LangChain)](https://www.langchain.com/blog/the-anatomy-of-an-agent-harness) — 定調 `Harness = Agent − Model`
+- [The Anatomy of an Agent Harness (LangChain)](https://www.langchain.com/blog/the-anatomy-of-an-agent-harness) — 定調 `Agent = Model + Harness`

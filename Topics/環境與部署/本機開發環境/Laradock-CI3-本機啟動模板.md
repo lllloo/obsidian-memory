@@ -1,7 +1,7 @@
 ---
 title: Laradock + CodeIgniter 3.x 本機啟動模板
 created: 2026-04-24
-updated: 2026-06-16
+updated: 2026-06-23
 tags:
   - docker
   - laradock
@@ -125,7 +125,7 @@ docker exec -it laradock-nginx-1 nginx -s reload
 
 ## 5. 建立資料庫並匯入 dump
 
-CI 3.x 多半沒 migration，從開發站撈 dump。phpMyAdmin：`http://localhost:8088`（root / root）。
+CI 3.x 多半沒 migration，從開發站撈 dump。phpMyAdmin：`http://localhost:8088`（port 由 laradock `.env` 的 `PMA_PORT` 決定，本機自訂為 8088；照抄前先確認自己的值。root / root）。
 
 1. 建 DB `<DB_NAME>`，collation `utf8mb4_general_ci`
 2. 開發站 phpMyAdmin → 匯出 SQL
