@@ -27,7 +27,7 @@
 
 cwd 不在 vault，只能靠 obsidian CLI 定位與寫入。下列 gate **全部通過才可寫入；任一失敗即中止、不寫檔、不降級**：
 
-1. **CLI 可用**：執行 `obsidian vault`（PowerShell；Git Bash 用 `Obsidian.com vault`）。exit 0 且印出 vault path → 通過；非 0 / 找不到指令 / 空輸出 → 中止，提示使用者啟用 Obsidian CLI（設定 → General → Command line interface 並重開 terminal）。
+1. **CLI 可用**：執行 `obsidian vault`（PowerShell；Git Bash 用 `Obsidian.com vault`）。exit 0 且印出 vault path → 通過；非 0 / 找不到指令 / 空輸出 → 中止，提示使用者確認 Obsidian app 正在執行，且已啟用 CLI（設定 → General → Command line interface 並重開 terminal）。
 
 2. **vault 身分**：CLI 回傳的 vault path 正規化後（大小寫、分隔符、尾斜線）必須 `== C:\code\obsidian-memory`。不符 → 中止（避免寫進錯的 vault）。
 
