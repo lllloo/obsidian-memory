@@ -1,7 +1,7 @@
 ---
 title: 圖片上傳後畫面會旋轉
 created: 2026-06-03
-updated: 2026-06-23
+updated: 2026-06-26
 tags:
   - bug
   - frontend
@@ -26,9 +26,9 @@ tags:
 
 ### 實作步驟
 
-1. 安裝 exif-js（可用 CDN 或 npm）。
+1. 安裝現役函式庫（exifr 或 blueimp-load-image），或直接用瀏覽器原生 `createImageBitmap(blob, { imageOrientation: 'from-image' })` 免裝套件。
 2. 讀取圖片檔案並取得 EXIF Orientation 資訊。
-3. 根據 Orientation，使用 canvas 旋轉圖片至正確方向。
+3. 根據 Orientation，使用 canvas 旋轉圖片至正確方向（用 `createImageBitmap` 則由瀏覽器自動轉正）。
 4. 將修正後的圖片顯示或上傳。
 
 ## 後端處理方式
@@ -41,4 +41,6 @@ tags:
 
 ## 參考資料
 
-- [exif-js](https://github.com/exif-js/exif-js)
+- [exifr](https://github.com/MikeKovarik/exifr) — 現役 EXIF 解析函式庫
+- [blueimp-load-image](https://github.com/blueimp/JavaScript-Load-Image) — 載入即依 EXIF 轉正
+- [exif-js](https://github.com/exif-js/exif-js) — 已停止維護，僅供歷史參考

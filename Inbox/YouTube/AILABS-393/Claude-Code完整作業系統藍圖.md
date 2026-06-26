@@ -66,7 +66,7 @@ dynamic workflows 是隨 Opus 4.8 推出的功能，是把整套系統收尾成�
 
 ## 內建 workflow：deep research
 
-Claude Code 內建一個 dynamic workflow 叫 deep research，等於過去要手動用多個 context 檔與 `CLAUDE.md` 搭出的多步研究 pipeline，現在可從任何專案直接呼叫。它分五個階段、一階接一階：
+Claude Code 內建一個 dynamic workflow 叫 deep research，等於過去要手動用多個 context 檔與 `CLAUDE.md` 搭出的多步研究 pipeline，現在可從任何專案直接呼叫。它分四個階段、一階接一階：
 
 1. 搜尋資訊
 2. 從找到的來源抓取細節

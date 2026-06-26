@@ -1,7 +1,7 @@
 ---
 title: Claude Code 雙帳號設定
 created: 2026-04-09
-updated: 2026-05-29
+updated: 2026-06-26
 tags:
   - claude-code
   - windows
@@ -28,7 +28,8 @@ mkdir "$env:USERPROFILE\.claude-p"
 
 ```powershell
 echo $PROFILE
-New-Item -Path $PROFILE -ItemType File -Force   # 若已存在會覆蓋，可先 Test-Path $PROFILE 確認
+# 不存在才建，避免 -Force 覆蓋／清空既有 profile
+if (-not (Test-Path $PROFILE)) { New-Item -Path $PROFILE -ItemType File }
 ```
 
 開啟 profile 並加入 function：

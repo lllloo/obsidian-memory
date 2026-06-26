@@ -1,7 +1,7 @@
 ---
 title: 記憶拼圖
 created: 2026-03-29
-updated: 2026-06-03
+updated: 2026-06-26
 ---
 
 開發路上的筆記與發現，挑有興趣的看就好。
@@ -13,7 +13,7 @@ updated: 2026-06-03
 - **[[Topics/Obsidian/index|Obsidian]]** — 用 Obsidian 搭配 Claude Code 打造個人知識庫
 - **[[Topics/UI設計/index|UI 設計]]** — 設計工具、DESIGN.md 系統、視覺靈感
 - **[[Topics/前端技術/index|前端技術]]** — CSS、動效、切版原則、常見 bug
-- **[[Topics/部署/index|部署]]** — 上版流程、Quartz 發佈、CI/CD 踩坑
+- **[[Topics/環境與部署/index|部署]]** — 上版流程、Quartz 發佈、CI/CD 踩坑
 
 ## 依標籤探索
 

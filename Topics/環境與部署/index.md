@@ -2,7 +2,7 @@
 title: 環境與部署
 description: 從本機把專案跑起來到上版發佈的整條鏈：Laradock 開發環境、Quartz 靜態站發佈、GitHub Actions CI/CD 與踩坑
 created: 2026-05-08
-updated: 2026-06-22
+updated: 2026-06-26
 tags:
   - deploy
   - docker
@@ -29,6 +29,7 @@ tags:
 ## 上版 / 發佈
 
 - [[git-archive-打包異動檔]] — 把 commit 之間的異動打包成 zip 交付給沒 Git 的環境
+- [[Quartz-部署筆記]] — 把本 vault 以 Quartz 發佈成靜態站的設定與踩坑
 
 ## CI/CD（GitHub Actions）
 

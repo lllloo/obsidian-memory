@@ -19,7 +19,7 @@ tags:
 
 ## 工具書籤
 
-- [[bookmark-Impeccable-前端設計Skill|Impeccable]] — 反模式規則 + 23 commands 的 Claude Code skill（前端設計工作流 Layer 1）
+- [[bookmark-Impeccable-前端設計Skill|Impeccable]] — 反模式規則 + 命令集的 Claude Code skill（前端設計工作流 Layer 1）
 - [[bookmark-Awwwards-前端設計靈感站|Awwwards]] — 高品質網站靈感與獎項平台（Layer 2 視覺參考）
 - [[bookmark-Stitch-AI設計畫布|Stitch]] — Google Labs AI-native 設計畫布（Layer 5 設計工具整合）
 - [[bookmark-Awesome-Design-MD-設計範例庫|Awesome-Design-MD]] — 公開網站抽出的 `DESIGN.md` 範例集合（風格研究起點）
