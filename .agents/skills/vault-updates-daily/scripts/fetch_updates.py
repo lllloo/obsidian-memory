@@ -304,6 +304,7 @@ def fetch_github_changelog(since: dt.datetime) -> None:
 def fetch_discussions_with_gh(repo: str, since: dt.datetime) -> None:
     gh = shutil.which("gh")
     if not gh:
+        print(f"ERROR:discussions:{repo}:gh CLI not found; skipping discussions")
         return
     owner, name = repo.split("/", 1)
     query = """
@@ -461,24 +462,21 @@ def main() -> int:
         else:
             print(f"OFFICIAL:{_sanitize(name)}|||{_sanitize(url)}|||{_sanitize(tag)}")
 
+    # Explicit repos always go through REST (token+REST works without gh).
+    # This is independent of --starred: the starred GraphQL path is gh-only and
+    # must never be the sole route to an explicitly tracked repo's releases.
+    for repo in explicit_repos:
+        if not re.match(r"^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$", repo):
+            print(f"ERROR:repo:{repo}:invalid owner/name")
+            continue
+        fetch_releases(repo, since)
+        fetch_discussions_with_gh(repo, since)
+
     if args.starred:
-        # Single GraphQL call covers all starred repos (includes explicit repos if starred).
-        # Skip explicit repos to avoid duplicate RELEASE lines.
-        # Discussions only for explicitly listed repos.
+        # Additional starred-only repos via a single GraphQL call (gh-only).
+        # Explicit repos are skipped here — they are already covered by REST
+        # above — so there are no duplicate RELEASE lines when gh is present.
         fetch_starred_releases(since, skip_repos=set(explicit_repos))
-        for repo in explicit_repos:
-            if not re.match(r"^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$", repo):
-                print(f"ERROR:repo:{repo}:invalid owner/name")
-                continue
-            fetch_discussions_with_gh(repo, since)
-    else:
-        # No starred flag: use REST for explicit repos only
-        for repo in explicit_repos:
-            if not re.match(r"^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$", repo):
-                print(f"ERROR:repo:{repo}:invalid owner/name")
-                continue
-            fetch_releases(repo, since)
-            fetch_discussions_with_gh(repo, since)
 
     return 0
 
