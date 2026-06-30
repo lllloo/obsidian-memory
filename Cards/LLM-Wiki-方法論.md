@@ -1,7 +1,7 @@
 ---
 title: LLM Wiki 方法論
 created: 2026-05-29
-updated: 2026-05-29
+updated: 2026-06-30
 source: "https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f"
 tags:
   - memory
@@ -28,6 +28,12 @@ LLM Wiki 相反：知識被**編譯一次後持續維護**。交叉引用已建�
 3. **Schema** — 規範文件（`CLAUDE.md` / `AGENTS.md`），告訴 LLM wiki 的結構、慣例與工作流程。這是把 LLM 從通用聊天機器人變成「有紀律的 wiki 維護者」的關鍵。
 
 `index.md`（內容導向目錄）與 `log.md`（時序僅追加紀錄）是 **wiki 層內的兩個特殊檔案**，不是獨立層級。
+
+## 標準化方向：OKF
+
+Google Open Knowledge Format（OKF）可視為 LLM Wiki 的標準化方向：用每層 `index.md`、concept metadata、YAML description 讓 agent 先判斷「這份知識庫有什麼、哪個檔案值得打開」，再精準讀內容。它不是取代 wiki，而是把每個人自訂的 second brain 慣例整理成較可攜、可分享、可被 agent 導航的 bundle。
+
+對本 vault 的啟發不是追著格式改名，而是保留現有 `vault-map.md` / `Topics/*/index.md` 這類入口的價值：agent 先讀索引與描述，再進細節，比直接全文 grep 更省 token，也更不容易重複建頁或放錯位置。OKF 仍偏新，實務上先學它的「索引 + 單一概念 + metadata」原則，不急著把 vault 轉成另一套格式。
 
 ```mermaid
 flowchart LR
@@ -64,3 +70,8 @@ flowchart LR
 ## 淵源
 
 精神上承接 Vannevar Bush 1945 年的 **Memex**：私人、主動策管、文件間的聯想路徑與文件本身同等重要。Bush 無法解決「誰來做維護」——LLM 解決了。
+
+## 來源
+
+- [Karpathy LLM Wiki](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f)
+- [Google OKF 知識庫標準化解讀（AI Labs）](https://www.youtube.com/watch?v=k4sMSsMzX2g)
