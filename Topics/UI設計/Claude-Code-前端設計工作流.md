@@ -1,7 +1,7 @@
 ---
 title: Claude Code 前端設計工作流
 created: 2026-04-20
-updated: 2026-06-03
+updated: 2026-06-30
 tags:
   - claude-code
   - design
@@ -20,6 +20,15 @@ Claude Code 在 agentic coding（自主代理寫程式）表現卓越，但前�
 - **使用者面**：品味瓶頸——不知道好的設計長什麼樣，就無法用文字告訴模型要什麼
 
 所有解法都在處理這兩層之一。
+
+## 先分流：marketing UI 與 functional UI
+
+不要把「好看的 landing page」和「可長期使用的 dashboard」當成同一個設計問題。AI 生成 UI 之前先判斷路線：
+
+- **Marketing UI**：landing page、作品集、品牌頁。重點是差異化、情緒、視覺記憶點；可用設計 skill 打破預設、拉高動畫 effort，必要時接 GSAP。
+- **Functional UI**：後台、dashboard、營運工具。重點是資訊密度、掃描效率、元件正確性；先做 HTML mock-up 或多版本實驗，定稿後再轉成真實元件。
+
+`design.md` 的時機也跟路線有關。Marketing UI 太早套會把創意鎖死，較適合在模型先產出方向後再套品牌語言；Functional UI 則可把 `design.md` 當成 mock-up 階段的視覺 source of truth，讓多個畫面保持一致。
 
 ## 七層工作流
 
@@ -74,6 +83,7 @@ Claude Code 在 agentic coding（自主代理寫程式）表現卓越，但前�
 - **Figma MCP + Shadcn MCP**（Vibe Design）：把 Figma frame、元件資訊與 registry 線索交給 agent 落地；若設計稿命名乾淨、元件選型一致，還原會更穩，但不應寫成保證式的像素級還原
   - 若 Figma 稿用 Shadcn 元件且 layer 名對應，Shadcn MCP 自動從 registry 抓元件
   - 第三方 Shadcn registry：Fancy Components、Animate UI、Magic UI、Plate UI
+- **Shadcn skill + MCP**：MCP 提供即時 registry 與元件；skill 提供規則、專案脈絡與正確組裝方式。兩者一起用才不只是「抓得到元件」，而是能把定稿 mock-up 還原成可維護的產品介面。
 - **[Stitch](https://stitch.withgoogle.com/)**（[[bookmark-Stitch-AI設計畫布|Stitch]]）：視覺畫布生成 variants，可匯出程式碼或轉入 Claude Code
 - **[Pencil](https://www.pencil.dev/)**：VS Code / Cursor 側邊的 infinite vector canvas（無限延展向量畫布），邊畫邊生成 React/Tailwind，透過 MCP 與 Claude Code 溝通（[[Pencil-讀取規則]]）
 - **[Figma](https://www.figma.com/)** / **[paper.design](https://paper.design/)**：傳統與新興向量設計工具，截圖或匯出後給 Claude Code 實作
@@ -96,9 +106,12 @@ Claude Code 在 agentic coding（自主代理寫程式）表現卓越，但前�
 
 ## 核心原則
 
+- **路線先分流**：Marketing UI 追求記憶點；Functional UI 追求可掃描、可操作、可維護
 - **反模式 > 正模式**：明確說「這是 AI slop，不要做」比「做出好設計」更有效
 - **版面優先**：先對齊 layout 再談 theme，避免在錯版面上調風格
 - **展示 > 描述**：截圖、原始碼、參考元件，都比純文字 prompt 有效
+- **Skill + MCP 分工**：skill 放規則與專案脈絡，MCP 連即時資料或 registry；不要期待單靠 MCP 讓模型懂得正確使用元件
+- **驗證交給旁路**：讓 sub-agent 對照 `design.md`、截圖或 mock-up 檢查輸出，避免主 agent 自評時看漏自己的問題
 - **持續暴露**：瓶頸在使用者品味，解法是複製 + 拆解 + 重建，累積設計語彙
 
 ## 常見陷阱
@@ -106,6 +119,8 @@ Claude Code 在 agentic coding（自主代理寫程式）表現卓越，但前�
 | 徵兆 | 原因 | 解法 |
 |---|---|---|
 | 生成物仍像 AI 模板 | 只停在 Layer 1，沒給視覺參考或原始碼 | 往 Layer 2-3 推進，給截圖或 HTML |
+| Landing page 一開始就變僵 | 太早套 `design.md`，字體、色彩、元件語言把探索空間鎖死 | 先讓模型產出方向，再套品牌語言收斂 |
+| Dashboard 好看但不好用 | 把 marketing UI skill 套到 functional UI | 先做 HTML mock-up / 多版本比較，再用 Shadcn skill 轉元件 |
 | 截圖迭代無限輪 | 純視覺還原有損失 | 往 Layer 3 拿原始碼，或 Layer 5 Figma MCP |
 | 版面有了但主題質感停在範本感 | 沒做 theme，色彩 / 字型 / 陰影靠模型亂猜 | Layer 4 用 Tweakcn 把主題變數定下來 |
 | 用 Inter 字體、版面對但不耐看 | 沒有質感細節 | Layer 6 補 Google Fonts + 動畫/素材 |
@@ -126,3 +141,5 @@ Claude Code 在 agentic coding（自主代理寫程式）表現卓越，但前�
 - [前端設計技巧、Plugins 與 CLIs Top 10（Chase H AI）](https://www.youtube.com/watch?v=Q9ty3eopOPs)
 - [如何擺脫千篇一律的 AI 風 UI（AIJasonZ）](https://www.youtube.com/watch?v=Nocg_8ECs6w)
 - [Vibe Design 工作流：Figma MCP + Shadcn MCP（AIJasonZ）](https://www.youtube.com/watch?v=4j51FMU-SUQ)
+- [Claude Code 打造精緻網站的四種設計流程（AI Labs）](https://www.youtube.com/watch?v=HqD5a2Cae60)
+- [Claude 設計技能打造精緻網站（AI Labs）](https://www.youtube.com/watch?v=Ot582-E61ac)
