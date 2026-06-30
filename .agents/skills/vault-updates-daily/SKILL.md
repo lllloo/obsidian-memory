@@ -1,296 +1,68 @@
 ---
 name: vault-updates-daily
-description: 每天彙整高信任 developer tooling 更新成一篇 Obsidian daily updates briefing，來源涵蓋官方 changelog / release notes、GitHub releases（含 authenticated user 的 starred repos）、GitHub discussions；專注 coding agent 與 developer workflow 相關變更。追蹤的工具清單由 `Inbox/Updates/01.index.md` 決定，skill 不硬編碼。使用時機：使用者要求「同步 changelog」、「release notes 更新」、「官方變更同步」、「daily updates」，或直接呼叫 /vault-updates-daily。
+description: 每天彙整高信任 developer tooling 更新成一篇 Obsidian daily updates briefing。使用官方 changelog / release notes、GitHub releases、GitHub discussions，含 authenticated user 的 starred repo releases；專注 coding agent、CLI、API、model、connector、developer workflow 相關變更。追蹤來源只讀 `Inbox/Updates/01.index.md`，不硬編碼工具清單。使用時機：使用者要求「同步 changelog」、「release notes 更新」、「官方變更同步」、「daily updates」、查最近工具更新，或直接呼叫 /vault-updates-daily。
 ---
 
 # Vault Updates Daily
 
-同步高信任 developer tooling 更新到 Obsidian。重點是可回查、可操作、可沉澱的來源：官方 changelog、release notes、GitHub releases、GitHub discussions。
-
-## 定位
-
-優先來源：
-
-1. **官方 changelog / release notes**：最高信任，適合建立正式來源筆記。
-2. **GitHub releases**：版本、功能、breaking change、修復資訊。
-3. **GitHub discussions**：actionable workaround、maintainer confirmation、重要設計決策。
-
-不處理：
-
-- GitHub issues（訊噪比太差，已移除）
-- YouTube 頻道同步（用 `vault-youtube-sync`）
-- 既有 vault 查詢（用 `ob-read`）或單篇筆記建檔（用 `ob-write`）
-- 社群日報或輿情 briefing
+同步高信任 developer tooling 更新到 Obsidian，產出可回查、可消化的 Inbox briefing。重點是 high precision：少收但可用，不把 changelog 當全文剪藏。
 
 ## 產出
 
-- 筆記：`Inbox/Updates/<YYYY-MM-DD>-daily-updates.md`（每次 sync 一篇，按工具分 section；同日多次 sync 追加而非覆蓋）
-- Index：`Inbox/Updates/01.index.md`（只保存同步來源設定，不累積日報 wikilink）
-- 筆記代表「高信任待消化來源」，進 Inbox 不直接發佈；後續可由使用者整理到 `Cards/` 或 `Topics/`。
+- 日報：`Inbox/Updates/<YYYY-MM-DD>-daily-updates.md`
+- 來源設定：`Inbox/Updates/01.index.md`
+- 日報進 Inbox，代表「高信任待消化來源」；不要直接整理進 `Cards/` 或 `Topics/`。
+- 同日多次同步時追加新內容，不覆蓋舊日報；不要把日報 wikilink 追加回 index。
 
-### Frontmatter
+日報 frontmatter：
 
 ```yaml
 ---
 title: "<YYYY-MM-DD> Daily Updates"
-created: <今日 YYYY-MM-DD>
-updated: <今日 YYYY-MM-DD>
-tags:
-  - updates
-  - <涵蓋的工具 tag，取自 01.index.md 各來源行的 tag 欄位>
----
-```
-
-`updates` 永遠保留；其餘 tags 由本次涵蓋的來源決定（不額外硬編碼清單）。
-
-### 筆記結構
-
-每個工具一個 `##` section，底下每個 release / changelog entry 一個 `###` 子標題。entry 內精簡為「摘要 + 少量重點」，不逐條搬原文：
-
-```markdown
-## <工具名>
-
-### <版本或日期>（[release 標題](url)）
-
-**繁中摘要**：一到兩句，點出這版最該知道的變更與影響。
-
-- **<變更名>**：一句話，能帶出對 workflow / CLI / API 的影響就一起寫
-- **<變更名>**：...
-
----
-
-## <工具名>
-
-### <版本或日期>
-
-...
-```
-
-精簡原則（讓筆記是「已內化的理解」而非 changelog 流水帳）：
-
-- 摘要必留；重點 bullet 控制在 3–6 條，挑使用者真的會因此調整行為的變更。
-- 「是什麼」與「影響」併在同一句，不再拆成「變更重點 / 實務影響」兩段。
-- 不逐條列 bug fix：除非某個 bug 是重大安全修補或 regression，否則一句帶過數量並點名 1–2 個關鍵。
-- 待追蹤只在真有未定狀態時保留，至多 1 條，否則省略。
-- 跳過無使用者可見變更的項目。
-
-## Source index
-
-`Inbox/Updates/01.index.md` 是**唯一**的來源真實值：要追蹤哪些工具、抓哪些 changelog、是否啟用 starred 同步，全部由此檔決定。skill 與腳本都不硬編碼工具清單。
-
-**索引檔格式：**
-
-```markdown
----
-title: Tool Updates
 created: <YYYY-MM-DD>
 updated: <YYYY-MM-DD>
 tags:
   - updates
-  - index
+  - <本次涵蓋的工具 tag，取自 01.index.md>
 ---
-
-高信任 developer tooling 更新來源。
-
-## Official changelogs
-
-- <顯示名>|<changelog URL>|<tag>
-
-## GitHub repositories
-
-- <owner>/<repo>|<tag>
-
-## GitHub starred
-
-sync: releases
 ```
 
-來源格式：
+正文按工具分 `## <工具名>` section；每筆 entry 保留繁中摘要與 3-6 條重點，避免逐條搬運原文。
 
-- Official changelogs：`- <name>|<url>|<tag>`，每行一個官方 changelog。
-- GitHub repositories：`- <owner>/<repo>|<tag>`，每行一個明確追蹤的 repo（會額外抓 discussions）。
-- GitHub starred：`sync: releases` 代表啟用，從 authenticated user 的星星清單抓 releases（`gh` CLI 需已登入）。
+## 資源
 
-三個 `##` 段可任意保留或省略；至少需有其一非空，否則 skill 報錯停止。
+- `references/daily-runbook.md`：執行細節。真正同步前必須先讀全文。
+- `references/item-analyzer.md`：候選分析 prompt。分析前讀全文；傳給 Agent subagent 時貼全文，不叫 subagent 自己讀檔。
+- `scripts/fetch_updates.py`：從 index 抓候選，輸出 machine-readable lines。
+- `scripts/dedup_check.py`：寫入前查重，避免跨日重報。
 
-> **URL 維護**：Official changelogs 的 URL 可能因文件改版而失效。遇到 `ERROR:` 或抓到空頁時，先 WebFetch 該工具的官網首頁找新的 changelog 路徑，再更新 `Inbox/Updates/01.index.md`。
->
-> **新增 / 移除工具**：直接編輯 `Inbox/Updates/01.index.md` 對應段落即可，**不要動 SKILL.md 或 fetch_updates.py**。
+## 主流程
 
-## 前置作業
+1. 用 harness-native `Read vault-map.md` 確認 cwd 是 vault root；讀不到就停止，請使用者 `cd C:\code\obsidian-memory`。
+2. 讀 `Inbox/Updates/01.index.md`。不存在或三個來源段皆空時停止，請使用者先補來源；單段為空只略過該來源類型。
+3. 讀 `references/daily-runbook.md`，照 runbook 解析 index、抓候選、處理 `OFFICIAL:`、去重、分析與組裝。
+4. 預設同步最近 7 天；使用者指定日期時用該日期到今天。
+5. 執行抓取：
 
-用 `Read vault-map.md` 確認 cwd 為 repo root（harness-native，不經 shell）；讀不到就停止並請使用者 cd 到 repo root。
-
-## 步驟 1：讀取來源
-
-讀 `Inbox/Updates/01.index.md`：
-
-- `## Official changelogs` 段：官方 changelog / release notes。
-- `## GitHub repositories` 段：GitHub release / discussion 來源。
-- `## GitHub starred` 段：是否啟用 starred 同步。
-
-若 index 不存在，**停止並請使用者依「Source index」段建立**，不要自動產生預設清單（避免引入未經確認的追蹤源）。若三段皆為空，同樣停止並提示使用者至少加一個來源。單段為空時略過該來源類型，不中止整體流程。
-
-## 步驟 2：抓候選
-
-預設同步最近 7 天；使用者指定日期時用該日期到今天。
-
-腳本自己解析 `Inbox/Updates/01.index.md` 的三段來源（official changelogs / repositories / starred），`--since` 預設 7 天前。cwd 為 vault root，用完整相對路徑執行：
-
-```
+```powershell
 python3 .agents/skills/vault-updates-daily/scripts/fetch_updates.py
 ```
 
-- 指定日期：加 `--since YYYY-MM-DD`。
-- 自訂 index 路徑：加 `--index <path>`（預設 `Inbox/Updates/01.index.md`）。
+若錯誤明確是 `python3` 指令不存在，再改用 `python` 跑同一指令；本機已安裝 `uv` 時也可用 `uv run python` 作替代 runner。指定日期時加 `--since YYYY-MM-DD`；自訂 index 時加 `--index <path>`。
 
-> 解析 index 與算 since 的邏輯都在腳本內（`parse_index`），跨平台、零 shell 膠水。SKILL 不再硬編碼工具清單——唯一真實來源是 `01.index.md`。
->
-> **抓取上限（silent cap，避免誤判為已涵蓋全部）**：腳本對各來源有硬上限——starred repos 取前 100、每 repo releases 前 5、explicit repo releases `per_page=30`、discussions 前 20。starred 超過 100 個或單來源超過上限時會靜默漏抓。來源接近上限時，於回覆「各來源抓取數」一併標注可能截斷。
+6. 對 `OFFICIAL:` 行使用 Defuddle 或 WebFetch 讀取官方頁，依 runbook 擷取近期 changelog section 成候選。
+7. 粗篩只保留會影響 workflow / CLI / API / model / connector / billing-quota / deprecation / breaking change / security posture 的項目；跳過 dependency bump、alpha noise、無使用者可見變更、非 developer workflow 內容。
+8. 寫入前每筆先跑 `dedup_check.py`；命中 `DUP:` 就跳過，不傳分析。
+9. 去重後最多送 24 筆進分析。可用 `Agent` 工具時每批 8-10 筆平行分析，`subagent_type: "general-purpose"`；無 Agent 工具時主 agent 直接照 `references/item-analyzer.md` 分析。
+10. 依 `TOOL:` 分組組裝日報，合併本次 tags 到 frontmatter，更新 `updated`。
 
-輸出格式：
+## 固定回覆
 
-- `META:since|||<YYYY-MM-DD>`
-- `OFFICIAL:<name>|||<url>|||<tag>`
-- `CHANGELOG:<source>|||<published>|||<title>|||<url>|||<body-snippet>`
-- `RELEASE:<repo>|||<published>|||<tag>|||<name>|||<url>|||<body-snippet>`
-- `DISCUSSION:<repo>|||<updated>|||<comments>|||<title>|||<url>|||<body-snippet>`（explicit repos 才抓；starred repos 只抓 releases）
-- `ERROR:<source>:<message>`（記錄後繼續）
-
-**OFFICIAL 行的處理**：腳本只列出 URL，不會自行抓取。對每個 `OFFICIAL:` 行（GitHub Changelog 除外，已由 RSS 轉成 `CHANGELOG:` 行），主 agent 用 Defuddle 或 WebFetch 讀取該 URL。若有多個 OFFICIAL URL 且有 subagent 能力，平行各呼叫一個 subagent 抓取；無 subagent 能力時串列執行。
-
-抓到頁面後，找出日期格式的 heading（如 `## 2025-01-01`、`## v1.5.0 (2025-01-01)`），擷取 `since` 日期之後的 section（heading 到下一個同級 heading 之間的內容）作為一筆候選。無法識別日期 heading 時，以最近 5 個 major section 作為候選。每筆格式化為：
-
-```
-CHANGELOG:<name>|||<entry-date>|||<entry-title>|||<url>#<slug>|||<body-snippet>
-```
-
-其中 `<body-snippet>` 從段落提取純文字，截斷至 800 字元。無法取得個別 entry URL 時，用頁面 URL 加 heading slug（`<url>#<slug>`）作為日報連結用的顯示 URL 即可；anchor 只是讓讀者能跳到該段，**不作為去重依據**（去重改用步驟 4 的 `--tool`/`--key` 穩定鍵，anchor 漂掉也不影響）。
-
-## 步驟 3：高精度粗篩
-
-保留候選：
-
-- 官方 changelog entry 有 workflow / CLI / API / model / connector / billing-quota / deprecation / breaking change 影響。
-- GitHub release 包含新功能、breaking change、security fix、workflow 變更、重要 bug fix。
-- GitHub discussion 形成具體做法、官方回答、或重要設計決策。
-
-跳過候選：
-
-- release 只有內部依賴 bump、alpha/noise、或無使用者可見變更。
-- changelog 與 developer tooling / coding agent / workflow 無關。
-- starred repo 的 release 若與 coding agent / developer workflow 無關（例如純 UI library patch）。
-
-若粗篩後候選仍過多，最多送 24 筆給分析階段，優先順序：
-
-1. 官方 changelog / release notes
-2. Stable GitHub releases 或明確 user-facing release
-3. 有具體設計決策或官方回答的 discussion
-
-## 步驟 4：去重與分批分析
-
-### 去重（傳給 subagent 前先做）
-
-日報是合併格式（無 `source:` frontmatter），用腳本掃個別筆記 `source: <url>` + 所有日報正文（含前幾天的日報）做 fixed-string 去重，自動避開 URL 裡 `?`/`&` 等 regex metachar。每個候選跑一次（cwd = repo root），依候選類型給參數：
-
-**Release / discussion**（有穩定 URL）只傳 URL：
-
-```
-python3 .agents/skills/vault-updates-daily/scripts/dedup_check.py "<url>"
-```
-
-**官方網頁 changelog 條目**（單條沒有獨立 URL，頁面 anchor 每次跑 slug 會漂、比 URL 會漏抓重報）改傳穩定鍵 `--tool` + `--key`，不靠 anchor：
-
-```
-python3 .agents/skills/vault-updates-daily/scripts/dedup_check.py "<頁面url>" --tool "<工具名>" --key "<版本或標題關鍵字>"
-```
-
-- `--tool`：對應日報的 `## <工具名>`，限縮比對範圍避免跨工具撞版本號；工具名用 item-analyzer 的工具名稱正規表（如 `Claude Code`、`OpenAI Codex`）。
-- `--key`：該條的穩定識別——有版本號就用版本（如 `2.1.169`），無版本用標題的distinctive關鍵字（如 `Sites`）。腳本只在 `### ` 標題行比對，不會被內文順帶提及的版本誤判。
-
-輸出 `DUP:<檔案>` 即命中、標記 skip 不傳給 subagent；`UNIQUE` 則保留。
-
-### 分批平行分析
-
-去重後剩餘候選每批 8-10 筆，平行呼叫 general-purpose subagent。無 subagent 能力時由主 agent 直接讀 `references/item-analyzer.md` 全文執行同流程。
-
-呼叫前讀取 `references/item-analyzer.md` 全文，放入 subagent prompt；不要叫 subagent 自己讀檔。
-
-Subagent prompt 結構：
-
-```text
-[item-analyzer.md 全文]
-
----
-
-今日日期：<YYYY-MM-DD>
-
-候選清單：
-1. <TYPE> <source/repo> <published/updated> <title>
-   URL: <url>
-   Body: <body-snippet，腳本已預先截取，無需再 fetch>
-   metadata: <comments 數等>
-```
-
-Subagent 回傳格式（每個候選一條，save 附帶 section 內容）：
-
-```text
-SAVE <url>
-TOOL: <工具名（依 item-analyzer.md 工具名稱正規表）>
-META: <版本或日期，如 v1.5.0 · 2025-01-01 或 2025-01-01；用 · 分隔多個欄位>
-CONTENT:
-<此 item 的 markdown 內容，不含 ## 或 ### heading>
-END_CONTENT
-
-SKIP <url> <一行原因>
-```
-
-## 步驟 5：組裝日報與彙整
-
-收集所有 subagent 回傳，依 `TOOL:` 分組，組裝日報：
-
-1. 日報路徑：`Inbox/Updates/<YYYY-MM-DD>-daily-updates.md`
-2. 若當日已有日報（同日第二次 sync），將新 section 追加到檔尾；不覆蓋已有內容。追加時同步更新 frontmatter：將本次涵蓋的工具 tag 合入既有 `tags`（去重），並更新 `updated` 為今日日期。
-3. 寫入格式：
-
-```markdown
----
-title: "<YYYY-MM-DD> Daily Updates"
-created: <YYYY-MM-DD>
-updated: <YYYY-MM-DD>
-tags:
-  - updates
-  - <涵蓋的工具 tag>
----
-
-## <工具名>
-
-### <META>（[標題](url)）
-
-**繁中摘要**：...
-
-- **<變更名>**：...
-
----
-
-## <工具名>
-
-### <META>
-
-<CONTENT block>
-
----
-```
-
-主 agent 組裝邏輯：依 `TOOL:` 分組 → 每個 TOOL 寫 `## <工具名>` → 同 TOOL 底下每個 SAVE item 寫 `### <META>（[標題](<url>)）` 後接 CONTENT block → TOOL 之間插 `---`。若同 TOOL 下只有一筆，`### META` 標題可省略，直接放 CONTENT。
-
-4. 不要把日報 wikilink 追加回 `Inbox/Updates/01.index.md`。此 index 只保存同步來源設定；日報本身留在 `Inbox/Updates/`，讀完後由使用者消化進 `Cards/` / `Topics/` 或刪除。
-
-回覆固定包含：
+完成後回覆：
 
 - 各來源抓取數 / 粗篩通過數 / 已寫入數
 - 日報路徑
 - 跳過原因分布
-- 需要人工追蹤但未建檔的候選（最多 5 筆）
+- 需要人工追蹤但未建檔的候選，最多 5 筆
 
-所有變更留給使用者審核。
+若來源抓取接近 runbook 記載的上限，明確標注可能截斷。
