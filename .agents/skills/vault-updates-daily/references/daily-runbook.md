@@ -122,12 +122,13 @@ Release / discussion 有穩定 URL：
 python3 .agents/skills/vault-updates-daily/scripts/dedup_check.py "<url>"
 ```
 
-官方網頁 changelog 單條沒有穩定 URL，改用工具名與穩定鍵：
+官方網頁 changelog 單條沒有穩定 URL，只用工具名與穩定鍵，**不傳頁面 URL**：
 
 ```powershell
-python3 .agents/skills/vault-updates-daily/scripts/dedup_check.py "<頁面url>" --tool "<工具名>" --key "<版本或標題關鍵字>"
+python3 .agents/skills/vault-updates-daily/scripts/dedup_check.py --tool "<工具名>" --key "<版本或標題關鍵字>"
 ```
 
+- 不要拿頁面 URL 走 URL 比對：頁面 URL 為整頁所有條目共用，舊日報任何指向該頁的連結都會命中，新條目必被誤判 DUP → 默默漏報。腳本在 `--key` 模式已忽略 URL 引數，但正確用法是不傳。
 - `--tool` 對應日報的 `## <工具名>`，限縮比對範圍。
 - `--key` 有版本號就用版本；無版本時用 distinctive 標題關鍵字。
 - 腳本只在 `### ` 標題行比對 key，避免內文順帶提及版本造成誤判。
