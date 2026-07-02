@@ -47,11 +47,9 @@ sync: releases
 
 在 vault root 執行：
 
-```powershell
+```
 python3 .agents/skills/vault-updates-daily/scripts/fetch_updates.py
 ```
-
-若錯誤明確是 `python3` 指令不存在，再改用 `python` 跑同一指令。不要寫成 `python3 ... || python ...`，避免腳本本身失敗時被重跑。本機已安裝 `uv` 時，可用 `uv run python ...` 作替代 runner；不要把 `uv` 當必要前提。
 
 常用參數：
 
@@ -118,13 +116,13 @@ CHANGELOG:<name>|||<entry-date>|||<entry-title>|||<url>#<slug>|||<body-snippet>
 
 Release / discussion 有穩定 URL：
 
-```powershell
+```
 python3 .agents/skills/vault-updates-daily/scripts/dedup_check.py "<url>"
 ```
 
 官方網頁 changelog 單條沒有穩定 URL，只用工具名與穩定鍵，**不傳頁面 URL**：
 
-```powershell
+```
 python3 .agents/skills/vault-updates-daily/scripts/dedup_check.py --tool "<工具名>" --key "<版本或標題關鍵字>"
 ```
 

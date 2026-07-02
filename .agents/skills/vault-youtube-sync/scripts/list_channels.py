@@ -12,6 +12,7 @@ import sys
 
 try:
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+    sys.stderr.reconfigure(encoding="utf-8", errors="replace")
 except (AttributeError, OSError):
     pass
 
@@ -20,7 +21,8 @@ if not os.path.isfile("vault-map.md"):
     sys.exit("ERROR: cwd 不在 vault root（找不到 vault-map.md）")
 
 for idx in sorted(glob.glob("Inbox/YouTube/*/01.index.md")):
-    text = open(idx, encoding="utf-8").read()
+    with open(idx, encoding="utf-8") as fh:
+        text = fh.read()
     m = re.search(r"^source:\s*(https://www\.youtube\.com/@[^/\s]+)", text, re.M)
     if m:
         print(m.group(1))

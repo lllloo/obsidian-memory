@@ -48,6 +48,7 @@ import xml.etree.ElementTree as ET
 
 try:
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+    sys.stderr.reconfigure(encoding="utf-8", errors="replace")
 except (AttributeError, OSError):
     pass
 
@@ -151,8 +152,10 @@ def request_text(url: str) -> str:
     for attempt in range(len(RETRY_BACKOFF_SECONDS) + 1):
         try:
             if curl:
+                # 不用 --fail：curl 對 4xx/5xx 一律 exit 22 無法區分，改由 -w 取
+                # http_code 自行判斷（4xx 不重試、5xx 退避重試，與 urllib 分支一致）。
                 cmd = [
-                    curl, "-sS", "--fail", "-L",
+                    curl, "-sS", "-L", "-w", "\n%{http_code}",
                     "-H", f"User-Agent: {headers['User-Agent']}",
                     "-H", f"Accept: {headers['Accept']}",
                     "-H", f"Accept-Language: {headers['Accept-Language']}",
@@ -162,13 +165,20 @@ def request_text(url: str) -> str:
                 cmd.append(url)
                 proc = subprocess.run(cmd, check=True, capture_output=True, text=True,
                                       encoding="utf-8", errors="replace", timeout=25)
-                return proc.stdout
-            req = urllib.request.Request(url, headers=headers)
-            with urllib.request.urlopen(req, timeout=25) as resp:
-                return resp.read().decode("utf-8", errors="replace")
+                body, _, code_s = proc.stdout.rpartition("\n")
+                code = int(code_s.strip() or 0)
+                if 200 <= code < 400:
+                    return body
+                if code < 500:
+                    raise RuntimeError(f"HTTP {code}")
+                last_error = RuntimeError(f"HTTP {code}")
+            else:
+                req = urllib.request.Request(url, headers=headers)
+                with urllib.request.urlopen(req, timeout=25) as resp:
+                    return resp.read().decode("utf-8", errors="replace")
+        except RuntimeError:
+            raise  # 4xx：不重試，直接回報
         except subprocess.CalledProcessError as e:
-            if e.returncode == 22:
-                raise RuntimeError((e.stderr or "").strip() or "HTTP error (4xx)")
             last_error = RuntimeError((e.stderr or "").strip() or f"curl exit {e.returncode}")
         except urllib.error.HTTPError as e:
             if e.code < 500:
@@ -189,53 +199,91 @@ def request_json(url: str) -> object:
 GRAPHQL_URL = "https://api.github.com/graphql"
 
 
+def _graphql_post(token: str, payload: str) -> str:
+    """POST GraphQL payload via curl/urllib，沿用 request_text 的重試策略
+    （4xx 不重試、5xx/網路錯誤退避重試）。"""
+    curl = shutil.which("curl")
+    last_error: Exception | None = None
+    for attempt in range(len(RETRY_BACKOFF_SECONDS) + 1):
+        try:
+            if curl:
+                proc = subprocess.run(
+                    [curl, "-sS", "-L", "-X", "POST", "-w", "\n%{http_code}",
+                     "-H", f"Authorization: Bearer {token}",
+                     "-H", "Content-Type: application/json",
+                     "-H", f"User-Agent: {HEADERS['User-Agent']}",
+                     "-d", "@-", GRAPHQL_URL],
+                    input=payload, check=True, capture_output=True, text=True,
+                    encoding="utf-8", errors="replace", timeout=30,
+                )
+                body, _, code_s = proc.stdout.rpartition("\n")
+                code = int(code_s.strip() or 0)
+                if 200 <= code < 400:
+                    return body
+                if code < 500:
+                    raise RuntimeError(f"HTTP {code}")
+                last_error = RuntimeError(f"HTTP {code}")
+            else:
+                req = urllib.request.Request(
+                    GRAPHQL_URL,
+                    data=payload.encode("utf-8"),
+                    headers={
+                        "Authorization": f"Bearer {token}",
+                        "Content-Type": "application/json",
+                        "User-Agent": HEADERS["User-Agent"],
+                    },
+                    method="POST",
+                )
+                with urllib.request.urlopen(req, timeout=30) as resp:
+                    return resp.read().decode("utf-8", errors="replace")
+        except RuntimeError:
+            raise  # 4xx：不重試，直接回報
+        except subprocess.CalledProcessError as e:
+            last_error = RuntimeError((e.stderr or "").strip() or f"curl exit {e.returncode}")
+        except urllib.error.HTTPError as e:
+            if e.code < 500:
+                raise RuntimeError(f"HTTP {e.code}")
+            last_error = RuntimeError(f"HTTP {e.code}")
+        except Exception as exc:  # noqa: BLE001
+            last_error = exc
+        if attempt >= len(RETRY_BACKOFF_SECONDS):
+            break
+        time.sleep(RETRY_BACKOFF_SECONDS[attempt])
+    raise RuntimeError(str(last_error or "unknown request error"))
+
+
 def graphql_query(query: str, variables: dict[str, str] | None = None) -> dict:
     """Call GitHub GraphQL. Prefers `gh api graphql` (auth handled by gh);
-    falls back to curl/urllib POST with GITHUB_TOKEN/GH_TOKEN when gh is absent.
+    falls back to curl/urllib POST with GITHUB_TOKEN/GH_TOKEN when gh is
+    absent **or fails**（未登入、額度用盡、暫時性錯誤都落 token fallback）.
 
-    Raises RuntimeError (no auth route / GraphQL errors) or
-    subprocess.CalledProcessError (gh/curl non-zero exit).
+    Raises RuntimeError (no auth route / HTTP / GraphQL errors).
     """
     variables = variables or {}
+    body: str | None = None
+    gh_error: str | None = None
     gh = shutil.which("gh")
     if gh:
         cmd = [gh, "api", "graphql"]
         for key, value in variables.items():
             cmd += ["-f", f"{key}={value}"]
         cmd += ["-f", f"query={query}"]
-        proc = subprocess.run(cmd, check=True, capture_output=True, text=True,
-                              encoding="utf-8", errors="replace", timeout=30)
-        body = proc.stdout
-    else:
+        try:
+            proc = subprocess.run(cmd, check=True, capture_output=True, text=True,
+                                  encoding="utf-8", errors="replace", timeout=30)
+            body = proc.stdout
+        except subprocess.CalledProcessError as e:
+            gh_error = (e.stderr or "").strip() or f"gh exit {e.returncode}"
+        except Exception as exc:  # noqa: BLE001
+            gh_error = str(exc)
+    if body is None:
         token = os.environ.get("GITHUB_TOKEN") or os.environ.get("GH_TOKEN")
         if not token:
+            if gh_error is not None:
+                raise RuntimeError(f"gh failed ({gh_error}) and no GITHUB_TOKEN/GH_TOKEN fallback")
             raise RuntimeError("gh CLI not found and no GITHUB_TOKEN/GH_TOKEN set")
         payload = json.dumps({"query": query, "variables": variables})
-        curl = shutil.which("curl")
-        if curl:
-            proc = subprocess.run(
-                [curl, "-sS", "--fail", "-X", "POST",
-                 "-H", f"Authorization: Bearer {token}",
-                 "-H", "Content-Type: application/json",
-                 "-H", f"User-Agent: {HEADERS['User-Agent']}",
-                 "-d", "@-", GRAPHQL_URL],
-                input=payload, check=True, capture_output=True, text=True,
-                encoding="utf-8", errors="replace", timeout=30,
-            )
-            body = proc.stdout
-        else:
-            req = urllib.request.Request(
-                GRAPHQL_URL,
-                data=payload.encode("utf-8"),
-                headers={
-                    "Authorization": f"Bearer {token}",
-                    "Content-Type": "application/json",
-                    "User-Agent": HEADERS["User-Agent"],
-                },
-                method="POST",
-            )
-            with urllib.request.urlopen(req, timeout=30) as resp:
-                body = resp.read().decode("utf-8", errors="replace")
+        body = _graphql_post(token, payload)
 
     result = json.loads(body)
     if isinstance(result, dict) and result.get("errors"):
@@ -407,7 +455,8 @@ def parse_index(path: str) -> tuple[list[str], list[str], bool]:
     repos: list[str] = []
     starred = False
     try:
-        lines = open(path, encoding="utf-8").read().splitlines()
+        with open(path, encoding="utf-8") as fh:
+            lines = fh.read().splitlines()
     except OSError as exc:
         print(f"ERROR:index:cannot read {path}: {exc}")
         return official, repos, starred

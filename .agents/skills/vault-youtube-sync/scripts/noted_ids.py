@@ -13,6 +13,7 @@ import sys
 
 try:
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+    sys.stderr.reconfigure(encoding="utf-8", errors="replace")
 except (AttributeError, OSError):
     pass
 
@@ -27,7 +28,13 @@ if not notes_dir or not os.path.isdir(notes_dir):
 for f in sorted(os.listdir(notes_dir)):
     if not f.endswith(".md") or f == "01.index.md":
         continue
-    text = open(os.path.join(notes_dir, f), encoding="utf-8").read()
+    try:
+        with open(os.path.join(notes_dir, f), encoding="utf-8") as fh:
+            text = fh.read()
+    except OSError as exc:
+        # 單檔讀取失敗（權限/鎖定）不中斷整體去重，但要留訊號供排查
+        print(f"WARN: 讀取失敗，略過 {f}: {exc}", file=sys.stderr)
+        continue
     if re.search(r"^draft:\s*true", text, re.M):
         continue  # draft 占位讓 subagent 重抓覆寫，不去重
     m = re.search(r"^source: https://www\.youtube\.com/watch\?v=([A-Za-z0-9_-]+)", text, re.M)

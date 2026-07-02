@@ -166,7 +166,7 @@ views:
 
 ## 步驟 5：分批平行處理文章
 
-01.index.md 與 02.影片清單.base 建立完成後，將影片清單分成每批 5-6 部，在**同一個 response** 中用 Agent tool 平行啟動所有 subagents。
+01.index.md 與 02.影片清單.base 建立完成後，將影片清單分成每批 5-6 部，在**同一個 response** 中用 Agent tool（`subagent_type: "general-purpose"`）平行啟動所有 subagents。
 
 **前置（送出前必做）**：
 

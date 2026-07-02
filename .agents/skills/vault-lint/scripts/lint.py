@@ -17,6 +17,7 @@ from pathlib import Path
 # Windows console 預設 cp950，強制 UTF-8 才能正確輸出中文檔名 / JSON
 try:
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+    sys.stderr.reconfigure(encoding="utf-8", errors="replace")
 except (AttributeError, OSError):
     pass
 
@@ -335,7 +336,7 @@ def scan():
 
 def main():
     if not (ROOT / "vault-map.md").is_file():
-        print(json.dumps({"error": "cwd 不在 vault root（找不到 vault-map.md）"}), ensure_ascii=False)
+        print(json.dumps({"error": "cwd 不在 vault root（找不到 vault-map.md）"}, ensure_ascii=False))
         sys.exit(1)
     print(json.dumps(scan(), ensure_ascii=False, indent=2))
 

@@ -16,6 +16,7 @@ import urllib.request
 # Windows 預設 stdout cp950，遇 emoji / 非 cp950 字元會炸，強制 UTF-8
 try:
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+    sys.stderr.reconfigure(encoding="utf-8", errors="replace")
 except (AttributeError, OSError):
     pass
 

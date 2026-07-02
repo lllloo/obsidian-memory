@@ -25,6 +25,7 @@ import html as html_module
 # 強制 UTF-8 輸出，主 skill 讀 stdout 才不會收到 partial output。
 try:
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+    sys.stderr.reconfigure(encoding="utf-8", errors="replace")
 except (AttributeError, OSError):
     pass  # Python <3.7 沒有 reconfigure，但本 repo 要求 3.7+
 

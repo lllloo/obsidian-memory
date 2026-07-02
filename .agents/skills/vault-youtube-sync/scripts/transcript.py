@@ -27,6 +27,7 @@ import sys
 
 try:
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+    sys.stderr.reconfigure(encoding="utf-8", errors="replace")
 except (AttributeError, OSError):
     pass
 
@@ -63,8 +64,12 @@ def run_defuddle(url: str) -> dict | None:
                 encoding="utf-8", errors="replace", timeout=60,
             )
             return json.loads(proc.stdout)
-        except Exception:  # noqa: BLE001
+        except Exception as exc:  # noqa: BLE001
+            # fallback 鏈刻意吞錯，但把原因寫到 stderr 供排查（stdout 契約不變）
+            print(f"DIAG:defuddle:{cmd[0]}:{exc}", file=sys.stderr)
             continue
+    if not candidates:
+        print("DIAG:defuddle:not-installed（defuddle/npx 都不在 PATH）", file=sys.stderr)
     return None
 
 
@@ -87,9 +92,11 @@ def transcript_api(video_id: str) -> str | None:
                 encoding="utf-8", errors="replace", timeout=120,
             )
             items = _fetch()
-        except Exception:  # noqa: BLE001
+        except Exception as exc:  # noqa: BLE001
+            print(f"DIAG:transcript-api:install-or-fetch:{exc}", file=sys.stderr)
             return None
-    except Exception:  # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
+        print(f"DIAG:transcript-api:fetch:{exc}", file=sys.stderr)
         return None
 
     lines = []

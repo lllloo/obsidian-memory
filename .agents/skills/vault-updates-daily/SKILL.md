@@ -44,11 +44,11 @@ tags:
 4. 預設同步最近 7 天；使用者指定日期時用該日期到今天。
 5. 執行抓取：
 
-```powershell
+```
 python3 .agents/skills/vault-updates-daily/scripts/fetch_updates.py
 ```
 
-若錯誤明確是 `python3` 指令不存在，再改用 `python` 跑同一指令；本機已安裝 `uv` 時也可用 `uv run python` 作替代 runner。指定日期時加 `--since YYYY-MM-DD`；自訂 index 時加 `--index <path>`。
+指定日期時加 `--since YYYY-MM-DD`；自訂 index 時加 `--index <path>`。
 
 6. 對 `OFFICIAL:` 行使用 Defuddle 或 WebFetch 讀取官方頁，依 runbook 擷取近期 changelog section 成候選。
 7. 粗篩只保留會影響 workflow / CLI / API / model / connector / billing-quota / deprecation / breaking change / security posture 的項目；跳過 dependency bump、alpha noise、無使用者可見變更、非 developer workflow 內容。
