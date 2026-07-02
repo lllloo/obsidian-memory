@@ -37,7 +37,7 @@ sync: releases
 
 - `Official changelogs`：`- <name>|<url>|<tag>`，每行一個官方 changelog。
 - `GitHub repositories`：`- <owner>/<repo>|<tag>`，每行一個明確追蹤 repo；會抓 releases 與 discussions。
-- `GitHub starred`：`sync: releases` 代表啟用，從 authenticated user 的 starred repos 抓 releases；需要 `gh` CLI 已登入。`fetch_updates.py` 會用單一 `gh api graphql` call 抓 starred repos 的 releases，不要改成逐 repo REST call。
+- `GitHub starred`：`sync: releases` 代表啟用，從 authenticated user 的 starred repos 抓 releases；需要 `gh` CLI 已登入，或環境變數 `GITHUB_TOKEN`／`GH_TOKEN`（token 須屬於要同步 starred 的使用者本人，GraphQL 查的是 `viewer`）。`fetch_updates.py` 會用單一 GraphQL call 抓 starred repos 的 releases，不要改成逐 repo REST call。discussions 同樣走 GraphQL，依賴相同（gh 或 token）。
 - 三段可任意省略；至少一段非空。不要自動產生預設清單。
 - 新增或移除工具時，只改 index；不要改 `SKILL.md` 或 `fetch_updates.py`。
 

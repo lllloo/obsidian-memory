@@ -186,13 +186,70 @@ def request_json(url: str) -> object:
     return json.loads(request_text(url))
 
 
+GRAPHQL_URL = "https://api.github.com/graphql"
+
+
+def graphql_query(query: str, variables: dict[str, str] | None = None) -> dict:
+    """Call GitHub GraphQL. Prefers `gh api graphql` (auth handled by gh);
+    falls back to curl/urllib POST with GITHUB_TOKEN/GH_TOKEN when gh is absent.
+
+    Raises RuntimeError (no auth route / GraphQL errors) or
+    subprocess.CalledProcessError (gh/curl non-zero exit).
+    """
+    variables = variables or {}
+    gh = shutil.which("gh")
+    if gh:
+        cmd = [gh, "api", "graphql"]
+        for key, value in variables.items():
+            cmd += ["-f", f"{key}={value}"]
+        cmd += ["-f", f"query={query}"]
+        proc = subprocess.run(cmd, check=True, capture_output=True, text=True,
+                              encoding="utf-8", errors="replace", timeout=30)
+        body = proc.stdout
+    else:
+        token = os.environ.get("GITHUB_TOKEN") or os.environ.get("GH_TOKEN")
+        if not token:
+            raise RuntimeError("gh CLI not found and no GITHUB_TOKEN/GH_TOKEN set")
+        payload = json.dumps({"query": query, "variables": variables})
+        curl = shutil.which("curl")
+        if curl:
+            proc = subprocess.run(
+                [curl, "-sS", "--fail", "-X", "POST",
+                 "-H", f"Authorization: Bearer {token}",
+                 "-H", "Content-Type: application/json",
+                 "-H", f"User-Agent: {HEADERS['User-Agent']}",
+                 "-d", "@-", GRAPHQL_URL],
+                input=payload, check=True, capture_output=True, text=True,
+                encoding="utf-8", errors="replace", timeout=30,
+            )
+            body = proc.stdout
+        else:
+            req = urllib.request.Request(
+                GRAPHQL_URL,
+                data=payload.encode("utf-8"),
+                headers={
+                    "Authorization": f"Bearer {token}",
+                    "Content-Type": "application/json",
+                    "User-Agent": HEADERS["User-Agent"],
+                },
+                method="POST",
+            )
+            with urllib.request.urlopen(req, timeout=30) as resp:
+                body = resp.read().decode("utf-8", errors="replace")
+
+    result = json.loads(body)
+    if isinstance(result, dict) and result.get("errors"):
+        errors = result["errors"]
+        if isinstance(errors, list):
+            message = "; ".join(str(e.get("message", e)) for e in errors[:3] if isinstance(e, (dict, str)))
+        else:
+            message = str(errors)
+        raise RuntimeError(message or "GraphQL error")
+    return result if isinstance(result, dict) else {}
+
+
 def fetch_starred_releases(since: dt.datetime, skip_repos: set[str]) -> None:
     """Fetch releases from all starred repos in a single GraphQL call."""
-    gh = shutil.which("gh")
-    if not gh:
-        print("ERROR:starred:gh CLI not found; skipping starred repos")
-        return
-
     query = """
 query {
   viewer {
@@ -214,18 +271,9 @@ query {
 }
 """
     try:
-        proc = subprocess.run(
-            [gh, "api", "graphql", "-f", f"query={query}"],
-            check=True,
-            capture_output=True,
-            text=True,
-            encoding="utf-8",
-            errors="replace",
-            timeout=30,
-        )
-        payload = json.loads(proc.stdout)
+        payload = graphql_query(query)
     except subprocess.CalledProcessError as e:
-        print(f"ERROR:starred:{(e.stderr or '').strip() or f'gh exit {e.returncode}'}")
+        print(f"ERROR:starred:{(e.stderr or '').strip() or f'exit {e.returncode}'}")
         return
     except Exception as exc:  # noqa: BLE001
         print(f"ERROR:starred:{exc}")
@@ -301,11 +349,7 @@ def fetch_github_changelog(since: dt.datetime) -> None:
         print(f"CHANGELOG:GitHub Changelog|||{published.isoformat()}|||{title}|||{link}|||{desc}")
 
 
-def fetch_discussions_with_gh(repo: str, since: dt.datetime) -> None:
-    gh = shutil.which("gh")
-    if not gh:
-        print(f"ERROR:discussions:{repo}:gh CLI not found; skipping discussions")
-        return
+def fetch_discussions(repo: str, since: dt.datetime) -> None:
     owner, name = repo.split("/", 1)
     query = """
 query($owner:String!, $name:String!) {
@@ -323,28 +367,9 @@ query($owner:String!, $name:String!) {
 }
 """
     try:
-        proc = subprocess.run(
-            [
-                gh,
-                "api",
-                "graphql",
-                "-f",
-                f"owner={owner}",
-                "-f",
-                f"name={name}",
-                "-f",
-                f"query={query}",
-            ],
-            check=True,
-            capture_output=True,
-            text=True,
-            encoding="utf-8",
-            errors="replace",
-            timeout=25,
-        )
-        payload = json.loads(proc.stdout)
+        payload = graphql_query(query, {"owner": owner, "name": name})
     except subprocess.CalledProcessError as e:
-        print(f"ERROR:discussions:{repo}:{(e.stderr or '').strip() or f'gh exit {e.returncode}'}")
+        print(f"ERROR:discussions:{repo}:{(e.stderr or '').strip() or f'exit {e.returncode}'}")
         return
     except Exception as exc:  # noqa: BLE001
         print(f"ERROR:discussions:{repo}:{exc}")
@@ -463,19 +488,21 @@ def main() -> int:
             print(f"OFFICIAL:{_sanitize(name)}|||{_sanitize(url)}|||{_sanitize(tag)}")
 
     # Explicit repos always go through REST (token+REST works without gh).
-    # This is independent of --starred: the starred GraphQL path is gh-only and
-    # must never be the sole route to an explicitly tracked repo's releases.
+    # This is independent of --starred: the starred GraphQL path needs gh or a
+    # token and must never be the sole route to an explicitly tracked repo's releases.
     for repo in explicit_repos:
         if not re.match(r"^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$", repo):
             print(f"ERROR:repo:{repo}:invalid owner/name")
             continue
         fetch_releases(repo, since)
-        fetch_discussions_with_gh(repo, since)
+        fetch_discussions(repo, since)
 
     if args.starred:
-        # Additional starred-only repos via a single GraphQL call (gh-only).
+        # Additional starred-only repos via a single GraphQL call
+        # (gh, or curl/urllib + GITHUB_TOKEN/GH_TOKEN — the token must belong to
+        # the user whose stars are synced, since the query reads `viewer`).
         # Explicit repos are skipped here — they are already covered by REST
-        # above — so there are no duplicate RELEASE lines when gh is present.
+        # above — so there are no duplicate RELEASE lines.
         fetch_starred_releases(since, skip_repos=set(explicit_repos))
 
     return 0
