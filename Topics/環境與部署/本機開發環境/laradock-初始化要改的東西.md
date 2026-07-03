@@ -1,7 +1,7 @@
 ---
 title: laradock 初始化要改的東西
 created: 2026-05-19
-updated: 2026-06-23
+updated: 2026-07-03
 tags:
   - laradock
   - docker
@@ -10,7 +10,7 @@ tags:
 
 ## 為什麼有這篇
 
-laradock clone 完不是 just works，至少有三件事要先處理才跑得起來。下次再 clone 一份新環境時照這張單子改，省得重新踩。
+laradock clone 完不是 just works，至少有三件事要先處理才跑得起來（處理完照 §4 的組合啟動容器）。下次再 clone 一份新環境時照這張單子改，省得重新踩。
 
 ## 1. `.env` 必改三處
 
@@ -59,6 +59,17 @@ laradock 預設 `nginx/sites/` 底下只有 `default.conf` 跟一堆 `*.conf.exa
 | `REDIS_PASSWORD` | `null` | `secret_redis` |
 
 理由：Laravel container 走 Docker 內部網路，hostname 是 service 名；`root/root` 與 `secret_redis` 都是 laradock 容器的預設帳密。
+
+## 4. Laravel 專案的容器啟動組合
+
+```bash
+docker-compose up -d workspace nginx mariadb phpmyadmin redis
+```
+
+與 CI3 版（[[Laradock-CI3-本機啟動模板]] §1）的差異：
+
+- **多 `redis`**：Laravel 的 cache / queue 用，對應上面 §3 的 `REDIS_HOST=redis`；CI3 專案用不到
+- **省略 `php-fpm`**：laradock 的 `docker-compose.yml` 裡 nginx `depends_on: php-fpm`（php-fpm 又依賴 workspace），列了 nginx 就會自動帶起，明列只是可讀性差異、結果相同
 
 ## 相關
 
