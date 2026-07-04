@@ -1,7 +1,7 @@
 ---
 title: Vault Map
 created: 2026-04-15
-updated: 2026-06-18
+updated: 2026-07-04
 tags:
   - index
 ---
@@ -30,7 +30,7 @@ tags:
 │   │   └── daveebbelaar/          — Python、LLM Evals、API 整合
 │   ├── Clippings/ — 網頁剪貼參考庫（agent 不主動消化；使用者明指才處理）
 │   ├── Archive/   — 封存區：已內化但保留備查的原料（agent 不主動掃描/消化/刪除；使用者明指才處理）
-│   └── Updates/   — 日常更新彙整（vault-updates-daily skill 產出）
+│   └── Updates/   — 日常更新彙整（vault-updates-daily skill 產出；待讀佇列，讀畢由使用者指示清理）
 ├── Cards/         — 未歸屬的完整概念 Cards
 └── Topics/        — 已歸檔主題（子目錄如下）
   ├── AI-Agent-工作流/ — Harness、frameworks、multi-agent workflow

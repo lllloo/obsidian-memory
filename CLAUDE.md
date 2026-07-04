@@ -13,6 +13,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working in this
 - 不主動擴大 scope：不自動回存筆記、不自動結構搬移或升 Topic。
 - `Inbox/Clippings/` 例外：agent **不主動掃描、消化或刪除** Clippings 內容。使用者剪藏的網頁原料留作參考，只在使用者明確指名（如「消化 Clippings/X.md」、「處理 Clippings」）才處理。「整理 Inbox」這類掃描動作預設**跳過 Clippings**。
 - `Inbox/Archive/` 例外：封存區，放**已內化但保留備查**的原料（不夠格升 Card、又捨不得刪、留作回查）。agent **不主動掃描、消化或刪除** Archive 內容，「整理 Inbox」掃描動作預設**跳過 Archive**；只在使用者明確指名才處理。與 Clippings 的差別：Clippings 是未消化的待讀剪藏，Archive 是已消化的留底。
+- `Inbox/Updates/` 例外：`vault-updates-daily` 產出的日報屬待讀佇列，agent **不主動掃描、消化或刪除**，「整理 Inbox」預設**跳過 Updates**（`vault-updates-daily` skill 自身的產出與 `01.index.md` 維護不在此限）；使用者讀畢明確指示（如「清 Updates」）才清理。
 - 刪除筆記（Inbox／Cards／Topics）的授權一律來自使用者，agent 不自主刪除、skill 也不在自身流程內自動刪（現有 skill 只把原料帶進 Inbox）。授權有兩種形式：逐次拍板，或已含在使用者「消化某篇／清空 Inbox」的指示內——此時消化完刪該 Inbox 原篇屬該指示的一部分（見下方三層流動流程）。
 - 執行 `git push` 或任何遠端推送前，必須先取得使用者明確同意。
 
@@ -22,7 +23,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working in this
 
 驗證方式用 harness-native `Read vault-map.md`（不經 shell、跨平台）——讀得到即在 vault root，讀不到就停止並請使用者 cd 過來。不要用 `[ -f vault-map.md ]` 之類 shell gate（在 Windows 預設 PowerShell 會翻車）。
 
-從其他專案呼叫本 repo skill 前，先 `cd C:\code\obsidian-memory`。
+從其他專案呼叫本 repo skill 前，先 cd 到 vault root：Windows `C:\code\obsidian-memory`、macOS `/Users/barney/code/obsidian-memory`。
 
 ## 寫入前 Checklist
 
@@ -36,7 +37,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working in this
 
 正文與 frontmatter 不得包含：
 
-- Token / Key：`sk-`、`sk-ant-`、`ghp_`、`gho_`、`AKIA`、`AIza`、`xox[baprs]-`、`eyJ`（JWT）
+- Token / Key 字面前綴：`sk-`、`sk-ant-`、`ghp_`、`gho_`、`AKIA`、`AIza`；regex 字元類：`xox[baprs]-`（Slack token）；`eyJ`（JWT）誤報率較高——任何 base64 編碼的 JSON 都以它開頭，命中先人工覆核再定案
 - Private key header：`-----BEGIN ... PRIVATE KEY-----`
 - 自然語言密碼：「密碼是 ...」、「password: ...」後接明文
 - 客戶 / 公司內部資訊、個資：身分證、私人電話、地址、內部 IP / 網址
@@ -76,7 +77,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working in this
 | `extracted_to` | 多主題 Inbox 筆記內化某切角後指回整合頁（半消化狀態） | `"[[<整合頁名>]]"` |
 | `tags` | 主題分類 + 必要的功能性 tag | YAML list |
 
-一般筆記需有 `title`、`created`、`updated`、`tags`。根 `index.md`（Quartz 公開首頁）可不加 `tags`。`tags` 一律用 YAML list，不用 inline array 或字串。下列三類需有 `description`：Topics `index.md`、Inbox/Clippings 網頁剪藏（Web Clipper 自動帶）、Inbox/YouTube 影片摘要（vault-youtube-sync skill 範本帶）。
+一般筆記需有 `title`、`created`、`updated`、`tags`。根 `index.md`（Quartz 公開首頁）可不加 `tags`。`tags` 一律用 YAML list，不用 inline array 或字串。下列三類需有 `description`：Topics `index.md`、Inbox/Clippings 網頁剪藏（Web Clipper 自動帶）、Inbox/YouTube 影片摘要（vault-youtube-sync skill 範本帶）。Clippings 的 `description` 為 Web Clipper 自動帶入的外站文案，豁免 30–80 字與風格要求，agent 不回頭修。
 
 Topics 的 `index.md` 是主題入口；Cards/筆記也可以是整合頁。不要用額外 tag 標記這類結構角色，辨識時依路徑（如 `Topics/*/index.md`）與內容判斷。
 
@@ -111,7 +112,7 @@ Topics 的 `index.md` 是主題入口；Cards/筆記也可以是整合頁。不�
 整合流程：
 
 1. 先讀 `vault-map.md`，再用 tag、路徑、正文關鍵字搜尋 `Inbox/`、`Cards/`、`Topics/`。
-2. 列出候選筆記與共同主題；排除既有整合頁（例如 `Topics/*/index.md` 或內容明確為整合頁），避免整合頁套整合頁。
+2. 列出候選筆記與共同主題；既有整合頁（例如 `Topics/*/index.md` 或內容明確為整合頁）不列入來源素材，避免整合頁套整合頁——但可作為步驟 3 的改寫目標。
 3. 只有整合了 ≥2 篇既有筆記、且產生原文沒有的綜合結論時，才建立或改寫整合頁。
 4. 整合頁預設寫入 `Cards/<主題>.md`；不自動升入 `Topics/`，升 Topic 仍須使用者拍板（見「Cards -> Topics 升級限制」）。
 5. 整合頁 frontmatter 必須含主題 tag，不新增結構角色 tag，並遵守本檔寫入前 Checklist。
@@ -141,7 +142,13 @@ Topics 的 `index.md` 是主題入口；Cards/筆記也可以是整合頁。不�
 - SKILL.md 主流程不寫憲法級規則（不自動 commit、通用 wikilink/frontmatter、卡片盒升級流程等）——這些在本檔 `CLAUDE.md`，不重述也不寫「見 CLAUDE.md」指回
 - 但 subagent 經 `references/*.md` 執行時要遵守的寫作規則（繁中、時間抗性等）必須在該 prompt 內可達（inline 或叫它先讀 AGENTS.md），不能只靠 AGENTS.md
 
-未透過 skill 直接操作 Inbox 或 Cards 時，依三層流動流程：Inbox 三條清空路徑（寫新 Card／強化既有 Card 或 Topic／直接刪，三者都刪 Inbox 原篇）；多主題只內化部分切角時用 `extracted_to` 指回整合頁並保留剩餘段落（用法見〈多筆記整合 / 整合頁〉）；升 Topic 的門檻、`git mv` 與「須使用者拍板」見〈Cards -> Topics 升級限制〉，此處不重述。
+## 三層流動流程
+
+未透過 skill 直接操作 Inbox 或 Cards 時，依此流程推進 Inbox → Cards → Topics：
+
+- **Inbox 三條清空路徑**：寫新 Card／強化既有 Card 或 Topic／直接刪——三者都刪 Inbox 原篇。
+- **半消化**：多主題筆記只內化部分切角時，用 `extracted_to` 指回整合頁並保留剩餘段落（用法見〈多筆記整合 / 整合頁〉）。
+- **升 Topic**：門檻、`git mv` 與「須使用者拍板」見〈Cards -> Topics 升級限制〉，此處不重述。
 
 ## Cards -> Topics 升級限制
 

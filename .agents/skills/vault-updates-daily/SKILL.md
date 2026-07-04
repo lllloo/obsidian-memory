@@ -39,7 +39,7 @@ tags:
 
 ## 主流程
 
-1. 用 harness-native `Read vault-map.md` 確認 cwd 是 vault root；讀不到就停止，請使用者 `cd C:\code\obsidian-memory`。
+1. 用 harness-native `Read vault-map.md` 確認 cwd 是 vault root；讀不到就停止，請使用者 cd 到 vault root（Windows `C:\code\obsidian-memory`、macOS `/Users/barney/code/obsidian-memory`）。
 2. 讀 `Inbox/Updates/01.index.md`。不存在或三個來源段皆空時停止，請使用者先補來源；單段為空只略過該來源類型。
 3. 讀 `references/daily-runbook.md`，照 runbook 解析 index、抓候選、處理 `OFFICIAL:`、去重、分析與組裝。
 4. 預設同步最近 7 天；使用者指定日期時用該日期到今天。
