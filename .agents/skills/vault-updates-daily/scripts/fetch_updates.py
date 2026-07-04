@@ -19,6 +19,8 @@ When no --official / --repo / --starred flags are given, the script parses the i
 
 Outputs:
     META:since|||<YYYY-MM-DD>
+    META:starred|||live|||<n> repos            (authed: live viewer query, snapshot refreshed)
+    META:starred|||snapshot|||<date>|||<n> repos  (no auth: fell back to snapshot + atom feed)
     OFFICIAL:<name>|||<url>|||<tag>
     CHANGELOG:<source>|||<published>|||<title>|||<url>|||<body-snippet>
     RELEASE:<repo>|||<published>|||<tag>|||<name>|||<url>|||<body-snippet>
@@ -59,6 +61,8 @@ HEADERS = {
 }
 
 _GITHUB_RSS_URL = "https://github.blog/changelog/feed/"
+_ATOM_NS = {"a": "http://www.w3.org/2005/Atom"}
+DEFAULT_SNAPSHOT = ".agents/skills/vault-updates-daily/starred-repos.txt"
 CHANGELOG_KEYWORDS = [
     "agent",
     "agents",
@@ -296,9 +300,7 @@ def graphql_query(query: str, variables: dict[str, str] | None = None) -> dict:
     return result if isinstance(result, dict) else {}
 
 
-def fetch_starred_releases(since: dt.datetime, skip_repos: set[str]) -> None:
-    """Fetch releases from all starred repos in a single GraphQL call."""
-    query = """
+_STARRED_QUERY = """
 query {
   viewer {
     starredRepositories(first: 100) {
@@ -318,13 +320,109 @@ query {
   }
 }
 """
+
+
+def read_snapshot(path: str) -> tuple[list[str], str | None]:
+    """Read the starred-repos snapshot: (repos, updated-date-or-None)."""
+    repos: list[str] = []
+    updated: str | None = None
     try:
-        payload = graphql_query(query)
-    except subprocess.CalledProcessError as e:
-        print(f"ERROR:starred:{(e.stderr or '').strip() or f'exit {e.returncode}'}")
-        return
+        with open(path, encoding="utf-8") as fh:
+            lines = fh.read().splitlines()
+    except OSError:
+        return repos, updated
+    for ln in lines:
+        s = ln.strip()
+        if not s:
+            continue
+        if s.startswith("#"):
+            m = re.search(r"updated:\s*(\d{4}-\d{2}-\d{2})", s)
+            if m:
+                updated = m.group(1)
+            continue
+        if re.match(r"^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$", s):
+            repos.append(s)
+    return repos, updated
+
+
+def write_snapshot(repos: list[str], path: str) -> None:
+    """Persist the starred repo list so token-free environments can still
+    check them via the atom feed. Best-effort: never crash the fetch."""
+    try:
+        today = dt.datetime.now(dt.timezone.utc).date().isoformat()
+        with open(path, "w", encoding="utf-8") as fh:
+            fh.write("# starred repos snapshot for vault-updates-daily; machine-written, do not hand-edit\n")
+            fh.write(f"# updated: {today}\n")
+            for repo in sorted(set(r for r in repos if r)):
+                fh.write(repo + "\n")
+    except OSError as exc:
+        print(f"META:starred|||snapshot-write-failed|||{exc}", file=sys.stderr)
+
+
+def fetch_releases_atom(repo: str, since: dt.datetime) -> None:
+    """Token-free release fetch via github.com's per-repo atom feed.
+
+    Used as the starred fallback when there is no gh/token auth: the atom feed
+    is served by github.com (not the REST API), so it is not subject to the
+    unauthenticated 60/hr API rate limit."""
+    url = f"https://github.com/{repo}/releases.atom"
+    try:
+        text = request_text(url)
+        root = ET.fromstring(text)
     except Exception as exc:  # noqa: BLE001
-        print(f"ERROR:starred:{exc}")
+        print(f"ERROR:releases:{repo}:atom {exc}")
+        return
+    for entry in root.findall("a:entry", _ATOM_NS):
+        updated = _parse_iso(entry.findtext("a:updated", default="", namespaces=_ATOM_NS))
+        if not updated or updated < since:
+            continue
+        # Atom entries carry no separate tag_name; the title IS the tag/name.
+        title = _sanitize(entry.findtext("a:title", default="", namespaces=_ATOM_NS))
+        link_el = entry.find("a:link", _ATOM_NS)
+        html_url = _sanitize(link_el.get("href") if link_el is not None else "")
+        body = _sanitize_body(entry.findtext("a:content", default="", namespaces=_ATOM_NS))
+        print(f"RELEASE:{repo}|||{updated.isoformat()}|||{title}|||{title}|||{html_url}|||{body}")
+
+
+def _starred_from_snapshot(since: dt.datetime, skip_repos: set[str], snapshot_path: str) -> None:
+    repos, updated = read_snapshot(snapshot_path)
+    if not repos:
+        print(f"ERROR:starred:no auth and no snapshot at {snapshot_path}; "
+              "run 'fetch_updates.py --snapshot-starred' locally (with gh login or GITHUB_TOKEN) first")
+        return
+    print(f"META:starred|||snapshot|||{updated or 'unknown'}|||{len(repos)} repos")
+    for repo in repos:
+        if repo in skip_repos:
+            continue
+        fetch_releases_atom(repo, since)
+
+
+def query_starred_repos() -> list[str]:
+    """Enumerate the authenticated viewer's starred repos (needs gh/token).
+    Raises RuntimeError when no auth route is available."""
+    query = "query { viewer { starredRepositories(first: 100) { nodes { nameWithOwner } } } }"
+    payload = graphql_query(query)
+    nodes = (
+        payload.get("data", {})
+        .get("viewer", {})
+        .get("starredRepositories", {})
+        .get("nodes", [])
+    )
+    return [_sanitize(n.get("nameWithOwner")) for n in nodes if n.get("nameWithOwner")]
+
+
+def fetch_starred_releases(since: dt.datetime, skip_repos: set[str], snapshot_path: str) -> None:
+    """Fetch releases from all starred repos.
+
+    With auth (gh login or GITHUB_TOKEN/GH_TOKEN belonging to the star owner),
+    use a single live GraphQL call and opportunistically refresh the snapshot.
+    Without auth (e.g. a headless cloud agent), the `viewer` query cannot run —
+    fall back to the snapshot's repo list via the token-free atom feed."""
+    try:
+        payload = graphql_query(_STARRED_QUERY)
+    except Exception as exc:  # noqa: BLE001 — any auth/network failure → snapshot fallback
+        print(f"META:starred|||live-failed|||{exc}", file=sys.stderr)
+        _starred_from_snapshot(since, skip_repos, snapshot_path)
         return
 
     repos = (
@@ -333,8 +431,11 @@ query {
         .get("starredRepositories", {})
         .get("nodes", [])
     )
+    repo_names: list[str] = []
     for repo in repos:
         name_with_owner = _sanitize(repo.get("nameWithOwner"))
+        if name_with_owner:
+            repo_names.append(name_with_owner)
         if name_with_owner in skip_repos:
             continue
         for release in repo.get("releases", {}).get("nodes", []):
@@ -346,6 +447,8 @@ query {
             url = _sanitize(release.get("url"))
             body = _sanitize_body(release.get("description") or "")
             print(f"RELEASE:{name_with_owner}|||{published.isoformat()}|||{tag}|||{rname}|||{url}|||{body}")
+    print(f"META:starred|||live|||{len(repo_names)} repos")
+    write_snapshot(repo_names, snapshot_path)
 
 
 def fetch_releases(repo: str, since: dt.datetime) -> None:
@@ -490,10 +593,27 @@ def main() -> int:
     parser.add_argument("--official", action="append", default=[],
                         help="Official changelog source: 'name|url|tag'; repeatable")
     parser.add_argument("--starred", action="store_true", help="also fetch releases from all starred repos")
+    parser.add_argument("--snapshot-path", default=DEFAULT_SNAPSHOT,
+                        help=f"starred repos snapshot file (default: {DEFAULT_SNAPSHOT})")
+    parser.add_argument("--snapshot-starred", action="store_true",
+                        help="refresh the starred snapshot (needs gh/token) and exit; run this locally")
     parser.add_argument("--index", default=None,
                         help=f"parse sources from this index md (default: {DEFAULT_INDEX} when no explicit "
                              "--official/--repo/--starred given)")
     args = parser.parse_args()
+
+    # Standalone snapshot refresh: enumerate stars (needs auth) and persist the
+    # list so token-free environments can later check them via the atom feed.
+    if args.snapshot_starred:
+        try:
+            repos = query_starred_repos()
+        except Exception as exc:  # noqa: BLE001
+            print(f"ERROR:starred:snapshot enumeration failed ({exc}); "
+                  "needs gh login or GITHUB_TOKEN/GH_TOKEN")
+            return 1
+        write_snapshot(repos, args.snapshot_path)
+        print(f"META:starred|||snapshot-written|||{len(repos)} repos|||{args.snapshot_path}")
+        return 0
 
     # Source resolution: explicit flags win; otherwise parse the index md.
     # 01.index.md is the single source of truth — the script never hardcodes a tool list.
@@ -552,7 +672,7 @@ def main() -> int:
         # the user whose stars are synced, since the query reads `viewer`).
         # Explicit repos are skipped here — they are already covered by REST
         # above — so there are no duplicate RELEASE lines.
-        fetch_starred_releases(since, skip_repos=set(explicit_repos))
+        fetch_starred_releases(since, skip_repos=set(explicit_repos), snapshot_path=args.snapshot_path)
 
     return 0
 

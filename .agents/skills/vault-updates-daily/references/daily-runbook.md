@@ -37,7 +37,12 @@ sync: releases
 
 - `Official changelogs`：`- <name>|<url>|<tag>`，每行一個官方 changelog。
 - `GitHub repositories`：`- <owner>/<repo>|<tag>`，每行一個明確追蹤 repo；會抓 releases 與 discussions。
-- `GitHub starred`：`sync: releases` 代表啟用，從 authenticated user 的 starred repos 抓 releases；需要 `gh` CLI 已登入，或環境變數 `GITHUB_TOKEN`／`GH_TOKEN`（token 須屬於要同步 starred 的使用者本人，GraphQL 查的是 `viewer`）。`fetch_updates.py` 會用單一 GraphQL call 抓 starred repos 的 releases，不要改成逐 repo REST call。discussions 同樣走 GraphQL，依賴相同（gh 或 token）。
+- `GitHub starred`：`sync: releases` 代表啟用。有兩條路，腳本自動選：
+  - **有 auth（`gh` 已登入，或 `GITHUB_TOKEN`／`GH_TOKEN` 屬於 star 擁有者本人）**：單一 GraphQL `viewer` call 抓所有 starred repos 的 releases，並**順手把 repo 清單寫回快照** `.agents/skills/vault-updates-daily/starred-repos.txt`。不要改成逐 repo REST call。
+  - **無 auth（如雲端 Claude agent）**：`viewer` query 需身分憑證，headless 環境查不到「我 star 了誰」。腳本改讀快照的 repo 清單，逐 repo 抓 `https://github.com/<repo>/releases.atom`——由 github.com 提供，免身分、不吃 REST 的 60/hr rate limit。
+  - discussions 仍只走 GraphQL（需 auth），無 auth 時該來源會回 `ERROR:discussions:...`；starred 有 atom fallback，discussions 沒有。
+
+  快照維護：快照由本機 authed 執行時自動保鮮（每跑一次 daily 就更新）。要在不跑 daily 的情況下手動刷新，本機執行 `python3 .agents/skills/vault-updates-daily/scripts/fetch_updates.py --snapshot-starred`。雲端首次啟用前，務必先在本機跑過一次讓快照存在——否則雲端會回 `ERROR:starred:no auth and no snapshot ...`。
 - 三段可任意省略；至少一段非空。不要自動產生預設清單。
 - 新增或移除工具時，只改 index；不要改 `SKILL.md` 或 `fetch_updates.py`。
 
@@ -59,6 +64,8 @@ python3 .agents/skills/vault-updates-daily/scripts/fetch_updates.py
 輸出格式：
 
 - `META:since|||<YYYY-MM-DD>`
+- `META:starred|||live|||<n> repos`：authed 走 live viewer query，快照已刷新。
+- `META:starred|||snapshot|||<date>|||<n> repos`：無 auth，改用快照 + atom；`<date>` 是快照日期，過舊時在回覆標注。
 - `OFFICIAL:<name>|||<url>|||<tag>`
 - `CHANGELOG:<source>|||<published>|||<title>|||<url>|||<body-snippet>`
 - `RELEASE:<repo>|||<published>|||<tag>|||<name>|||<url>|||<body-snippet>`
@@ -69,8 +76,8 @@ python3 .agents/skills/vault-updates-daily/scripts/fetch_updates.py
 
 抓取上限：
 
-- starred repos：前 100 個。
-- starred repo releases：每 repo 前 5 筆。
+- starred repos：前 100 個（live viewer query）；快照 fallback 則為快照內的全部 repo。
+- starred repo releases：live 路徑每 repo 前 5 筆；atom fallback 取該 repo feed 的近期 entries（github.com 預設約 10 筆），一律再用 `since` 過濾。
 - explicit repo releases：`per_page=30`。
 - discussions：前 20 筆。
 
@@ -213,3 +220,4 @@ tags:
 - 跳過原因分布。
 - 需要人工追蹤但未建檔的候選，最多 5 筆。
 - 若有 `ERROR:` 或接近抓取上限，明確列出。
+- starred 路徑據實標注：讀到 `META:starred|||snapshot|||<date>|||...` 時，回覆點明「starred 走快照（<date>）+ atom，非 live」；快照過舊（如超過 30 天）提醒本機刷新。讀到 `ERROR:starred:no auth and no snapshot` 時，明確說 starred 這次整段沒抓到、需先本機建快照——不要讓空的 starred section 被誤讀成「本週無更新」。

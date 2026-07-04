@@ -33,8 +33,9 @@ tags:
 
 - `references/daily-runbook.md`：執行細節。真正同步前必須先讀全文。
 - `references/item-analyzer.md`：候選分析 prompt。分析前讀全文；傳給 Agent subagent 時貼全文，不叫 subagent 自己讀檔。
-- `scripts/fetch_updates.py`：從 index 抓候選，輸出 machine-readable lines。
+- `scripts/fetch_updates.py`：從 index 抓候選，輸出 machine-readable lines。starred 有 auth 走 live GraphQL 並自動刷新快照，無 auth（雲端）改讀快照 `starred-repos.txt` + atom feed，細節見 runbook。
 - `scripts/dedup_check.py`：寫入前查重，避免跨日重報。
+- `starred-repos.txt`：starred repo 清單快照（skill 目錄內的機器資料檔，非 vault 筆記，不進 Quartz）。本機 authed 跑 daily 時自動保鮮；雲端 token-free 環境靠它才抓得到 starred。首次啟用雲端前先本機跑一次 `fetch_updates.py --snapshot-starred`。
 
 ## 主流程
 
@@ -64,5 +65,6 @@ python3 .agents/skills/vault-updates-daily/scripts/fetch_updates.py
 - 日報路徑
 - 跳過原因分布
 - 需要人工追蹤但未建檔的候選，最多 5 筆
+- starred 路徑：走快照 + atom（非 live）時標注快照日期；快照過舊或整段沒抓到（`ERROR:starred:no auth and no snapshot`）時明講，別讓空的 starred 被誤讀成本週無更新
 
 若來源抓取接近 runbook 記載的上限，明確標注可能截斷。
