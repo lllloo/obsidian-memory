@@ -121,7 +121,16 @@ CHANGELOG:<name>|||<entry-date>|||<entry-title>|||<url>#<slug>|||<body-snippet>
 
 日報是合併格式，不靠 `source:` frontmatter。寫入前每筆候選都跑 `dedup_check.py`。
 
-Release / discussion 有穩定 URL：
+Release（`RELEASE:`）有穩定 URL，且同一版本可能已由官方 changelog 報過——**URL + 工具/版本鍵一起比**，做交叉去重：
+
+```
+python3 .agents/skills/vault-updates-daily/scripts/dedup_check.py "<url>" --tool "<工具名>" --key "<版本>"
+```
+
+- `<工具名>`＝該 release 在日報會用的 `## <工具名>`（依 item-analyzer 命名規則把 repo 人類化，如 `anthropics/claude-code` → `Claude Code`）；務必與官方 changelog 同來源用**完全一致**的工具名，`--tool` scope 才對得上。
+- `<版本>`＝`RELEASE:` 的 tag 版本（如 `v2.1.199`）。若官方 changelog 那邊寫的是不帶 `v` 的 `2.1.199`，用不帶 `v` 的數字當 key 可同時命中兩種寫法（代價：短版本號可能前綴誤中長版本，如 `2.1.19` 誤中 `2.1.199`——取捨後仍以能交叉命中為優先）。
+
+Discussion（`DISCUSSION:`）只有穩定 URL、無版本概念，只比 URL：
 
 ```
 python3 .agents/skills/vault-updates-daily/scripts/dedup_check.py "<url>"
@@ -133,7 +142,7 @@ python3 .agents/skills/vault-updates-daily/scripts/dedup_check.py "<url>"
 python3 .agents/skills/vault-updates-daily/scripts/dedup_check.py --tool "<工具名>" --key "<版本或標題關鍵字>"
 ```
 
-- 不要拿頁面 URL 走 URL 比對：頁面 URL 為整頁所有條目共用，舊日報任何指向該頁的連結都會命中，新條目必被誤判 DUP → 默默漏報。腳本在 `--key` 模式已忽略 URL 引數，但正確用法是不傳。
+- 不要拿官方 changelog 的頁面 URL 走 URL 比對：頁面 URL 為整頁所有條目共用，舊日報任何指向該頁的連結都會命中，新條目必被誤判 DUP → 默默漏報。故官方 changelog 只傳 `--tool/--key`、不傳 URL。（release 的 `.../releases/tag/<版本>` 是 per-entry 穩定 URL，安全，照傳。）
 - `--tool` 對應日報的 `## <工具名>`，限縮比對範圍。
 - `--key` 有版本號就用版本；無版本時用 distinctive 標題關鍵字。
 - 腳本只在 `### ` 標題行比對 key，避免內文順帶提及版本造成誤判。

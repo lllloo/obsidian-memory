@@ -2,8 +2,12 @@
 
 用法（cwd = repo root）：
 
-    # release / discussion：有穩定 URL，只需 URL
+    # discussion：只有穩定 URL，比 URL
     python3 .agents/skills/vault-updates-daily/scripts/dedup_check.py "<url>"
+
+    # release：穩定 URL + 工具/版本鍵一起比（交叉去重——同版本可能已由官方 changelog 報過）
+    python3 .agents/skills/vault-updates-daily/scripts/dedup_check.py \
+        "<url>" --tool "<工具名>" --key "<版本>"
 
     # 官方網頁 changelog 條目：anchor 會漂（每次跑 slug 不同），只用穩定鍵，不傳 URL
     python3 .agents/skills/vault-updates-daily/scripts/dedup_check.py \
@@ -16,18 +20,27 @@
   fixed-string 比 URL 就漏抓 → 同一條重報。改以「工具 + 版本／標題」這種穩定識別比對，
   與 anchor 無關，根治重複。
 
-為什麼 --key 模式忽略 URL：
-  頁面 URL 為整頁所有條目共用，舊日報任何指向該頁的連結（帶或不帶 anchor）都會命中，
-  新條目必被誤判 DUP → 默默漏報。故給了 --key 就只比穩定鍵，URL 引數即使傳入也不參與比對。
+為什麼 release 也要帶 --tool/--key（交叉去重）：
+  同一個版本可能兩條路都抓到——官方 changelog（頁面 URL + anchor）與 GitHub release
+  （`.../releases/tag/<版本>` 穩定 URL）。兩者 URL 格式不同，只比 URL 撞不到 → 同版本
+  重報。release 額外帶「工具 + 版本」穩定鍵，就能命中先前由官方 changelog 報過的同一版
+  （反向亦然：官方 changelog 條目的版本鍵也會命中先前的 release 標題）。
 
-三層檢查（任一命中即 DUP；--key 模式只跑第 3 層）：
-  1. 舊個別筆記格式：Inbox/Updates / Cards / Topics 任一 .md 含 `source: <url>`。
-  2. 所有日報正文：任一 `*-daily-updates.md` 含完整 <url>（release/discussion 的穩定 URL 走這層）。
+URL 是否參與比對由呼叫端決定：
+  release 的 URL 是 per-entry 穩定連結，安全，照傳；官方 changelog 的頁面 URL 為整頁
+  條目共用，傳了會讓新條目誤判 DUP（默默漏報），故官方 changelog **只傳 --tool/--key、
+  不傳 URL**。腳本不猜，依你傳不傳 URL 而定。
+
+檢查層（任一命中即 DUP；給了什麼跑什麼，可同時）：
+  1. 舊個別筆記格式（僅當給 URL）：Inbox/Updates / Cards / Topics 任一 .md 含 `source: <url>`。
+  2. 所有日報正文（僅當給 URL）：任一 `*-daily-updates.md` 含完整 <url>（release/discussion 的穩定 URL 走這層）。
      比對有右邊界檢查：命中後下一字元不得仍是 URL 字元，避免短 URL 前綴誤命中長 URL
     （如 `...#2-1-19` 誤中 `...#2-1-198`、裸頁面 URL 誤中帶 anchor 連結）。
   3. 穩定鍵（僅當給 --key）：在日報的 `### ` 標題行找 <key>；給 --tool 時，只在該
      `## <tool>` section 內找（避免跨工具撞版本號）。只比標題行，不比內文——內文順帶
      提到的版本（如某版說明寫「regression in 2.1.161」）不算已報。
+     注意：`### ` 標題的 META 需含該版本字串（組裝格式 `### <META>（...）` 已保證），
+     且 release 與官方 changelog 對同一版本要用一致的工具名，--tool scope 才對得上。
 
 輸出：
     DUP:<命中檔案相對路徑>   （第一個命中即印出）
@@ -98,8 +111,9 @@ def main() -> int:
     parser.add_argument("--key", default=None, help="穩定鍵（版本號或標題關鍵字），在 `### ` 標題行比對")
     args = parser.parse_args()
 
-    # --key 模式：頁面 URL 為整頁條目共用，任何比對都會誤判 DUP（默默漏報），一律忽略 URL
-    url = "" if args.key else args.url
+    # URL 與 --key 可並存：release 帶穩定 URL + 工具/版本鍵交叉去重。是否傳 URL 由呼叫端
+    # 決定——官方 changelog 不傳頁面 URL（會誤判 DUP），release 傳 per-entry 穩定 URL。
+    url = args.url
     if not url and not args.key:
         print("UNIQUE")
         return 0
