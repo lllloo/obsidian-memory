@@ -1,7 +1,7 @@
 ---
 title: Vault 運作模式
 created: 2026-05-25
-updated: 2026-06-03
+updated: 2026-07-04
 tags:
   - vault
   - meta
@@ -55,11 +55,11 @@ Vault 分三層成熟度：
 
 這三層不是單純分類資料夾，而是成熟度流動：未消化 → 待歸類 → 已歸檔。防爆量靠流動，不靠紀律。
 
-**Inbox → Cards（消化）**：一份原料消化後有三種去向——內化成新 Card、強化既有 Card / Topic、或沒學到東西就直接刪；三者都以清空 Inbox 原篇作結，Inbox 空 = 無積欠（這裡的「空」指 agent 職責內的待消化佇列；`Inbox/Clippings/` 是使用者剪藏的參考原料，不在 agent 主動消化職責內、不計入積欠，見 [`CLAUDE.md`](CLAUDE.md)）。前提是使用者本人已讀過／看過；AI 代摘要但本人尚未消化的原料不算內化，留 Inbox 當待讀佇列。
+**Inbox → Cards（消化）**：一份原料消化後有三種去向候選——內化成新 Card、強化既有 Card / Topic、或沒學到東西就直接刪；三者都要先由 agent 列出建議並等使用者確認，確認後才處置 Inbox 原篇，Inbox 空 = 無積欠（這裡的「空」指 agent 職責內的待消化佇列；`Inbox/Clippings/` 是使用者剪藏的參考原料，不在 agent 主動消化職責內、不計入積欠，見 [`CLAUDE.md`](CLAUDE.md)）。前提是使用者本人已讀過／看過；AI 代摘要但本人尚未消化的原料不算內化，留 Inbox 當待讀佇列。
 
 **Cards → Topics（歸檔）**：Card 是完整概念，獨立可讀、不靠原文就能懂。同主題累積成群、或單張裂變成多張時，成批搬進 `Topics/<主題>/`。跨主題靠 `tags` 串連，`Topics/` 第一層不做跨主題巢套（不建「AI-工具/Claude-Code/」這種群組）。
 
-具體操作步驟（三條清空路徑、`extracted_to` 半消化例外、`Inbox/Clippings/` 不主動消化、`git mv` 歸檔與補 `index.md` wikilink）均見 [`CLAUDE.md`](CLAUDE.md)；升 Topic 門檻見 CLAUDE「Cards -> Topics 升級限制」，單張卡品質與反指標見 [`card-quality.md`](card-quality.md)。已升 Topic 重看若命中反指標可退回 Cards，仍須使用者拍板。
+具體操作步驟（三條處置候選、`extracted_to` 半消化例外、`Inbox/Clippings/` 不主動消化、`git mv` 歸檔與補 `index.md` wikilink）均見 [`CLAUDE.md`](CLAUDE.md)；升 Topic 門檻見 CLAUDE「Cards -> Topics 升級限制」，單張卡品質與反指標見 [`card-quality.md`](card-quality.md)。已升 Topic 重看若命中反指標可退回 Cards，仍須使用者拍板。
 
 主要操作由 skills 承載：
 

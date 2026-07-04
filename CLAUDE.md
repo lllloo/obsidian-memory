@@ -14,7 +14,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working in this
 - `Inbox/Clippings/` 例外：agent **不主動掃描、消化或刪除** Clippings 內容。使用者剪藏的網頁原料留作參考，只在使用者明確指名（如「消化 Clippings/X.md」、「處理 Clippings」）才處理。「整理 Inbox」這類掃描動作預設**跳過 Clippings**。
 - `Inbox/Archive/` 例外：封存區，放**已內化但保留備查**的原料（不夠格升 Card、又捨不得刪、留作回查）。agent **不主動掃描、消化或刪除** Archive 內容，「整理 Inbox」掃描動作預設**跳過 Archive**；只在使用者明確指名才處理。與 Clippings 的差別：Clippings 是未消化的待讀剪藏，Archive 是已消化的留底。
 - `Inbox/Updates/` 例外：`vault-updates-daily` 產出的日報屬待讀佇列，agent **不主動掃描、消化或刪除**，「整理 Inbox」預設**跳過 Updates**（`vault-updates-daily` skill 自身的產出與 `01.index.md` 維護不在此限）；使用者讀畢明確指示（如「清 Updates」）才清理。
-- 刪除筆記（Inbox／Cards／Topics）的授權一律來自使用者，agent 不自主刪除、skill 也不在自身流程內自動刪（現有 skill 只把原料帶進 Inbox）。授權有兩種形式：逐次拍板，或已含在使用者「消化某篇／清空 Inbox」的指示內——此時消化完刪該 Inbox 原篇屬該指示的一部分（見下方三層流動流程）。
+- 刪除筆記（Inbox／Cards／Topics）的授權一律來自使用者，agent 不自主刪除、skill 也不在自身流程內自動刪（現有 skill 只把原料帶進 Inbox）。Inbox 原料要升級成新 Card、強化既有 Card / Topic、或升入 Topic，必須先列出建議並取得使用者確認；確認升級或直接刪除後，才可刪該 Inbox 原篇（見下方三層流動流程）。
 - 執行 `git push` 或任何遠端推送前，必須先取得使用者明確同意。
 
 ## CWD 契約
@@ -146,7 +146,7 @@ Topics 的 `index.md` 是主題入口；Cards/筆記也可以是整合頁。不�
 
 未透過 skill 直接操作 Inbox 或 Cards 時，依此流程推進 Inbox → Cards → Topics：
 
-- **Inbox 三條清空路徑**：寫新 Card／強化既有 Card 或 Topic／直接刪——三者都刪 Inbox 原篇。
+- **Inbox 三條處置候選**：寫新 Card／強化既有 Card 或 Topic／直接刪。三者都必須先列出建議並取得使用者確認；確認後才執行升級、強化或刪除，並刪該 Inbox 原篇。
 - **半消化**：多主題筆記只內化部分切角時，用 `extracted_to` 指回整合頁並保留剩餘段落（用法見〈多筆記整合 / 整合頁〉）。
 - **升 Topic**：門檻、`git mv` 與「須使用者拍板」見〈Cards -> Topics 升級限制〉，此處不重述。
 
