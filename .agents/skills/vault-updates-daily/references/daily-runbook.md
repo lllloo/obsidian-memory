@@ -36,11 +36,10 @@ sync: releases
 解析規則：
 
 - `Official changelogs`：`- <name>|<url>|<tag>`，每行一個官方 changelog。
-- `GitHub repositories`：`- <owner>/<repo>|<tag>`，每行一個明確追蹤 repo；會抓 releases 與 discussions。
+- `GitHub repositories`：`- <owner>/<repo>|<tag>`，每行一個明確追蹤 repo；抓 releases。
 - `GitHub starred`：`sync: releases` 代表啟用。有兩條路，腳本自動選：
   - **有 auth（`gh` 已登入，或 `GITHUB_TOKEN`／`GH_TOKEN` 屬於 star 擁有者本人）**：單一 GraphQL `viewer` call 抓所有 starred repos 的 releases，並**順手把 repo 清單寫回快照** `.agents/skills/vault-updates-daily/starred-repos.txt`。不要改成逐 repo REST call。
   - **無 auth（如雲端 Claude agent）**：`viewer` query 需身分憑證，headless 環境查不到「我 star 了誰」。腳本改讀快照的 repo 清單，逐 repo 抓 `https://github.com/<repo>/releases.atom`——由 github.com 提供，免身分、不吃 REST 的 60/hr rate limit。
-  - discussions 仍只走 GraphQL（需 auth），無 auth 時該來源會回 `ERROR:discussions:...`；starred 有 atom fallback，discussions 沒有。
 
   快照維護：快照由本機 authed 執行時自動保鮮（每跑一次 daily 就更新）。要在不跑 daily 的情況下手動刷新，本機執行 `python3 .agents/skills/vault-updates-daily/scripts/fetch_updates.py --snapshot-starred`。雲端首次啟用前，務必先在本機跑過一次讓快照存在——否則雲端會回 `ERROR:starred:no auth and no snapshot ...`。
 - 三段可任意省略；至少一段非空。不要自動產生預設清單。
@@ -69,7 +68,6 @@ python3 .agents/skills/vault-updates-daily/scripts/fetch_updates.py
 - `OFFICIAL:<name>|||<url>|||<tag>`
 - `CHANGELOG:<source>|||<published>|||<title>|||<url>|||<body-snippet>`
 - `RELEASE:<repo>|||<published>|||<tag>|||<name>|||<url>|||<body-snippet>`
-- `DISCUSSION:<repo>|||<updated>|||<comments>|||<title>|||<url>|||<body-snippet>`
 - `ERROR:<source>:<message>`
 
 記錄 `ERROR:` 後繼續處理其他來源；最後回覆列出需要人工追蹤的錯誤或候選。
@@ -79,7 +77,6 @@ python3 .agents/skills/vault-updates-daily/scripts/fetch_updates.py
 - starred repos：前 100 個（live viewer query）；快照 fallback 則為快照內的全部 repo。
 - starred repo releases：live 路徑每 repo 前 5 筆；atom fallback 取該 repo feed 的近期 entries（github.com 預設約 10 筆），一律再用 `since` 過濾。
 - explicit repo releases：`per_page=30`。
-- discussions：前 20 筆。
 
 接近上限時，在回覆的「各來源抓取數」標注可能截斷；不要讓使用者誤以為已涵蓋全部。
 
@@ -107,7 +104,6 @@ CHANGELOG:<name>|||<entry-date>|||<entry-title>|||<url>#<slug>|||<body-snippet>
 
 - 官方 changelog entry 會影響 workflow、CLI/API 使用、model、connector、billing/quota、deprecation、breaking change、security posture。
 - GitHub release 有新功能、breaking change、security fix、workflow 變更、重要 regression 修復。
-- GitHub discussion 形成具體 workaround、maintainer confirmation、重要設計決策，或多人命中且會影響日常使用。
 
 跳過：
 
@@ -115,7 +111,7 @@ CHANGELOG:<name>|||<entry-date>|||<entry-title>|||<url>#<slug>|||<body-snippet>
 - 與 coding agent、developer tooling、developer workflow 無關。
 - Body 為空且標題不足以判斷價值。
 
-粗篩後仍過多時，最多 24 筆進分析；優先 official changelog，其次 stable / user-facing release，再來有具體結論的 discussion。
+粗篩後仍過多時，最多 24 筆進分析；優先 official changelog，其次 stable / user-facing release。
 
 ## Dedup
 
@@ -129,12 +125,6 @@ python3 .agents/skills/vault-updates-daily/scripts/dedup_check.py "<url>" --tool
 
 - `<工具名>`＝該 release 在日報會用的 `## <工具名>`（依 item-analyzer 命名規則把 repo 人類化，如 `anthropics/claude-code` → `Claude Code`）；務必與官方 changelog 同來源用**完全一致**的工具名，`--tool` scope 才對得上。
 - `<版本>`＝`RELEASE:` 的 tag 版本（如 `v2.1.199`）。若官方 changelog 那邊寫的是不帶 `v` 的 `2.1.199`，用不帶 `v` 的數字當 key 可同時命中兩種寫法（代價：短版本號可能前綴誤中長版本，如 `2.1.19` 誤中 `2.1.199`——取捨後仍以能交叉命中為優先）。
-
-Discussion（`DISCUSSION:`）只有穩定 URL、無版本概念，只比 URL：
-
-```
-python3 .agents/skills/vault-updates-daily/scripts/dedup_check.py "<url>"
-```
 
 官方網頁 changelog 單條沒有穩定 URL，只用工具名與穩定鍵，**不傳頁面 URL**：
 

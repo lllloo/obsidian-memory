@@ -24,7 +24,6 @@ Outputs:
     OFFICIAL:<name>|||<url>|||<tag>
     CHANGELOG:<source>|||<published>|||<title>|||<url>|||<body-snippet>
     RELEASE:<repo>|||<published>|||<tag>|||<name>|||<url>|||<body-snippet>
-    DISCUSSION:<repo>|||<updated>|||<comments>|||<title>|||<url>|||<body-snippet>
     ERROR:<source>:<message>
 
 This script intentionally keeps the first pass mechanical. The skill/analyzer
@@ -500,49 +499,6 @@ def fetch_github_changelog(since: dt.datetime) -> None:
         print(f"CHANGELOG:GitHub Changelog|||{published.isoformat()}|||{title}|||{link}|||{desc}")
 
 
-def fetch_discussions(repo: str, since: dt.datetime) -> None:
-    owner, name = repo.split("/", 1)
-    query = """
-query($owner:String!, $name:String!) {
-  repository(owner:$owner, name:$name) {
-    discussions(first: 20, orderBy: {field: UPDATED_AT, direction: DESC}) {
-      nodes {
-        title
-        updatedAt
-        url
-        body
-        comments { totalCount }
-      }
-    }
-  }
-}
-"""
-    try:
-        payload = graphql_query(query, {"owner": owner, "name": name})
-    except subprocess.CalledProcessError as e:
-        print(f"ERROR:discussions:{repo}:{(e.stderr or '').strip() or f'exit {e.returncode}'}")
-        return
-    except Exception as exc:  # noqa: BLE001
-        print(f"ERROR:discussions:{repo}:{exc}")
-        return
-
-    nodes = (
-        payload.get("data", {})
-        .get("repository", {})
-        .get("discussions", {})
-        .get("nodes", [])
-    )
-    for item in nodes:
-        updated = _parse_iso(str(item.get("updatedAt") or ""))
-        if not updated or updated < since:
-            continue
-        title = _sanitize(item.get("title"))
-        url = _sanitize(item.get("url"))
-        comments = int(item.get("comments", {}).get("totalCount") or 0)
-        body = _sanitize_body(item.get("body") or "")
-        print(f"DISCUSSION:{repo}|||{updated.isoformat()}|||{comments}|||{title}|||{url}|||{body}")
-
-
 DEFAULT_INDEX = "Inbox/Updates/01.index.md"
 
 
@@ -664,7 +620,6 @@ def main() -> int:
             print(f"ERROR:repo:{repo}:invalid owner/name")
             continue
         fetch_releases(repo, since)
-        fetch_discussions(repo, since)
 
     if args.starred:
         # Additional starred-only repos via a single GraphQL call

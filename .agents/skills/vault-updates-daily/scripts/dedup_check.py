@@ -2,9 +2,6 @@
 
 用法（cwd = repo root）：
 
-    # discussion：只有穩定 URL，比 URL
-    python3 .agents/skills/vault-updates-daily/scripts/dedup_check.py "<url>"
-
     # release：穩定 URL + 工具/版本鍵一起比（交叉去重——同版本可能已由官方 changelog 報過）
     python3 .agents/skills/vault-updates-daily/scripts/dedup_check.py \
         "<url>" --tool "<工具名>" --key "<版本>"
@@ -33,7 +30,7 @@ URL 是否參與比對由呼叫端決定：
 
 檢查層（任一命中即 DUP；給了什麼跑什麼，可同時）：
   1. 舊個別筆記格式（僅當給 URL）：Inbox/Updates / Cards / Topics 任一 .md 含 `source: <url>`。
-  2. 所有日報正文（僅當給 URL）：任一 `*-daily-updates.md` 含完整 <url>（release/discussion 的穩定 URL 走這層）。
+  2. 所有日報正文（僅當給 URL）：任一 `*-daily-updates.md` 含完整 <url>（release 的穩定 URL 走這層）。
      比對有右邊界檢查：命中後下一字元不得仍是 URL 字元，避免短 URL 前綴誤命中長 URL
     （如 `...#2-1-19` 誤中 `...#2-1-198`、裸頁面 URL 誤中帶 anchor 連結）。
   3. 穩定鍵（僅當給 --key）：在日報的 `### ` 標題行找 <key>；給 --tool 時，只在該

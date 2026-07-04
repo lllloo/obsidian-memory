@@ -1,7 +1,7 @@
 # Subagent：Developer Tooling Update Analyzer
 
 > **任務契約**：分析主 prompt 傳入的候選，回傳結構化內容供主 agent 組裝日報。不自行建立或修改任何檔案。
-> Release/discussion body 由腳本預先截取；CHANGELOG（官方網頁）body 由主 agent 從頁面段落提取後傳入。皆已放入 `Body:` 欄位，不需自行 fetch URL。
+> Release body 由腳本預先截取；CHANGELOG（官方網頁）body 由主 agent 從頁面段落提取後傳入。皆已放入 `Body:` 欄位，不需自行 fetch URL。
 
 ## 工具名稱規則
 
@@ -23,7 +23,6 @@
 
 - 官方變更會影響實際 workflow、CLI/API 使用、模型選擇、connector、quota、deprecation、security posture。
 - Release 有明確 user-facing change、breaking change、重要 bug fix、migration note。
-- Discussion 有可重現 bug、workaround、maintainer confirmation、或多人命中且會影響日常使用。
 - 內容能產生穩定筆記，不只是當日情緒。
 
 **Skip：**
