@@ -27,16 +27,14 @@ prompt 末段帶 `MODE=local|cross`。先據此解析出 **$VAULT_ROOT**（vault
 
 ### MODE=cross（cwd 在其他專案）
 
-cwd 不在 vault，只能靠 obsidian CLI 定位。下列 gate **全部通過才可搜尋；任一失敗即輸出未命中 JSON、不降級亂搜**：
+cwd 不在 vault，走**定位鏈**找本機 clone：`Read` 固定路徑 `~/code/obsidian-memory/vault-map.md`（`~` 先展開為當前使用者 home 絕對路徑；Windows 即 `%USERPROFILE%\code\obsidian-memory\vault-map.md`），讀到且內容含錨點 `title: Vault Map` 即驗明身分（harness-native，不經 shell、不依賴 obsidian CLI）。此路徑是**唯一候選**，不在它之外猜路徑；此約定與全域 `~/.claude/rules/obsidian.md`、ob-write `references/write.md` 同步維護，改一處要三處同改。
 
-1. **CLI 可用**：執行 `obsidian vault`（PowerShell；Git Bash 用 `Obsidian.com vault`）。exit 0 且印出 vault path → 通過；非 0／找不到指令／空輸出 → 未命中，`miss_reason` 寫「跨專案查詢需 obsidian CLI，請確認 Obsidian app 正在執行，且已啟用 CLI（設定 → General → Command line interface）並重開 terminal」。
-2. **vault 身分**：CLI 回傳的 path 正規化後（大小寫、分隔符、尾斜線，且開頭 `~` 展開為當前使用者家目錄）必須等於本 vault root `~/code/obsidian-memory`。不符 → 未命中，`miss_reason` 寫「obsidian CLI 指向的 vault 非 obsidian-memory，已中止」。（前提：Obsidian 以 home 路徑開此 vault，CLI 才回 `<home>/code/obsidian-memory`；Windows 若回舊 junction 路徑 `C:\code\obsidian-memory` 會不符，須改用 home 路徑重開。）
-3. 通過後 `$VAULT_ROOT` = 該絕對路徑。後續三層搜尋：
-   - `Read` 帶絕對路徑（`$VAULT_ROOT/vault-map.md`、`$VAULT_ROOT/Cards/foo.md`）。
-   - `Glob`／`Grep` 帶 `path` 參數指向 `$VAULT_ROOT`（或其子目錄如 `$VAULT_ROOT/Cards`），pattern 照常。
-   - 搜尋全程仍走 harness-native 唯讀工具；`obsidian vault` 僅用於定位，不執行任何寫入子命令。
+**命中**：`$VAULT_ROOT` = 該 clone 根目錄。後續三層搜尋：
 
-> **shell 註記**：`obsidian` 在 PowerShell 經 PATHEXT 可直接用；Git Bash 不認 `.com`，改用 `Obsidian.com vault` 或 `powershell.exe -Command "obsidian vault"`，別誤判成「CLI 不可用」。
+- `Read` 帶絕對路徑（`$VAULT_ROOT/vault-map.md`、`$VAULT_ROOT/Cards/foo.md`）。
+- `Glob`／`Grep` 帶 `path` 參數指向 `$VAULT_ROOT`（或其子目錄如 `$VAULT_ROOT/Cards`），pattern 照常。
+
+**找不到**：輸出未命中 JSON、**不降級亂搜**、不做任何 fallback。`miss_reason` 寫「`~/code/obsidian-memory` 找不到 vault——尚未 clone 請 `git clone https://github.com/lllloo/obsidian-memory ~/code/obsidian-memory`；clone 在別處請建連結（Windows `mklink /J \"%USERPROFILE%\\code\" \"C:\\code\"`、WSL `ln -s /mnt/c/code ~/code`）」。
 
 ## Vault 佈局
 

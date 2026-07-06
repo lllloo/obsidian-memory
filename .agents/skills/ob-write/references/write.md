@@ -10,8 +10,6 @@
 
 ## §1. 模式前置 gate（先做，未通過不得寫入）
 
-> **shell 註記**（兩模式皆適用）：`obsidian` 在 PowerShell 經 PATHEXT 可直接用；Git Bash 不認 `.com`，會 `command not found`——此時改用 `Obsidian.com <cmd>` 或 `powershell.exe -Command "obsidian ..."`，不要把它誤判成「CLI 不可用」而中止。
-
 ### MODE=local（cwd 已在 vault root）
 
 本模式契約是 **cwd 必須是 vault root**（底下直接有 `vault-map.md`、`Cards/`、`Topics/`）。所有路徑 cwd-relative。
@@ -20,24 +18,17 @@
 
 - 讀不到就停止，不要猜測寫到別的地方。
 - vault 身分天然確定（`vault-map.md` 在 = 就是這個 vault），不需額外比對 path。
-- 讀 vault 規則（見 §2）：CLI 可用 `obsidian read file="CLAUDE.md"`，不可用 `Read CLAUDE.md`（cwd-relative）。
-- 工具策略：**CLI 優先，不可用降級 Write/Edit**（見 §3）。
+- 讀 vault 規則（見 §2）：`Read CLAUDE.md`（cwd-relative）。
+- 工具策略：**harness-native 工具直寫（Write/Edit）**（見 §3）。
 
 ### MODE=cross（cwd 在其他專案）
 
-cwd 不在 vault，只能靠 obsidian CLI 定位與寫入。下列 gate **全部通過才可寫入；任一失敗即中止、不寫檔、不降級**：
+cwd 不在 vault，走**定位鏈**找本機 clone：`Read` 固定路徑 `~/code/obsidian-memory/vault-map.md`（`~` 先展開為當前使用者 home 絕對路徑；Windows 即 `%USERPROFILE%\code\obsidian-memory\vault-map.md`），讀到且內容含錨點 `title: Vault Map` 即驗明身分（harness-native，不經 shell、不依賴 obsidian CLI）。此路徑是**唯一候選**，不在它之外猜路徑；此約定與全域 `~/.claude/rules/obsidian.md`、ob-read `references/query.md` 同步維護，改一處要三處同改。
 
-1. **CLI 可用**：執行 `obsidian vault`（PowerShell；Git Bash 用 `Obsidian.com vault`）。exit 0 且印出 vault path → 通過；非 0 / 找不到指令 / 空輸出 → 中止，提示使用者確認 Obsidian app 正在執行，且已啟用 CLI（設定 → General → Command line interface 並重開 terminal）。
+**命中**：`$VAULT_ROOT` = 該 clone 根目錄，後續寫入用檔案工具**直寫該 clone**（Write/Edit 帶 `$VAULT_ROOT` 絕對路徑），**不 commit、不 push**。接著讀規則：`Read $VAULT_ROOT/CLAUDE.md`，成功且內容含錨點（字串「寫入前 Checklist」與「Frontmatter schema」）→ 通過；讀取失敗或缺錨點 → 中止。
 
-2. **vault 身分**：CLI 回傳的 vault path 正規化後（大小寫、分隔符、尾斜線，且開頭 `~` 展開為當前使用者家目錄）必須等於本 vault root `~/code/obsidian-memory`。不符 → 中止（避免寫進錯的 vault）。（前提：Obsidian 以 home 路徑開此 vault，CLI 才回 `<home>/code/obsidian-memory`；Windows 若回舊 junction 路徑 `C:\code\obsidian-memory` 會不符，須改用 home 路徑重開。）
+**找不到**：**中止**，不寫檔、不降級寫到別處、不做任何 fallback——跨專案寫入沒有任何遠端寫入路徑。提示使用者對齊路徑：尚未 clone → `git clone https://github.com/lllloo/obsidian-memory ~/code/obsidian-memory`（Windows 目標寫 `%USERPROFILE%\code\obsidian-memory`）；clone 在別處 → 建連結（Windows `mklink /J "%USERPROFILE%\code" "C:\code"`、WSL `ln -s /mnt/c/code ~/code`）。
 
-3. **規則讀取**：
-   ```
-   obsidian read file="CLAUDE.md"
-   ```
-   （shell 差異同上：Git Bash 用 `Obsidian.com read ...`）成功且內容含錨點（字串「寫入前 Checklist」與「Frontmatter schema」）→ 通過；讀取失敗或缺錨點 → 中止。
-
-- 工具策略：**嚴格 CLI，無 Write/Edit 降級**。
 - 無論 §2 的 CLAUDE.md 是否讀到，**§6 的 inline 最小保護一律生效**。
 - 不做歸檔 / `git mv`（§7 僅 local）。
 
@@ -47,8 +38,8 @@ cwd 不在 vault，只能靠 obsidian CLI 定位與寫入。下列 gate **全部
 
 CLAUDE.md 是 vault 規則的唯一來源，此 reference 不重複內嵌完整規則（§6 的最小保護除外）。subagent 進場自己讀一次，確保規則到位：
 
-- `MODE=local`：CLI 可用 → `obsidian read file="CLAUDE.md"`；否則 `Read CLAUDE.md`。
-- `MODE=cross`：§1 gate 3 已讀到，直接沿用。
+- `MODE=local`：`Read CLAUDE.md`（cwd-relative）。
+- `MODE=cross`：§1 已讀 `$VAULT_ROOT/CLAUDE.md`，直接沿用。
 
 依 CLAUDE.md 的「寫入前 Checklist」逐項自檢（敏感資料、frontmatter schema、tag 沿用、命名），通過才寫入。
 
@@ -58,13 +49,13 @@ CLAUDE.md 是 vault 規則的唯一來源，此 reference 不重複內嵌完整�
 
 | 操作 | MODE=local | MODE=cross |
 |---|---|---|
-| 建檔（新檔） | **用 Write 直寫**（不經 shell、最可靠，見 §5） | obsidian CLI 的 `content=`（不用 stdin pipe）；不可用即中止 |
-| append / 改 frontmatter/tags | obsidian CLI 優先；不可用降級 Edit | **一律 obsidian CLI；不可用即中止** |
-| CLI 無對應操作（rename、batch regex、精準 old_string 局部修改） | 可用 `mv`/Write/Edit fallback，事後提醒 reload | 不做（提示使用者回 repo 處理） |
-| 查找/確認 vault 檔是否存在 | Glob/Grep/Read | 經 CLI（`obsidian read`/`obsidian search`） |
+| 建檔（新檔） | **用 Write 直寫**（不經 shell、最可靠，見 §5） | **用 Write 直寫**（帶 `$VAULT_ROOT` 絕對路徑，見 §5） |
+| append / 改 frontmatter/tags | Edit 直改 | Edit 直改（帶 `$VAULT_ROOT` 絕對路徑） |
+| rename、batch regex、精準 old_string 局部修改 | `mv`/Write/Edit，事後提醒 reload | 不做（提示使用者回 repo 處理） |
+| 查找/確認 vault 檔是否存在 | Glob/Grep/Read | Glob/Grep/Read 帶 `path=$VAULT_ROOT` |
 | 當前工作目錄的非 vault 檔（程式碼、文件） | Glob/Grep/Read/Edit/Write 皆可 | 同左（非 vault 不受限） |
 
-判斷原則：**能用 harness-native 工具（Glob/Read/Write/Grep/Edit）就用它**——不經 shell、不分 PowerShell/bash，沒有「挑錯 shell」失敗點。只有兩件事真需 shell：(1) `obsidian` CLI（要 Obsidian 即時感知變更，harness 工具做不到）、(2) 真需 pipeline 的聚合。落 shell 時範例直接寫對某一支（標 PowerShell / Git Bash），別寫含糊版讓模型臨場翻譯。走 Write/Edit 改 vault 檔後，提醒使用者 `Ctrl+P → Reload app without saving`。
+判斷原則：**一律用 harness-native 工具（Glob/Read/Write/Grep/Edit）**——不經 shell、不分 PowerShell/bash，沒有「挑錯 shell」失敗點。obsidian CLI 唯一剩餘用途是 `MODE=local` 寫完後選用 `obsidian open`（見 §5），CLI 不可用不影響任何流程。走 Write/Edit 改 vault 檔後，Obsidian file watcher 通常自動抓到；沒更新就提醒使用者 `Ctrl+P → Reload app without saving`。
 
 ---
 
@@ -90,44 +81,18 @@ CLAUDE.md 是 vault 規則的唯一來源，此 reference 不重複內嵌完整�
 
 ## §5. 建檔與寫入後驗證
 
-frontmatter 含完整 tags YAML 清單，依 CLAUDE.md 的 Frontmatter schema 與 §6；tags 直接寫進 frontmatter 文字，**不要事後用 `obsidian property:set` 補**（會變 inline 字串）。
+frontmatter 含完整 tags YAML 清單，依 CLAUDE.md 的 Frontmatter schema 與 §6；tags 直接寫進 frontmatter 文字。
 
-建檔機制依模式分流，主軸是**避開 shell 脆弱點**——Windows 上 stdin 經 `.com` redirector 餵 obsidian 已知會留 0 bytes 空檔，且 shell 語法 PowerShell/bash 不通用：
+建檔兩模式都用 **Write**（filesystem 寫入不經 shell、百分百可靠，沒有 PowerShell/bash 方言差異）：
 
-#### MODE=local 建檔 → 用 Write
+- `MODE=local`：`Write "Cards/<標題>.md"`（cwd-relative）帶完整 frontmatter + 正文。
+- `MODE=cross`：`Write "$VAULT_ROOT/Cards/<標題>.md"`（絕對路徑）帶完整 frontmatter + 正文。
 
-filesystem 寫入百分百可靠、不經 shell。**直接 `Write "Cards/<標題>.md"` 帶完整 frontmatter + 正文**，不走 `obsidian create`（stdin/CLI 多一次必然偶爾失敗的往返）。Obsidian file watcher 通常自動抓到外部新檔；沒更新就提醒 `Ctrl+P → Reload app without saving`。要 app 立刻開該檔可選 `obsidian open file="Cards/<標題>.md"`（Git Bash 用 `Obsidian.com open ...`）。
+**寫入後驗證（一律檢查，不可只看「無 error」）**：`Read` 剛寫的檔（cross 帶 `$VAULT_ROOT` 絕對路徑），看得到完整 frontmatter（開頭 `---` 與 `title:`）+ 正文即過；讀取失敗／內容缺損 → **中止並如實回報**，不盲目重寫。
 
-#### MODE=cross 建檔 → 用 `content=` 參數，不用 stdin pipe
+Obsidian file watcher 通常自動抓到外部新檔；沒更新就提醒 `Ctrl+P → Reload app without saving`。`MODE=local` 要 app 立刻開該檔可選 `obsidian open file="Cards/<標題>.md"`（PowerShell 直接 `obsidian`；Git Bash 不認 `.com`，用 `Obsidian.com open ...`）；`MODE=cross` 省略 `open`（人在他專案，別彈 vault UI）。
 
-cross 不能 Write，只能 CLI，但**避開 stdin pipe**（redirector 透傳不穩）。用 `content=` 帶整段內容：
-
-- PowerShell：**直接在字串內用 `` `n `` 換行**，不要先存進多行變數再展開——多行 here-string 變數展開後經 CLI redirector 會丟內容：
-  ```powershell
-  obsidian create path="Cards/<標題>.md" content="---`ntitle: <標題>`ntags:`n  - foo`n---`n正文"
-  ```
-- Git Bash：`Obsidian.com create path="Cards/<標題>.md" content="---\ntitle: <標題>\n---\n正文"`
-
-省略 `open`（人在他專案，別彈 vault UI）。寫入後必走下方驗證。
-
-**寫入後驗證（一律檢查，不可只看「無 error」）**——cross 經 CLI 寫入時，驗證才能確認內容有確實寫進去。驗證機制**依模式分流**：CLI 的 `file=`/`path=` 一律 vault-relative、跨 cwd 也定位得到；filesystem 路徑只在 cwd=vault root 時才解得到。
-
-### MODE=local（cwd=vault root，可用 filesystem）
-
-建檔走 Write，工具寫失敗會直接報錯；仍 `Read "Cards/<標題>.md"` 確認一次，看得到完整 frontmatter + 正文即過——不經 shell、不分 PowerShell/bash。
-
-### MODE=cross（嚴格 CLI，禁碰 filesystem）
-
-cwd 不在 vault，filesystem 既解不到 vault 路徑、又違反本模式「不降級」契約，**只能經 CLI 驗證**：
-
-```
-obsidian read file="Cards/<標題>.md"   # file= 為 vault-relative，CLI 自行定位（Git Bash 用 Obsidian.com）
-```
-
-- 回傳內容非空、且含 frontmatter 錨點（開頭 `---` 與 `title:`）→ 通過。
-- 讀取失敗 / 空內容 / 缺錨點 → **中止並如實回報**（附 CLI 輸出），不降級。
-
-完成後回應：「已建立筆記《標題》✓」+ 路徑（+ 模式 / 是否降級）。
+完成後回應：「已建立筆記《標題》✓」+ 路徑（+ 模式）。
 
 ---
 

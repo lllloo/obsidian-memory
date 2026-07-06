@@ -12,24 +12,19 @@ git clone <repo-url> obsidian-memory
 
 - [Obsidian](https://obsidian.md/) — 編輯與圖譜瀏覽
 - Python 3（純 stdlib）— skill 腳本執行所需
-- [Obsidian CLI](https://help.obsidian.md/cli)（選用）— 跨專案呼叫 `ob-write` / `ob-read` 時用來定位 vault
+- [Obsidian CLI](https://help.obsidian.md/cli)（選用）— 僅剩 `ob-write` 本地寫完後 `obsidian open` 立即開檔用，不影響任何流程
 
 在 Obsidian 直接「Open folder as vault」開啟本 repo 即可閱讀編輯；skill 由 Claude Code 在 repo 根目錄喚起。
 
 ### vault 路徑約定（跨平台）
 
-skill 契約與跨專案身分核對統一以 **`~/code/obsidian-memory`** 指向 vault root（`ob-write` / `ob-read` 核對時將 `~` 展開為家目錄後比對 Obsidian CLI 回傳的路徑）。各平台對齊方式：
+跨專案呼叫 `ob-write` / `ob-read` 時，定位鏈只認**固定路徑 `~/code/obsidian-memory`**（Read 該處 `vault-map.md`，含錨點 `title: Vault Map` 即驗明身分，不依賴 obsidian CLI）。各平台對齊方式：
 
-- **macOS / WSL**：clone 到 `~/code/obsidian-memory`（`/Users/<user>/...`、`/home/<user>/...`），home 底下天生成立，無需額外設定。
-- **Windows**：vault 實體可留在 `C:\code\obsidian-memory`，另建 junction 讓 `~/code`（即 `%USERPROFILE%\code`）指向 `C:\code`：
+- **macOS / Linux**：clone 到 `~/code/obsidian-memory`，天生成立。
+- **Windows**：clone 到 `%USERPROFILE%\code\obsidian-memory`；vault 實體在別處（如 `C:\code\obsidian-memory`）時建連結：`mklink /J "%USERPROFILE%\code" "C:\code"`（免管理員權限，前提該路徑尚不存在）。
+- **WSL**：vault 實體通常在 Windows 側，建連結：`ln -s /mnt/c/code ~/code`。
 
-  ```cmd
-  mklink /J "%USERPROFILE%\code" "C:\code"
-  ```
-
-  （PowerShell 內：`cmd /c mklink /J "$env:USERPROFILE\code" "C:\code"`；junction 免管理員權限，前提 `%USERPROFILE%\code` 尚不存在。）
-
-  接著在 Obsidian **以 home 路徑 `%USERPROFILE%\code\obsidian-memory` 開啟此 vault**（非舊的 `C:\code\...`），`obsidian vault` 回傳的路徑經 `~` 展開才對得上核對契約。cmd.exe 不認 `~`，手動 `cd` 時改用 `%USERPROFILE%\code\obsidian-memory`。
+找不到時 skill 不做任何 fallback，直接以上述對齊方式提示。Obsidian 用哪個路徑開啟 vault 不影響定位；手動 `cd` 統一用 `~/code/obsidian-memory`（cmd.exe 不認 `~`，改用 `%USERPROFILE%\code\obsidian-memory`）。
 
 ## 結構
 
@@ -59,7 +54,7 @@ skill 契約與跨專案身分核對統一以 **`~/code/obsidian-memory`** 指�
 | `/vault-updates-daily` | 彙整日常更新 |
 | `/vault-lint` | Vault 結構健檢 |
 
-**使用契約**：cwd 必須是本 repo 根目錄（含 `vault-map.md` 的目錄），所有路徑 cwd-relative，不靠環境變數。從別的專案想呼叫 skill，先 `cd` 進來。**例外**：`ob-write` 為 global skill（symlink/junction 到 `~/.claude/skills/`），任何專案皆可呼叫——cwd 不在 vault 時自動走跨專案模式（嚴格 CLI 定位 vault）。
+**使用契約**：cwd 必須是本 repo 根目錄（含 `vault-map.md` 的目錄），所有路徑 cwd-relative，不靠環境變數。從別的專案想呼叫 skill，先 `cd` 進來。**例外**：`ob-write` / `ob-read` 為 global skills（symlink/junction 到 `~/.claude/skills/`），任何專案皆可呼叫——cwd 不在 vault 時自動走跨專案模式（定位鏈找本機 clone，見上方「vault 路徑約定」）。
 
 ## 兩個入口檔的差別
 
