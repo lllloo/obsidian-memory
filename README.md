@@ -16,6 +16,21 @@ git clone <repo-url> obsidian-memory
 
 在 Obsidian 直接「Open folder as vault」開啟本 repo 即可閱讀編輯；skill 由 Claude Code 在 repo 根目錄喚起。
 
+### vault 路徑約定（跨平台）
+
+skill 契約與跨專案身分核對統一以 **`~/code/obsidian-memory`** 指向 vault root（`ob-write` / `ob-read` 核對時將 `~` 展開為家目錄後比對 Obsidian CLI 回傳的路徑）。各平台對齊方式：
+
+- **macOS / WSL**：clone 到 `~/code/obsidian-memory`（`/Users/<user>/...`、`/home/<user>/...`），home 底下天生成立，無需額外設定。
+- **Windows**：vault 實體可留在 `C:\code\obsidian-memory`，另建 junction 讓 `~/code`（即 `%USERPROFILE%\code`）指向 `C:\code`：
+
+  ```cmd
+  mklink /J "%USERPROFILE%\code" "C:\code"
+  ```
+
+  （PowerShell 內：`cmd /c mklink /J "$env:USERPROFILE\code" "C:\code"`；junction 免管理員權限，前提 `%USERPROFILE%\code` 尚不存在。）
+
+  接著在 Obsidian **以 home 路徑 `%USERPROFILE%\code\obsidian-memory` 開啟此 vault**（非舊的 `C:\code\...`），`obsidian vault` 回傳的路徑經 `~` 展開才對得上核對契約。cmd.exe 不認 `~`，手動 `cd` 時改用 `%USERPROFILE%\code\obsidian-memory`。
+
 ## 結構
 
 - `Inbox/` — 待消化暫存（AI 抄錄外部原料，消化完刪除）

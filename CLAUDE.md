@@ -23,7 +23,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working in this
 
 驗證方式用 harness-native `Read vault-map.md`（不經 shell、跨平台）——讀得到即在 vault root，讀不到就停止並請使用者 cd 過來。不要用 `[ -f vault-map.md ]` 之類 shell gate（在 Windows 預設 PowerShell 會翻車）。
 
-從其他專案呼叫本 repo skill 前，先 cd 到 vault root：Windows `C:\code\obsidian-memory`、macOS `/Users/barney/code/obsidian-memory`。
+從其他專案呼叫本 repo skill 前，先 cd 到 vault root：`~/code/obsidian-memory`（三平台一致；cmd.exe 不認 `~`，改用 `%USERPROFILE%\code\obsidian-memory`）。
 
 ## 寫入前 Checklist
 

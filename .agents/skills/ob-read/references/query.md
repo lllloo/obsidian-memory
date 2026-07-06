@@ -30,7 +30,7 @@ prompt 末段帶 `MODE=local|cross`。先據此解析出 **$VAULT_ROOT**（vault
 cwd 不在 vault，只能靠 obsidian CLI 定位。下列 gate **全部通過才可搜尋；任一失敗即輸出未命中 JSON、不降級亂搜**：
 
 1. **CLI 可用**：執行 `obsidian vault`（PowerShell；Git Bash 用 `Obsidian.com vault`）。exit 0 且印出 vault path → 通過；非 0／找不到指令／空輸出 → 未命中，`miss_reason` 寫「跨專案查詢需 obsidian CLI，請確認 Obsidian app 正在執行，且已啟用 CLI（設定 → General → Command line interface）並重開 terminal」。
-2. **vault 身分**：CLI 回傳的 path 正規化後（大小寫、分隔符、尾斜線）必須等於本 vault root——Windows `C:\code\obsidian-memory`、macOS `/Users/barney/code/obsidian-memory`。不符 → 未命中，`miss_reason` 寫「obsidian CLI 指向的 vault 非 obsidian-memory，已中止」。
+2. **vault 身分**：CLI 回傳的 path 正規化後（大小寫、分隔符、尾斜線，且開頭 `~` 展開為當前使用者家目錄）必須等於本 vault root `~/code/obsidian-memory`。不符 → 未命中，`miss_reason` 寫「obsidian CLI 指向的 vault 非 obsidian-memory，已中止」。（前提：Obsidian 以 home 路徑開此 vault，CLI 才回 `<home>/code/obsidian-memory`；Windows 若回舊 junction 路徑 `C:\code\obsidian-memory` 會不符，須改用 home 路徑重開。）
 3. 通過後 `$VAULT_ROOT` = 該絕對路徑。後續三層搜尋：
    - `Read` 帶絕對路徑（`$VAULT_ROOT/vault-map.md`、`$VAULT_ROOT/Cards/foo.md`）。
    - `Glob`／`Grep` 帶 `path` 參數指向 `$VAULT_ROOT`（或其子目錄如 `$VAULT_ROOT/Cards`），pattern 照常。
