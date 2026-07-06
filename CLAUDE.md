@@ -126,8 +126,8 @@ Topics 的 `index.md` 是主題入口；Cards/筆記也可以是整合頁。不�
 
 | Skill | 用途 |
 |---|---|
-| `ob-write` | 筆記建立（global，任何專案可呼叫；cwd=vault root 不限工具，跨專案嚴格 CLI） |
-| `ob-read` | vault 查詢（global，任何專案可呼叫；cwd=vault root 本地直搜，跨專案嚴格 CLI 定位後唯讀三層搜尋） |
+| `ob-write` | 筆記建立（global，任何專案可呼叫；cwd=vault root 不限工具，跨專案走定位鏈直寫本機 clone） |
+| `ob-read` | vault 查詢（global，任何專案可呼叫；cwd=vault root 本地直搜，跨專案定位鏈定位後唯讀三層搜尋） |
 | `vault-youtube-sync` | YouTube 影片摘要同步至 Inbox |
 | `vault-updates-daily` | 日常更新彙整 |
 | `vault-lint` | Vault 結構健檢 |
