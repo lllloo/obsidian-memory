@@ -12,7 +12,7 @@ description: 把內容「寫進／建立／新增」到 Obsidian vault（obsidia
 
 寫入分兩種模式，先判 cwd——用 `Read vault-map.md` 確認存在（harness-native，不經 shell、不分 PowerShell/bash）：讀得到 → `MODE=local`；讀不到 → `MODE=cross`。
 
-- `MODE=local`：cwd 已是 vault root → 本地模式，不限工具（建檔用 Write，其餘 CLI 優先）。
+- `MODE=local`：cwd 已是 vault root → 本地模式，建檔／改檔一律用 harness-native 工具（Write／Edit）；obsidian CLI 僅寫完後選用 `obsidian open`，不可用不影響流程。
 - `MODE=cross`：cwd 在其他專案 → 走定位鏈（固定路徑 `~/code/obsidian-memory`）找本機 clone 直寫（不 commit、不 push）；找不到即中止提示對齊路徑，不降級寫到別處。
 
 ## 執行
