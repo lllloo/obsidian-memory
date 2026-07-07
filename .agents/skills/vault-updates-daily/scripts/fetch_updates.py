@@ -477,13 +477,25 @@ def fetch_releases(repo: str, since: dt.datetime) -> None:
 
 
 
-def fetch_github_changelog(since: dt.datetime) -> None:
-    url = "https://github.blog/changelog/feed/"
+def _is_github_blog_feed(url: str) -> bool:
+    """True for any github.blog changelog RSS feed — the general
+    `/changelog/feed/` or a label-scoped one like `/changelog/label/copilot/feed/`.
+    github.blog is a distinct domain from github.com/api.github.com and is not
+    subject to the Anthropic agent proxy's repository-bound access restriction."""
+    stripped = url.rstrip("/")
+    return stripped.startswith("https://github.blog/changelog") and stripped.endswith("/feed")
+
+
+def fetch_github_changelog(name: str, url: str, since: dt.datetime) -> None:
+    # Label-scoped feeds (e.g. /changelog/label/copilot/feed/) are already
+    # precision-scoped by GitHub's own labeling — only the unscoped general
+    # feed needs the keyword filter to cut cross-topic noise.
+    apply_keyword_filter = url.rstrip("/") == _GITHUB_RSS_URL.rstrip("/")
     try:
         text = request_text(url)
         root = ET.fromstring(text)
     except Exception as exc:  # noqa: BLE001
-        print(f"ERROR:GitHub Changelog:{exc}")
+        print(f"ERROR:{name}:{exc}")
         return
 
     for item in root.findall(".//item"):
@@ -492,11 +504,12 @@ def fetch_github_changelog(since: dt.datetime) -> None:
         published = _parse_rss_date(item.findtext("pubDate") or "")
         if not published or published < since:
             continue
-        haystack = title.lower()
-        if not any(keyword in haystack for keyword in CHANGELOG_KEYWORDS):
-            continue
+        if apply_keyword_filter:
+            haystack = title.lower()
+            if not any(keyword in haystack for keyword in CHANGELOG_KEYWORDS):
+                continue
         desc = _sanitize_body(item.findtext("description") or "")
-        print(f"CHANGELOG:GitHub Changelog|||{published.isoformat()}|||{title}|||{link}|||{desc}")
+        print(f"CHANGELOG:{name}|||{published.isoformat()}|||{title}|||{link}|||{desc}")
 
 
 DEFAULT_INDEX = "Inbox/Updates/01.index.md"
@@ -607,8 +620,8 @@ def main() -> int:
     print(f"META:since|||{since.date().isoformat()}")
 
     for name, url, tag in official_sources:
-        if url.rstrip("/") == _GITHUB_RSS_URL.rstrip("/"):
-            fetch_github_changelog(since)
+        if _is_github_blog_feed(url):
+            fetch_github_changelog(name, url, since)
         else:
             print(f"OFFICIAL:{_sanitize(name)}|||{_sanitize(url)}|||{_sanitize(tag)}")
 

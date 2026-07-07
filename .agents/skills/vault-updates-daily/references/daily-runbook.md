@@ -39,9 +39,11 @@ sync: releases
 - `GitHub repositories`：`- <owner>/<repo>|<tag>`，每行一個明確追蹤 repo；抓 releases。
 - `GitHub starred`：`sync: releases` 代表啟用。有兩條路，腳本自動選：
   - **有 auth（`gh` 已登入，或 `GITHUB_TOKEN`／`GH_TOKEN` 屬於 star 擁有者本人）**：單一 GraphQL `viewer` call 抓所有 starred repos 的 releases，並**順手把 repo 清單寫回快照** `.agents/skills/vault-updates-daily/starred-repos.txt`。不要改成逐 repo REST call。
-  - **無 auth（如雲端 Claude agent）**：`viewer` query 需身分憑證，headless 環境查不到「我 star 了誰」。腳本改讀快照的 repo 清單，逐 repo 抓 `https://github.com/<repo>/releases.atom`——由 github.com 提供，免身分、不吃 REST 的 60/hr rate limit。
+  - **無 auth（一般 token-free 環境）**：`viewer` query 需身分憑證，headless 環境查不到「我 star 了誰」。腳本改讀快照的 repo 清單，逐 repo 抓 `https://github.com/<repo>/releases.atom`——由 github.com 提供，免身分、不吃 REST 的 60/hr rate limit。
+  - **Claude Code 雲端 GitHub proxy 限制**：Anthropic agent proxy 會攔截 `github.com` / `api.github.com`，並把 session 綁定到已配置 repositories。若 session 只授權本 vault repo，`GitHub repositories` 清單中列出的 repo 與 starred repos 的 releases / atom 會被 proxy 回 `403`（例如 `GitHub access to this repository is not enabled for this session. Use add_repo to request access.` 或 `sessions are bound to their configured repositories.`）。這不是 GitHub 回的 rate limit，也不是 relay failure；`releases.atom` 也會被同一層政策擋住，快照 fallback 無法解決。有官方非 GitHub changelog 頁的工具（如 `openai/codex`、`anthropics/claude-code`）因此優先改列 `Official changelogs`，從根源避開此限制。
+  - **本 vault 目前停用 starred 同步**：本 vault 只在雲端執行、不本機跑，而 starred 本質是「我在 GitHub star 了誰」，沒有非 GitHub 替代來源，即使有快照，atom fallback 仍會被上述 proxy 擋下——在純雲端模式下結構性永遠踩不通。故 `01.index.md` 目前**沒有**寫入 `## GitHub starred` / `sync: releases`。若未來改回會定期本機執行的操作模式，才考慮重新啟用（啟用前需先本機跑一次 `--snapshot-starred` 建快照，見下段快照維護說明）。
 
-  快照維護：快照由本機 authed 執行時自動保鮮（每跑一次 daily 就更新）。要在不跑 daily 的情況下手動刷新，本機執行 `python3 .agents/skills/vault-updates-daily/scripts/fetch_updates.py --snapshot-starred`。雲端首次啟用前，務必先在本機跑過一次讓快照存在——否則雲端會回 `ERROR:starred:no auth and no snapshot ...`。
+  快照維護（僅在重新啟用 starred 時適用）：快照由本機 authed 執行時自動保鮮（每跑一次 daily 就更新）。要在不跑 daily 的情況下手動刷新，本機執行 `python3 .agents/skills/vault-updates-daily/scripts/fetch_updates.py --snapshot-starred`。雲端啟用前，務必先在本機跑過一次讓快照存在——否則雲端會回 `ERROR:starred:no auth and no snapshot ...`。
 - 三段可任意省略；至少一段非空。不要自動產生預設清單。
 - 新增或移除工具時，只改 index；不要改 `SKILL.md` 或 `fetch_updates.py`。
 
@@ -72,6 +74,8 @@ python3 .agents/skills/vault-updates-daily/scripts/fetch_updates.py
 
 記錄 `ERROR:` 後繼續處理其他來源；最後回覆列出需要人工追蹤的錯誤或候選。
 
+若 explicit repo / starred atom 大量出現 Anthropic proxy 的 repo-bound `403`，回覆時標成「session GitHub repository access 未授權」，不要寫成 GitHub 整站 egress 封鎖。
+
 抓取上限：
 
 - starred repos：前 100 個（live viewer query）；快照 fallback 則為快照內的全部 repo。
@@ -82,9 +86,7 @@ python3 .agents/skills/vault-updates-daily/scripts/fetch_updates.py
 
 ## Official Changelog Handling
 
-> 目前 `01.index.md` 的官方來源只有 GitHub Changelog RSS（由腳本直接轉 `CHANGELOG:`），不會產生 `OFFICIAL:` 行，故本段休眠。保留供日後在 index 加入「單頁 + 日期/版本 heading」型官方 changelog 時使用——屆時腳本會列出 `OFFICIAL:`，依下列步驟處理。
-
-`fetch_updates.py` 對多數 `OFFICIAL:` 只列 URL，不抓頁面。GitHub Changelog RSS 例外，會直接轉成 `CHANGELOG:`。
+`fetch_updates.py` 對多數 `OFFICIAL:` 只列 URL，不抓頁面，交由執行 skill 的 agent 依下列步驟處理。**任何 `github.blog/changelog/.../feed/` 網址**是例外，腳本會自動辨識並直接轉成 `CHANGELOG:`（不限定 `/changelog/feed/` 這個總覽 feed，label 專屬 feed 如 `/changelog/label/copilot/feed/` 一樣自動處理）——只有未加 `/label/` 的總覽 feed 才會套用 `CHANGELOG_KEYWORDS` 關鍵字過濾，label feed 本身已經是精準範圍，不再過濾。
 
 處理 `OFFICIAL:`：
 
@@ -99,6 +101,24 @@ CHANGELOG:<name>|||<entry-date>|||<entry-title>|||<url>#<slug>|||<body-snippet>
 ```
 
 `body-snippet` 取純文字並截斷到 800 字元。無法取得個別 entry URL 時，用頁面 URL 加 heading slug 只作顯示連結；anchor 不作為去重依據。
+
+**週報式 labelled block 變體**（例如 `code.claude.com` 的 Claude Code What's New 頁）：內容不是逐條 `##`/`###` heading，而是 `<Update label="Week N" description="<日期範圍>" tags={[...]}>...內容...</Update>` 區塊，區塊內含指向該週獨立頁面的「閱讀 Week N 摘要 →」連結（如 `/zh-TW/whats-new/2026-w26`，補上網域即為完整 URL，例如 `https://code.claude.com/docs/zh-TW/whats-new/2026-w26`）。抽取規則：
+
+1. 每個 `<Update>` block 算一筆候選。
+2. `entry-date` 取 `description` 日期範圍的**結束日**（較寬鬆，避免同週稍早的更新因 since 卡在範圍中段而被漏掉）。
+3. `entry-title` 用 `label` + `description`，例如 `Week 26（2026 年 6 月 22–26 日）`。
+4. `url` 用該週獨立頁面的完整網址（每週各自穩定，可直接走一般 URL dedup，不必落到 `--tool/--key`）。
+5. `body-snippet` 取 block 內文字內容（`label`/`description`/`tags` 屬性以外的段落），依一般規則截斷 800 字元。
+
+**單頁版本清單變體**（例如 `opencode.ai/changelog`）：整頁列出所有版本，新到舊排列，每個版本以版本連結（如 `[v1.17.14]`）加日期起頭，非 `##`/`###` heading，頁面內也沒有各版本專屬錨點（版本連結多半指向該版本的 GitHub release，不可拿來當本頁 dedup URL）。抽取規則：
+
+1. 依版本連結 + 日期切出每個版本區塊，只保留日期 `>= since` 的區塊。
+2. `entry-date` 用區塊旁標示的日期。
+3. `entry-title` 用版本號，例如 `v1.17.14`。
+4. 沒有獨立 URL 可用，dedup 改走 `--tool "<index 內該來源的顯示名>" --key "<版本號>"`（見下方 Dedup 一節），**不要**傳頁面 URL。
+5. `body-snippet` 取該版本區塊內文字內容，依一般規則截斷 800 字元；區塊常見子分類（如 Core／TUI／Desktop／SDK）可保留在摘要裡供分析判斷影響範圍。
+
+同樣道理也適用於 `geminicli.com/docs/changelogs/`（Gemini CLI 全歷史頁）：這裡的 heading 是標準格式 `## Announcements: v0.45.0 - 2026-06-03`，日期就在 heading 內，可直接套用最上方的步驟 1-5 抽取；差別只在於頁面同樣沒有每筆各自的外部網址（只有頁內錨點），所以 dedup 一樣要用 `--tool/--key`，不要把錨點當獨立 URL。
 
 ## High-Precision Filtering
 
@@ -125,7 +145,7 @@ Release（`RELEASE:`）與 GitHub Changelog（`CHANGELOG:`）都有 per-entry �
 python3 .agents/skills/vault-updates-daily/scripts/dedup_check.py "<url>"
 ```
 
-`--tool/--key` 模式僅為「單頁 + 漂移 anchor」型官方 changelog 保留（目前來源皆有穩定 URL，用不到）；若日後在 index 加入這類 changelog，改用工具名與穩定鍵、**不傳頁面 URL**：
+`--tool/--key` 模式用於「單頁列出全部版本、無獨立外部網址」型官方 changelog（`OpenCode`、`Gemini CLI` 皆屬此類，見上方「單頁版本清單變體」），改用工具名與穩定鍵、**不傳頁面 URL**：
 
 ```
 python3 .agents/skills/vault-updates-daily/scripts/dedup_check.py --tool "<工具名>" --key "<版本或標題關鍵字>"
