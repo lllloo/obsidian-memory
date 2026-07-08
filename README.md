@@ -27,14 +27,14 @@ git clone <repo-url> obsidian-memory
   - `Updates/` — 日常更新彙整
 - `wiki/` — 活知識庫（agent 綜合 raw 維護的摘要/實體/概念/綜合頁，含內容目錄 `01.index.md`）
 - `Cards/`、`Topics/` — **使用者私人策展區，agent 不管理**；同時是 Quartz 唯一對外公開的層。使用者自行從 wiki 撿選內容放入
-- 資料夾完整索引見 [`vault-map.md`](./vault-map.md)
+- 資料夾完整索引見 [`schema/vault-map.md`](./schema/vault-map.md)
 - `index.md` — 真人讀者入口（Quartz 網站首頁，列主題與 tag 連結）
-- `vault-map.md` — agent 用的全局導航與 tag 查詢
+- `schema/vault-map.md` — agent 用的全局導航與 tag 查詢
 - `.agents/skills/` — repo-local Claude Code skills（`.claude/skills` 為 symlink）
 
 ## 規則與工作流
 
-先看 [`SYSTEM-DESIGN.md`](./SYSTEM-DESIGN.md)——系統全貌：Karpathy LLM Wiki 心智模型、人/AI 分工、刻意不做的事。可執行規則（agent 維護規則、Ingest/Query/Lint、寫入慣例、唯一守門）見 [`CLAUDE.md`](./CLAUDE.md)，導航見 [`vault-map.md`](./vault-map.md)。
+先看 [`schema/SYSTEM-DESIGN.md`](./schema/SYSTEM-DESIGN.md)——系統全貌：Karpathy LLM Wiki 心智模型、人/AI 分工、刻意不做的事。可執行規則（agent 維護規則、Ingest/Query/Lint、寫入慣例、唯一守門）見 [`CLAUDE.md`](./CLAUDE.md)，導航見 [`schema/vault-map.md`](./schema/vault-map.md)。
 
 ## Skills
 
@@ -45,7 +45,7 @@ git clone <repo-url> obsidian-memory
 | `/vault-youtube-sync` | 同步 YouTube 影片摘要至 raw |
 | `/vault-updates-daily` | 彙整日常更新至 raw |
 
-**使用契約**：cwd 必須是本 repo 根目錄（含 `vault-map.md` 的目錄），所有路徑 cwd-relative，不靠環境變數。從別的專案想呼叫 skill，先 `cd` 進來。
+**使用契約**：cwd 必須是本 repo 根目錄（含 `CLAUDE.md` 的目錄），所有路徑 cwd-relative，不靠環境變數。從別的專案想呼叫 skill，先 `cd` 進來。
 
 > 原核心 skill `ob-write`、`ob-read`（global）、`vault-wiki-build`、`vault-lint` 已移除；Ingest（wiki 綜合）／Query／Lint 三動作目前由 agent 手動執行，後續按需重建。
 
@@ -54,4 +54,4 @@ git clone <repo-url> obsidian-memory
 | 檔案 | 給誰看 | 內容 |
 |---|---|---|
 | `index.md` | 真人讀者（Quartz 訪客） | bugloop.com 首頁，挑感興趣的主題逛 |
-| `vault-map.md` | AI / agent | Vault 結構地圖、tag 索引、查詢用地形圖 |
+| `schema/vault-map.md` | AI / agent | Vault 結構地圖、tag 索引、查詢用地形圖 |

@@ -7,12 +7,15 @@ tags:
 ---
 
 
-## 根層治理檔
+## schema 層治理檔
+
+> `CLAUDE.md`（+ `AGENTS.md` symlink）因 harness 從 repo root 自動載入而留在 root；敘述文件 `SYSTEM-DESIGN.md` 與本檔已移入 `schema/`。CWD 契約改用只存在於 root 的 `CLAUDE.md` 當「在 vault root」的驗證檔。
 
 | 檔案 | 職責 |
 |---|---|
-| `CLAUDE.md` | schema：agent 維護規則、三層架構、Ingest/Query/Lint、寫入慣例、唯一守門 git push（`AGENTS.md` 為其 symlink） |
-| `SYSTEM-DESIGN.md` | 運作總綱：Karpathy LLM Wiki 心智模型、人/AI 分工、刻意不做的事 |
+| `CLAUDE.md`（root） | schema：agent 維護規則、三層架構、Ingest/Query/Lint、寫入慣例、唯一守門 git push（`AGENTS.md` 為其 symlink） |
+| `schema/SYSTEM-DESIGN.md` | 運作總綱：Karpathy LLM Wiki 心智模型、人/AI 分工、刻意不做的事 |
+| `schema/vault-map.md` | 本檔：全局導航與 tag 查詢地圖 |
 
 ## 資料夾索引
 
@@ -20,6 +23,7 @@ tags:
 
 ```
 .
+├── schema/      — schema 層敘述文件：SYSTEM-DESIGN.md（運作總綱）、vault-map.md（本檔，導航）；CLAUDE.md/AGENTS.md 因 harness 自動載入留 root
 ├── raw/         — 不可變原始來源。agent 只讀不改，事實來源
 │   ├── YouTube/   — 影片摘要，依頻道分組；各頻道 01.index.md + 02.影片清單.base 索引（含 last_sync_id checkpoint）
 │   │   ├── AIJasonZ/              — Claude 設計工作流、Skills、Agent 記憶體管理

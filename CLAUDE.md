@@ -1,6 +1,6 @@
 # CLAUDE.md
 
-本檔是這個 vault 的 **schema**：告訴 agent 這套 Karpathy LLM Wiki 怎麼維護。系統全貌與心智模型見 [`SYSTEM-DESIGN.md`](SYSTEM-DESIGN.md)，全局導航與 tag 查詢見 [`vault-map.md`](vault-map.md)。
+本檔是這個 vault 的 **schema**：告訴 agent 這套 Karpathy LLM Wiki 怎麼維護。系統全貌與心智模型見 [`SYSTEM-DESIGN.md`](schema/SYSTEM-DESIGN.md)，全局導航與 tag 查詢見 [`vault-map.md`](schema/vault-map.md)。
 
 > 這個 vault 是 Karpathy 的 [LLM Wiki](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f) 實作：agent 漸進維護一套互聯的 markdown wiki，夾在你與原始資料之間。不是 RAG——知識被編譯一次後持續維護，是複利資產。
 
@@ -10,7 +10,7 @@
 |---|---|---|
 | `raw/` | 不可變原始來源（你精選的原料，事實來源） | **只讀不改** |
 | `wiki/` | agent 完全掌管的活知識庫：摘要、實體、概念、比較、綜合 | **全權**：自由建頁、改頁、刪頁、交叉引用、維護 index |
-| schema | 本檔 + `SYSTEM-DESIGN.md` + `vault-map.md`（規範 agent 行為） | 依規則維護 |
+| schema | 本檔（root）+ `schema/SYSTEM-DESIGN.md` + `schema/vault-map.md`（規範 agent 行為） | 依規則維護 |
 
 **`Cards/` 與 `Topics/` 不屬於本系統。** 它們是使用者的私人資料夾，同時是 Quartz **唯一對外公開發佈**的層。agent 一律**不讀、不寫、不掃描、不維護、不索引** Cards/Topics——Ingest、Query、Lint 全部跳過它們。使用者自行從 wiki 手動撿選、複製想公開的內容進去；那是使用者的動作，不是系統的一環。
 
@@ -24,9 +24,9 @@ agent 自主維護 wiki（含改頁、刪頁），**不需逐步拍板**——�
 
 ## CWD 契約
 
-所有 repo-local vault skills 都要求 cwd 是 vault root，也就是本 repo 根目錄，底下直接有 `vault-map.md`。
+所有 repo-local vault skills 都要求 cwd 是 vault root，也就是本 repo 根目錄，底下直接有 `CLAUDE.md`（schema 敘述文件 `SYSTEM-DESIGN.md`、`vault-map.md` 已移入 `schema/`；驗證改用只存在於 root 的 `CLAUDE.md`）。
 
-驗證方式用 harness-native `Read vault-map.md`（不經 shell、跨平台）——讀得到即在 vault root，讀不到就停止並請使用者 cd 過來。不要用 `[ -f vault-map.md ]` 之類 shell gate（在 Windows 預設 PowerShell 會翻車）。
+驗證方式用 harness-native `Read CLAUDE.md`（不經 shell、跨平台）——讀得到即在 vault root，讀不到就停止並請使用者 cd 過來。不要用 `[ -f CLAUDE.md ]` 之類 shell gate（在 Windows 預設 PowerShell 會翻車）。
 
 從其他專案呼叫本 repo skill 前，先 cd 到 vault root：`~/code/obsidian-memory`（三平台一致；cmd.exe 不認 `~`，改用 `%USERPROFILE%\code\obsidian-memory`）。
 
