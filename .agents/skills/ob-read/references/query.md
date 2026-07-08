@@ -23,7 +23,7 @@ prompt 末段帶 `MODE=local|cross`。先據此解析出 **$VAULT_ROOT**（vault
 
 ### MODE=local（cwd 已是 vault root）
 
-`Read vault-map.md` 確認存在（harness-native，不經 shell）。讀得到 → `$VAULT_ROOT` = cwd，後續路徑用 cwd-relative（`vault-map.md`、`Cards/**` …），Glob/Grep 回的本就是相對路徑。讀不到代表 MODE 判錯，直接輸出未命中 JSON，`miss_reason` 寫「MODE=local 但找不到 `vault-map.md`，cwd 不在 vault root」。
+`Read vault-map.md` 確認存在（harness-native，不經 shell）。讀得到 → `$VAULT_ROOT` = cwd，後續路徑用 cwd-relative（`vault-map.md`、`wiki/**` …），Glob/Grep 回的本就是相對路徑。讀不到代表 MODE 判錯，直接輸出未命中 JSON，`miss_reason` 寫「MODE=local 但找不到 `vault-map.md`，cwd 不在 vault root」。
 
 ### MODE=cross（cwd 在其他專案）
 
@@ -31,8 +31,8 @@ cwd 不在 vault，走**定位鏈**找本機 clone：`Read` 固定路徑 `~/code
 
 **命中**：`$VAULT_ROOT` = 該 clone 根目錄。後續三層搜尋：
 
-- `Read` 帶絕對路徑（`$VAULT_ROOT/vault-map.md`、`$VAULT_ROOT/Cards/foo.md`）。
-- `Glob`／`Grep` 帶 `path` 參數指向 `$VAULT_ROOT`（或其子目錄如 `$VAULT_ROOT/Cards`），pattern 照常。
+- `Read` 帶絕對路徑（`$VAULT_ROOT/vault-map.md`、`$VAULT_ROOT/wiki/foo.md`）。
+- `Glob`／`Grep` 帶 `path` 參數指向 `$VAULT_ROOT`（或其子目錄如 `$VAULT_ROOT/wiki`），pattern 照常。
 
 **找不到**：輸出未命中 JSON、**不降級亂搜**、不做任何 fallback。`miss_reason` 寫「`~/code/obsidian-memory` 找不到 vault——尚未 clone 請 `git clone https://github.com/lllloo/obsidian-memory ~/code/obsidian-memory`；clone 在別處請建連結（Windows `mklink /J \"%USERPROFILE%\\code\" \"C:\\code\"`、WSL `ln -s /mnt/c/code ~/code`）」。
 
@@ -40,10 +40,11 @@ cwd 不在 vault，走**定位鏈**找本機 clone：`Read` 固定路徑 `~/code
 
 - 入口：`vault-map.md` — 資料夾索引與 Tag 查詢指南都在裡面，**實際資料夾清單與 tag 字典以 vault-map 為準**，下列只是粗結構
 - 資料夾粗結構：
-  - `Cards/` — 未歸屬的完整概念 Cards（工作區）
-  - `Topics/<主題>/` — 已歸檔主題，第一層子目錄一個主題一個
+  - `wiki/` — agent 維護的活知識庫（摘要頁／實體頁／概念頁／綜合頁），`wiki/01.index.md` 為內容目錄
   - `raw/YouTube/<頻道>/` — 影片摘要，每個頻道一個子目錄
   - `raw/Clippings/` — 網頁剪貼
+  - `raw/Archive/`、`raw/Updates/` — 封存原料、日常更新彙整
+- **查詢範圍只有 `raw/` + `wiki/`**：`Cards/`、`Topics/` 是使用者私人區、Quartz 唯一公開層，agent 一律不讀、不寫、不掃描、不查詢——三層搜尋一律跳過這兩個資料夾
 - **搜尋時排除**：`.obsidian/`
 
 ## 三層搜尋策略
@@ -68,7 +69,7 @@ cwd 不在 vault，走**定位鏈**找本機 clone：`Read` 固定路徑 `~/code
 ### L3：正文 Grep 與驗證
 
 1. 對 L2 篩出的檔案 Grep 關鍵字正文（取 `-C 2` 看上下文）
-2. **L2 空集合 fallback**：若 L2 兩種篩選聯集後仍為 0 筆，L3 改對 `Cards/**/*.md` + `Topics/**/*.md` 全範圍 Grep（**排除 `raw/YouTube/`、`raw/Clippings/` 避免雜訊**）
+2. **L2 空集合 fallback**：若 L2 兩種篩選聯集後仍為 0 筆，L3 改對 `raw/**/*.md` + `wiki/**/*.md` 全範圍 Grep（**排除 `raw/YouTube/`、`raw/Clippings/` 避免雜訊**）
 3. 對 Grep 命中的檔案 Read 首 50 行，判斷是否真正回答問題（不只字面出現）
 4. 挑最相關 1~5 筆組成 `hits`
 
@@ -111,7 +112,7 @@ cwd 不在 vault，走**定位鏈**找本機 clone：`Read` 固定路徑 `~/code
 {
   "query": "<使用者原始問題>",
   "hits": [],
-  "miss_reason": "已檢查：Topics/Claude-Code/、raw/YouTube/Chase-H-AI/；嘗試關鍵字：dream, 記憶；皆無相關內容"
+  "miss_reason": "已檢查：wiki/、raw/YouTube/Chase-H-AI/；嘗試關鍵字：dream, 記憶；皆無相關內容"
 }
 ```
 
@@ -123,7 +124,7 @@ cwd 不在 vault，走**定位鏈**找本機 clone：`Read` 固定路徑 `~/code
 
 `path` 規則：
 
-- 一律回 **vault root 相對路徑**（如 `Cards/foo.md`），不要回絕對路徑
+- 一律回 **vault root 相對路徑**（如 `wiki/foo.md`），不要回絕對路徑
 - `MODE=local`：cwd 即 vault root，Glob/Grep 回的本就是相對路徑，直接用
 - `MODE=cross`：Glob/Grep 帶 `path=$VAULT_ROOT` 回的路徑可能含 `$VAULT_ROOT` 前綴，輸出前**去掉 `$VAULT_ROOT/` 前綴**轉回 vault-relative
 - **一律使用 forward slash（`/`）**，不論作業系統。Windows 路徑含 `\` 時，輸出前 replace `\` 為 `/`

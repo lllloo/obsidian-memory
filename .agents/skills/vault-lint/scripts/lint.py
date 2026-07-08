@@ -7,6 +7,11 @@
 
 輸出單一 JSON 物件到 stdout，欄位對應 SKILL.md 的掃描項表。
 不修改任何檔案；判讀與互動確認由呼叫端 agent 依 SKILL.md 處理。
+
+掃描範圍：只有 `raw/`、`wiki/`，加上根層治理 .md（CLAUDE.md / SYSTEM-DESIGN.md /
+vault-map.md / README.md / index.md，僅用於 dead_links 的連結來源與目標索引）。
+`Cards/`、`Topics/` 是使用者私人區、Quartz 唯一公開層，agent 一律不讀、不寫、
+不掃描、不索引——所有走訪目錄的邏輯都排除這兩個資料夾。
 """
 import datetime
 import json
@@ -23,31 +28,20 @@ except (AttributeError, OSError):
 
 ROOT = Path.cwd()
 
+# CLAUDE.md「### 4. Frontmatter schema」表格第一欄的機器執行副本，順序即正典順序。
 WHITELIST = [
     "title", "description", "created", "updated", "source",
-    "published", "parent", "last_sync_id", "draft", "extracted_to", "tags",
+    "published", "parent", "last_sync_id", "draft", "tags",
 ]
 WL_ORDER = {k: i for i, k in enumerate(WHITELIST)}
 
-REQUIRED_DIRS = [
-    "raw", "raw/Clippings", "raw/Updates", "raw/YouTube", "Cards", "Topics", "wiki",
-]
+REQUIRED_DIRS = ["raw", "raw/Clippings", "raw/Updates", "raw/YouTube", "wiki"]
 
-# 敏感資料 token 前綴正典：CLAUDE.md「### 2. 敏感資料」的機器執行副本，正規化為比對用 stem
-# （`xox[baprs]-`→`xox`、`-----BEGIN ... PRIVATE KEY-----`→`-----BEGIN`）。
-# 與 WHITELIST 同理：格式與 CLAUDE.md 散文不可互通，靠 sensitive_drift() 校驗不漂移。
-SENSITIVE_PREFIXES = [
-    "sk-", "sk-ant-", "ghp_", "gho_", "AKIA", "AIza", "xox", "eyJ", "-----BEGIN",
-]
+# Cards/Topics 是使用者私人區，agent 不掃；所有目錄走訪一律排除。
+EXCLUDED_TOP_DIRS = {"Cards", "Topics"}
 
-# 各 skill 中「自包含複製」這份黑名單的 subagent reference（執行時不保證載入 CLAUDE.md，故各自列全）。
-# 新增含敏感黑名單的 reference 時加入此清單，sensitive_drift() 會校驗它們涵蓋正典每個前綴。
-SENSITIVE_REFERENCE_FILES = [
-    ".agents/skills/ob-write/references/write.md",
-    ".agents/skills/vault-youtube-sync/references/subagent-note-creator.md",
-    ".agents/skills/vault-updates-daily/references/item-analyzer.md",
-    ".agents/skills/vault-wiki-build/references/synthesizer.md",
-]
+# dead_links 的連結來源／目標索引額外納入的根層治理檔（raw/wiki 之外唯一可掃的內容）。
+ROOT_GOVERNANCE_FILES = ["CLAUDE.md", "SYSTEM-DESIGN.md", "vault-map.md", "README.md", "index.md"]
 
 
 def rel(p: Path) -> str:
@@ -62,21 +56,25 @@ def read(p: Path) -> str:
         return ""
 
 
-def _hidden(p: Path) -> bool:
-    """路徑含 `.` 開頭的元件（.agents/.claude/.git/.obsidian…），對齊 ripgrep 預設略過隱藏目錄。"""
-    return any(part.startswith(".") for part in p.relative_to(ROOT).parts)
+def _excluded(p: Path) -> bool:
+    """隱藏路徑（.agents/.claude/.git/.obsidian…），或落在 Cards/Topics 底下（使用者私人區，agent 不掃）。"""
+    parts = p.relative_to(ROOT).parts
+    if not parts:
+        return False
+    if parts[0] in EXCLUDED_TOP_DIRS:
+        return True
+    return any(part.startswith(".") for part in parts)
 
 
 def md_files(*dirs: str):
     for d in dirs:
         base = ROOT / d
         if base.is_dir():
-            yield from sorted(p for p in base.rglob("*.md") if not _hidden(p))
+            yield from sorted(p for p in base.rglob("*.md") if not _excluded(p))
 
 
-def has_line(text: str, prefix: str) -> bool:
-    """任一行以 prefix 開頭（對應 rg '^prefix'）。"""
-    return any(ln.startswith(prefix) for ln in text.splitlines())
+def governance_files():
+    return [ROOT / f for f in ROOT_GOVERNANCE_FILES if (ROOT / f).is_file()]
 
 
 def frontmatter_keys(text: str):
@@ -142,62 +140,6 @@ def schema_drift():
     return {"claude_md": declared, "lint_whitelist": list(WHITELIST)}
 
 
-def claude_sensitive_prefixes():
-    """解析 CLAUDE.md「敏感資料」段落的 token 前綴，正規化為比對用 stem list；解析不到回 None。
-
-    取該 `###` 段落內所有反引號 token，截斷到第一個 `[`（字元類）與空白之前，
-    使 `xox[baprs]-`→`xox`、`-----BEGIN ... PRIVATE KEY-----`→`-----BEGIN`。
-    """
-    lines = read(ROOT / "CLAUDE.md").splitlines()
-    start = None
-    for i, ln in enumerate(lines):
-        if ln.lstrip().startswith("#") and "敏感資料" in ln:
-            start = i
-            break
-    if start is None:
-        return None
-    seg = []
-    for ln in lines[start + 1:]:
-        if ln.lstrip().startswith("#"):
-            break
-        seg.append(ln)
-    stems = []
-    for tok in re.findall(r"`([^`]+)`", "\n".join(seg)):
-        stem = tok.split("[")[0].split()[0]
-        if stem and stem not in stems:
-            stems.append(stem)
-    return stems or None
-
-
-def sensitive_drift():
-    """校驗敏感資料 token 黑名單未漂移，分兩層（一致回 None）：
-
-    1. CLAUDE.md 正典 vs lint.py 的 SENSITIVE_PREFIXES（機器執行副本）。
-    2. 各 subagent reference（自包含複製）是否涵蓋正典每個前綴。
-
-    類比 schema_drift()，補上「高後果（公開發佈洩密）＋ 多處手抄 ＋ 原本零校驗」的盲點。
-    """
-    canon = claude_sensitive_prefixes()
-    if canon is None:
-        return {"error": "無法解析 CLAUDE.md 敏感資料段落"}
-    result = {}
-    if canon != SENSITIVE_PREFIXES:
-        result["canon_vs_lint"] = {"claude_md": canon, "lint_const": list(SENSITIVE_PREFIXES)}
-    refs = {}
-    for relpath in SENSITIVE_REFERENCE_FILES:
-        p = ROOT / relpath
-        if not p.is_file():
-            refs[relpath] = ["<檔案不存在>"]
-            continue
-        text = read(p)
-        lack = [s for s in SENSITIVE_PREFIXES if s not in text]
-        if lack:
-            refs[relpath] = lack
-    if refs:
-        result["references"] = refs
-    return result or None
-
-
 def scan():
     out = {"date": datetime.date.today().isoformat()}
 
@@ -207,19 +149,14 @@ def scan():
     raw_dir = ROOT / "raw"
     out["inbox_backlog"] = sum(1 for p in md_files("raw") if p.parent == raw_dir)
 
-    # 2. extracted_to 遺留（raw 內）
-    out["extracted_to"] = [
-        rel(p) for p in md_files("raw") if has_line(read(p), "extracted_to:")
-    ]
-
-    # 3. Frontmatter 缺欄位（Cards/Topics）
+    # 2. Frontmatter 缺欄位（raw + wiki，agent 唯一能寫的層）
     missing_title, missing_tags, missing_updated = [], [], []
-    for p in md_files("Cards", "Topics"):
+    for p in md_files("raw", "wiki"):
         # 用 frontmatter 頂層欄位判定，避免正文行首 `title:` 等造成假陰性
         keys = frontmatter_keys(read(p))
         if "title" not in keys:
             missing_title.append(rel(p))
-        if p.name != "index.md" and "tags" not in keys:
+        if "tags" not in keys:
             missing_tags.append(rel(p))
         if "updated" not in keys:
             missing_updated.append(rel(p))
@@ -227,77 +164,9 @@ def scan():
     out["missing_tags"] = missing_tags
     out["missing_updated"] = missing_updated
 
-    # 4. Topics 資料夾缺 index.md
-    topics = ROOT / "Topics"
-    topic_dirs = sorted(d for d in topics.iterdir() if d.is_dir()) if topics.is_dir() else []
-    out["topics_missing_index"] = [
-        rel(d) + "/" for d in topic_dirs if not (d / "index.md").is_file()
-    ]
-
-    # 5. vault-map 未收錄的 Topics（含巢狀子目錄；子字串比對目錄名）
-    #    遞迴到子目錄，否則 Topics/X/Y/ 這類第二層漏收 vault-map 抓不到
-    vmap = read(ROOT / "vault-map.md")
-    all_topic_dirs = (
-        sorted(d for d in topics.rglob("*") if d.is_dir() and not _hidden(d))
-        if topics.is_dir() else []
-    )
-    # 比對帶尾斜線的目錄名（樹狀條目皆為 `<name>/`），避免散文中同字串（如描述裡的「部署」）造成假陰性
-    out["topics_not_in_vaultmap"] = [rel(d) for d in all_topic_dirs if (d.name + "/") not in vmap]
-
-    # 6. Tag 同義異寫：統計純英數 YAML list 項，取 top 60
-    tag_re = re.compile(r'^\s+-\s*"?([A-Za-z0-9_-]+)"?\s*$')
-    counts = {}
-    for p in md_files("."):
-        for ln in read(p).splitlines():
-            m = tag_re.match(ln)
-            if m:
-                counts[m.group(1)] = counts.get(m.group(1), 0) + 1
-    top = sorted(counts.items(), key=lambda kv: (-kv[1], kv[0]))[:60]
-    out["tag_counts"] = top
-
-    # 7. 孤立頁面（Cards/Topics，排除 index.md，無入站 [[title）
-    all_md = list(md_files("."))
-    texts = {p: read(p) for p in all_md}
-    orphans_cards, orphans_topics = [], []
-    for p in md_files("Cards", "Topics"):
-        if p.name == "index.md":
-            continue
-        title = p.stem
-        needle = "[[" + title
-        cited = any(needle in body for q, body in texts.items() if q != p)
-        if not cited:
-            r = rel(p)
-            (orphans_cards if r.startswith("Cards/") else orphans_topics).append(r)
-    out["orphans_cards"] = orphans_cards
-    out["orphans_topics"] = orphans_topics
-
-    # 8. 死連結（wikilink 目標不存在）
-    link_re = re.compile(r"\[\[([^\]|#]+)")
-    targets = set()
-    for body in texts.values():
-        body = strip_markdown_code(body)
-        for m in link_re.finditer(body):
-            targets.add(m.group(1).strip())
-    # 建立檔名索引（basename → 存在），同樣略過隱藏目錄
-    names = {p.name for p in ROOT.rglob("*") if p.is_file() and not _hidden(p)}
-    dead = []
-    for t in sorted(targets):
-        if not t or "<" in t:  # 跳過 schema 佔位符 [[<...>]]
-            continue
-        base = t.split("/")[-1]
-        wanted = base if base.endswith(".base") else base + ".md"
-        if wanted not in names:
-            dead.append(f"[[{t}]]")
-    out["dead_links"] = dead
-
-    # 9. 規範資料夾實體存在
-    out["missing_required_dirs"] = [
-        d for d in REQUIRED_DIRS if not (ROOT / d).is_dir()
-    ]
-
-    # 10. description 缺失（三類規範必填）
-    desc_targets = []
-    desc_targets += [d / "index.md" for d in topic_dirs]
+    # 3. description 缺失（規範必填三類：wiki 頁、raw/Clippings、raw/YouTube 影片筆記；
+    #    各自的 01.index.md 是目錄/導覽頁，不算內容頁，排除）
+    desc_targets = [p for p in md_files("wiki") if p.name != "01.index.md"]
     clip = ROOT / "raw" / "Clippings"
     if clip.is_dir():
         desc_targets += [p for p in sorted(clip.glob("*.md")) if p.name != "01.index.md"]
@@ -309,9 +178,62 @@ def scan():
         if p.is_file() and "description" not in frontmatter_keys(read(p))
     ]
 
-    # 11. Frontmatter 欄位順序錯亂 / 白名單外游離欄位
+    # 4. Tag 同義異寫：統計純英數 YAML list 項（raw + wiki），取 top 60
+    tag_re = re.compile(r'^\s+-\s*"?([A-Za-z0-9_-]+)"?\s*$')
+    counts = {}
+    for p in md_files("raw", "wiki"):
+        for ln in read(p).splitlines():
+            m = tag_re.match(ln)
+            if m:
+                counts[m.group(1)] = counts.get(m.group(1), 0) + 1
+    top = sorted(counts.items(), key=lambda kv: (-kv[1], kv[0]))[:60]
+    out["tag_counts"] = top
+
+    # 5. dead_links 的連結來源／目標索引：raw + wiki + 根層治理檔（唯一可掃的內容範圍）
+    scanned = list(md_files("raw", "wiki")) + governance_files()
+    texts = {p: read(p) for p in scanned}
+
+    # 5a. wiki 孤立頁（排除 01.index.md，無任何入站 [[title 連結）
+    #     只在掃描範圍內找入站連結——wiki 單向連回 raw，交叉引用只會出現在 raw/wiki/根層治理檔裡，
+    #     Cards/Topics 一律不讀，即便它們私下連了 wiki 頁也不算數。
+    orphans_wiki = []
+    for p in md_files("wiki"):
+        if p.name == "01.index.md":
+            continue
+        title = p.stem
+        needle = "[[" + title
+        cited = any(needle in body for q, body in texts.items() if q != p)
+        if not cited:
+            orphans_wiki.append(rel(p))
+    out["orphans_wiki"] = orphans_wiki
+
+    # 5b. 死連結（wikilink 目標不存在）
+    link_re = re.compile(r"\[\[([^\]|#]+)")
+    targets = set()
+    for body in texts.values():
+        body = strip_markdown_code(body)
+        for m in link_re.finditer(body):
+            targets.add(m.group(1).strip())
+    # 建立檔名索引（basename → 存在），同樣排除隱藏目錄與 Cards/Topics
+    names = {p.name for p in ROOT.rglob("*") if p.is_file() and not _excluded(p)}
+    dead = []
+    for t in sorted(targets):
+        if not t or "<" in t:  # 跳過 schema 佔位符 [[<...>]]
+            continue
+        base = t.split("/")[-1]
+        wanted = base if base.endswith(".base") else base + ".md"
+        if wanted not in names:
+            dead.append(f"[[{t}]]")
+    out["dead_links"] = dead
+
+    # 6. 規範資料夾實體存在（僅 agent 管的 raw/wiki 子夾；git 不追蹤空目錄）
+    out["missing_required_dirs"] = [
+        d for d in REQUIRED_DIRS if not (ROOT / d).is_dir()
+    ]
+
+    # 7. Frontmatter 欄位順序錯亂 / 白名單外游離欄位（raw + wiki）
     rogue, order = [], []
-    for p in md_files("Cards", "Topics", "raw", "wiki"):
+    for p in md_files("raw", "wiki"):
         keys = frontmatter_keys(read(p))
         if not keys:
             continue
@@ -324,11 +246,8 @@ def scan():
     out["frontmatter_rogue"] = rogue
     out["frontmatter_order"] = order
 
-    # 12. WHITELIST 與 CLAUDE.md schema 漂移校驗（None = 一致）
+    # 8. WHITELIST 與 CLAUDE.md schema 漂移校驗（None = 一致）
     out["schema_drift"] = schema_drift()
-
-    # 13. 敏感資料 token 黑名單漂移校驗（None = 一致）
-    out["sensitive_drift"] = sensitive_drift()
 
     return out
 

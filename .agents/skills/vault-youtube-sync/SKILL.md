@@ -7,7 +7,7 @@ description: 將 YouTube 頻道影片批次轉成 Obsidian 筆記，支援指定
 
 將 YouTube 頻道影片批次轉換成 Obsidian vault 筆記。
 
-> 本 skill 產出進入 `raw/YouTube/`，代表「待消化暫存」。使用者讀完會內化成 Cards 並歸檔至 `Topics/<主題>/`，raw 原篇刪除。Skill 只負責抓取，不負責消化。
+> 本 skill 產出進入 `raw/YouTube/`，屬不可變原始來源，永久留存、只讀不改。後續由 `vault-wiki-build` 綜合多篇 raw 成 `wiki/` 頁；本 skill 只負責抓取，不負責消化。
 
 ## 資料夾規則
 

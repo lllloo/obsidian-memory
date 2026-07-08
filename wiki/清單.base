@@ -9,10 +9,10 @@ properties:
   tags:
     displayName: 主題
   file.name:
-    displayName: 候選頁
+    displayName: 頁面
 views:
   - type: table
-    name: wiki 候選清單
+    name: wiki 頁面清單
     order:
       - file.name
       - description

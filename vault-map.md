@@ -11,58 +11,42 @@ tags:
 
 | 檔案 | 職責 |
 |---|---|
-| `CLAUDE.md` | agent 執行規則：寫入前 checklist、frontmatter schema、Cards -> Topics 升級門檻（`AGENTS.md` 為其 symlink） |
-| `SYSTEM-DESIGN.md` | 運作總綱：模式血緣、核心賭注、刻意不做的事（給人建立心智模型） |
-| `card-quality.md` | 單張 Card 品質標準與反指標 |
+| `CLAUDE.md` | schema：agent 維護規則、三層架構、Ingest/Query/Lint、寫入慣例、唯一守門 git push（`AGENTS.md` 為其 symlink） |
+| `SYSTEM-DESIGN.md` | 運作總綱：Karpathy LLM Wiki 心智模型、人/AI 分工、刻意不做的事 |
 
 ## 資料夾索引
 
-> 路徑以 repo root 為基準（即 vault root）。
+> 路徑以 repo root 為基準（即 vault root）。agent 只維護 `raw/` + `wiki/`；`Cards/`、`Topics/` 是使用者私人區，agent 不讀不寫不掃。
 
 ```
 .
-├── raw/         — raw 層：外部原料永久留存、建索引供檢索（不再消化即刪）
-│   ├── YouTube/   — 影片摘要 raw，依頻道分組；各頻道 01.index.md + 02.影片清單.base 索引（含 last_sync_id checkpoint）
+├── raw/         — 不可變原始來源。agent 只讀不改，事實來源
+│   ├── YouTube/   — 影片摘要，依頻道分組；各頻道 01.index.md + 02.影片清單.base 索引（含 last_sync_id checkpoint）
 │   │   ├── AIJasonZ/              — Claude 設計工作流、Skills、Agent 記憶體管理
 │   │   ├── AILABS-393/            — Claude Code 進階技巧、RAG
 │   │   ├── AgentcrewAcademy/      — Claude Code Windows 安裝、MCP 整合、Sub-Agent 與新手教學
 │   │   ├── Chase-H-AI/            — Claude Code 實戰、RAG、Obsidian 整合
 │   │   └── daveebbelaar/          — Python、LLM Evals、API 整合
-│   ├── Clippings/ — 網頁剪貼參考庫 raw（01.index.md + 清單.base 索引；agent 不主動消化，使用者明指才處理）
-│   ├── Archive/   — 封存區 raw：已內化但保留備查的原料（01.index.md + 清單.base 索引；agent 不主動掃描/消化/刪除）
-│   └── Updates/   — 日常更新彙整 raw（vault-updates-daily 產出，01.index.md 索引；待讀佇列，讀畢由使用者指示清理）
-├── wiki/          — AI 候選層：散落 raw 綜合成的 draft 候選頁（vault-wiki-build 產；01.index.md + 清單.base 索引，單向連結指回 raw）
-├── Cards/         — 未歸屬的完整概念 Cards
-└── Topics/        — 已歸檔主題（子目錄如下）
-  ├── AI-Agent-工作流/ — Harness、frameworks、multi-agent workflow
-  │   ├── Spec-Kit/    — GitHub spec-driven toolkit，spec 驅動生 code
-  │   ├── OpenSpec/    — Fission-AI 輕量 spec-driven，"Actions not phases"
-  │   ├── BMAD/        — agile lifecycle 多 agent persona（PM／Architect／Dev…）
-  │   ├── GStack/      — planning／design／QA／ship 多 persona workflow
-  │   └── Superpowers/ — TDD gate／系統化除錯／review loop
-  ├── Claude-Code/    — Skills、permissions、agent packages、日常操作
-  ├── Obsidian/       — CLI 整合、Skills、Quartz 部署
-  ├── UI設計/         — 設計工具、DESIGN.md 系統、視覺靈感
-  ├── 前端技術/       — CSS、動效、捲動互動實作
-  │   └── issues/      — 跨瀏覽器／裝置的前端疑難（iOS Safari、LINE WebView、EXIF…）
-  └── 環境與部署/      — 本機開發環境 → 上版發佈 → CI/CD 整條交付鏈
-      ├── 本機開發環境/ — Laradock / Docker Compose 把專案在本機跑起來
-      ├── 上版發佈/     — git-archive 交付、靜態站發佈
-      └── CI-CD/        — GitHub Actions secrets、Discord CI 通知
+│   ├── Clippings/ — 網頁剪貼參考庫（01.index.md + 清單.base 索引；agent 不主動消化，使用者明指才處理）
+│   ├── Archive/   — 封存區：保留備查的原料（01.index.md + 清單.base 索引；agent 不主動掃描/消化/刪除）
+│   └── Updates/   — 日常更新彙整（vault-updates-daily 產出，01.index.md 索引；待讀佇列，讀畢由使用者指示清理）
+├── wiki/          — 活知識庫：agent 綜合 raw 維護的摘要/實體/概念/綜合頁（01.index.md 為內容目錄，每次 ingest 更新）
+├── Cards/         — 【使用者私人區，agent 不管理】使用者自存文件；Quartz 公開層之一
+└── Topics/        — 【使用者私人區，agent 不管理】使用者自存主題資料夾；Quartz 公開層之一
 ```
 
 ## Tag 查詢指南
 
+> agent 查詢範圍是 `raw/` + `wiki/`。`Cards/`、`Topics/` 屬使用者私人區，不在 agent 查詢範圍內。
+
 | 主題 | Tags | 位置 |
 |------|------|------|
-| Claude Code 實作 | `claude-code` | `Topics/Claude-Code/` + `Cards/` + `raw/YouTube/` |
-| AI Agent 工作流 | `ai-agent` `agent-framework` `harness` | `Topics/AI-Agent-工作流/` + `Cards/` |
-| 記憶系統 / Context | `memory` `context-engineering` | `Cards/` |
-| MCP | `mcp` | `Topics/UI設計/`（附於 Pencil / Stitch 等 MCP 工具書籤；尚無獨立 MCP 主題筆記） |
-| Obsidian 操作 | `obsidian` `cli` `quartz` | `Topics/Obsidian/` + `Cards/` |
-| UI 設計 / 設計工作流 | `design` `design-system` `frontend` | `Topics/UI設計/` + `Cards/` |
-| 前端 / CSS / 動效實作 | `css` `flexbox` `animation` | `Topics/前端技術/` + `Cards/` |
-| Docker / Laradock / CI3 | `docker` `laradock` `codeigniter` `本機環境` `sop` | `Topics/環境與部署/` + `Cards/` |
-| Windows / Git / CLI 工具 | `windows` `git` `cli` `workflow` | `Cards/` |
-| 上版 / 部署 | `deploy` | `Topics/環境與部署/` + `Cards/` |
-| GitHub Actions / CI 通知 | `github-actions` `discord` | `Topics/環境與部署/` |
+| Claude Code 實作 | `claude-code` | `raw/YouTube/` + `wiki/` |
+| AI Agent 工作流 | `ai-agent` `agent-framework` `harness` | `raw/YouTube/` + `wiki/` |
+| 記憶系統 / Context | `memory` `context-engineering` | `wiki/` |
+| RAG | `rag` | `raw/YouTube/` + `wiki/` |
+| Obsidian 操作 | `obsidian` `cli` `quartz` | `wiki/` |
+| Python / API 整合 | `python` `api` `llm-evals` | `raw/YouTube/daveebbelaar/` + `wiki/` |
+| 日常工具更新 | 見 `raw/Updates/01.index.md` | `raw/Updates/` |
+
+wiki 尚在成長，新主題頁隨 ingest 補入 `wiki/01.index.md`；查詢先讀該內容目錄再鑽細節。

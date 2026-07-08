@@ -11,7 +11,7 @@ description: 每天彙整高信任 developer tooling 更新成一篇 Obsidian da
 
 - 日報：`raw/Updates/<YYYY-MM-DD>-daily-updates.md`
 - 來源設定：`raw/Updates/01.index.md`
-- 日報進 raw，代表「高信任待消化來源」；不要直接整理進 `Cards/` 或 `Topics/`。
+- 日報進 raw，代表「高信任待消化來源」；`Cards/`、`Topics/` 是使用者私人區，agent 不寫入、不整理進去。
 - 同日多次同步時追加新內容，不覆蓋舊日報；不要把日報 wikilink 追加回 index。
 
 日報 frontmatter：

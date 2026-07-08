@@ -1,6 +1,6 @@
 # Obsidian Memory Vault
 
-個人 Obsidian vault，採「半自動卡片盒」工作流。公開版本在 [bugloop.com](https://bugloop.com)。
+個人 Obsidian vault，採 Karpathy [LLM Wiki](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f) 工作流：agent 讀不可變的 `raw/` 原料，漸進維護一套互聯的 `wiki/` 活知識庫。`Cards/`、`Topics/` 是使用者私人策展區，也是對外公開的層。公開版本在 [bugloop.com](https://bugloop.com)。
 
 ## 安裝與使用
 
@@ -28,21 +28,21 @@ git clone <repo-url> obsidian-memory
 
 ## 結構
 
-- `raw/` — 外部原料 raw 層（永久留存、建索引供檢索，不再消化即刪）
+- `raw/` — 不可變原始來源（agent 只讀不改，事實來源）
   - `YouTube/` — 影片摘要，依頻道分組
   - `Clippings/` — 網頁剪貼
-  - `Archive/` — 已內化但保留備查的原料
+  - `Archive/` — 保留備查的原料
   - `Updates/` — 日常更新彙整
-- `wiki/` — AI 候選層（散落 raw 綜合成的 `draft` 候選頁，可丟可重生）
-- `Cards/` — 未歸屬的完整概念 Card（累積同主題後批次升 Topic）
-- `Topics/<主題>/` — 已歸檔主題（Claude-Code、AI-Agent-工作流、UI設計、前端技術、Obsidian、部署）；完整索引見 [`vault-map.md`](./vault-map.md)
+- `wiki/` — 活知識庫（agent 綜合 raw 維護的摘要/實體/概念/綜合頁，含內容目錄 `01.index.md`）
+- `Cards/`、`Topics/` — **使用者私人策展區，agent 不管理**；同時是 Quartz 唯一對外公開的層。使用者自行從 wiki 撿選內容放入
+- 資料夾完整索引見 [`vault-map.md`](./vault-map.md)
 - `index.md` — 真人讀者入口（Quartz 網站首頁，列主題與 tag 連結）
 - `vault-map.md` — agent 用的全局導航與 tag 查詢
 - `.agents/skills/` — repo-local Claude Code skills（`.claude/skills` 為 symlink）
 
 ## 規則與工作流
 
-先看 [`SYSTEM-DESIGN.md`](./SYSTEM-DESIGN.md)——系統全貌：模式血緣、核心賭注、刻意不做的事，建立整體心智模型。各份規則文件（agent 規則、Card 品質標準、導航）由它的「細節在哪」往下索引，這裡不重列。
+先看 [`SYSTEM-DESIGN.md`](./SYSTEM-DESIGN.md)——系統全貌：Karpathy LLM Wiki 心智模型、人/AI 分工、刻意不做的事。可執行規則（agent 維護規則、Ingest/Query/Lint、寫入慣例、唯一守門）見 [`CLAUDE.md`](./CLAUDE.md)，導航見 [`vault-map.md`](./vault-map.md)。
 
 ## Skills
 
@@ -50,11 +50,12 @@ git clone <repo-url> obsidian-memory
 
 | 指令 | 用途 |
 |---|---|
-| `/ob-write` | 建立筆記 |
-| `/ob-read` | 查詢 vault |
+| `/ob-write` | 寫入筆記到 raw/wiki |
+| `/ob-read` | 查詢 wiki |
 | `/vault-youtube-sync` | 同步 YouTube 影片摘要至 raw |
-| `/vault-updates-daily` | 彙整日常更新 |
-| `/vault-lint` | Vault 結構健檢 |
+| `/vault-updates-daily` | 彙整日常更新至 raw |
+| `/vault-wiki-build` | Ingest：綜合 raw 維護 wiki 頁 |
+| `/vault-lint` | wiki 結構健檢 |
 
 **使用契約**：cwd 必須是本 repo 根目錄（含 `vault-map.md` 的目錄），所有路徑 cwd-relative，不靠環境變數。從別的專案想呼叫 skill，先 `cd` 進來。**例外**：`ob-write` / `ob-read` 為 global skills（symlink/junction 到 `~/.claude/skills/`），任何專案皆可呼叫——cwd 不在 vault 時自動走跨專案模式（定位鏈找本機 clone，見上方「vault 路徑約定」）。
 
