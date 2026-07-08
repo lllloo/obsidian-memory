@@ -1,7 +1,7 @@
 ---
 title: 跨專案內容整理到 Inbox
 created: 2026-05-21
-updated: 2026-06-26
+updated: 2026-07-08
 tags:
   - obsidian
   - claude-code
@@ -27,10 +27,9 @@ agent 就建立一篇 `Inbox/<主題>.md`，內容只要包含：
 - 這次真正值得留下的重點
 - 必要時補一行回查線索，例如原專案、檔案、指令或關鍵字
 
-寫入方式依當前所在分兩種，由 `/ob-write` 自動判斷 cwd：
+寫入方式：目前在 vault repo（cwd = vault root）內直接用檔案工具寫入。
 
-- **在 vault repo（cwd = vault root）**：本地模式，不限工具，可直接用檔案工具寫入。
-- **在其他專案（跨專案）**：嚴格 CLI 模式——用 Obsidian CLI 定位 vault 並建檔；CLI 不可用或 vault 身分不符即**中止、不降級**寫檔，避免繞過身分 gate 亂寫。
+> 註：原本跨專案由 `/ob-write` 自動判斷 cwd、跨專案時走 CLI／定位鏈寫入的機制已移除。現階段跨專案要保留內容，先 `cd` 進 vault repo 再操作。
 
 不需要把整段對話、完整 log、一次性過程或還沒整理的外部資料搬進來。
 

@@ -47,13 +47,14 @@ tags:
 - **Query（查詢）** — 向 wiki 提問，LLM 讀 index → 找頁 → 綜合附引用的答案。好答案回存成新 wiki 頁，讓探索跟來源一樣複利。
 - **Lint（健檢）** — 定期掃矛盾、過時主張、孤立頁、缺專屬頁的概念、缺交叉引用、資料空缺，產出修補與新探究建議。
 
-規則見 [`CLAUDE.md`](CLAUDE.md)；主要由 skills 承載：
+規則見 [`CLAUDE.md`](CLAUDE.md)。三動作的模型仍是本 vault 架構；目前只有「外部原料進 raw」有專屬 skill，其餘（wiki 綜合、查詢、健檢）由 agent 手動執行，核心 skill 待按需重建：
 
 | 操作 | 做什麼 | 承載 |
 |---|---|---|
-| Ingest | 外部原料進 raw；綜合維護進 wiki | `ob-write`、`vault-youtube-sync`、`vault-updates-daily`、`vault-wiki-build` |
-| Query | 問 wiki，附引用綜合；好答案回存 wiki | `ob-read`（查）、`ob-write`（回存） |
-| Lint | 掃 wiki 孤立頁、死連結、矛盾、缺欄位等 | `vault-lint` |
+| Ingest | 外部原料進 raw | `vault-youtube-sync`、`vault-updates-daily` |
+| Ingest | 綜合維護進 wiki | 手動（原 `ob-write`／`vault-wiki-build` 已移除） |
+| Query | 問 wiki，附引用綜合；好答案回存 wiki | 手動（原 `ob-read` 已移除） |
+| Lint | 掃 wiki 孤立頁、死連結、矛盾、缺欄位等 | 手動（原 `vault-lint` 已移除） |
 
 ## 人 / AI 分工
 
@@ -71,7 +72,7 @@ AI 承擔重複、瑣碎、容易被延後的維護工作，自主維護 wiki（
 這些不是缺功能，而是設計選擇：
 
 - **不管 Cards/Topics**：它們是使用者私人抽屜兼唯一公開層，策展與公開完全交給人；agent 的 Ingest/Query/Lint 一律跳過。
-- **不做自動成長掃描**：概念缺口、該連沒連這類成長面觀察，只在討論中浮現、只提議，不背景掃全 vault。可機械驗證的結構問題（孤立頁、死連結、tag 漂移、缺欄位）才交給 `vault-lint`。
+- **不做自動成長掃描**：概念缺口、該連沒連這類成長面觀察，只在討論中浮現、只提議，不背景掃全 vault。可機械驗證的結構問題（孤立頁、死連結、tag 漂移、缺欄位）才交給 Lint 健檢（原 `vault-lint` 已移除，目前由 agent 手動執行）。
 - **不寫 `log.md`**：Karpathy 建議的時序簿記檔，本 vault 暫不採用——操作時間軸靠 git log 與 commit 訊息即可，不另立一個需要人工同步、容易漂移的簿記檔。之後想要再補。
 - **不上搜尋引擎（qmd 等）**：目前規模用 `rg` / harness-native Grep 夠用。等搜尋真的變痛再升級。
 

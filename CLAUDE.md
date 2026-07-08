@@ -53,7 +53,7 @@ wiki 的維護就是這三個動作，全部只在 `raw/` + `wiki/` 上進行，
 
 ### Lint（健檢）
 
-定期掃 wiki（+ raw 索引）：矛盾、被新來源取代的過時主張、孤立頁、被提到卻沒專屬頁的概念、缺交叉引用、可用查證補的資料空缺。產出修補與新探究建議。由 `vault-lint` 承載，只掃 raw/wiki，不碰 Cards/Topics。
+定期掃 wiki（+ raw 索引）：矛盾、被新來源取代的過時主張、孤立頁、被提到卻沒專屬頁的概念、缺交叉引用、可用查證補的資料空缺。產出修補與新探究建議。只掃 raw/wiki，不碰 Cards/Topics。（目前無專屬 skill，由 agent 手動執行；後續按需重建。）
 
 ## wiki 頁面與索引
 
@@ -114,14 +114,12 @@ wiki 的維護就是這三個動作，全部只在 `raw/` + `wiki/` 上進行，
 
 | Skill | 用途 |
 |---|---|
-| `ob-write` | 寫入筆記到 raw/wiki（global，任何專案可呼叫；cwd=vault root 不限工具，跨專案走定位鏈直寫本機 clone） |
-| `ob-read` | wiki 查詢（global，任何專案可呼叫；cwd=vault root 本地直搜，跨專案定位鏈定位後唯讀搜尋） |
 | `vault-youtube-sync` | YouTube 影片摘要同步至 `raw/` |
 | `vault-updates-daily` | 日常更新彙整至 `raw/Updates/` |
-| `vault-wiki-build` | Ingest：讀散落 raw → 綜合維護 wiki 頁 → 更新 index |
-| `vault-lint` | wiki 結構健檢（掃 raw/wiki，不碰 Cards/Topics） |
 
 優先使用 skill，不新增平行流程。新增或修改 skill 時，盡量遵循 [Agent Skills](https://agentskills.io) 開放標準，讓內容可跨工具移植。
+
+> **已移除的核心 skill**：`ob-write`、`ob-read`、`vault-wiki-build`、`vault-lint`（含 `ob-write`／`ob-read` 兩個全域 symlink）已於重整時移除。三動作（Ingest／Query／Lint）的模型仍是本 vault 的架構，目前改由 agent 手動執行；後續有需求再按「留名字換內臟」方向重建。
 
 ### 新增 / 修改 skill 的本 repo 約束
 
