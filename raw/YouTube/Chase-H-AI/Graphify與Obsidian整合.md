@@ -67,7 +67,7 @@ Graphify 會把每個 node 轉成 markdown file，並建立對應 backlinks。�
 
 ## 對本 vault 的啟示
 
-Graphify + Obsidian 適合「把大型外部 corpus 做成可查地圖」，但不等於應該直接寫進主 vault。對已經有 Inbox / Cards / Topics 流程的 vault，更合理的做法是：
+Graphify + Obsidian 適合「把大型外部 corpus 做成可查地圖」，但不等於應該直接寫進主 vault。對已經有 raw / Cards / Topics 流程的 vault，更合理的做法是：
 
 - 先獨立輸出或放進隔離資料夾。
 - 檢查哪些概念真的會被長期使用。

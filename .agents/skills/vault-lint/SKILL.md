@@ -1,6 +1,6 @@
 ---
 name: vault-lint
-description: Vault 健檢：掃描孤立頁面、死連結、Inbox 積壓、tag 同義異寫、frontmatter 缺欄位、Topics 缺 index.md、vault-map 未收錄、extracted_to 遺留等問題。列出報告後互動確認，等用戶拍板再修。使用時機：使用者說「健檢」、「lint」、「vault 健康檢查」、「掃問題」、「vault 狀態」，或直接呼叫 /vault-lint。
+description: Vault 健檢：掃描孤立頁面、死連結、raw 積壓、tag 同義異寫、frontmatter 缺欄位、Topics 缺 index.md、vault-map 未收錄、extracted_to 遺留等問題。列出報告後互動確認，等用戶拍板再修。使用時機：使用者說「健檢」、「lint」、「vault 健康檢查」、「掃問題」、「vault 狀態」，或直接呼叫 /vault-lint。
 ---
 
 # /vault-lint — Vault 健檢
@@ -25,10 +25,10 @@ JSON 欄位對應的問題與嚴重度：
 
 | JSON 欄位 | 意義 | 報告分類 |
 |---|---|---|
-| `inbox_backlog` | Inbox root 未歸檔散項數（各 raw 子夾 Clippings/Archive/Updates/YouTube 不計） | > 20 🔴；> 5 🟡；≤ 5 不報 |
+| `inbox_backlog` | raw root 未歸檔散項數（各 raw 子夾 Clippings/Archive/Updates/YouTube 不計） | > 20 🔴；> 5 🟡；≤ 5 不報 |
 | `dead_links` | wikilink 目標不存在（已排除 `[[<佔位符>]]`、帶路徑、`.base`） | 🔴 |
 | `missing_title` | Cards/Topics 缺 `title` | 🔴 |
-| `missing_description` | 規範必填 `description` 缺失（Topics `index.md`、`Inbox/Clippings/*`、YouTube 影片筆記） | 🔴 |
+| `missing_description` | 規範必填 `description` 缺失（Topics `index.md`、`raw/Clippings/*`、YouTube 影片筆記） | 🔴 |
 | `topics_missing_index` | Topics 資料夾無 `index.md` | 🔴 |
 | `schema_drift` | `lint.py` 的 `WHITELIST` 與 `CLAUDE.md` schema 表格不一致（`null` = 一致） | 🔴 |
 | `sensitive_drift` | 敏感資料 token 黑名單漂移：`CLAUDE.md` 正典 vs `lint.py` 的 `SENSITIVE_PREFIXES`（`canon_vs_lint`）、各 subagent reference 是否涵蓋正典每個前綴（`references`）；`null` = 一致 | 🔴 |
@@ -38,7 +38,7 @@ JSON 欄位對應的問題與嚴重度：
 | `missing_required_dirs` | 規範常設資料夾遺漏（git 不追蹤空目錄） | 🟡 |
 | `frontmatter_order` | frontmatter 白名單欄位順序錯亂 | 🟡 |
 | `frontmatter_rogue` | 出現白名單外游離欄位（`[路徑, [欄位…]]`） | 🟡 |
-| `extracted_to` | 半消化 Inbox 筆記（仍有剩餘段落） | 🟡 |
+| `extracted_to` | 半消化 raw 筆記（仍有剩餘段落） | 🟡 |
 | `orphans_cards` | 孤立 Cards | 🔵（半自動卡片盒，孤立可接受；摺疊成數量，不逐張列） |
 | `missing_updated` | Cards/Topics 缺 `updated` | 🔵 |
 | `tag_counts` | 純英數 tag 使用次數 top 60 | 🔵（肉眼辨識同義異寫，如 `claude-code` vs `claudeCode`） |
@@ -55,18 +55,18 @@ JSON 欄位對應的問題與嚴重度：
 ### 🔴 嚴重（N 項）
 - 死連結：[[xxx]]、[[yyy]]
 - 缺 title：Cards/foo.md
-- 缺 description：Inbox/Clippings/foo.md
+- 缺 description：raw/Clippings/foo.md
 - Topics/bar/ 無 index.md
 - schema 漂移：lint.py WHITELIST 與 CLAUDE.md schema 不一致（列出兩邊欄位差異）
 - 敏感黑名單漂移：reference 缺前綴或 lint 常數與 CLAUDE.md 不一致（列出哪份缺哪些）
 
 ### 🟡 警告（N 項）
-- Inbox 散項：8 篇未歸檔（> 5）
+- raw 散項：8 篇未歸檔（> 5）
 - 孤立 Topics：Topics/foo/bar.md（升級主題卻無入站連結）
 - vault-map 未收錄：Topics/AI-Agent-工作流/BMAD（含巢狀子目錄）
-- 規範資料夾遺漏：Inbox/Clippings
+- 規範資料夾遺漏：raw/Clippings
 - frontmatter 欄位順序 / 白名單外欄位：ORDER Cards/foo.md、ROGUE Cards/bar.md: author
-- extracted_to 遺留：Inbox/abc.md
+- extracted_to 遺留：raw/abc.md
 
 ### 🔵 資訊（N 項）
 - 孤立 Cards：7 張（半自動卡片盒，孤立可接受；摺疊成數量，不逐張列）
@@ -90,7 +90,7 @@ JSON 欄位對應的問題與嚴重度：
 - tag 同義異寫 — 哪個是正典？
 - frontmatter 欄位順序 / 白名單外欄位 — ORDER 手動調整欄位順序；ROGUE 判斷該補進白名單還是刪除
 - extracted_to 遺留 — 何時消化剩餘段落？
-- Inbox 散項 — 未歸進 raw 子夾的散項，歸檔時機由用戶自選（raw 子夾永久留存，不計積壓）
+- raw 散項 — 未歸進 raw 子夾的散項，歸檔時機由用戶自選（raw 子夾永久留存，不計積壓）
 - description 缺失 — 需手動寫 30–80 字摘要，不自動產生
 - schema 漂移 — 判斷 `CLAUDE.md` schema 與 `lint.py` 的 `WHITELIST` 哪邊才是正確意圖，再同步另一邊（規範變更通常以 `CLAUDE.md` 為準）
 - 敏感黑名單漂移 — `references` 缺漏：把該 reference 的 token 清單補齊到涵蓋正典；`canon_vs_lint` 不一致：先定 `CLAUDE.md` 正典，再同步 `lint.py` 的 `SENSITIVE_PREFIXES`

@@ -21,7 +21,7 @@ tags:
 
 ```
 .
-├── Inbox/         — raw 層：外部原料永久留存、建索引供檢索（不再消化即刪）
+├── raw/         — raw 層：外部原料永久留存、建索引供檢索（不再消化即刪）
 │   ├── YouTube/   — 影片摘要 raw，依頻道分組；各頻道 01.index.md + 02.影片清單.base 索引（含 last_sync_id checkpoint）
 │   │   ├── AIJasonZ/              — Claude 設計工作流、Skills、Agent 記憶體管理
 │   │   ├── AILABS-393/            — Claude Code 進階技巧、RAG
@@ -55,7 +55,7 @@ tags:
 
 | 主題 | Tags | 位置 |
 |------|------|------|
-| Claude Code 實作 | `claude-code` | `Topics/Claude-Code/` + `Cards/` + `Inbox/YouTube/` |
+| Claude Code 實作 | `claude-code` | `Topics/Claude-Code/` + `Cards/` + `raw/YouTube/` |
 | AI Agent 工作流 | `ai-agent` `agent-framework` `harness` | `Topics/AI-Agent-工作流/` + `Cards/` |
 | 記憶系統 / Context | `memory` `context-engineering` | `Cards/` |
 | MCP | `mcp` | `Topics/UI設計/`（附於 Pencil / Stitch 等 MCP 工具書籤；尚無獨立 MCP 主題筆記） |

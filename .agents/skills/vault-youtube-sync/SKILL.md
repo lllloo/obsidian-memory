@@ -7,11 +7,11 @@ description: 將 YouTube 頻道影片批次轉成 Obsidian 筆記，支援指定
 
 將 YouTube 頻道影片批次轉換成 Obsidian vault 筆記。
 
-> 本 skill 產出進入 `Inbox/YouTube/`，代表「待消化暫存」。使用者讀完會內化成 Cards 並歸檔至 `Topics/<主題>/`，Inbox 原篇刪除。Skill 只負責抓取，不負責消化。
+> 本 skill 產出進入 `raw/YouTube/`，代表「待消化暫存」。使用者讀完會內化成 Cards 並歸檔至 `Topics/<主題>/`，raw 原篇刪除。Skill 只負責抓取，不負責消化。
 
 ## 資料夾規則
 
-- 筆記存放：`Inbox/YouTube/<頻道名>/`（例：`Inbox/YouTube/Chase-H-AI/`）
+- 筆記存放：`raw/YouTube/<頻道名>/`（例：`raw/YouTube/Chase-H-AI/`）
 - 此資料夾已在 `quartz.config.ts` 的 `ignorePatterns` 中，**不會發佈到網站**
 - 每個頻道資料夾下建立 `01.index.md` 與 `02.影片清單.base` 作為索引（數字前綴確保固定排第一）
 - 影片筆記的 frontmatter 需加 `parent: "[[01.index]]"`，讓 Obsidian 圖譜能從影片連回頻道 index（`.base` 檔案不產生圖譜連結，只有 property link 有效）
@@ -27,7 +27,7 @@ description: 將 YouTube 頻道影片批次轉成 Obsidian 筆記，支援指定
 依使用者輸入決定處理範圍：
 
 - **模式 A — 指定頻道**：使用者給 handle 或頻道 URL（例：`@Chase-H-AI`、`https://www.youtube.com/@Chase-H-AI/videos`）→ 直接以該 handle 執行步驟 1-6
-- **模式 B — 同步全部既有頻道**：使用者未指定頻道，或明說「同步全部 / 更新所有頻道 / yt 全部更新」→ 掃 `Inbox/YouTube/*/01.index.md`，從每份 frontmatter 的 `source:` 欄位抽出 handle，**依序**逐頻道跑步驟 1-6（頻道之間順序執行避免 YouTube rate limit；單頻道內步驟 5 仍維持 5-6 部一批平行）
+- **模式 B — 同步全部既有頻道**：使用者未指定頻道，或明說「同步全部 / 更新所有頻道 / yt 全部更新」→ 掃 `raw/YouTube/*/01.index.md`，從每份 frontmatter 的 `source:` 欄位抽出 handle，**依序**逐頻道跑步驟 1-6（頻道之間順序執行避免 YouTube rate limit；單頻道內步驟 5 仍維持 5-6 部一批平行）
 
 模式 B 取得頻道清單（每行一個 `source:` URL），cwd = repo root：
 
@@ -66,7 +66,7 @@ python3 .agents/skills/vault-youtube-sync/scripts/fetch_videos.py <handle>
 
 ## 步驟 2：增量同步檢查 + 內容篩選 + 建立資料夾
 
-先確認是否為更新情境：用 `Read` 開 `Inbox/YouTube/<頻道名>/01.index.md`，從 frontmatter 取 `last_sync_id` 值（harness-native，不經 shell；檔案不存在即視為首次同步）。
+先確認是否為更新情境：用 `Read` 開 `raw/YouTube/<頻道名>/01.index.md`，從 frontmatter 取 `last_sync_id` 值（harness-native，不經 shell；檔案不存在即視為首次同步）。
 
 **Checkpoint 過濾邏輯：**
 
@@ -81,7 +81,7 @@ python3 .agents/skills/vault-youtube-sync/scripts/fetch_videos.py <handle>
 即使通過 checkpoint 篩選，也必須再排除「已有完整筆記的影片」——防止 checkpoint 失效時（如距上次 sync 超過 30 部）產生重複。**`draft: true` 的筆記不算去重命中**——那是先前 transcript 失敗的占位，本次要交給 subagent 覆寫重抓。取得已有非 draft 筆記的 videoId 清單（cwd = repo root）：
 
 ```
-python3 .agents/skills/vault-youtube-sync/scripts/noted_ids.py "Inbox/YouTube/<頻道名>"
+python3 .agents/skills/vault-youtube-sync/scripts/noted_ids.py "raw/YouTube/<頻道名>"
 ```
 
 將輸出的 ID 集合與待處理清單比對，**移除任何 ID 已出現在「非 draft」筆記 source 欄位的影片**，不論檔名是否相同。
@@ -111,7 +111,7 @@ python3 .agents/skills/vault-youtube-sync/scripts/noted_ids.py "Inbox/YouTube/<�
 
 ## 步驟 3：建立 01.index.md
 
-**在啟動文章生成前**，先在頻道資料夾建立 `Inbox/YouTube/<頻道名>/01.index.md`（若已存在則跳過）。
+**在啟動文章生成前**，先在頻道資料夾建立 `raw/YouTube/<頻道名>/01.index.md`（若已存在則跳過）。
 
 頻道簡介已在步驟 1 的 `DESC:` 行取得（可能為空）。寫入 index 前，**將簡介翻譯為繁體中文**（技術名詞/品牌名保留英文）；若為空則省略。
 
@@ -134,12 +134,12 @@ tags:
 
 ## 步驟 4：建立 02.影片清單.base
 
-**在啟動文章生成前**，先在頻道資料夾建立 `Inbox/YouTube/<頻道名>/02.影片清單.base`（若已存在則跳過）：
+**在啟動文章生成前**，先在頻道資料夾建立 `raw/YouTube/<頻道名>/02.影片清單.base`（若已存在則跳過）：
 
 ```yaml
 filters:
   and:
-    - file.inFolder("Inbox/YouTube/<頻道名>")
+    - file.inFolder("raw/YouTube/<頻道名>")
     - file.ext == "md"
     - file.name != "01.index"
 properties:
@@ -187,7 +187,7 @@ views:
 <NOTE_CREATOR_CONTENT>
 --- end ---
 
-NOTES_DIR：Inbox/YouTube/<頻道名>/    # 例：Inbox/YouTube/Chase-H-AI/
+NOTES_DIR：raw/YouTube/<頻道名>/    # 例：raw/YouTube/Chase-H-AI/
 今日日期：<YYYY-MM-DD>                        # 例：2026-04-24
 語言要求：正文內容一律繁體中文，技術名詞/品牌名保留英文。
 
@@ -204,7 +204,7 @@ N. <標題> — <URL>
 
 | #   | 影片標題 | 筆記路徑                           | published  | 狀態                |
 | --- | -------- | ---------------------------------- | ---------- | ------------------- |
-| 1   | ...      | Inbox/YouTube/<頻道名>/... | YYYY-MM-DD | ✓ 完整 / ⚠ 內容不足 |
+| 1   | ...      | raw/YouTube/<頻道名>/... | YYYY-MM-DD | ✓ 完整 / ⚠ 內容不足 |
 
 **模式 B（多頻道）額外彙總表**：所有頻道跑完後，最末再加一張總覽：
 
@@ -217,7 +217,7 @@ N. <標題> — <URL>
 **更新 checkpoint**：所有筆記建立完成後，將 `01.index.md` 的 `last_sync_id` 更新為**步驟 1 清單中第一筆**的 video ID（即目前頻道最新的影片），cwd = repo root：
 
 ```
-python3 .agents/skills/vault-youtube-sync/scripts/update_checkpoint.py "Inbox/YouTube/<頻道名>/01.index.md" <NEW_ID> <TODAY>
+python3 .agents/skills/vault-youtube-sync/scripts/update_checkpoint.py "raw/YouTube/<頻道名>/01.index.md" <NEW_ID> <TODAY>
 ```
 
 > 若本次無新影片（早已是最新），不需更新 checkpoint。
@@ -234,4 +234,4 @@ python3 .agents/skills/vault-youtube-sync/scripts/update_checkpoint.py "Inbox/Yo
 - **published 欄位不穩定**：defuddle 解析 YouTube 頁面時 `published` 欄位常為空，屬正常現象。無論 defuddle 是否成功，只要 `published` 為空都需用 `video_meta.py` 補全（取 `DATE:`）；若仍為空才留空
 - **跨平台 / 編碼**：所有抓取與處理都在 `scripts/*.py` 內完成，已統一處理 UTF-8 stdout 與 subprocess 解碼（`encoding="utf-8", errors="replace"`），不需在 skill 流程裡另寫 shell pipeline 或 ad-hoc subprocess
 - **重複筆記**：Step 2 的 Source URL 去重（過濾 draft 後）是主要防線，以 video ID 為準不依賴檔名；subagent Step 0 寫檔前再用 `Grep` 確認一次。兩道防線確保同一支影片不會產生兩份完整筆記
-- **不發佈**：`Inbox/YouTube/` 已在 ignorePatterns，正常筆記無需加 `draft: true`；`draft: true` 在此 skill 中專用於「失敗占位等待重試」語意
+- **不發佈**：`raw/YouTube/` 已在 ignorePatterns，正常筆記無需加 `draft: true`；`draft: true` 在此 skill 中專用於「失敗占位等待重試」語意

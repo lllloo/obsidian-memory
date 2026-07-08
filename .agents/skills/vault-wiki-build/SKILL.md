@@ -1,6 +1,6 @@
 ---
 name: vault-wiki-build
-description: 把散落 raw（整個 Inbox）綜合壓縮成 wiki 候選頁。偵測 ≥N 篇共享同主題的散落原料 → 提議 → 使用者同意才產頁到 wiki/，全 draft、可丟可重生。壓縮硬閘（跨 ≥2 來源才產、鏡射單源則拒）、單向 wikilink 指回 raw。使用時機：使用者說「建 wiki 候選」、「綜合散落 raw」、「掃 Inbox 找可綜合的主題」、「wiki build」，或直接呼叫 /vault-wiki-build。
+description: 把散落 raw（整個 raw）綜合壓縮成 wiki 候選頁。偵測 ≥N 篇共享同主題的散落原料 → 提議 → 使用者同意才產頁到 wiki/，全 draft、可丟可重生。壓縮硬閘（跨 ≥2 來源才產、鏡射單源則拒）、單向 wikilink 指回 raw。使用時機：使用者說「建 wiki 候選」、「綜合散落 raw」、「掃 raw 找可綜合的主題」、「wiki build」，或直接呼叫 /vault-wiki-build。
 ---
 
 # vault-wiki-build — raw → wiki 候選層
@@ -9,9 +9,9 @@ description: 把散落 raw（整個 Inbox）綜合壓縮成 wiki 候選頁。偵
 
 ## 定位
 
-- **raw = 整個 `Inbox/`**：永久留存的原料，本 skill 只讀不改。
+- **raw = 整個 `raw/`**：永久留存的原料，本 skill 只讀不改。
 - **wiki = AI 候選層**：把散落 raw 壓縮成的候選頁，全 `draft: true`、可丟可重生。給人看為主。
-- **流向**：`Inbox(raw) →（本 skill 綜合）→ wiki(候選) →（人內化）→ Card → Topic`。wiki→Card 匯出由使用者挑選、機制另定，不在本 skill。
+- **流向**：`raw →（本 skill 綜合）→ wiki(候選) →（人內化）→ Card → Topic`。wiki→Card 匯出由使用者挑選、機制另定，不在本 skill。
 
 **提議制**：偵測到 cluster 只是「有這個可綜合」，不等於要產。一律先列提議、等使用者挑哪幾個才產——只持久化使用者說「會回來看」的。
 
@@ -21,7 +21,7 @@ description: 把散落 raw（整個 Inbox）綜合壓縮成 wiki 候選頁。偵
 
 ## 資源
 
-- `scripts/cluster.py`：掃 Inbox raw，依既有 tags 找 ≥N 篇共享主題的散落項，輸出 JSON。已被既有 wiki 頁指到的 raw 視為已綜合，整群已綜合的 cluster 不重複提議。
+- `scripts/cluster.py`：掃 raw，依既有 tags 找 ≥N 篇共享主題的散落項，輸出 JSON。已被既有 wiki 頁指到的 raw 視為已綜合，整群已綜合的 cluster 不重複提議。
 - `references/synthesizer.md`：綜合器 subagent prompt。傳給 Agent subagent 時貼**全文** + 本次主題與成員 raw 全文；不叫 subagent 自己讀。無 Agent 工具時主 agent 直接 Read 全文照走同一流程。
 
 ## 主流程

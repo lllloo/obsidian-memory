@@ -28,10 +28,12 @@ git clone <repo-url> obsidian-memory
 
 ## 結構
 
-- `Inbox/` — 待消化暫存（AI 抄錄外部原料，消化完刪除）
+- `raw/` — 外部原料 raw 層（永久留存、建索引供檢索，不再消化即刪）
   - `YouTube/` — 影片摘要，依頻道分組
   - `Clippings/` — 網頁剪貼
+  - `Archive/` — 已內化但保留備查的原料
   - `Updates/` — 日常更新彙整
+- `wiki/` — AI 候選層（散落 raw 綜合成的 `draft` 候選頁，可丟可重生）
 - `Cards/` — 未歸屬的完整概念 Card（累積同主題後批次升 Topic）
 - `Topics/<主題>/` — 已歸檔主題（Claude-Code、AI-Agent-工作流、UI設計、前端技術、Obsidian、部署）；完整索引見 [`vault-map.md`](./vault-map.md)
 - `index.md` — 真人讀者入口（Quartz 網站首頁，列主題與 tag 連結）
@@ -50,7 +52,7 @@ git clone <repo-url> obsidian-memory
 |---|---|
 | `/ob-write` | 建立筆記 |
 | `/ob-read` | 查詢 vault |
-| `/vault-youtube-sync` | 同步 YouTube 影片摘要至 Inbox |
+| `/vault-youtube-sync` | 同步 YouTube 影片摘要至 raw |
 | `/vault-updates-daily` | 彙整日常更新 |
 | `/vault-lint` | Vault 結構健檢 |
 

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""vault-wiki-build cluster 偵測：掃 Inbox raw，依既有 tags 找 ≥N 篇共享主題的散落項。
+"""vault-wiki-build cluster 偵測：掃 raw（整個 raw/），依既有 tags 找 ≥N 篇共享主題的散落項。
 
 在 vault root（cwd 有 vault-map.md）執行：
 
@@ -81,10 +81,10 @@ def covered_stems():
 
 
 def scan(min_n):
-    inbox = ROOT / "Inbox"
+    raw_dir = ROOT / "raw"
     notes = []
-    if inbox.is_dir():
-        for p in sorted(inbox.rglob("*.md")):
+    if raw_dir.is_dir():
+        for p in sorted(raw_dir.rglob("*.md")):
             if p.name == "01.index.md":
                 continue
             tags, title, desc = frontmatter(read(p))

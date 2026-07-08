@@ -8,13 +8,13 @@ This file provides guidance to Claude Code (claude.ai/code) when working in this
 
 ## 基本原則
 
-- Vault 是「半自動卡片盒」：整理、改寫成卡片與升級分類（Inbox → Cards → Topics）由 agent 協助、人工拍板半自動推進；Cards/Topics 寫成已內化的理解版本，Inbox 原料則以 raw 永久留存供檢索（不再消化即刪）。
-- 「已內化」以使用者本人讀過／看過為準。AI 代為摘要、但使用者尚未親自消化的外部原料，**不主動升 Card**——摘要留 Inbox 當「待讀佇列」，待本人消化再內化。已誤升成 Card 的，**搬回 Inbox**，不用 `draft` 等標記在 Cards 充當待讀狀態。
+- Vault 是「半自動卡片盒」：整理、改寫成卡片與升級分類（raw → Cards → Topics）由 agent 協助、人工拍板半自動推進；Cards/Topics 寫成已內化的理解版本，raw 原料則以 raw 永久留存供檢索（不再消化即刪）。
+- 「已內化」以使用者本人讀過／看過為準。AI 代為摘要、但使用者尚未親自消化的外部原料，**不主動升 Card**——摘要留 raw 當「待讀佇列」，待本人消化再內化。已誤升成 Card 的，**搬回 raw**，不用 `draft` 等標記在 Cards 充當待讀狀態。
 - 不主動擴大 scope：不自動回存筆記、不自動結構搬移或升 Topic。
-- `Inbox/Clippings/` 例外：agent **不主動掃描、消化或刪除** Clippings 內容。使用者剪藏的網頁原料留作參考，只在使用者明確指名（如「消化 Clippings/X.md」、「處理 Clippings」）才處理。「整理 Inbox」這類掃描動作預設**跳過 Clippings**。（agent 仍可維護該夾 `01.index.md` / `清單.base` 索引。）
-- `Inbox/Archive/` 例外：封存區，放**已內化但保留備查**的原料（不夠格升 Card、又捨不得刪、留作回查）。agent **不主動掃描、消化或刪除** Archive 內容，「整理 Inbox」掃描動作預設**跳過 Archive**；只在使用者明確指名才處理。與 Clippings 的差別：Clippings 是未消化的待讀剪藏，Archive 是已消化的留底。（agent 仍可維護該夾 `01.index.md` / `清單.base` 索引。）
-- `Inbox/Updates/` 例外：`vault-updates-daily` 產出的日報屬待讀佇列，agent **不主動掃描、消化或刪除**，「整理 Inbox」預設**跳過 Updates**（`vault-updates-daily` skill 自身的產出與 `01.index.md` 維護不在此限）；使用者讀畢明確指示（如「清 Updates」）才清理。
-- 刪除筆記（Inbox／Cards／Topics）的授權一律來自使用者，agent 不自主刪除、skill 也不在自身流程內自動刪（現有 skill 只把原料帶進 Inbox）。Inbox 原料要升級成新 Card、強化既有 Card / Topic、或升入 Topic，必須先列出建議並取得使用者確認。**升 Card 後 Inbox 原篇留存為 raw、不刪**（原「消化即刪原篇」作廢）；刪除 raw 是獨立動作，一律另經使用者拍板（見下方三層流動流程）。
+- `raw/Clippings/` 例外：agent **不主動掃描、消化或刪除** Clippings 內容。使用者剪藏的網頁原料留作參考，只在使用者明確指名（如「消化 Clippings/X.md」、「處理 Clippings」）才處理。「整理 raw」這類掃描動作預設**跳過 Clippings**。（agent 仍可維護該夾 `01.index.md` / `清單.base` 索引。）
+- `raw/Archive/` 例外：封存區，放**已內化但保留備查**的原料（不夠格升 Card、又捨不得刪、留作回查）。agent **不主動掃描、消化或刪除** Archive 內容，「整理 raw」掃描動作預設**跳過 Archive**；只在使用者明確指名才處理。與 Clippings 的差別：Clippings 是未消化的待讀剪藏，Archive 是已消化的留底。（agent 仍可維護該夾 `01.index.md` / `清單.base` 索引。）
+- `raw/Updates/` 例外：`vault-updates-daily` 產出的日報屬待讀佇列，agent **不主動掃描、消化或刪除**，「整理 raw」預設**跳過 Updates**（`vault-updates-daily` skill 自身的產出與 `01.index.md` 維護不在此限）；使用者讀畢明確指示（如「清 Updates」）才清理。
+- 刪除筆記（raw／Cards／Topics）的授權一律來自使用者，agent 不自主刪除、skill 也不在自身流程內自動刪（現有 skill 只把原料帶進 raw）。raw 原料要升級成新 Card、強化既有 Card / Topic、或升入 Topic，必須先列出建議並取得使用者確認。**升 Card 後 raw 原篇留存為 raw、不刪**（原「消化即刪原篇」作廢）；刪除 raw 是獨立動作，一律另經使用者拍板（見下方三層流動流程）。
 - 執行 `git push` 或任何遠端推送前，必須先取得使用者明確同意。
 
 ## CWD 契約
@@ -66,7 +66,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working in this
 | 欄位 | 用途 / 何時用 | 值格式 |
 |---|---|---|
 | `title` | 主題名，可含空格與中文；不加日期前綴（SKILL 範本可例外，如 `vault-updates-daily` 日報 `"<YYYY-MM-DD> Daily Updates"`） | 字串（檔名為其無空格、`-` 連接版） |
-| `description` | 一句話自我介紹，給 Obsidian Bases、Quartz SEO、AI 查詢用。**適用**：Topics `index.md`、Inbox/YouTube 影片摘要、Inbox/Clippings 網頁剪藏（Web Clipper 自動帶 `{{description}}`）；其餘筆記不加（書籤型第一段已是定位段，判斷型靠第一段帶頭） | 字串，30–80 字；不重複 title，避免「這篇 / 本文」自我指涉 |
+| `description` | 一句話自我介紹，給 Obsidian Bases、Quartz SEO、AI 查詢用。**適用**：Topics `index.md`、raw/YouTube 影片摘要、raw/Clippings 網頁剪藏（Web Clipper 自動帶 `{{description}}`）；其餘筆記不加（書籤型第一段已是定位段，判斷型靠第一段帶頭） | 字串，30–80 字；不重複 title，避免「這篇 / 本文」自我指涉 |
 | `created` | 進 vault 日期 | `YYYY-MM-DD` |
 | `updated` | 最後修改日期 | `YYYY-MM-DD` |
 | `source` | 來源 URL（網頁／影片連結；YouTube `index` 為頻道 URL）；回查用，非證據本體 | URL |
@@ -74,10 +74,10 @@ This file provides guidance to Claude Code (claude.ai/code) when working in this
 | `parent` | Obsidian 圖譜用 wikilink，讓筆記出現在圖譜 | `"[[01.index]]"` |
 | `last_sync_id` | youtube-sync 增量同步 checkpoint，僅存於頻道 `01.index.md` | YouTube videoId |
 | `draft` | `true` = 不發佈到 Quartz 公開站（未定稿／含敏感脈絡，或 youtube transcript 抓取失敗的占位待重抓） | `true`（省略 = 已發佈） |
-| `extracted_to` | 多主題 Inbox 筆記內化某切角後指回整合頁（半消化狀態） | `"[[<整合頁名>]]"` |
+| `extracted_to` | 多主題 raw 筆記內化某切角後指回整合頁（半消化狀態） | `"[[<整合頁名>]]"` |
 | `tags` | 主題分類 + 必要的功能性 tag | YAML list |
 
-一般筆記需有 `title`、`created`、`updated`、`tags`。根 `index.md`（Quartz 公開首頁）可不加 `tags`。`tags` 一律用 YAML list，不用 inline array 或字串。下列三類需有 `description`：Topics `index.md`、Inbox/Clippings 網頁剪藏（Web Clipper 自動帶）、Inbox/YouTube 影片摘要（vault-youtube-sync skill 範本帶）。Clippings 的 `description` 為 Web Clipper 自動帶入的外站文案，豁免 30–80 字與風格要求，agent 不回頭修。
+一般筆記需有 `title`、`created`、`updated`、`tags`。根 `index.md`（Quartz 公開首頁）可不加 `tags`。`tags` 一律用 YAML list，不用 inline array 或字串。下列三類需有 `description`：Topics `index.md`、raw/Clippings 網頁剪藏（Web Clipper 自動帶）、raw/YouTube 影片摘要（vault-youtube-sync skill 範本帶）。Clippings 的 `description` 為 Web Clipper 自動帶入的外站文案，豁免 30–80 字與風格要求，agent 不回頭修。
 
 Topics 的 `index.md` 是主題入口；Cards/筆記也可以是整合頁。不要用額外 tag 標記這類結構角色，辨識時依路徑（如 `Topics/*/index.md`）與內容判斷。
 
@@ -111,7 +111,7 @@ Topics 的 `index.md` 是主題入口；Cards/筆記也可以是整合頁。不�
 
 整合流程：
 
-1. 先讀 `vault-map.md`，再用 tag、路徑、正文關鍵字搜尋 `Inbox/`、`Cards/`、`Topics/`。
+1. 先讀 `vault-map.md`，再用 tag、路徑、正文關鍵字搜尋 `raw/`、`Cards/`、`Topics/`。
 2. 列出候選筆記與共同主題；既有整合頁（例如 `Topics/*/index.md` 或內容明確為整合頁）不列入來源素材，避免整合頁套整合頁——但可作為步驟 3 的改寫目標。
 3. 只有整合了 ≥2 篇既有筆記、且產生原文沒有的綜合結論時，才建立或改寫整合頁。
 4. 整合頁預設寫入 `Cards/<主題>.md`；不自動升入 `Topics/`，升 Topic 仍須使用者拍板（見「Cards -> Topics 升級限制」）。
@@ -128,7 +128,7 @@ Topics 的 `index.md` 是主題入口；Cards/筆記也可以是整合頁。不�
 |---|---|
 | `ob-write` | 筆記建立（global，任何專案可呼叫；cwd=vault root 不限工具，跨專案走定位鏈直寫本機 clone） |
 | `ob-read` | vault 查詢（global，任何專案可呼叫；cwd=vault root 本地直搜，跨專案定位鏈定位後唯讀三層搜尋） |
-| `vault-youtube-sync` | YouTube 影片摘要同步至 Inbox |
+| `vault-youtube-sync` | YouTube 影片摘要同步至 raw |
 | `vault-updates-daily` | 日常更新彙整 |
 | `vault-wiki-build` | raw → wiki 候選層綜合（提議制產候選頁） |
 | `vault-lint` | Vault 結構健檢 |
@@ -145,15 +145,15 @@ Topics 的 `index.md` 是主題入口；Cards/筆記也可以是整合頁。不�
 
 ## 三層流動流程
 
-未透過 skill 直接操作 Inbox 或 Cards 時，依此流程推進 Inbox → Cards → Topics：
+未透過 skill 直接操作 raw 或 Cards 時，依此流程推進 raw → Cards → Topics：
 
-- **Inbox 處置候選**：寫新 Card／強化既有 Card 或 Topic／留存為 raw（預設）。都必須先列出建議並取得使用者確認；**升 Card 或強化後 Inbox 原篇一律留存為 raw、不刪**（原「消化即刪原篇」作廢）。刪除 raw 是獨立動作，需另經使用者拍板。
+- **raw 處置候選**：寫新 Card／強化既有 Card 或 Topic／留存為 raw（預設）。都必須先列出建議並取得使用者確認；**升 Card 或強化後 raw 原篇一律留存為 raw、不刪**（原「消化即刪原篇」作廢）。刪除 raw 是獨立動作，需另經使用者拍板。
 - **半消化**：多主題筆記只內化部分切角時，用 `extracted_to` 指回整合頁並保留剩餘段落（用法見〈多筆記整合 / 整合頁〉）。
 - **升 Topic**：門檻、`git mv` 與「須使用者拍板」見〈Cards -> Topics 升級限制〉，此處不重述。
 
 ## wiki 候選層
 
-`wiki/` 是 raw 與 Card 之間的 **AI 候選層**：把散落 raw（整個 `Inbox/`）綜合壓縮成候選頁。由 `vault-wiki-build` skill 承載，規則：
+`wiki/` 是 raw 與 Card 之間的 **AI 候選層**：把散落 raw（整個 `raw/`）綜合壓縮成候選頁。由 `vault-wiki-build` skill 承載，規則：
 
 - **定位**：候選頁全 `draft: true`（不發佈到 Quartz），可丟、可重生；給人看為主，不是定稿。`wiki/清單.base` 自動列出，`wiki/01.index.md` 為入口。
 - **壓縮硬閘**：一頁只有在綜合跨 ≥2 來源的散落事實、產生原文各自沒有的整合結論時才值得存在；鏡射單一可 grep 的檔／單張卡 = 負價值，禁止。

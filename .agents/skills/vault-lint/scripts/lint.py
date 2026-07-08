@@ -30,7 +30,7 @@ WHITELIST = [
 WL_ORDER = {k: i for i, k in enumerate(WHITELIST)}
 
 REQUIRED_DIRS = [
-    "Inbox", "Inbox/Clippings", "Inbox/Updates", "Inbox/YouTube", "Cards", "Topics", "wiki",
+    "raw", "raw/Clippings", "raw/Updates", "raw/YouTube", "Cards", "Topics", "wiki",
 ]
 
 # 敏感資料 token 前綴正典：CLAUDE.md「### 2. 敏感資料」的機器執行副本，正規化為比對用 stem
@@ -201,15 +201,15 @@ def sensitive_drift():
 def scan():
     out = {"date": datetime.date.today().isoformat()}
 
-    # 1. Inbox 散項：直接躺在 Inbox root、未歸進任何 raw 子夾的 md
-    #    新模型下 Inbox = raw 永久留存，各子夾（Clippings/Archive/Updates/YouTube）本就會長、不算積壓；
+    # 1. raw 散項：直接躺在 raw root、未歸進任何 raw 子夾的 md
+    #    raw 層永久留存，各子夾（Clippings/Archive/Updates/YouTube）本就會長、不算積壓；
     #    只有還沒歸進任何子夾的散項才提醒歸檔。
-    inbox = ROOT / "Inbox"
-    out["inbox_backlog"] = sum(1 for p in md_files("Inbox") if p.parent == inbox)
+    raw_dir = ROOT / "raw"
+    out["inbox_backlog"] = sum(1 for p in md_files("raw") if p.parent == raw_dir)
 
-    # 2. extracted_to 遺留（Inbox 內）
+    # 2. extracted_to 遺留（raw 內）
     out["extracted_to"] = [
-        rel(p) for p in md_files("Inbox") if has_line(read(p), "extracted_to:")
+        rel(p) for p in md_files("raw") if has_line(read(p), "extracted_to:")
     ]
 
     # 3. Frontmatter 缺欄位（Cards/Topics）
@@ -298,10 +298,10 @@ def scan():
     # 10. description 缺失（三類規範必填）
     desc_targets = []
     desc_targets += [d / "index.md" for d in topic_dirs]
-    clip = ROOT / "Inbox" / "Clippings"
+    clip = ROOT / "raw" / "Clippings"
     if clip.is_dir():
         desc_targets += [p for p in sorted(clip.glob("*.md")) if p.name != "01.index.md"]
-    yt = ROOT / "Inbox" / "YouTube"
+    yt = ROOT / "raw" / "YouTube"
     if yt.is_dir():
         desc_targets += [p for p in sorted(yt.rglob("*.md")) if p.name != "01.index.md"]
     out["missing_description"] = [
@@ -311,7 +311,7 @@ def scan():
 
     # 11. Frontmatter 欄位順序錯亂 / 白名單外游離欄位
     rogue, order = [], []
-    for p in md_files("Cards", "Topics", "Inbox", "wiki"):
+    for p in md_files("Cards", "Topics", "raw", "wiki"):
         keys = frontmatter_keys(read(p))
         if not keys:
             continue

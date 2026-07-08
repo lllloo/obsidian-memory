@@ -42,8 +42,8 @@ cwd 不在 vault，走**定位鏈**找本機 clone：`Read` 固定路徑 `~/code
 - 資料夾粗結構：
   - `Cards/` — 未歸屬的完整概念 Cards（工作區）
   - `Topics/<主題>/` — 已歸檔主題，第一層子目錄一個主題一個
-  - `Inbox/YouTube/<頻道>/` — 影片摘要，每個頻道一個子目錄
-  - `Inbox/Clippings/` — 網頁剪貼
+  - `raw/YouTube/<頻道>/` — 影片摘要，每個頻道一個子目錄
+  - `raw/Clippings/` — 網頁剪貼
 - **搜尋時排除**：`.obsidian/`
 
 ## 三層搜尋策略
@@ -68,7 +68,7 @@ cwd 不在 vault，走**定位鏈**找本機 clone：`Read` 固定路徑 `~/code
 ### L3：正文 Grep 與驗證
 
 1. 對 L2 篩出的檔案 Grep 關鍵字正文（取 `-C 2` 看上下文）
-2. **L2 空集合 fallback**：若 L2 兩種篩選聯集後仍為 0 筆，L3 改對 `Cards/**/*.md` + `Topics/**/*.md` 全範圍 Grep（**排除 `Inbox/YouTube/`、`Inbox/Clippings/` 避免雜訊**）
+2. **L2 空集合 fallback**：若 L2 兩種篩選聯集後仍為 0 筆，L3 改對 `Cards/**/*.md` + `Topics/**/*.md` 全範圍 Grep（**排除 `raw/YouTube/`、`raw/Clippings/` 避免雜訊**）
 3. 對 Grep 命中的檔案 Read 首 50 行，判斷是否真正回答問題（不只字面出現）
 4. 挑最相關 1~5 筆組成 `hits`
 
@@ -84,7 +84,7 @@ cwd 不在 vault，走**定位鏈**找本機 clone：`Read` 固定路徑 `~/code
 
 - Read 檔案數 ≤ 15（候選太多靠 frontmatter `title` 篩）
 - Grep 指定 `**/*.md` 或候選資料夾以加速
-- 不要對 `Inbox/YouTube/` 影片摘要做全域正文 Grep；先靠 L1 縮範圍
+- 不要對 `raw/YouTube/` 影片摘要做全域正文 Grep；先靠 L1 縮範圍
 
 ## 輸出格式
 
@@ -95,7 +95,7 @@ cwd 不在 vault，走**定位鏈**找本機 clone：`Read` 固定路徑 `~/code
   "query": "<使用者原始問題>",
   "hits": [
     {
-      "path": "Inbox/YouTube/Chase-H-AI/Claude-Code-RAG七層次.md",
+      "path": "raw/YouTube/Chase-H-AI/Claude-Code-RAG七層次.md",
       "title": "Claude Code 與 RAG 的七個層次",
       "summary": "將 Claude Code 記憶架構分為 7 層，從 AutoMemory 到 Agentic RAG",
       "relevance": "high"
@@ -111,7 +111,7 @@ cwd 不在 vault，走**定位鏈**找本機 clone：`Read` 固定路徑 `~/code
 {
   "query": "<使用者原始問題>",
   "hits": [],
-  "miss_reason": "已檢查：Topics/Claude-Code/、Inbox/YouTube/Chase-H-AI/；嘗試關鍵字：dream, 記憶；皆無相關內容"
+  "miss_reason": "已檢查：Topics/Claude-Code/、raw/YouTube/Chase-H-AI/；嘗試關鍵字：dream, 記憶；皆無相關內容"
 }
 ```
 

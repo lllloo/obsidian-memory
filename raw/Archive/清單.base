@@ -1,6 +1,6 @@
 filters:
   and:
-    - file.inFolder("Inbox/Archive")
+    - file.inFolder("raw/Archive")
     - file.ext == "md"
     - file.name != "01.index"
 properties:
