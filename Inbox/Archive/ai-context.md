@@ -1,7 +1,8 @@
 ---
 title: 從模型到上下文
+description: 從 Model 到 Context Window 逐一拆解 AI 工具七大元件（Model / AGENTS.md / Commands / Skills / MCP / Agent / Context），理解 AI 能力邊界
 created: 2026-06-03
-updated: 2026-06-04
+updated: 2026-07-08
 tags:
   - ai-agent
   - context-engineering

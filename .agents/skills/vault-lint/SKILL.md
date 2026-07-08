@@ -25,7 +25,7 @@ JSON 欄位對應的問題與嚴重度：
 
 | JSON 欄位 | 意義 | 報告分類 |
 |---|---|---|
-| `inbox_backlog` | Inbox 篇數（排除 `Inbox/Updates/`） | > 50 🔴；> 20 🟡；≤ 20 不報 |
+| `inbox_backlog` | Inbox root 未歸檔散項數（各 raw 子夾 Clippings/Archive/Updates/YouTube 不計） | > 20 🔴；> 5 🟡；≤ 5 不報 |
 | `dead_links` | wikilink 目標不存在（已排除 `[[<佔位符>]]`、帶路徑、`.base`） | 🔴 |
 | `missing_title` | Cards/Topics 缺 `title` | 🔴 |
 | `missing_description` | 規範必填 `description` 缺失（Topics `index.md`、`Inbox/Clippings/*`、YouTube 影片筆記） | 🔴 |
@@ -61,7 +61,7 @@ JSON 欄位對應的問題與嚴重度：
 - 敏感黑名單漂移：reference 缺前綴或 lint 常數與 CLAUDE.md 不一致（列出哪份缺哪些）
 
 ### 🟡 警告（N 項）
-- Inbox 積壓：42 篇（> 20）
+- Inbox 散項：8 篇未歸檔（> 5）
 - 孤立 Topics：Topics/foo/bar.md（升級主題卻無入站連結）
 - vault-map 未收錄：Topics/AI-Agent-工作流/BMAD（含巢狀子目錄）
 - 規範資料夾遺漏：Inbox/Clippings
@@ -90,7 +90,7 @@ JSON 欄位對應的問題與嚴重度：
 - tag 同義異寫 — 哪個是正典？
 - frontmatter 欄位順序 / 白名單外欄位 — ORDER 手動調整欄位順序；ROGUE 判斷該補進白名單還是刪除
 - extracted_to 遺留 — 何時消化剩餘段落？
-- Inbox 積壓 — 批次清理時機由用戶自選
+- Inbox 散項 — 未歸進 raw 子夾的散項，歸檔時機由用戶自選（raw 子夾永久留存，不計積壓）
 - description 缺失 — 需手動寫 30–80 字摘要，不自動產生
 - schema 漂移 — 判斷 `CLAUDE.md` schema 與 `lint.py` 的 `WHITELIST` 哪邊才是正確意圖，再同步另一邊（規範變更通常以 `CLAUDE.md` 為準）
 - 敏感黑名單漂移 — `references` 缺漏：把該 reference 的 token 清單補齊到涵蓋正典；`canon_vs_lint` 不一致：先定 `CLAUDE.md` 正典，再同步 `lint.py` 的 `SENSITIVE_PREFIXES`

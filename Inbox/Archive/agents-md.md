@@ -1,7 +1,8 @@
 ---
 title: "AGENTS.md：AI 編碼工具的統一指令標準"
+description: AGENTS.md 跨工具指令標準：各 AI 編碼工具支援現況，以及 @ 引用與 Symlink 兩種讓 Claude Code 共用同一份指令的因應方案
 created: 2026-06-03
-updated: 2026-06-04
+updated: 2026-07-08
 tags:
   - claude-code
   - copilot

@@ -30,7 +30,7 @@ WHITELIST = [
 WL_ORDER = {k: i for i, k in enumerate(WHITELIST)}
 
 REQUIRED_DIRS = [
-    "Inbox", "Inbox/Clippings", "Inbox/Updates", "Inbox/YouTube", "Cards", "Topics",
+    "Inbox", "Inbox/Clippings", "Inbox/Updates", "Inbox/YouTube", "Cards", "Topics", "wiki",
 ]
 
 # 敏感資料 token 前綴正典：CLAUDE.md「### 2. 敏感資料」的機器執行副本，正規化為比對用 stem
@@ -46,6 +46,7 @@ SENSITIVE_REFERENCE_FILES = [
     ".agents/skills/ob-write/references/write.md",
     ".agents/skills/vault-youtube-sync/references/subagent-note-creator.md",
     ".agents/skills/vault-updates-daily/references/item-analyzer.md",
+    ".agents/skills/vault-wiki-build/references/synthesizer.md",
 ]
 
 
@@ -200,13 +201,11 @@ def sensitive_drift():
 def scan():
     out = {"date": datetime.date.today().isoformat()}
 
-    # 1. Inbox 積壓（排除 Inbox/Updates/）
-    updates = (ROOT / "Inbox" / "Updates")
-    backlog = [
-        p for p in md_files("Inbox")
-        if updates not in p.parents
-    ]
-    out["inbox_backlog"] = len(backlog)
+    # 1. Inbox 散項：直接躺在 Inbox root、未歸進任何 raw 子夾的 md
+    #    新模型下 Inbox = raw 永久留存，各子夾（Clippings/Archive/Updates/YouTube）本就會長、不算積壓；
+    #    只有還沒歸進任何子夾的散項才提醒歸檔。
+    inbox = ROOT / "Inbox"
+    out["inbox_backlog"] = sum(1 for p in md_files("Inbox") if p.parent == inbox)
 
     # 2. extracted_to 遺留（Inbox 內）
     out["extracted_to"] = [
@@ -301,7 +300,7 @@ def scan():
     desc_targets += [d / "index.md" for d in topic_dirs]
     clip = ROOT / "Inbox" / "Clippings"
     if clip.is_dir():
-        desc_targets += sorted(clip.glob("*.md"))
+        desc_targets += [p for p in sorted(clip.glob("*.md")) if p.name != "01.index.md"]
     yt = ROOT / "Inbox" / "YouTube"
     if yt.is_dir():
         desc_targets += [p for p in sorted(yt.rglob("*.md")) if p.name != "01.index.md"]
@@ -312,7 +311,7 @@ def scan():
 
     # 11. Frontmatter 欄位順序錯亂 / 白名單外游離欄位
     rogue, order = [], []
-    for p in md_files("Cards", "Topics", "Inbox"):
+    for p in md_files("Cards", "Topics", "Inbox", "wiki"):
         keys = frontmatter_keys(read(p))
         if not keys:
             continue

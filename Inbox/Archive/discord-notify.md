@@ -1,7 +1,8 @@
 ---
 title: GitHub Actions 寄送 Discord 通知
+description: 用 sarisia/actions-status-discord 在 GitHub Actions 完成後自動發 Discord 通知：webhook 設定、常用參數與多 job 部署流程範例
 created: 2026-06-03
-updated: 2026-06-04
+updated: 2026-07-08
 tags:
   - github-actions
   - discord
