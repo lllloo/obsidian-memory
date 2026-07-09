@@ -13,10 +13,10 @@ tags:
 
 ## 架構（分離雙 repo）
 
-- **筆記本體**：本 repo `obsidian-memory`，含 `raw/`、`wiki/`、`schema/`、`Cards/`、`Topics/` 與 skills，無 Quartz 設定檔。
+- **筆記本體**：本 repo `obsidian-memory`，含 `raw/`、`wiki/`、`schema/`、`cards/`、`topics/` 與 skills，無 Quartz 設定檔。
 - **發佈層**：獨立 repo [obsidian-deploy](https://github.com/lllloo/obsidian-deploy)，存放 `quartz.config.ts`、`quartz.layout.ts`、CI 與稽核腳本。
 - **串接方式**：發佈 repo 的 CI 用 `actions/checkout` 把 `obsidian-memory` 整個 clone 進 `content/`（**獨立 checkout，非 submodule**），Quartz 把 `content/` 當 vault 根目錄讀取。
-- **發佈範圍**：`ignorePatterns`（定義在發佈 repo 的 `quartz.config.ts`）排除 `.obsidian` 與私有層整個資料夾（`raw/`、`wiki/`、`schema/`）、根目錄治理檔（`CLAUDE.md`、`AGENTS.md`、`README.md`）；實際只發佈 `Cards/`、`Topics/` 與根 `index.md`。完整清單以發佈 repo 的 `quartz.config.ts` 為準，vault 新增私有資料夾時記得同步加入。
+- **發佈範圍**：`ignorePatterns`（定義在發佈 repo 的 `quartz.config.ts`）排除 `.obsidian` 與私有層整個資料夾（`raw/`、`wiki/`、`schema/`）、根目錄治理檔（`CLAUDE.md`、`AGENTS.md`、`README.md`）；實際只發佈 `cards/`、`topics/` 與根 `index.md`。完整清單以發佈 repo 的 `quartz.config.ts` 為準，vault 新增私有資料夾時記得同步加入。
 - **部署網址**：[bugloop.com](https://bugloop.com)（GitHub Pages + 自訂網域）。
 
 ## 部署流程

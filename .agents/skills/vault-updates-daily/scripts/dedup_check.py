@@ -21,7 +21,7 @@
   新條目必被誤判 DUP → 默默漏報。故給了 --key 就只比穩定鍵，URL 引數即使傳入也不參與比對。
 
 三層檢查（任一命中即 DUP；--key 模式只跑第 3 層）：
-  1. 舊個別筆記格式：raw/Updates 任一 .md 含 `source: <url>`。Cards/Topics 是使用者私人區，
+  1. 舊個別筆記格式：raw/Updates 任一 .md 含 `source: <url>`。cards/topics 是使用者私人區，
      agent 不掃描，故不列入比對範圍。
   2. 所有日報正文：任一 `*-daily-updates.md` 含完整 <url>（release 的穩定 URL 走這層）。
      比對有右邊界檢查：命中後下一字元不得仍是 URL 字元，避免短 URL 前綴誤命中長 URL

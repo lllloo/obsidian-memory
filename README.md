@@ -1,6 +1,6 @@
 # Obsidian Memory Vault
 
-個人 Obsidian vault，採 Karpathy [LLM Wiki](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f) 工作流：agent 讀不可變的 `raw/` 原料，漸進維護一套互聯的 `wiki/` 活知識庫。`Cards/`、`Topics/` 是使用者私人策展區，也是對外公開的層。公開版本在 [bugloop.com](https://bugloop.com)。
+個人 Obsidian vault，採 Karpathy [LLM Wiki](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f) 工作流：agent 讀不可變的 `raw/` 原料，漸進維護一套互聯的 `wiki/` 活知識庫。`cards/`、`topics/` 是使用者私人策展區，也是對外公開的層。公開版本在 [bugloop.com](https://bugloop.com)。
 
 ## 安裝與使用
 
@@ -26,7 +26,7 @@ git clone <repo-url> obsidian-memory
   - `Archive/` — 保留備查的原料
   - `Updates/` — 日常更新彙整
 - `wiki/` — 活知識庫（agent 綜合 raw 維護的摘要/實體/概念/綜合頁，含內容目錄 `01.index.md`）
-- `Cards/`、`Topics/` — **使用者私人策展區，agent 不管理**；同時是 Quartz 唯一對外公開的層。使用者自行從 wiki 撿選內容放入
+- `cards/`、`topics/` — **使用者私人策展區，agent 不管理**；同時是 Quartz 唯一對外公開的層。使用者自行從 wiki 撿選內容放入
 - 資料夾完整索引見 [`schema/vault-map.md`](./schema/vault-map.md)
 - `index.md` — 真人讀者入口（Quartz 網站首頁，列主題與 tag 連結）
 - `schema/vault-map.md` — agent 用的全局導航與 tag 查詢

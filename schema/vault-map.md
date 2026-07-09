@@ -19,7 +19,7 @@ tags:
 
 ## 資料夾索引
 
-> 路徑以 repo root 為基準（即 vault root）。agent 只維護 `raw/` + `wiki/`；`Cards/`、`Topics/` 是使用者私人區，agent 不讀不寫不掃。
+> 路徑以 repo root 為基準（即 vault root）。agent 只維護 `raw/` + `wiki/`；`cards/`、`topics/` 是使用者私人區，agent 不讀不寫不掃。
 
 ```
 .
@@ -35,13 +35,13 @@ tags:
 │   ├── Archive/   — 封存區：保留備查的原料（01.index.md + 清單.base 索引；agent 不主動掃描/消化/刪除）
 │   └── Updates/   — 日常更新彙整（vault-updates-daily 產出，01.index.md 索引；待讀佇列，讀畢由使用者指示清理）
 ├── wiki/          — 活知識庫：agent 綜合 raw 維護的摘要/實體/概念/綜合頁（01.index.md 為內容目錄，每次 ingest 更新）
-├── Cards/         — 【使用者私人區，agent 不管理】使用者自存文件；Quartz 公開層之一
-└── Topics/        — 【使用者私人區，agent 不管理】使用者自存主題資料夾；Quartz 公開層之一
+├── cards/         — 【使用者私人區，agent 不管理】使用者自存文件；Quartz 公開層之一
+└── topics/        — 【使用者私人區，agent 不管理】使用者自存主題資料夾；Quartz 公開層之一
 ```
 
 ## Tag 查詢指南
 
-> agent 查詢範圍是 `raw/` + `wiki/`。`Cards/`、`Topics/` 屬使用者私人區，不在 agent 查詢範圍內。
+> agent 查詢範圍是 `raw/` + `wiki/`。`cards/`、`topics/` 屬使用者私人區，不在 agent 查詢範圍內。
 
 | 主題 | Tags | 位置 |
 |------|------|------|

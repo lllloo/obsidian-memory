@@ -33,7 +33,7 @@ LLM Wiki 相反：知識被**編譯一次後持續維護**。交叉引用已建�
 
 Google Open Knowledge Format（OKF）可視為 LLM Wiki 的標準化方向：用每層 `index.md`、concept metadata、YAML description 讓 agent 先判斷「這份知識庫有什麼、哪個檔案值得打開」，再精準讀內容。它不是取代 wiki，而是把每個人自訂的 second brain 慣例整理成較可攜、可分享、可被 agent 導航的 bundle。
 
-對本 vault 的啟發不是追著格式改名，而是保留現有 `vault-map.md` / `Topics/*/index.md` 這類入口的價值：agent 先讀索引與描述，再進細節，比直接全文 grep 更省 token，也更不容易重複建頁或放錯位置。OKF 仍偏新，實務上先學它的「索引 + 單一概念 + metadata」原則，不急著把 vault 轉成另一套格式。
+對本 vault 的啟發不是追著格式改名，而是保留現有 `vault-map.md` / `topics/*/index.md` 這類入口的價值：agent 先讀索引與描述，再進細節，比直接全文 grep 更省 token，也更不容易重複建頁或放錯位置。OKF 仍偏新，實務上先學它的「索引 + 單一概念 + metadata」原則，不急著把 vault 轉成另一套格式。
 
 ```mermaid
 flowchart LR

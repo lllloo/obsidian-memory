@@ -42,6 +42,6 @@ tags:
 
 - [[bookmark-Superpowers-Agent開發框架|書籤]]
 
-## 後續候選（仍在 Cards/ 待消化）
+## 後續候選（仍在 cards/ 待消化）
 
-- [[QA-系統聊天回覆方案]]——RAG / QA 回覆六種方案選型，單篇暫放 Cards，待同主題累積再升 Topic。
+- [[QA-系統聊天回覆方案]]——RAG / QA 回覆六種方案選型，單篇暫放 cards，待同主題累積再升 topic。

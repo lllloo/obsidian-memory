@@ -24,4 +24,4 @@ tags:
 ## 工具書籤
 
 - [[bookmark-codex-plugin-cc-Codex整合外掛|codex-plugin-cc]] — OpenAI 出的 Claude Code plugin，做跨模型 review / task delegation
-- [[Skills-跨工具安裝]] — vercel-labs/skills：一份 skill 經 symlink 多工具共用（Claude Code／Copilot／OpenCode），暫放 Cards 待累積
+- [[Skills-跨工具安裝]] — vercel-labs/skills：一份 skill 經 symlink 多工具共用（Claude Code／Copilot／OpenCode），暫放 cards 待累積

@@ -12,7 +12,7 @@ tags:
 > 這份文件給人看，用來建立整體心智模型，逐節對齊 Karpathy 的 [LLM Wiki](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f)。
 > 可執行規則不放這裡：agent 維護規則、Ingest/Query/Lint、寫入慣例、唯一守門看 [`CLAUDE.md`](../CLAUDE.md)；導航與 tag 查詢看 [`vault-map.md`](vault-map.md)。
 
-一句話：**wiki 是腦的延伸，LLM 幫你維護；Cards/Topics 是你自己的抽屜。**
+一句話：**wiki 是腦的延伸，LLM 幫你維護；cards/topics 是你自己的抽屜。**
 
 ## 核心構想
 
@@ -44,14 +44,14 @@ tags:
 2. **`wiki/`（活知識庫）** — LLM 生成與維護的 markdown：摘要頁、實體頁、概念頁、比較頁、綜合頁。**LLM 完全掌管**——建頁、改頁、刪頁、交叉引用、維護 index，你只負責讀。
 3. **schema** — 規範文件（[`CLAUDE.md`](../CLAUDE.md) / `AGENTS.md`），告訴 LLM wiki 怎麼組織、慣例是什麼、Ingest/Query/Lint 各走什麼流程。這是把 LLM 從通用聊天機器人變成**有紀律的 wiki 維護者**的關鍵設定，你與 LLM 隨時間共同演進它。
 
-### 本 vault 的額外層：Cards/Topics（不在原文三層裡，系統不管）
+### 本 vault 的額外層：cards/topics（不在原文三層裡，系統不管）
 
-`Cards/` 與 `Topics/` 是本 vault 疊在三層之上的擴充，**不屬於 Karpathy 模型**：
+`cards/` 與 `topics/` 是本 vault 疊在三層之上的擴充，**不屬於 Karpathy 模型**：
 
 - **你的私人抽屜**：你愛放什麼放什麼，agent 完全不讀、不寫、不掃、不維護、不索引。
-- **唯一對外公開層**：Quartz 只發佈 Cards/Topics。你從 wiki 讀到覺得不錯的內容，**手動**撿選、複製進去對外發表。
+- **唯一對外公開層**：Quartz 只發佈 cards/topics。你從 wiki 讀到覺得不錯的內容，**手動**撿選、複製進去對外發表。
 
-wiki 是 LLM 幫你養的活知識庫（私有、只給你讀）；Cards/Topics 是你親手策展、決定對世界公開的成品。這也回應 Karpathy 的反指標「**結構化垃圾場**」：AI 生一堆沒人讀、不拿來決策的精美 wiki 就只是垃圾。守門不攔在 wiki 生成前（那會拖垮維護成本），而攔在「你決定公開什麼」——用「撿進 Cards/Topics」這個人為動作表達「這個我讀過、值得對外」。
+wiki 是 LLM 幫你養的活知識庫（私有、只給你讀）；cards/topics 是你親手策展、決定對世界公開的成品。這也回應 Karpathy 的反指標「**結構化垃圾場**」：AI 生一堆沒人讀、不拿來決策的精美 wiki 就只是垃圾。守門不攔在 wiki 生成前（那會拖垮維護成本），而攔在「你決定公開什麼」——用「撿進 cards/topics」這個人為動作表達「這個我讀過、值得對外」。
 
 ## 三個動作（Operations）
 
@@ -98,7 +98,7 @@ wiki 長大後可能想要能更有效操作它的小工具，最明顯的是 **
 
 ## 人 / AI 分工與唯一守門
 
-- **你**：蒐集來源、提出問題、判斷價值、從 wiki 撿選公開進 Cards/Topics、拍板 `git push`。
+- **你**：蒐集來源、提出問題、判斷價值、從 wiki 撿選公開進 cards/topics、拍板 `git push`。
 - **AI**：讀、摘要、整理、交叉引用、歸檔、維護 wiki 一致性、結構健檢。
 
 AI 承擔重複、瑣碎、容易被延後的維護工作，自主維護 wiki（含刪頁）不需逐步拍板——這正是「維護成本趨近於零」的重點。唯一硬守門是 **`git push` 前要你同意**（見 [`CLAUDE.md`](../CLAUDE.md)）。
@@ -111,7 +111,7 @@ AI 承擔重複、瑣碎、容易被延後的維護工作，自主維護 wiki（
 
 這些不是缺功能，而是設計選擇（原文皆為「optional / 建議」，本 vault 按需取捨）：
 
-- **不管 Cards/Topics**：使用者私人抽屜兼唯一公開層，策展與公開完全交給人；agent 的 Ingest/Query/Lint 一律跳過。
+- **不管 cards/topics**：使用者私人抽屜兼唯一公開層，策展與公開完全交給人；agent 的 Ingest/Query/Lint 一律跳過。
 - **不做自動成長掃描**：概念缺口、該連沒連這類成長面觀察，只在討論中浮現、只提議，不背景掃全 vault。可機械驗證的結構問題（孤立頁、死連結、tag 漂移、缺欄位）才交給 Lint。
 - **暫不寫 `log.md`**：見上「索引與日誌」，用 git log 代替。
 - **暫不上搜尋引擎（qmd 等）**：見上「選配」，現階段 Grep 夠用。
