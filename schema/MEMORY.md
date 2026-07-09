@@ -8,7 +8,7 @@ tags:
 
 # Agent 跨 Session 記憶
 
-有界、凍結快照式檔案，記錄 agent 跨 session 該延續的**操作狀態**——不是 wiki 內容（陳述性知識），也不是治理規則（那是 CLAUDE.md／SYSTEM-DESIGN.md 的事）。設計借鑑 [[Hermes-Agent]] 的 `MEMORY.md`／`USER.md`：**有上限、不自動摘要精簡**，寫爆時手動整理過時條目，逼自己維持精簡而非無限累積。由 `CLAUDE.md` `@` 匯入，session 開始自動載入；只在明確檢查點（如健檢、研究回存）更新，不逐句隨對話碎片化改動。
+有界、凍結快照式檔案，記錄 agent 跨 session 該延續的**操作狀態**——不是 wiki 內容（陳述性知識），也不是治理規則（那是 CLAUDE.md／SYSTEM-DESIGN.md 的事）。設計借鑑 [[Hermes-Agent]] 的 `MEMORY.md`／`USER.md`：**有上限、不自動摘要精簡**，寫爆時手動整理過時條目，逼自己維持精簡而非無限累積。由 `CLAUDE.md` `@` 匯入，session 開始自動載入；比照 Hermes 預設的 `write_approval: false`，**agent 自主、逐回合即時寫**——當下發現值得跨 session 延續的操作狀態就直接寫，不用等明確檢查點，不逐次拍板；40 行上限仍是唯一防線，寫爆時當場合併/刪除過時條目。
 
 ## 上限
 
