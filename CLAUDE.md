@@ -40,7 +40,7 @@ wiki 的維護就是這三個動作，全部只在 `raw/` + `wiki/` 上進行，
 
 ### Ingest（擷取）
 
-新來源進 `raw/` → agent 讀 → **與使用者討論重點** → 在 `wiki/` 寫入或更新頁面：
+新來源進 `raw/` → agent 讀 → 直接在 `wiki/` 寫入或更新頁面，**不需要先開一輪討論才動筆**：
 
 1. 寫一頁摘要（或更新既有摘要）。
 2. 更新相關的實體頁 / 概念頁：整合新資訊、改寫舊摘要、**新資料與舊主張衝突時就地標記矛盾**。
@@ -126,6 +126,8 @@ wiki 的維護就是這三個動作，全部只在 `raw/` + `wiki/` 上進行，
 > **已移除的核心 skill**：`ob-write`、`ob-read`、`vault-wiki-build`、`vault-lint`（含 `ob-write`／`ob-read` 兩個全域 symlink）已於重整時移除。三動作（Ingest／Query／Lint）的模型仍是本 vault 的架構，目前改由 agent 手動執行；後續有需求再按「留名字換內臟」方向重建。
 
 ### 新增 / 修改 skill 的本 repo 約束
+
+**新增或修改 skill（含既有 skill 的 bug 修正、一致性調整）一律先問過使用者再動手，不比照 wiki 全權自主。** skill 改的是 agent 之後怎麼行動，影響範圍比一頁 wiki 內容大，值得每次都讓你點頭。
 
 - subagent 一律 `Agent` + `subagent_type: "general-purpose"`，prompt = `references/*.md` 全文 + 本次需求（不要叫 subagent 自己 Read）
 - 工具限制等規則寫在 references 正文，自包含、不引用命名 agent

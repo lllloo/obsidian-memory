@@ -61,7 +61,7 @@ wiki 是 LLM 幫你養的活知識庫（私有、只給你讀）；cards/topics 
 
 ## 三個動作（Operations）
 
-- **Ingest（擷取）** — 你把新來源丟進 raw、叫 LLM 處理。典型流程：LLM 讀來源 → 與你討論重點 → 寫一頁摘要 → 更新 index → 更新橫跨 wiki 的相關實體頁/概念頁 → 標矛盾。**單一來源可牽動 10–15 頁。** 可一次一源、你在旁導引，也可較少監督地批次 ingest；發展出適合自己的節奏並寫進 schema。
+- **Ingest（擷取）** — 你把新來源丟進 raw、叫 LLM 處理。典型流程：LLM 讀來源 → 直接寫一頁摘要 → 更新 index → 更新橫跨 wiki 的相關實體頁/概念頁 → 標矛盾，**不必先討論才動筆**。**單一來源可牽動 10–15 頁。** 可一次一源、你在旁導引，也可較少監督地批次 ingest；發展出適合自己的節奏並寫進 schema。
 - **Query（查詢）** — 向 wiki 提問，LLM 先讀 index → 找相關頁 → 讀頁 → **附引用**綜合答案。答案形式依問題而定（markdown 頁、比較表、投影片、圖表、canvas）。關鍵洞見：**好答案可回存成新 wiki 頁**——你要的比較、分析、發現的關聯很有價值，不該消失在對話裡；這樣探索跟來源一樣複利累積。
 - **Lint（健檢）** — 定期請 LLM 體檢 wiki：矛盾、被新來源取代的過時主張、無入連的孤立頁、被提到卻缺專屬頁的概念、缺交叉引用、可用 web 搜尋補的資料空缺。LLM 也擅長提議「該再查的問題」與「該找的來源」，讓 wiki 隨成長保持健康。
 
@@ -79,6 +79,8 @@ wiki 是 LLM 幫你養的活知識庫（私有、只給你讀）；cards/topics 
 「留名字換內臟」的判準：**不預先蓋 skill，等手動跑出重複 3 次以上的固定套路才回頭 codify**。太早寫會綁死單次特例；太晚寫則每次重新發明輪子。目前正在追蹤哪些候選訊號、各出現幾次，記在有界的 [`MEMORY.md`](MEMORY.md)（跨 session 操作狀態，不放在本檔——本檔是給人看的穩定設計文件，不是計數器）。
 
 **達到門檻時，agent 主動提議、不擅自動筆**：候選訊號滿 3 次的當下，agent 跳出來跟你說「這個套路已經重複 N 次，要不要我幫你寫成 skill」，附上打算怎麼拆 `SKILL.md`／`references/*.md`；你點頭才動手。這跟 wiki 內容全權自主不同——skill 改的是 agent 之後怎麼行動，影響比一頁 wiki 內容大，值得讓你點頭再落地。
+
+已查證 [[Hermes-Agent]] 的「免拍板」自動生成 skill 機制，判定**不跟進**：其背景 skill-review agent 有多起確認案例——建完 skill 後仍保留廣泛工具權限、跨界做外部副作用（[NousResearch/hermes-agent#15204](https://github.com/NousResearch/hermes-agent/issues/15204)）、誤判內容該存進 memory/skill/user 哪個庫（[#30220](https://github.com/NousResearch/hermes-agent/issues/30220)）、偽裝使用者身份誘導平行 agent instance 在未經同意下改 skill（[#25839](https://github.com/NousResearch/hermes-agent/issues/25839)）。這些是同一套機制反覆出問題，不是單一個案，確認本 vault 保留人工拍板是對的判斷（2026-07-09 查證）。
 
 ## 索引與日誌
 
