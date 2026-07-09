@@ -64,3 +64,4 @@ schema 是關鍵設定：它讓 LLM 成為**有紀律的 wiki 維護者**，而�
 - 來源全文：[[LLM-Wiki-Karpathy]]
 - 同源哲學的另一實作：[[Hermes-Agent]]——把「複利資產」用在 agent 自策展的 **skill 庫**，可與本頁「維護 markdown wiki」對照兩種複利路徑。
 - 架構定位：[[Claude-Code-記憶系統六層比較]] 把本 pattern 列為 **Level 5（自組織知識庫）**，並與其餘五層（原生 CLAUDE.md、hook 召回、語意搜尋、逐字宮殿、跨工具共腦）對照取捨。
+- 人類 PKM 方法論對照：[[第二大腦方法論比較]]——BASB、Zettelkasten 等人類第二大腦方法論同樣在解「擷取後如何維護」，差異在維護者是人還是 LLM。

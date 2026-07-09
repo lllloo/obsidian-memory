@@ -54,3 +54,4 @@ Level 1–3 資料夾結構相近、**可疊加同跑**；Level 5、6 屬不同�
 - 原始逐字稿：[[Every-Claude-Code-Memory-System-Compared-(So-You-Don't-Have-To)]]
 - Level 5 深入：[[LLM-Wiki-知識管理模式]]、[[LLM-Wiki-Karpathy]]
 - openclaw 血緣的 agent：[[Hermes-Agent]]
+- 人類 PKM 方法論對照：[[第二大腦方法論比較]]（BASB／PARA／Zettelkasten，與本頁討論的 agent 記憶方案分屬不同層次，但共享「擷取—組織—檢索」結構性問題）

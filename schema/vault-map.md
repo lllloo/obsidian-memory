@@ -53,6 +53,7 @@ tags:
 | CLI / 部署類封存 | `cli` `deploy` `github-actions` | `raw/Archive/` |
 | Python / LLM 評測 | `python` `llm-eval` `llm-as-a-judge` | `raw/YouTube/daveebbelaar/` |
 | LLM 定價 / coding agent | `llm-pricing` `coding-agent` | `wiki/` |
+| 人類 PKM 方法論 | `pkm` `second-brain` | `wiki/` |
 | 日常工具更新 | 見 `updates/01.index.md` | `updates/` |
 
 wiki 尚在成長，新主題頁隨 ingest 補入 `wiki/01.index.md`；查詢先讀該內容目錄再鑽細節。

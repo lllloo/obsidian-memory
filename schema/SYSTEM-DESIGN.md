@@ -36,6 +36,12 @@ tags:
 
 本 vault 的實際落點偏 **coding agent / LLM 工具生態** 的個人研究知識庫（見 [`vault-map.md`](vault-map.md) 的 tag 地圖）。
 
+### 跨專案邊界
+
+本 vault 只吸收**跨專案通用**的知識——工具評測、方法論、AI 生態動態。**專案特定**的架構決策、bug 記錄、實作細節留在各自 repo 的 `CLAUDE.md`／`docs/`，不 ingest 進本 vault，避免 wiki 從「工具生態知識庫」稀釋成大雜燴。
+
+其他 repo 要用本 vault 的 skill（如 `vault-youtube-sync`）走 [CWD 契約](../CLAUDE.md)——先 cd 進 vault root 再呼叫，這是目前唯一的合作介面，且是單向：別的專案能呼叫本 vault，本 vault 不會主動伸手進別的 repo。允許的連結方向是**其他專案的文件單向引用本 vault 的 wiki 頁**（例如某專案 CLAUDE.md 寫「LLM 選型參考 obsidian-memory 的 xxx 頁」），不建立自動同步。
+
 ## 架構：三層
 
 原文是三層，本 vault 照搬：
@@ -67,6 +73,13 @@ wiki 是 LLM 幫你養的活知識庫（私有、只給你讀）；cards/topics 
 | Ingest | 綜合維護進 wiki | 手動（原 `ob-write`／`vault-wiki-build` 已移除） |
 | Query | 問 wiki，附引用綜合；好答案回存 wiki | 手動（原 `ob-read` 已移除） |
 | Lint | 掃 wiki 孤立頁、死連結、矛盾、缺欄位等 | 手動（原 `vault-lint` 已移除） |
+
+## Skill 升級訊號
+
+「留名字換內臟」的判準：**不預先蓋 skill，等手動跑出重複 3 次以上的固定套路才回頭codify**。太早寫會綁死單次特例；太晚寫則每次重新發明輪子。目前累積的候選訊號：
+
+- **Lint checklist**：孤立頁（比對每頁 wikilink 互相引用，找只被 `01.index.md` 連到、沒有其他頁連回的頁）、raw-index 完整性檢查（先看 `01.index.md` 是否用 `.base` 動態查詢——是的話檔名沒出現在正文是正常，不要誤判成缺漏）、tag 表同步（`schema/vault-map.md`）。這套步驟已在 2026-07-09 的健檢對話中走過一次，之後若再重複 2 次以上，直接寫成 `vault-lint` skill 的 `references/lint-checklist.md`。
+- **deep-research 回存流程**：呼叫 `deep-research` skill → 綜合結果寫成新 wiki 頁 → 更新 `wiki/01.index.md` → 補雙向交叉引用（新頁連舊頁、舊頁的「關聯」段落連回新頁）→ 若用到新 tag 就同步更新 `vault-map.md` 的 tag 表。這是完整、可重複的 Query 動作範例，之後若再重複 2 次以上，直接寫成 `vault-query`-類 skill 的 `references/*.md`。
 
 ## 索引與日誌
 
