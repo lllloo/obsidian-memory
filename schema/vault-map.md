@@ -32,9 +32,9 @@ tags:
 │   │   ├── Chase-H-AI/            — Claude Code 實戰、RAG、Obsidian 整合
 │   │   └── daveebbelaar/          — Python、LLM Evals、API 整合
 │   ├── Clippings/ — 網頁剪貼參考庫（01.index.md + 清單.base 索引；agent 不主動消化，使用者明指才處理）
-│   ├── Archive/   — 封存區：保留備查的原料（01.index.md + 清單.base 索引；agent 不主動掃描/消化/刪除）
-│   └── Updates/   — 日常更新彙整（vault-updates-daily 產出，01.index.md 索引；待讀佇列，讀畢由使用者指示清理）
+│   └── Archive/   — 封存區：保留備查的原料（01.index.md + 清單.base 索引；agent 不主動掃描/消化/刪除）
 ├── wiki/          — 活知識庫：agent 綜合 raw 維護的摘要/實體/概念/綜合頁（01.index.md 為內容目錄，每次 ingest 更新）
+├── updates/       — 【獨立消費層，不屬三層系統】日常工具更新日報（vault-updates-daily 產出，01.index.md 為來源設定；使用者瀏覽用，agent 不 ingest／query／lint）
 ├── cards/         — 【使用者私人區，agent 不管理】使用者自存文件；Quartz 公開層之一
 └── topics/        — 【使用者私人區，agent 不管理】使用者自存主題資料夾；Quartz 公開層之一
 ```

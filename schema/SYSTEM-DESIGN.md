@@ -1,7 +1,7 @@
 ---
 title: Vault 運作模式
 created: 2026-05-25
-updated: 2026-07-08
+updated: 2026-07-09
 tags:
   - vault
   - meta
@@ -40,7 +40,7 @@ tags:
 
 原文是三層，本 vault 照搬：
 
-1. **`raw/`（原始來源）** — 你精選的原料：文章、影片摘要、剪貼、資料。**不可變**，LLM 只讀不改，是事實來源。本 vault 分 `YouTube/`、`Clippings/`、`Archive/`、`Updates/`。
+1. **`raw/`（原始來源）** — 你精選的原料：文章、影片摘要、剪貼、資料。**不可變**，LLM 只讀不改，是事實來源。本 vault 分 `YouTube/`、`Clippings/`、`Archive/`。
 2. **`wiki/`（活知識庫）** — LLM 生成與維護的 markdown：摘要頁、實體頁、概念頁、比較頁、綜合頁。**LLM 完全掌管**——建頁、改頁、刪頁、交叉引用、維護 index，你只負責讀。
 3. **schema** — 規範文件（[`CLAUDE.md`](../CLAUDE.md) / `AGENTS.md`），告訴 LLM wiki 怎麼組織、慣例是什麼、Ingest/Query/Lint 各走什麼流程。這是把 LLM 從通用聊天機器人變成**有紀律的 wiki 維護者**的關鍵設定，你與 LLM 隨時間共同演進它。
 
