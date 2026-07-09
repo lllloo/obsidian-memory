@@ -1,6 +1,6 @@
 ---
 name: vault-updates-daily
-description: 每天彙整高信任 developer tooling 更新成一篇 Obsidian daily updates briefing。使用官方 changelog / release notes、GitHub releases，含 authenticated user 的 starred repo releases；專注 coding agent、CLI、API、model、connector、developer workflow 相關變更。追蹤來源只讀 `raw/Updates/01.index.md`，不硬編碼工具清單。使用時機：使用者要求「同步 changelog」、「release notes 更新」、「官方變更同步」、「daily updates」、查最近工具更新，或直接呼叫 /vault-updates-daily。
+description: 每天彙整高信任 developer tooling 更新成一篇 Obsidian daily updates briefing。使用官方 changelog / release notes、GitHub releases，含 authenticated user 的 starred repo releases；專注 coding agent、CLI、API、model、connector、developer workflow 相關變更。追蹤來源只讀 `updates/01.index.md`，不硬編碼工具清單。使用時機：使用者要求「同步 changelog」、「release notes 更新」、「官方變更同步」、「daily updates」、查最近工具更新，或直接呼叫 /vault-updates-daily。
 ---
 
 # Vault Updates Daily
@@ -9,8 +9,8 @@ description: 每天彙整高信任 developer tooling 更新成一篇 Obsidian da
 
 ## 產出
 
-- 日報：`raw/Updates/<YYYY-MM-DD>-daily-updates.md`
-- 來源設定：`raw/Updates/01.index.md`
+- 日報：`updates/<YYYY-MM-DD>-daily-updates.md`
+- 來源設定：`updates/01.index.md`
 - 日報進 raw，代表「高信任待消化來源」。
 - 同日多次同步時追加新內容，不覆蓋舊日報；不要把日報 wikilink 追加回 index。
 
@@ -40,7 +40,7 @@ tags:
 ## 主流程
 
 1. 用 harness-native `Read CLAUDE.md` 確認 cwd 是 vault root；讀不到就停止，請使用者 cd 到 vault root（`~/code/obsidian-memory`；三平台一致，cmd.exe 不認 `~` 改用 `%USERPROFILE%\code\obsidian-memory`）。
-2. 讀 `raw/Updates/01.index.md`。不存在或三個來源段皆空時停止，請使用者先補來源；單段為空只略過該來源類型。
+2. 讀 `updates/01.index.md`。不存在或三個來源段皆空時停止，請使用者先補來源；單段為空只略過該來源類型。
 3. 讀 `references/daily-runbook.md`，照 runbook 解析 index、抓候選、處理 `OFFICIAL:`、去重、分析與組裝。
 4. 預設同步最近 7 天；使用者指定日期時用該日期到今天。
 5. 執行抓取：

@@ -14,6 +14,8 @@
 
 **`cards/` 與 `topics/` 不屬於本系統。** 它們是使用者的私人資料夾，同時是 Quartz **唯一對外公開發佈**的層。agent 一律**不讀、不寫、不掃描、不維護、不索引** cards/topics——Ingest、Query、Lint 全部跳過它們。使用者自行從 wiki 手動撿選、複製想公開的內容進去；那是使用者的動作，不是系統的一環。
 
+**`updates/` 也不屬於三層系統。** 它是使用者每天瞄一眼「有什麼新工具更新」的消費性 feed，**不是 ingest 原料**。唯一寫入者是 `vault-updates-daily` skill（append 當日日報 + 讀 `updates/01.index.md` 的來源設定）；除此之外 agent **不把日報當原料 ingest 進 wiki、不 query、不 lint**。日報按日 append、彼此不互聯，寫完即凍結；要沉澱進 wiki 的知識由使用者另外指示，不自動化。
+
 ## 唯一守門：git push
 
 agent 自主維護 wiki（含改頁、刪頁），**不需逐步拍板**——這正是 Karpathy「維護成本趨近於零」的重點。唯一硬規則：
@@ -115,7 +117,7 @@ wiki 的維護就是這三個動作，全部只在 `raw/` + `wiki/` 上進行，
 | Skill | 用途 |
 |---|---|
 | `vault-youtube-sync` | YouTube 影片摘要同步至 `raw/` |
-| `vault-updates-daily` | 日常更新彙整至 `raw/Updates/` |
+| `vault-updates-daily` | 日常更新彙整至 `updates/` |
 
 優先使用 skill，不新增平行流程。新增或修改 skill 時，盡量遵循 [Agent Skills](https://agentskills.io) 開放標準，讓內容可跨工具移植。
 

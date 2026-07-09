@@ -104,7 +104,7 @@ def main() -> int:
         return 0
 
     # 1 + 2. 日報正文：URL 完整比對（含右邊界檢查）或標題行穩定鍵比對（--key 模式）
-    updates_dir = Path("raw/Updates")
+    updates_dir = Path("updates")
     if updates_dir.is_dir():
         for p in sorted(updates_dir.glob("*-daily-updates.md")):
             try:
