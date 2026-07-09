@@ -20,12 +20,11 @@
   頁面 URL 為整頁所有條目共用，舊日報任何指向該頁的連結（帶或不帶 anchor）都會命中，
   新條目必被誤判 DUP → 默默漏報。故給了 --key 就只比穩定鍵，URL 引數即使傳入也不參與比對。
 
-三層檢查（任一命中即 DUP；--key 模式只跑第 3 層）：
-  1. 舊個別筆記格式：Inbox/Updates / Cards / Topics 任一 .md 含 `source: <url>`。
-  2. 所有日報正文：任一 `*-daily-updates.md` 含完整 <url>（release 的穩定 URL 走這層）。
+兩層檢查（任一命中即 DUP；--key 模式只跑第 2 層）：
+  1. 所有日報正文：任一 `*-daily-updates.md` 含完整 <url>（release 的穩定 URL 走這層）。
      比對有右邊界檢查：命中後下一字元不得仍是 URL 字元，避免短 URL 前綴誤命中長 URL
     （如 `...#2-1-19` 誤中 `...#2-1-198`、裸頁面 URL 誤中帶 anchor 連結）。
-  3. 穩定鍵（僅當給 --key）：在日報的 `### ` 標題行找 <key>；給 --tool 時，只在該
+  2. 穩定鍵（僅當給 --key）：在日報的 `### ` 標題行找 <key>；給 --tool 時，只在該
      `## <tool>` section 內找（避免跨工具撞版本號）。只比標題行，不比內文——內文順帶
      提到的版本（如某版說明寫「regression in 2.1.161」）不算已報。
 
@@ -48,8 +47,8 @@ except (AttributeError, OSError):
     pass
 
 # cwd 必為 vault root：cwd 錯時 rglob 會靜默空集合 → 誤回 UNIQUE 放行重複；hard-fail 較安全
-if not Path("vault-map.md").is_file():
-    sys.exit("ERROR: cwd 不在 vault root（找不到 vault-map.md）")
+if not Path("schema/vault-map.md").is_file():
+    sys.exit("ERROR: cwd 不在 vault root（找不到 schema/vault-map.md）")
 
 
 # URL 續行字元集：命中片段後緊接這些字元，代表正文裡是更長的 URL（帶 anchor / 更長版本號），不算命中
@@ -104,23 +103,8 @@ def main() -> int:
         print("UNIQUE")
         return 0
 
-    # 1. 個別筆記格式（source: <url>）
-    if url:
-        needle = f"source: {url}"
-        for base in ("Inbox/Updates", "Cards", "Topics"):
-            root = Path(base)
-            if not root.is_dir():
-                continue
-            for p in sorted(root.rglob("*.md")):
-                try:
-                    if url_hit(p.read_text(encoding="utf-8", errors="replace"), needle):
-                        print(f"DUP:{p.as_posix()}")
-                        return 0
-                except OSError:
-                    continue
-
-    # 2 + 3. 日報正文：URL 完整比對（含右邊界檢查）或標題行穩定鍵比對（--key 模式）
-    updates_dir = Path("Inbox/Updates")
+    # 1 + 2. 日報正文：URL 完整比對（含右邊界檢查）或標題行穩定鍵比對（--key 模式）
+    updates_dir = Path("updates")
     if updates_dir.is_dir():
         for p in sorted(updates_dir.glob("*-daily-updates.md")):
             try:

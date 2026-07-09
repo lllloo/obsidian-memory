@@ -1,0 +1,22 @@
+filters:
+  and:
+    - file.inFolder("wiki")
+    - file.ext == "md"
+    - file.name != "01.index"
+properties:
+  description:
+    displayName: 摘要
+  tags:
+    displayName: 主題
+  file.name:
+    displayName: 頁面
+views:
+  - type: table
+    name: wiki 頁面清單
+    order:
+      - file.name
+      - description
+      - tags
+    sort:
+      - property: file.name
+        direction: ASC

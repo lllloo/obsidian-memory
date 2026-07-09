@@ -1,0 +1,19 @@
+filters:
+  and:
+    - file.inFolder("raw/Archive")
+    - file.ext == "md"
+    - file.name != "01.index"
+properties:
+  description:
+    displayName: 摘要
+  file.name:
+    displayName: 筆記
+views:
+  - type: table
+    name: 封存清單
+    order:
+      - file.name
+      - description
+    sort:
+      - property: file.name
+        direction: ASC

@@ -3,7 +3,7 @@
 用法（cwd = repo root）：
     python3 .agents/skills/vault-youtube-sync/scripts/list_channels.py
 
-掃 Inbox/YouTube/*/01.index.md，從 frontmatter 的 source: 抽 @handle 頻道 URL。
+掃 raw/YouTube/*/01.index.md，從 frontmatter 的 source: 抽 @handle 頻道 URL。
 """
 import glob
 import os
@@ -17,10 +17,10 @@ except (AttributeError, OSError):
     pass
 
 # cwd 必為 vault root：cwd 錯時 glob 靜默空 → 模式 B 誤判「無既有頻道」
-if not os.path.isfile("vault-map.md"):
-    sys.exit("ERROR: cwd 不在 vault root（找不到 vault-map.md）")
+if not os.path.isfile("schema/vault-map.md"):
+    sys.exit("ERROR: cwd 不在 vault root（找不到 schema/vault-map.md）")
 
-for idx in sorted(glob.glob("Inbox/YouTube/*/01.index.md")):
+for idx in sorted(glob.glob("raw/YouTube/*/01.index.md")):
     with open(idx, encoding="utf-8") as fh:
         text = fh.read()
     m = re.search(r"^source:\s*(https://www\.youtube\.com/@[^/\s]+)", text, re.M)

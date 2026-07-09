@@ -3,7 +3,7 @@ Fetch high-trust developer tooling updates for vault-updates-daily.
 
 Usage (cwd = repo root):
 
-    # 一般用法：自動讀 Inbox/Updates/01.index.md
+    # 一般用法：自動讀 updates/01.index.md
     python3 .agents/skills/vault-updates-daily/scripts/fetch_updates.py
 
     # 指定日期範圍
@@ -14,7 +14,7 @@ Usage (cwd = repo root):
         --official "OpenAI Codex|https://developers.openai.com/codex/changelog|codex" \
         --repo openai/codex [--starred]
 
-Sources come from Inbox/Updates/01.index.md by default.
+Sources come from updates/01.index.md by default.
 When no --official / --repo / --starred flags are given, the script parses the index automatically.
 
 Outputs:
@@ -512,11 +512,11 @@ def fetch_github_changelog(name: str, url: str, since: dt.datetime) -> None:
         print(f"CHANGELOG:{name}|||{published.isoformat()}|||{title}|||{link}|||{desc}")
 
 
-DEFAULT_INDEX = "Inbox/Updates/01.index.md"
+DEFAULT_INDEX = "updates/01.index.md"
 
 
 def parse_index(path: str) -> tuple[list[str], list[str], bool]:
-    """Parse Inbox/Updates/01.index.md into (official, repos, starred).
+    """Parse updates/01.index.md into (official, repos, starred).
 
     Replaces the former bash/awk glue in SKILL.md. Sections:
       ## Official changelogs  → '- name|url|tag' lines → official ('name|url|tag')
@@ -614,7 +614,7 @@ def main() -> int:
 
     if not official_sources and not explicit_repos and not args.starred:
         print("ERROR:usage:no sources provided; pass --official, --repo, or --starred "
-              "(driven by Inbox/Updates/01.index.md)")
+              "(driven by updates/01.index.md)")
         return 1
 
     print(f"META:since|||{since.date().isoformat()}")
