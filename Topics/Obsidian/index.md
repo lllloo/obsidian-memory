@@ -11,7 +11,7 @@ tags:
 
 ## 工作流
 
-- [[跨專案內容整理到-Inbox]] — 其他專案裡想保留的內容先收進 Inbox，回 vault session 再決定是否內化
+- [[跨專案內容整理到-Inbox]] — 其他專案裡想保留的內容先收進 raw/，回 vault session 再決定是否內化
 
 ## 工具書籤
 

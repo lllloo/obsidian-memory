@@ -4,7 +4,7 @@
     {
       "id": 1,
       "prompt": "同步最近一週 Codex 和 Claude Code 的官方變更與 releases",
-      "expected_output": "觸發 vault-updates-daily，讀 Inbox/Updates/01.index.md；若 index 不存在或沒有來源則停止提示。來源存在時抓官方 changelog 與 GitHub releases，篩選有影響的項目寫入 Inbox/Updates/<YYYY-MM-DD>-daily-updates.md",
+      "expected_output": "觸發 vault-updates-daily，讀 raw/Updates/01.index.md；若 index 不存在或沒有來源則停止提示。來源存在時抓官方 changelog 與 GitHub releases，篩選有影響的項目寫入 raw/Updates/<YYYY-MM-DD>-daily-updates.md",
       "files": [],
       "assertions": [
         {
@@ -13,11 +13,11 @@
         },
         {
           "name": "正確寫入路徑",
-          "description": "筆記寫入 Inbox/Updates/<YYYY-MM-DD>-daily-updates.md，frontmatter 包含 title、created、updated、tags"
+          "description": "筆記寫入 raw/Updates/<YYYY-MM-DD>-daily-updates.md，frontmatter 包含 title、created、updated、tags"
         },
         {
           "name": "Index 不累積日報",
-          "description": "Inbox/Updates/01.index.md 只保存同步來源設定，不追加 daily-updates wikilink 清單"
+          "description": "raw/Updates/01.index.md 只保存同步來源設定，不追加 daily-updates wikilink 清單"
         },
         {
           "name": "高精度篩選",

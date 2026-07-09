@@ -2,8 +2,8 @@
 title: LLM Wiki 知識管理模式
 description: Karpathy 提出的個人知識庫模式：LLM 漸進維護一套互聯 markdown wiki，把知識編譯一次後持續維護，與每次查詢重新檢索的 RAG 形成對比
 created: 2026-07-08
-updated: 2026-07-08
-parent: "[[01.index]]"
+updated: 2026-07-09
+parent: "[[wiki/01.index]]"
 tags:
   - wiki
   - knowledge-graph

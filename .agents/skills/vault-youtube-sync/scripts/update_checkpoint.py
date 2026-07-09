@@ -19,7 +19,7 @@ except (AttributeError, OSError):
 
 if len(sys.argv) < 4:
     sys.exit("ERROR: usage update_checkpoint.py <index_path> <new_id> <today>")
-if not os.path.isfile("vault-map.md"):
+if not os.path.isfile("CLAUDE.md"):
     sys.exit("ERROR: cwd 不在 repo root，中止 checkpoint 更新")
 
 path, new_id, today = sys.argv[1], sys.argv[2], sys.argv[3]

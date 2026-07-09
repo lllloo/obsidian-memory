@@ -2,8 +2,8 @@
 title: Claude Code 記憶系統六層比較
 description: 從原生 CLAUDE.md 到跨工具統一大腦，六個層級的 AI 記憶方案沿「儲存位置」與「召回機制」兩軸拆解，含各層適用情境與升級門檻
 created: 2026-07-08
-updated: 2026-07-08
-parent: "[[01.index]]"
+updated: 2026-07-09
+parent: "[[wiki/01.index]]"
 tags:
   - claude-code
   - memory

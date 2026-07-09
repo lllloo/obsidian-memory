@@ -1,9 +1,9 @@
 ---
 title: Hermes Agent
-description: Nous Research 開源的自我進化 AI agent，內建學習迴路自動生成並改良 skill、跨 session 累積記憶與使用者模型，與 Karpathy LLM Wiki 同屬「知識/技能複利」哲學
+description: Nous Research 開源的自我進化 AI agent：學習迴路自動生成並改良 skill，跨 session 累積記憶與使用者模型
 created: 2026-07-08
-updated: 2026-07-08
-parent: "[[01.index]]"
+updated: 2026-07-09
+parent: "[[wiki/01.index]]"
 tags:
   - ai-agent
   - agent-framework

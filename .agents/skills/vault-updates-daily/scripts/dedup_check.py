@@ -49,8 +49,8 @@ except (AttributeError, OSError):
     pass
 
 # cwd 必為 vault root：cwd 錯時 rglob 會靜默空集合 → 誤回 UNIQUE 放行重複；hard-fail 較安全
-if not Path("vault-map.md").is_file():
-    sys.exit("ERROR: cwd 不在 vault root（找不到 vault-map.md）")
+if not Path("CLAUDE.md").is_file():
+    sys.exit("ERROR: cwd 不在 vault root（找不到 CLAUDE.md）")
 
 
 # URL 續行字元集：命中片段後緊接這些字元，代表正文裡是更長的 URL（帶 anchor / 更長版本號），不算命中
