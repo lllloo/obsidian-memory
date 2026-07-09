@@ -62,3 +62,7 @@ tags:
 - **台灣在地**：實際結帳可能加課 5% 營業稅、Apple/Google 內購加成與匯差，帳單略高於換算值。
 
 **官方查價**：[claude.com/pricing](https://claude.com/pricing)、[chatgpt.com/pricing](https://chatgpt.com/pricing)、[opencode.ai/go](https://opencode.ai/go)、[ai.google.dev/gemini-api/docs/pricing](https://ai.google.dev/gemini-api/docs/pricing)。
+
+## 關聯
+
+- [[Claude-Code-記憶系統六層比較]] ——同屬 coding agent 生態；該頁比較 Claude Code 等記憶方案，本頁比較其訂閱定價與競品，合看能同時掌握「選哪個 agent」與「選哪套記憶方案」兩個決策軸

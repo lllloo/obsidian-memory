@@ -54,6 +54,10 @@ schema 是關鍵設定：它讓 LLM 成為**有紀律的 wiki 維護者**，而�
 
 淵源上呼應 Vannevar Bush 的 **Memex（1945）**：私人、主動策展、文件間的關聯與文件本身同等重要的知識庫。Bush 解不了「誰來維護」，LLM 補上了這塊。
 
+## 已被獨立產品化
+
+2026 年中，Nous Research 的 [[Hermes-Agent]] 官方內建 `llm-wiki` skill，文件明言「Based on Andrej Karpathy's LLM Wiki pattern」，逐字複刻 raw／wiki／schema 三層架構——證明這套模式不是本 vault 的孤例，已被獨立的 AI agent 產品採用。差別在 Hermes 把它定位為「外接圖書館」，疊在自己的**有界核心記憶**（`MEMORY.md`／`USER.md`，session 級快照）之下，形成雙層結構；本 vault 目前沒有對應的核心記憶層，只有 wiki 本身。
+
 ## 選配工具
 
 - 規模變大時可加 wiki 專屬搜尋引擎（原文舉例 [qmd](https://github.com/tobi/qmd)：本地 markdown 搜尋，混合 BM25／向量＋LLM re-rank，含 CLI 與 MCP server）；小規模下 index 檔已足夠。

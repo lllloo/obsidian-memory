@@ -16,7 +16,7 @@ tags:
 
 Nous Research 開源、MIT 授權的**自我進化 AI agent**，標語 *The agent that grows with you*。定位為 coding／personal agent，與 Claude Code、OpenClaw 同類，但差異化主打**內建學習迴路**：記憶與 skill 是會複利成長的資產，而非每次從零開始。原始資料見 [[Hermes-Agent-NousResearch]]。
 
-> 這套哲學與本 vault 背後的 [[LLM-Wiki-知識管理模式]] 同源——**知識/技能編譯一次後持續維護，維護成本趨近零**。差別在維護對象：Hermes 讓 agent 自主策展 **skill 庫**，LLM Wiki 讓 agent 維護互聯的 **markdown wiki**。兩者都把「簿記雜活」交給不會膩的 LLM。
+> 這套哲學與本 vault 背後的 [[LLM-Wiki-知識管理模式]] 不只是「同源」，而是**同一套官方 skill**：Hermes 內建的 `llm-wiki` skill 直接聲明採用 Karpathy 的 LLM Wiki pattern，與本 vault 的三層架構一一對應——證明這套方法論已被獨立產品化，不是本 vault 的孤例。差別在 Hermes 另外疊了一條獨立複利軸：`llm-wiki`（陳述性知識，是什麼）之外，還有自主 **skill 庫**複利程序性知識（怎麼做），兩軸互補、各自演進。
 
 ## 核心差異：學習迴路（Learning Loop）
 
@@ -24,14 +24,16 @@ Nous Research 開源、MIT 授權的**自我進化 AI agent**，標語 *The agen
 
 | 機制 | 作用 |
 |---|---|
-| Agent-curated memory | agent 自管記憶，靠週期性 nudge 提醒把知識持久化 |
-| Autonomous skill creation | 完成複雜任務後自動把流程萃取成可重用 skill |
+| 有界核心記憶（Bounded core memory） | `MEMORY.md`／`USER.md`，各 2,200／1,375 字元上限，session 開始一次性注入、中途絕不改變（保留 prefix cache）；寫爆時**不自動摘要精簡，直接報錯**，逼 agent 自己合併/刪除過時條目 |
+| Autonomous skill creation | 完成複雜任務（5+ 次工具呼叫）成功、解決錯誤、使用者糾正、或發現非顯而易見流程時觸發，自動把流程萃取成可重用 skill；預設免人工核准即可寫入 |
 | Skill self-improvement | skill 在使用過程中自我修正 |
 | Autonomous Curator | 自主策展人：評分、合併重疊、封存過時、寫每輪報告、保護 pinned skill |
-| FTS5 cross-session recall | 全文檢索過往對話 + LLM 摘要，做跨 session 回憶 |
-| Honcho 使用者建模 | dialectic 三段推理（Initial Assessment → Self-Audit → Reconciliation）建立「你是誰」的模型 |
+| `llm-wiki` skill（官方內建） | **逐字複刻 Karpathy 的 LLM Wiki 模式**（raw/wiki/schema 三層），文件明言「Based on Andrej Karpathy's LLM Wiki pattern」——見 [[LLM-Wiki-知識管理模式]] |
+| 外接長期知識庫 | 8 個 memory provider 外掛（Honcho、Mem0、Supermemory、ByteRover 等）可選接，對應核心記憶（大腦）之外的圖書館 |
 
-其中 **skill 相容 agentskills.io 開放標準**——與本 repo `CLAUDE.md` 遵循的同一標準，理論上 skill 可跨 Hermes / Claude Code / Cursor 等工具移植。
+> ⚠️ **更正**（2026-07-09 deep-research 對抗式驗證）：先前版本描述的「agent 靠週期性 nudge 記憶」與「FTS5 全文檢索過往對話＋LLM 摘要做跨 session 回憶」查無官方文件依據，已被驗證駁回（0–3 票），改以上表「有界核心記憶」的官方逐字描述取代。
+
+其中 **skill 相容 agentskills.io 開放標準**——與本 repo `CLAUDE.md` 遵循的同一標準，理論上 skill 可跨 Hermes / Claude Code / Cursor 等工具移植；但「skill 目錄結構與本 vault `.agents/skills` 慣例高度同構」一說同樣查無依據，已被驗證駁回，勿引用。
 
 ## 架構組件
 
@@ -68,3 +70,4 @@ Hermes 24/7 長駐（有別於跑完即停的 Claude Code），背景任務、se
 - 原始資料：[[Hermes-Agent-NousResearch]]、[[Hermes-Agent-Token成本優化設定]]（token 成本拆解與設定）
 - 同源哲學：[[LLM-Wiki-知識管理模式]]（知識複利 vs. Hermes 的技能複利）
 - 記憶架構對照：[[Claude-Code-記憶系統六層比較]]——Hermes 屬「agent 自策展記憶 + skill」路線，且與其中 Level 3 的 openclaw 血緣相關（`hermes claw migrate` 自 OpenClaw 匯入）。
+- 人類 PKM 對照：[[第二大腦方法論比較]]——Hermes 的「有界核心記憶 vs. 外接 llm-wiki／provider」雙軸結構，與 BASB（資源/專案管理）vs. Zettelkasten（深度連結）的互補分工邏輯同構。

@@ -4,13 +4,15 @@
 
 > 這個 vault 是 Karpathy 的 [LLM Wiki](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f) 實作：agent 漸進維護一套互聯的 markdown wiki，夾在你與原始資料之間。不是 RAG——知識被編譯一次後持續維護，是複利資產。
 
+@schema/MEMORY.md
+
 ## 三層架構
 
 | 層 | 角色 | agent 權限 |
 |---|---|---|
 | `raw/` | 不可變原始來源（你精選的原料，事實來源） | **只讀不改** |
 | `wiki/` | agent 完全掌管的活知識庫：摘要、實體、概念、比較、綜合 | **全權**：自由建頁、改頁、刪頁、交叉引用、維護 index |
-| schema | 本檔（root）+ `schema/SYSTEM-DESIGN.md` + `schema/vault-map.md`（規範 agent 行為） | 依規則維護 |
+| schema | 本檔（root）+ `schema/SYSTEM-DESIGN.md` + `schema/vault-map.md` + `schema/MEMORY.md`（規範 agent 行為 + 跨 session 操作記憶） | 依規則維護 |
 
 **`cards/` 與 `topics/` 不屬於本系統。** 它們是使用者的私人資料夾，同時是 Quartz **唯一對外公開發佈**的層。agent 一律**不讀、不寫、不掃描、不維護、不索引** cards/topics——Ingest、Query、Lint 全部跳過它們。使用者自行從 wiki 手動撿選、複製想公開的內容進去；那是使用者的動作，不是系統的一環。
 

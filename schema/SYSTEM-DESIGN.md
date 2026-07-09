@@ -76,10 +76,9 @@ wiki 是 LLM 幫你養的活知識庫（私有、只給你讀）；cards/topics 
 
 ## Skill 升級訊號
 
-「留名字換內臟」的判準：**不預先蓋 skill，等手動跑出重複 3 次以上的固定套路才回頭codify**。太早寫會綁死單次特例；太晚寫則每次重新發明輪子。目前累積的候選訊號：
+「留名字換內臟」的判準：**不預先蓋 skill，等手動跑出重複 3 次以上的固定套路才回頭 codify**。太早寫會綁死單次特例；太晚寫則每次重新發明輪子。目前正在追蹤哪些候選訊號、各出現幾次，記在有界的 [`MEMORY.md`](MEMORY.md)（跨 session 操作狀態，不放在本檔——本檔是給人看的穩定設計文件，不是計數器）。
 
-- **Lint checklist**：孤立頁（比對每頁 wikilink 互相引用，找只被 `01.index.md` 連到、沒有其他頁連回的頁）、raw-index 完整性檢查（先看 `01.index.md` 是否用 `.base` 動態查詢——是的話檔名沒出現在正文是正常，不要誤判成缺漏）、tag 表同步（`schema/vault-map.md`）。這套步驟已在 2026-07-09 的健檢對話中走過一次，之後若再重複 2 次以上，直接寫成 `vault-lint` skill 的 `references/lint-checklist.md`。
-- **deep-research 回存流程**：呼叫 `deep-research` skill → 綜合結果寫成新 wiki 頁 → 更新 `wiki/01.index.md` → 補雙向交叉引用（新頁連舊頁、舊頁的「關聯」段落連回新頁）→ 若用到新 tag 就同步更新 `vault-map.md` 的 tag 表。這是完整、可重複的 Query 動作範例，之後若再重複 2 次以上，直接寫成 `vault-query`-類 skill 的 `references/*.md`。
+**達到門檻時，agent 主動提議、不擅自動筆**：候選訊號滿 3 次的當下，agent 跳出來跟你說「這個套路已經重複 N 次，要不要我幫你寫成 skill」，附上打算怎麼拆 `SKILL.md`／`references/*.md`；你點頭才動手。這跟 wiki 內容全權自主不同——skill 改的是 agent 之後怎麼行動，影響比一頁 wiki 內容大，值得讓你點頭再落地。
 
 ## 索引與日誌
 

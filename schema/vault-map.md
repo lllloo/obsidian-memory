@@ -13,9 +13,10 @@ tags:
 
 | 檔案 | 職責 |
 |---|---|
-| `CLAUDE.md`（root） | schema：agent 維護規則、三層架構、Ingest/Query/Lint、寫入慣例、唯一守門 git push（`AGENTS.md` 為其 symlink） |
-| `schema/SYSTEM-DESIGN.md` | 運作總綱：Karpathy LLM Wiki 心智模型、人/AI 分工、刻意不做的事 |
+| `CLAUDE.md`（root） | schema：agent 維護規則、三層架構、Ingest/Query/Lint、寫入慣例、唯一守門 git push（`AGENTS.md` 為其 symlink）；`@` 匯入 `MEMORY.md` |
+| `schema/SYSTEM-DESIGN.md` | 運作總綱：Karpathy LLM Wiki 心智模型、人/AI 分工、刻意不做的事、skill 升級判準 |
 | `schema/vault-map.md` | 本檔：全局導航與 tag 查詢地圖 |
+| `schema/MEMORY.md` | 有界跨 session 操作記憶：skill 升級訊號追蹤、待辦開放問題（非治理規則、非 wiki 內容，借鑑 [[Hermes-Agent]] `MEMORY.md` 設計） |
 
 ## 資料夾索引
 

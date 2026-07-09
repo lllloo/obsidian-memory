@@ -2,7 +2,7 @@
 
 > **路徑契約**：任務 prompt 會傳入 `NOTES_DIR`（repo root 相對路徑：`raw/YouTube/<頻道名>/`）。所有讀寫以 `NOTES_DIR` 為 base，cwd 必為 repo root（subagent 繼承父 agent cwd）。腳本路徑一律從 repo root 起算的完整相對路徑（`.agents/skills/vault-youtube-sync/scripts/...`）。
 >
-> **NOTES_DIR 自檢**：開工前確認 `NOTES_DIR` 已被主 skill 展開。若含字面 `<`、`>` 或仍是占位符，視為傳錯，**立即回報並停止**，不寫入任何檔案。用 `Read CLAUDE.md` 確認 cwd 為 repo root。
+> **NOTES_DIR 自檢**：開工前確認 `NOTES_DIR` 已被主 skill 展開。若含字面 `<`、`>` 或仍是占位符，視為傳錯，**立即回報並停止**，不寫入任何檔案。用 `Read schema/vault-map.md` 確認 cwd 為 vault root。
 >
 > **工具取向**：搜尋／讀檔／寫檔一律用 harness-native 工具（`Grep`/`Read`/`Write`），不落 shell。抓取／處理外部內容（defuddle、transcript、影片頁面）走下方 Python 腳本，腳本內部已處理跨平台與編碼。
 
