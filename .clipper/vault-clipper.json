@@ -42,5 +42,5 @@
 	],
 	"triggers": [],
 	"noteNameFormat": "{{title}}",
-	"path": "Inbox/Clippings"
+	"path": "raw/Clippings"
 }

@@ -49,12 +49,22 @@ Nous Research 開源、MIT 授權的**自我進化 AI agent**，標語 *The agen
 - **Terminal backends**：Local、Docker、SSH、Singularity、**Modal**（serverless、閒置近零成本）、**Daytona**（serverless、閒置休眠）——serverless 後端讓 agent 長駐又省錢。
 - **Model-agnostic**：Nous Portal（自帶 web search／生圖／TTS／browser）、OpenRouter、OpenAI、任意 custom endpoint，`/model` 切換宣稱 300+ models。
 
+## 成本控制
+
+Hermes 24/7 長駐（有別於跑完即停的 Claude Code），背景任務、self-evolving memory 與 90+ 預裝 skill 的 header 都持續吃 token，成本靠設定治理（拆解見 [[Hermes-Agent-Token成本優化設定]]）：
+
+- **模型路由是帳單最大槓桿**：auxiliary tasks 與 subagents 預設 fallback 到主模型，改指便宜模型；effort level 依任務調，簡單任務關 thinking。
+- **Context 瘦身**：調低壓縮門檻與 target ratio、精簡 memory/agent files、一次性指令用 ephemeral system prompt 不寫進 context files。
+- **削減常駐 context**：每則訊息都附帶全部已啟用的 tools/skills/MCP，不用的直接關；MCP 用 tool search 按需載入單一工具。
+- **Hard limits 防空轉**：max tokens、max turns（預設 150 可下修）、hard stop、cron job 回合上限，避免卡住時燒光額度。
+- 用量追蹤：token 使用記錄存 root database，`insights` 指令看近 30 天成本分解。
+
 ## 周邊
 
 - **hermes-agent-self-evolution**：DSPy + GEPA 演化 skill/prompt/code，純 API、無需 GPU 訓練，每次優化約 $2–10——把「skill 自我改良」再往離線最佳化推一層。
 
 ## 關聯
 
-- 原始資料：[[Hermes-Agent-NousResearch]]
+- 原始資料：[[Hermes-Agent-NousResearch]]、[[Hermes-Agent-Token成本優化設定]]（token 成本拆解與設定）
 - 同源哲學：[[LLM-Wiki-知識管理模式]]（知識複利 vs. Hermes 的技能複利）
 - 記憶架構對照：[[Claude-Code-記憶系統六層比較]]——Hermes 屬「agent 自策展記憶 + skill」路線，且與其中 Level 3 的 openclaw 血緣相關（`hermes claw migrate` 自 OpenClaw 匯入）。

@@ -24,9 +24,9 @@ agent 自主維護 wiki（含改頁、刪頁），**不需逐步拍板**——�
 
 ## CWD 契約
 
-所有 repo-local vault skills 都要求 cwd 是 vault root，也就是本 repo 根目錄，底下直接有 `CLAUDE.md`（schema 敘述文件 `SYSTEM-DESIGN.md`、`vault-map.md` 已移入 `schema/`；驗證改用只存在於 root 的 `CLAUDE.md`）。
+所有 repo-local vault skills 都要求 cwd 是 vault root，也就是本 repo 根目錄。哨兵檔用 `schema/vault-map.md`——幾乎每個專案根目錄都有 `CLAUDE.md`，拿它當 gate 對「跑錯 repo」無效；`schema/vault-map.md` 這個路徑只存在於本 vault。
 
-驗證方式用 harness-native `Read CLAUDE.md`（不經 shell、跨平台）——讀得到即在 vault root，讀不到就停止並請使用者 cd 過來。不要用 `[ -f CLAUDE.md ]` 之類 shell gate（在 Windows 預設 PowerShell 會翻車）。
+驗證方式用 harness-native `Read schema/vault-map.md`（不經 shell、跨平台）——讀得到即在 vault root，讀不到就停止並請使用者 cd 過來。不要用 shell 的檔案存在檢查（在 Windows 預設 PowerShell 會翻車）。
 
 從其他專案呼叫本 repo skill 前，先 cd 到 vault root：`~/code/obsidian-memory`（三平台一致；cmd.exe 不認 `~`，改用 `%USERPROFILE%\code\obsidian-memory`）。
 

@@ -84,7 +84,7 @@ tags:
 
 ## 筆記規則（必須嚴格遵守）
 
-Vault 內容會公開發佈，敏感資料零容忍。以下為本 subagent 必守規則（自包含，不依賴外部檔案）：
+Vault 會推上 GitHub 遠端 repo（`raw/` 不經 Quartz 公開，但仍進 repo 歷史），敏感資料零容忍。以下為本 subagent 必守規則（自包含，不依賴外部檔案）：
 
 - **語言**：正文一律**繁體中文**；技術名詞、品牌名、工具名保留英文（例：Claude Code、OpenAI、defuddle）。defuddle 取得英文 transcript 須翻譯整理為繁中再寫入。
 - **敏感資料**：正文與 frontmatter 不得含 token / key（`sk-`、`sk-ant-`、`ghp_`、`gho_`、`AKIA`、`AIza`、`xox[baprs]-`、JWT `eyJ`）、`-----BEGIN ... PRIVATE KEY-----`、明文密碼、個資（身分證、私人電話、地址、內部 IP/網址）。transcript 命中 → 移除該段或跳過整筆，不寫入。

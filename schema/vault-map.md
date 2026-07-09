@@ -1,7 +1,7 @@
 ---
 title: Vault Map
 created: 2026-04-15
-updated: 2026-07-08
+updated: 2026-07-09
 tags:
   - index
 ---
@@ -9,7 +9,7 @@ tags:
 
 ## schema 層治理檔
 
-> `CLAUDE.md`（+ `AGENTS.md` symlink）因 harness 從 repo root 自動載入而留在 root；敘述文件 `SYSTEM-DESIGN.md` 與本檔已移入 `schema/`。CWD 契約改用只存在於 root 的 `CLAUDE.md` 當「在 vault root」的驗證檔。
+> `CLAUDE.md`（+ `AGENTS.md` symlink）因 harness 從 repo root 自動載入而留在 root；敘述文件 `SYSTEM-DESIGN.md` 與本檔已移入 `schema/`。CWD 契約的哨兵檔是 `schema/vault-map.md`（本檔）——此路徑只存在於本 vault，能同時擋「不在 root」與「跑錯 repo」。
 
 | 檔案 | 職責 |
 |---|---|
@@ -45,12 +45,14 @@ tags:
 
 | 主題 | Tags | 位置 |
 |------|------|------|
-| Claude Code 實作 | `claude-code` | `raw/YouTube/` + `wiki/` |
-| AI Agent 工作流 | `ai-agent` `agent-framework` `harness` | `raw/YouTube/` + `wiki/` |
-| 記憶系統 / Context | `memory` `context-engineering` | `wiki/` |
-| RAG | `rag` | `raw/YouTube/` + `wiki/` |
-| Obsidian 操作 | `obsidian` `cli` `quartz` | `wiki/` |
-| Python / API 整合 | `python` `api` `llm-evals` | `raw/YouTube/daveebbelaar/` + `wiki/` |
+| Claude Code 實作 | `claude-code` | `raw/` 各區 + `wiki/` |
+| AI Agent 工作流 | `ai-agent` `agent-framework` `harness` | `raw/YouTube/` + `raw/Archive/` + `wiki/` |
+| 記憶系統 / Context | `memory`（僅 `wiki/`）、`context-engineering` | `raw/YouTube/` + `raw/Archive/` + `wiki/` |
+| RAG / 知識圖譜 | `rag` `knowledge-graph` | `raw/YouTube/` + `wiki/` |
+| Obsidian 操作 | `obsidian` | `raw/YouTube/` + `wiki/` |
+| CLI / 部署類封存 | `cli` `deploy` `github-actions` | `raw/Archive/` |
+| Python / LLM 評測 | `python` `llm-eval` `llm-as-a-judge` | `raw/YouTube/daveebbelaar/` |
+| LLM 定價 / coding agent | `llm-pricing` `coding-agent` | `wiki/` |
 | 日常工具更新 | 見 `raw/Updates/01.index.md` | `raw/Updates/` |
 
 wiki 尚在成長，新主題頁隨 ingest 補入 `wiki/01.index.md`；查詢先讀該內容目錄再鑽細節。

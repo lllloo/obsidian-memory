@@ -17,8 +17,8 @@ except (AttributeError, OSError):
     pass
 
 # cwd 必為 vault root：cwd 錯時 glob 靜默空 → 模式 B 誤判「無既有頻道」
-if not os.path.isfile("CLAUDE.md"):
-    sys.exit("ERROR: cwd 不在 vault root（找不到 CLAUDE.md）")
+if not os.path.isfile("schema/vault-map.md"):
+    sys.exit("ERROR: cwd 不在 vault root（找不到 schema/vault-map.md）")
 
 for idx in sorted(glob.glob("raw/YouTube/*/01.index.md")):
     with open(idx, encoding="utf-8") as fh:
