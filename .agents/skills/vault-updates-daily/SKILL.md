@@ -11,7 +11,7 @@ description: 每天彙整高信任 developer tooling 更新成一篇 Obsidian da
 
 - 日報：`updates/<YYYY-MM-DD>-daily-updates.md`
 - 來源設定：`updates/01.index.md`
-- 日報進 raw，代表「高信任待消化來源」。
+- 日報存於頂層 `updates/`，是使用者每天瞄一眼的消費性 feed；不屬三層系統、不進 raw、不當 ingest 原料。
 - 同日多次同步時追加新內容，不覆蓋舊日報；不要把日報 wikilink 追加回 index。
 
 日報 frontmatter：
@@ -39,7 +39,7 @@ tags:
 
 ## 主流程
 
-1. 用 harness-native `Read CLAUDE.md` 確認 cwd 是 vault root；讀不到就停止，請使用者 cd 到 vault root（`~/code/obsidian-memory`；三平台一致，cmd.exe 不認 `~` 改用 `%USERPROFILE%\code\obsidian-memory`）。
+1. 用 harness-native `Read schema/vault-map.md` 確認 cwd 是 vault root；讀不到就停止，請使用者 cd 到 vault root（`~/code/obsidian-memory`；三平台一致，cmd.exe 不認 `~` 改用 `%USERPROFILE%\code\obsidian-memory`）。
 2. 讀 `updates/01.index.md`。不存在或三個來源段皆空時停止，請使用者先補來源；單段為空只略過該來源類型。
 3. 讀 `references/daily-runbook.md`，照 runbook 解析 index、抓候選、處理 `OFFICIAL:`、去重、分析與組裝。
 4. 預設同步最近 7 天；使用者指定日期時用該日期到今天。
