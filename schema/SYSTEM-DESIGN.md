@@ -69,10 +69,12 @@ wiki 是 LLM 幫你養的活知識庫（私有、只給你讀）；cards/topics 
 
 | 操作 | 做什麼 | 承載 |
 |---|---|---|
-| Ingest | 外部原料進 raw | `vault-youtube-sync`、`vault-updates-daily`；貼 URL 時 agent 手動抓存 `raw/Clippings/` |
+| Ingest | 外部原料進 raw | `vault-youtube-sync`；貼 URL 時 agent 手動抓存 `raw/Clippings/` |
 | Ingest | 綜合維護進 wiki | 手動（原 `ob-write`／`vault-wiki-build` 已移除） |
 | Query | 問 wiki，附引用綜合；好答案回存 wiki | 手動（原 `ob-read` 已移除） |
 | Lint | 掃 wiki 孤立頁、死連結、矛盾、缺欄位等 | `vault-lint-daily`（產報告到 `lint/`；可唯一對應的死連結與 index 漏登錄自動修，其餘只報告、修補經使用者點頭——2026-07-10 依生態實證調整，見 wiki「LLM-Wiki-生態實作比較」） |
+
+（`vault-updates-daily` 不在表內：它產出的是消費層 `updates/` 日報，不進 raw、不屬三動作，見 CLAUDE.md「updates/ 不屬三層系統」。）
 
 ## Skill 升級訊號
 

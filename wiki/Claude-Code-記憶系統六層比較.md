@@ -14,9 +14,9 @@ tags:
 
 # Claude Code 記憶系統六層比較
 
-各家 AI 記憶方案（Mem0、Karpathy LLM Wiki、openclaw、Hermes、MemPalace、LightRAG、ClaudeMem…）其實**不是互相競爭，而是不同使用情境下處理記憶的不同方式**。它們回答同一個問題：給 agent 一個任務時，如何在正確時機取得正確 context？來源見 [[Every-Claude-Code-Memory-System-Compared-(So-You-Don't-Have-To)]]。
+各家 AI 記憶方案（Mem0、Karpathy LLM Wiki、OpenClaw、Hermes、MemPalace、LightRAG、ClaudeMem…）其實**不是互相競爭，而是不同使用情境下處理記憶的不同方式**。它們回答同一個問題：給 agent 一個任務時，如何在正確時機取得正確 context？來源見 [[Every-Claude-Code-Memory-System-Compared-(So-You-Don't-Have-To)]]。
 
-> **證據強度**：本頁對各方案機制的描述（儲存/召回實作、血緣關係如「memsearch 移植自 openclaw」「MemPalace 用 SQL+Chroma」「OpenBrain 用 Supabase Postgres」）均出自上述**單一影片來源**的主講人陳述，未經獨立查證、非對抗式驗證結果；引用個別機制細節前宜回查各方案官方文件（2026-07-10 標註）。
+> **證據強度**：本頁對各方案機制的描述（儲存/召回實作、血緣關係如「memsearch 移植自 OpenClaw」「MemPalace 用 SQL+Chroma」「OpenBrain 用 Supabase Postgres」）均出自上述**單一影片來源**的主講人陳述，未經獨立查證、非對抗式驗證結果；引用個別機制細節前宜回查各方案官方文件（2026-07-10 標註）。
 
 ## 兩條分辨軸
 
@@ -33,7 +33,7 @@ tags:
 |---|---|---|---|---|
 | **1** 原生 | CLAUDE.md + automemory（`memory.md`） | 本地 markdown，索引結構 | session 啟動自動載入索引 | 預設就有，免費；先正確使用 |
 | **2** 可靠召回 | John Connelly / Paweł Huryn 的 hook 系統 | 本地 markdown，`~/.claude/memory` 雙層 | session start hook 注入記憶索引 | 常重複告訴 Claude 它早該知道的事 |
-| **3** 語意搜尋 | **memsearch**（Zilliz，移植自 openclaw）／ ClaudeMem | markdown + 語意向量 | UserPromptSubmit hook 自動注入 top-N 語意匹配 | 用超過一個月、檔案變多、關鍵字搜尋失效 |
+| **3** 語意搜尋 | **memsearch**（Zilliz，移植自 OpenClaw）／ ClaudeMem | markdown + 語意向量 | UserPromptSubmit hook 自動注入 top-N 語意匹配 | 用超過一個月、檔案變多、關鍵字搜尋失效 |
 | **4** 逐字召回 | **MemPalace** | 本地 SQL（實體關係）+ Chroma vector（逐字分塊） | session end / pre-compaction hook 背景索引；記憶宮殿式定址 | 想找當初決策的「確切文字」 |
 | **5** 自組織知識庫 | **Karpathy LLM Wiki** ／ Recall（代管）／ LightRAG（企業級） | 純 markdown，raw + wiki 兩層 | 讀 index 找頁再鑽（無需 vector DB） | 定期消化文章/影片/podcast，要跨來源互聯的「第二大腦」 |
 | **6** 跨工具單一大腦 | **OpenBrain**（Nate Jones）／ Mem0 | 自有 Postgres（Supabase），`thoughts` 表 + embedding | MCP server 當前門，各 AI 工具共用同一 DB | 跨多個 AI 工具（手機 ChatGPT、桌面 Claude Code…）要共用記憶 |
@@ -49,12 +49,12 @@ Level 1–3 資料夾結構相近、**可疊加同跑**；Level 5、6 屬不同�
 ## 在本 vault 的定位
 
 - 本 vault 就是 **Level 5 / Karpathy LLM Wiki** 的實作——見 [[LLM-Wiki-知識管理模式]]。適合對特定主題深度研究、跨來源互聯；作者原意即「不是操作性記憶，而是內容消化型第二大腦」。
-- [[Hermes-Agent]] 出現在來源的開場清單，屬「agent 自策展記憶 + skill」路線；且其 `hermes claw migrate` 對應本文 Level 3 反覆提到的 **openclaw** 記憶架構（memsearch 即移植自 openclaw）——Hermes 與 openclaw 同一血緣，值得日後專門對照。
+- [[Hermes-Agent]] 出現在來源的開場清單，屬「agent 自策展記憶 + skill」路線；且其 `hermes claw migrate` 對應本文 Level 3 反覆提到的 **OpenClaw** 記憶架構（memsearch 即移植自 OpenClaw）——Hermes 與 OpenClaw 同一血緣，值得日後專門對照。
 
 ## 關聯
 
 - 原始逐字稿：[[Every-Claude-Code-Memory-System-Compared-(So-You-Don't-Have-To)]]
 - Level 5 深入：[[LLM-Wiki-知識管理模式]]、[[LLM-Wiki-Karpathy]]；Level 5 的生態實作全景（nvk、Hermes skill、Astro-Han、Letta MemFS）見 [[LLM-Wiki-生態實作比較]]
-- openclaw 血緣的 agent：[[Hermes-Agent]]
+- OpenClaw 血緣的 agent：[[Hermes-Agent]]
 - 人類 PKM 方法論對照：[[第二大腦方法論比較]]（BASB／PARA／Zettelkasten，與本頁討論的 agent 記憶方案分屬不同層次，但共享「擷取—組織—檢索」結構性問題）
 - coding agent 訂閱生態對照：[[LLM-方案定價與-coding-agent-比較]]（Claude Code 等三方案定價與模型天花板比較，與本頁的記憶系統選型同屬「怎麼選 coding agent」的決策脈絡）
