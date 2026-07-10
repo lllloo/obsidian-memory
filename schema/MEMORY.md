@@ -1,14 +1,18 @@
 ---
 title: Agent Memory
 created: 2026-07-09
-updated: 2026-07-09
+updated: 2026-07-10
 tags:
   - meta
 ---
 
 # Agent 跨 Session 記憶
 
-有界、凍結快照式檔案，記錄 agent 跨 session 該延續的**操作狀態**——不是 wiki 內容（陳述性知識），也不是治理規則（那是 CLAUDE.md／SYSTEM-DESIGN.md 的事）。設計借鑑 [[Hermes-Agent]] 的 `MEMORY.md`／`USER.md`：**有上限、不自動摘要精簡**，寫爆時手動整理過時條目，逼自己維持精簡而非無限累積。由 `CLAUDE.md` `@` 匯入，session 開始自動載入；比照 Hermes 預設的 `write_approval: false`，**agent 自主、逐回合即時寫**——當下發現值得跨 session 延續的操作狀態就直接寫，不用等明確檢查點，不逐次拍板；40 行上限仍是唯一防線，寫爆時當場合併/刪除過時條目。
+有界、凍結快照式檔案，記錄 agent 跨 session 該延續的**操作狀態**——不是 wiki 內容（陳述性知識），也不是治理規則（那是 CLAUDE.md／SYSTEM-DESIGN.md 的事）。
+
+存在理由是**可攜性**：agent 自身的 harness 記憶（如 Claude Code 的全域 memory）是工具專屬、不進 repo，換到別的 AI 工具打開這個 vault 就失憶；本檔 checked-in 進 repo，任何 agent、任何工具打開 vault 都讀得到，是這裡**唯一跨工具可攜的操作記憶載體**。由 `CLAUDE.md` `@` 匯入，session 開始自動載入。
+
+**有界、不自動摘要精簡**：40 行上限是唯一防線，寫爆時當場合併／刪除過時條目，逼自己維持精簡而非無限累積。**agent 自主、逐回合即時寫**——當下發現值得跨 session 延續的操作狀態就直接寫，不用等明確檢查點，不逐次拍板。
 
 ## 上限
 
