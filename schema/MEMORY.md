@@ -24,6 +24,7 @@ tags:
 
 - ~~Lint checklist~~——2026-07-10 已 codify 成 `vault-lint-daily` skill（使用者主動提出，非滿 3 次觸發；`.base` 誤判排除已寫進掃描腳本 BASEIDX 邏輯），候選收掉
 - **deep-research 回存流程**（建頁→更新 index→補雙向交叉引用→同步 tag 表）——第 3 次出現已於 2026-07-09（跨專案協作機制研究）觸發提議，**使用者判定該輪查證結果沒有回存價值而回絕**；純出現次數不是自動觸發依據，下次候選需一併評估該輪產出是否值得回存，不要只看次數重提
+- **貼 URL ingest 全流程**（抓內容→存 raw/Clippings→寫 wiki→更新 index→交叉引用→收尾 lint）——2026-07-10 schema 落地（raw write-once），目前 0 次手動執行；滿 3 次時評估 codify 成 skill（類 youtube-sync 的網頁版）
 
 ## 待追蹤的開放問題
 

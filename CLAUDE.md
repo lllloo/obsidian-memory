@@ -46,7 +46,7 @@ wiki 的維護就是這三個動作，全部只在 `raw/` + `wiki/` 上進行，
 
 進料管道（raw 為 write-once，落地後不改）：
 
-- **使用者貼 URL**：agent 直接抓內容（優先 defuddle）轉 markdown，按 frontmatter 慣例（含 `source`、`published`）存 `raw/Clippings/`，再往下 ingest。
+- **使用者貼 URL**：先 Grep `raw/Clippings/` 的 `source:` 查同 URL 是否已落地——已存在就不重複建檔，直接更新對應 wiki 頁。未存在才抓內容（優先 defuddle）轉 markdown，按 frontmatter 慣例（含 `source`、`published`）存 `raw/Clippings/`，再往下 ingest。抓到的內容明顯殘缺（登入牆、付費牆、重 JS 頁）時**不落地 raw**——write-once 塞進殘件即凍結——改請使用者用 Web Clipper 剪藏。
 - **Web Clipper 剪藏**、**使用者手動放檔**、**skill 同步**（如 `vault-youtube-sync`）：照舊。
 
 流程：
@@ -110,7 +110,7 @@ wiki 的維護就是這三個動作，全部只在 `raw/` + `wiki/` 上進行，
 | `draft` | youtube-sync transcript 抓取失敗的占位待重抓標記；正常筆記不用 | `true`（省略 = 正常） |
 | `tags` | 主題分類 + 必要的功能性 tag | YAML list |
 
-一般筆記需有 `title`、`created`、`updated`、`tags`。`tags` 一律用 YAML list，不用 inline array 或字串。Clippings 的 `description` 為 Web Clipper 自動帶入的外站文案，豁免 30–80 字與風格要求，agent 不回頭修。
+一般筆記需有 `title`、`created`、`updated`、`tags`。`tags` 一律用 YAML list，不用 inline array 或字串。Clippings 中 **Web Clipper 產出**的 `description` 為自動帶入的外站文案，豁免 30–80 字與風格要求，agent 不回頭修；**agent 貼 URL 落地**的 Clippings 則照正常 `description` 規則寫。
 
 修改 `.md` 內容時盡量同步 `updated` 為今日日期（`YYYY-MM-DD`），但不為此中斷流程。
 
