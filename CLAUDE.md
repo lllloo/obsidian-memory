@@ -18,6 +18,8 @@
 
 **`updates/` 也不屬於三層系統。** 它是使用者每天瞄一眼「有什麼新工具更新」的消費性 feed，**不是 ingest 原料**。唯一寫入者是 `vault-updates-daily` skill（append 當日日報 + 讀 `updates/01.index.md` 的來源設定）；除此之外 agent **不把日報當原料 ingest 進 wiki、不 query、不 lint**。日報按日 append、彼此不互聯，寫完即凍結；要沉澱進 wiki 的知識由使用者另外指示，不自動化。
 
+**`lint/` 同上，不屬三層系統。** vault 健檢日報的消費性 feed，唯一寫入者是 `vault-lint-daily` skill（讀 `lint/01.index.md` 的設定）；報告**只列發現、不改頁**，修補由使用者看報告後另行指示才動 wiki。報告按日一檔、寫完即凍結，不 ingest、不 query、報告本身不 lint。
+
 ## 唯一守門：git push
 
 agent 自主維護 wiki（含改頁、刪頁），**不需逐步拍板**——這正是 Karpathy「維護成本趨近於零」的重點。唯一硬規則：
@@ -46,6 +48,7 @@ wiki 的維護就是這三個動作，全部只在 `raw/` + `wiki/` 上進行，
 2. 更新相關的實體頁 / 概念頁：整合新資訊、改寫舊摘要、**新資料與舊主張衝突時就地標記矛盾**。
 3. 更新 `wiki/01.index.md`（新頁登錄、一行摘要）。
 4. 補交叉引用：新頁至少連 1–2 個相關既有頁，避免孤立。
+5. **收尾輕量 lint（只檢當輪動到的頁，不掃全庫）**：交叉引用是否雙向、有無與既有主張矛盾、有無因新頁產生的孤立頁。當輪頁本就在 context 裡，成本趨近於零；這是擋「漂移」（頁面 ingest 時未同步交叉引用而無聲過時）的主要防線，全庫成長掃描仍不做。
 
 單一來源可牽動多頁。agent 自主寫，不逐頁拍板；使用者在旁讀、隨時導引重點即可。可一次一源慢慢做，也可批次 ingest。
 
@@ -57,7 +60,7 @@ wiki 的維護就是這三個動作，全部只在 `raw/` + `wiki/` 上進行，
 
 ### Lint（健檢）
 
-定期掃 wiki（+ raw 索引）：矛盾、被新來源取代的過時主張、孤立頁、被提到卻沒專屬頁的概念、缺交叉引用、可用查證補的資料空缺。產出修補與新探究建議。只掃 raw/wiki，不碰 cards/topics。（目前無專屬 skill，由 agent 手動執行；後續按需重建。）
+定期掃 wiki（+ raw 索引）：矛盾、被新來源取代的過時主張、孤立頁、被提到卻沒專屬頁的概念、缺交叉引用、可用查證補的資料空缺。產出修補與新探究建議。只掃 raw/wiki，不碰 cards/topics。報告制掃描由 `vault-lint-daily` skill 承載（產報告到 `lint/`，不改頁）；修補在使用者看報告點頭後由 agent 執行。
 
 ## wiki 頁面與索引
 
@@ -120,10 +123,11 @@ wiki 的維護就是這三個動作，全部只在 `raw/` + `wiki/` 上進行，
 |---|---|
 | `vault-youtube-sync` | YouTube 影片摘要同步至 `raw/` |
 | `vault-updates-daily` | 日常更新彙整至 `updates/` |
+| `vault-lint-daily` | wiki+raw 健檢報告至 `lint/`（只報告、不改頁） |
 
 優先使用 skill，不新增平行流程。新增或修改 skill 時，盡量遵循 [Agent Skills](https://agentskills.io) 開放標準，讓內容可跨工具移植。
 
-> **已移除的核心 skill**：`ob-write`、`ob-read`、`vault-wiki-build`、`vault-lint`（含 `ob-write`／`ob-read` 兩個全域 symlink）已於重整時移除。三動作（Ingest／Query／Lint）的模型仍是本 vault 的架構，目前改由 agent 手動執行；後續有需求再按「留名字換內臟」方向重建。
+> **已移除的核心 skill**：`ob-write`、`ob-read`、`vault-wiki-build`、`vault-lint`（含 `ob-write`／`ob-read` 兩個全域 symlink）已於重整時移除。三動作（Ingest／Query／Lint）的模型仍是本 vault 的架構；其中 Lint 的掃描面已按需重建為報告制的 `vault-lint-daily`（2026-07-10），其餘（wiki 綜合、查詢、修補）仍由 agent 手動執行。
 
 ### 新增 / 修改 skill 的本 repo 約束
 

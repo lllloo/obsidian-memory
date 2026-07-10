@@ -22,9 +22,9 @@ tags:
 
 判準見 [`SYSTEM-DESIGN.md`](SYSTEM-DESIGN.md) 的「Skill 升級訊號」一節：候選滿 3 次時，**主動提議使用者要不要寫成 skill，不擅自動筆**；使用者點頭才動手拆 `SKILL.md`／`references/*.md`。
 
-- **Lint checklist**（孤立頁比對、raw-index `.base` 動態查詢誤判排除、tag 表同步）——出現 1 次（2026-07-09 健檢對話）
+- ~~Lint checklist~~——2026-07-10 已 codify 成 `vault-lint-daily` skill（使用者主動提出，非滿 3 次觸發；`.base` 誤判排除已寫進掃描腳本 BASEIDX 邏輯），候選收掉
 - **deep-research 回存流程**（建頁→更新 index→補雙向交叉引用→同步 tag 表）——第 3 次出現已於 2026-07-09（跨專案協作機制研究）觸發提議，**使用者判定該輪查證結果沒有回存價值而回絕**；純出現次數不是自動觸發依據，下次候選需一併評估該輪產出是否值得回存，不要只看次數重提
 
 ## 待追蹤的開放問題
 
-- 成長面 Lint 自動化（SYSTEM-DESIGN.md「不做自動成長掃描」）：曾提案比照 Hermes 背景 self-improvement review，限縮成「每次 ingest/query 結束後順手檢查當輪動到的幾頁」而非全庫掃描（全庫掃描 token 成本不成比例）。**2026-07-09 使用者選擇維持現況**（不做），列為未來可重新評估的待辦，非立即行動項。
+- 成長面 Lint 自動化（SYSTEM-DESIGN.md「不做自動成長掃描」）：2026-07-10 已採**限縮版**——結構性 lint 綁進 ingest 收尾、只檢當輪動到的頁（見 CLAUDE.md Ingest 第 5 步），由 Karpathy 社群生產經驗（漂移是頭號失敗模式）佐證。更重的**背景全庫成長掃描**仍不做（7/9 決定不變，token 成本不成比例）。

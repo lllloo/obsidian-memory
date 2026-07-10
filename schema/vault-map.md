@@ -36,6 +36,7 @@ tags:
 │   └── Archive/   — 封存區：保留備查的原料（01.index.md + 清單.base 索引；agent 不主動掃描/消化/刪除）
 ├── wiki/          — 活知識庫：agent 綜合 raw 維護的摘要/實體/概念/綜合頁（01.index.md 為內容目錄，每次 ingest 更新）
 ├── updates/       — 【獨立消費層，不屬三層系統】日常工具更新日報（vault-updates-daily 產出，01.index.md 為來源設定；使用者瀏覽用，agent 不 ingest／query／lint）
+├── lint/          — 【獨立消費層，不屬三層系統】vault 健檢日報（vault-lint-daily 產出，01.index.md 為設定；只報告不改頁，修補由使用者另行指示）
 ├── cards/         — 【使用者私人區，agent 不管理】使用者自存文件；Quartz 公開層之一
 └── topics/        — 【使用者私人區，agent 不管理】使用者自存主題資料夾；Quartz 公開層之一
 ```
@@ -56,5 +57,6 @@ tags:
 | LLM 定價 / coding agent | `llm-pricing` `coding-agent` | `wiki/` |
 | 人類 PKM 方法論 | `pkm` `second-brain` | `wiki/` |
 | 日常工具更新 | 見 `updates/01.index.md` | `updates/` |
+| vault 健檢日報 | `lint` | `lint/` |
 
 wiki 尚在成長，新主題頁隨 ingest 補入 `wiki/01.index.md`；查詢先讀該內容目錄再鑽細節。
