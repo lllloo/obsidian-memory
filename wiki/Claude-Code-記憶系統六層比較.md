@@ -16,6 +16,8 @@ tags:
 
 各家 AI 記憶方案（Mem0、Karpathy LLM Wiki、openclaw、Hermes、MemPalace、LightRAG、ClaudeMem…）其實**不是互相競爭，而是不同使用情境下處理記憶的不同方式**。它們回答同一個問題：給 agent 一個任務時，如何在正確時機取得正確 context？來源見 [[Every-Claude-Code-Memory-System-Compared-(So-You-Don't-Have-To)]]。
 
+> **證據強度**：本頁對各方案機制的描述（儲存/召回實作、血緣關係如「memsearch 移植自 openclaw」「MemPalace 用 SQL+Chroma」「OpenBrain 用 Supabase Postgres」）均出自上述**單一影片來源**的主講人陳述，未經獨立查證、非對抗式驗證結果；引用個別機制細節前宜回查各方案官方文件（2026-07-10 標註）。
+
 ## 兩條分辨軸
 
 所有方案的差異只在兩件事：

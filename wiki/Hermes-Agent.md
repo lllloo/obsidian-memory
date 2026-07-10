@@ -24,7 +24,7 @@ Nous Research 開源、MIT 授權的**自我進化 AI agent**，標語 *The agen
 
 | 機制 | 作用 |
 |---|---|
-| 有界核心記憶（Bounded core memory） | `MEMORY.md`／`USER.md`，各 2,200／1,375 字元上限，session 開始一次性注入、中途絕不改變（保留 prefix cache）；寫爆時**不自動摘要精簡，直接報錯**，逼 agent 自己合併/刪除過時條目 |
+| 有界核心記憶（Bounded core memory） | `MEMORY.md`／`USER.md`，各 2,200／1,375 字元上限（官方文件快照值，隨版本可變；出處 [[Hermes-Agent-NousResearch]]），session 開始一次性注入、中途絕不改變（保留 prefix cache）；寫爆時**不自動摘要精簡，直接報錯**，逼 agent 自己合併/刪除過時條目 |
 | Autonomous skill creation | 完成複雜任務（5+ 次工具呼叫）成功、解決錯誤、使用者糾正、或發現非顯而易見流程時觸發，自動把流程萃取成可重用 skill；預設免人工核准即可寫入 |
 | Skill self-improvement | skill 在使用過程中自我修正 |
 | Autonomous Curator | 自主策展人：評分、合併重疊、封存過時、寫每輪報告、保護 pinned skill |
@@ -58,7 +58,7 @@ Hermes 24/7 長駐（有別於跑完即停的 Claude Code），背景任務、se
 - **模型路由是帳單最大槓桿**：auxiliary tasks 與 subagents 預設 fallback 到主模型，改指便宜模型；effort level 依任務調，簡單任務關 thinking。
 - **Context 瘦身**：調低壓縮門檻與 target ratio、精簡 memory/agent files、一次性指令用 ephemeral system prompt 不寫進 context files。
 - **削減常駐 context**：每則訊息都附帶全部已啟用的 tools/skills/MCP，不用的直接關；MCP 用 tool search 按需載入單一工具。
-- **Hard limits 防空轉**：max tokens、max turns（預設 150 可下修）、hard stop、cron job 回合上限，避免卡住時燒光額度。
+- **Hard limits 防空轉**：max tokens、max turns（來源快照時預設 150，屬版本可變預設值，可下修）、hard stop、cron job 回合上限，避免卡住時燒光額度。
 - 用量追蹤：token 使用記錄存 root database，`insights` 指令看近 30 天成本分解。
 
 ## 周邊

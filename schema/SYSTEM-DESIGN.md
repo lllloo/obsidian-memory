@@ -48,7 +48,7 @@ tags:
 
 1. **`raw/`（原始來源）** — 你精選的原料：文章、影片摘要、剪貼、資料。**write-once**：人與 LLM 都可新增（貼 URL 由 LLM 抓內容落地、Web Clipper 剪藏、skill 同步），寫入後即凍結、不再修改，是事實來源。「不可變」約束的是修改，不是新增——與 Hermes bundled skill、nvk/llm-wiki 等主流實作一致（2026-07-10 查證跟進）。貼 URL 落地的 Clippings 另在 frontmatter 記正文 sha256，同 URL 重複 ingest 時比對以偵測來源漂移（偵測與標記用，raw 不回寫；借鏡 Hermes）。本 vault 分 `YouTube/`、`Clippings/`、`Archive/`。
 2. **`wiki/`（活知識庫）** — LLM 生成與維護的 markdown：摘要頁、實體頁、概念頁、比較頁、綜合頁。**LLM 完全掌管**——建頁、改頁、刪頁、交叉引用、維護 index，你只負責讀。
-3. **schema** — 規範文件（[`CLAUDE.md`](../CLAUDE.md) / `AGENTS.md`），告訴 LLM wiki 怎麼組織、慣例是什麼、Ingest/Query/Lint 各走什麼流程。這是把 LLM 從通用聊天機器人變成**有紀律的 wiki 維護者**的關鍵設定，你與 LLM 隨時間共同演進它。
+3. **schema** — 規範文件與操作記憶：root 的 [`CLAUDE.md`](../CLAUDE.md)（`AGENTS.md` 為其 symlink）+ 本檔 + `vault-map.md` + `MEMORY.md`，告訴 LLM wiki 怎麼組織、慣例是什麼、Ingest/Query/Lint 各走什麼流程。這是把 LLM 從通用聊天機器人變成**有紀律的 wiki 維護者**的關鍵設定，你與 LLM 隨時間共同演進它。
 
 ### 本 vault 的額外層：cards/topics（不在原文三層裡，系統不管）
 

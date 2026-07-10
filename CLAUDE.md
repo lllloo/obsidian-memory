@@ -18,7 +18,7 @@
 
 **`updates/` 也不屬於三層系統。** 它是使用者每天瞄一眼「有什麼新工具更新」的消費性 feed，**不是 ingest 原料**。唯一寫入者是 `vault-updates-daily` skill（append 當日日報 + 讀 `updates/01.index.md` 的來源設定）；除此之外 agent **不把日報當原料 ingest 進 wiki、不 query、不 lint**。日報按日 append、彼此不互聯，寫完即凍結；要沉澱進 wiki 的知識由使用者另外指示，不自動化。
 
-**`lint/` 同上，不屬三層系統。** vault 健檢日報的消費性 feed，唯一寫入者是 `vault-lint-daily` skill（讀 `lint/01.index.md` 的設定）。**機械項**（死連結、index 漏登錄等可機械驗證的結構問題）掃到即順手修並在報告記錄「已修」；**語意項**（矛盾、過時、缺交叉引用等判斷類）只列發現、不改頁，修補由使用者看報告後另行指示才動 wiki。報告按日一檔、寫完即凍結，不 ingest、不 query、報告本身不 lint。
+**`lint/` 同上，不屬三層系統。** vault 健檢日報的消費性 feed，唯一寫入者是 `vault-lint-daily` skill（讀 `lint/01.index.md` 的設定）。**機械項**（死連結、index 漏登錄等可機械驗證的結構問題）中**修法可唯一對應**者自動修並在報告記錄「已修」，無法唯一對應的只列發現；**語意項**（矛盾、過時、缺交叉引用等判斷類）只列發現、不改頁，修補由使用者看報告後另行指示才動 wiki。報告按日一檔、寫完即凍結，不 ingest、不 query、報告本身不 lint。
 
 ## 唯一守門：git push
 
