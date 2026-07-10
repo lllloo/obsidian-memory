@@ -23,7 +23,7 @@ tags:
 判準見 [`SYSTEM-DESIGN.md`](SYSTEM-DESIGN.md) 的「Skill 升級訊號」一節：候選滿 3 次時，**主動提議使用者要不要寫成 skill，不擅自動筆**；使用者點頭才動手拆 `SKILL.md`／`references/*.md`。
 
 - ~~Lint checklist~~——2026-07-10 已 codify 成 `vault-lint-daily` skill（使用者主動提出，非滿 3 次觸發；`.base` 誤判排除已寫進掃描腳本 BASEIDX 邏輯），候選收掉
-- **deep-research 回存流程**（建頁→更新 index→補雙向交叉引用→同步 tag 表）——2026-07-09 第 3 次觸發提議，使用者以該輪產出無回存價值回絕；2026-07-10 第 4 次（repo 方向研究）**產出有價值、使用者核可並完成回存**（wiki「LLM-Wiki-生態實作比較」）。價值判準已驗證可行：先評該輪產出值不值得存、再走流程；codify 與否待使用者點頭，不重複催
+- ~~deep-research 回存流程~~——2026-07-10 第 4 次（repo 方向研究）結案：主體流程與 CLAUDE.md Ingest 重合，**不開 skill**；特有的「強度標註」寫法已 codify 進 CLAUDE.md 寫入慣例第 6 條（使用者核可）。重開條件：回存變每週例行、或流程長出 CLAUDE.md 沒有的專屬結構。價值判準沿用：先評該輪產出值不值得存
 - **貼 URL ingest 全流程**（抓內容→存 raw/Clippings→寫 wiki→更新 index→交叉引用→收尾 lint）——2026-07-10 schema 落地（raw write-once），目前 0 次手動執行；滿 3 次時評估 codify 成 skill（類 youtube-sync 的網頁版）
 
 ## 待追蹤的開放問題

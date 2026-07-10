@@ -123,6 +123,10 @@ wiki 的維護就是這三個動作，全部只在 `raw/` + `wiki/` 上進行，
 - `#` 開頭的內容會被 Obsidian 解讀為 tag；hex 色碼必須用反引號包住，例如 `` `#57F287` ``。
 - 來源連結放置：單一主來源放 frontmatter `source`；正文需就地引用多個外部連結時用 inline 超連結（`[文字](URL)`）；自動化日報沿用既有的標題側連結格式。
 
+### 6. 查證產出的強度標註
+
+deep-research 或其他對抗式查證的結果回存 wiki 時：每條主張就地標**證據強度與限制**（如「單一 preprint、未同儕審查」「單一作者經驗值、非實證」）；被查證**否決**的主張明列並標「勿引用」，不無聲丟棄；拍板結果附日期記進頁面。防查證結論被後續引用時失去強度資訊。
+
 ## 可用 Skills
 
 本 repo 在 `.agents/skills/` 提供 repo-local skills；`.claude/skills` 是 symlink。
