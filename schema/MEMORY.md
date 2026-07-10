@@ -29,5 +29,5 @@ tags:
 ## 待追蹤的開放問題
 
 - 成長面 Lint 自動化（SYSTEM-DESIGN.md「不做自動成長掃描」）：2026-07-10 已採**限縮版**——結構性 lint 綁進 ingest 收尾、只檢當輪動到的頁（見 CLAUDE.md Ingest 第 5 步），由 Karpathy 社群生產經驗（漂移是頭號失敗模式）佐證。更重的**背景全庫成長掃描**仍不做（7/9 決定不變，token 成本不成比例）。
-- 2026-07-10 七線全面審核結案：README 對齊（批次 A）與強度標註/措辭對齊（批次 B）已修；**倉庫衛生兩項使用者拍板不動、勿重複提議**——`.gitignore` 不補 `.env`/金鑰類規則、`.obsidian/plugins/obsidian-git/` bundle 維持 tracked（換機開箱即用優先）。
+- 2026-07-10 七線全面審核結案（含第二輪複審通過）：批次 A（README）、B（強度標註/措辭）、D（複審殘留三項）已修；**倉庫衛生兩項使用者拍板不動、勿重複提議**——`.gitignore` 不補 `.env`/金鑰類規則、`.obsidian/plugins/obsidian-git/` bundle 維持 tracked（換機開箱即用優先）。
 - raw 消化缺口：審核實測 40/44 未沉澱進 wiki（主題簇：Graphify、Loop Engineering、Agentic OS、Fable 5 技巧、LLM Evals 等）；批次 ingest 會過 10 頁閘門，待使用者挑主題簇優先序再開工。`raw/Archive/` 3 檔是否本就不 ingest 未確認。
