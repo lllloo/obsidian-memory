@@ -2,7 +2,7 @@
 title: Claude Code 記憶系統六層比較
 description: 從原生 CLAUDE.md 到跨工具統一大腦，六個層級的 AI 記憶方案沿「儲存位置」與「召回機制」兩軸拆解，含各層適用情境與升級門檻
 created: 2026-07-08
-updated: 2026-07-09
+updated: 2026-07-10
 parent: "[[wiki/01.index]]"
 tags:
   - claude-code
@@ -52,7 +52,7 @@ Level 1–3 資料夾結構相近、**可疊加同跑**；Level 5、6 屬不同�
 ## 關聯
 
 - 原始逐字稿：[[Every-Claude-Code-Memory-System-Compared-(So-You-Don't-Have-To)]]
-- Level 5 深入：[[LLM-Wiki-知識管理模式]]、[[LLM-Wiki-Karpathy]]
+- Level 5 深入：[[LLM-Wiki-知識管理模式]]、[[LLM-Wiki-Karpathy]]；Level 5 的生態實作全景（nvk、Hermes skill、Astro-Han、Letta MemFS）見 [[LLM-Wiki-生態實作比較]]
 - openclaw 血緣的 agent：[[Hermes-Agent]]
 - 人類 PKM 方法論對照：[[第二大腦方法論比較]]（BASB／PARA／Zettelkasten，與本頁討論的 agent 記憶方案分屬不同層次，但共享「擷取—組織—檢索」結構性問題）
 - coding agent 訂閱生態對照：[[LLM-方案定價與-coding-agent-比較]]（Claude Code 等三方案定價與模型天花板比較，與本頁的記憶系統選型同屬「怎麼選 coding agent」的決策脈絡）

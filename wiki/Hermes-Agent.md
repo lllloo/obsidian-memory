@@ -2,7 +2,7 @@
 title: Hermes Agent
 description: Nous Research 開源的自我進化 AI agent：學習迴路自動生成並改良 skill，跨 session 累積記憶與使用者模型
 created: 2026-07-08
-updated: 2026-07-09
+updated: 2026-07-10
 parent: "[[wiki/01.index]]"
 tags:
   - ai-agent
@@ -69,5 +69,6 @@ Hermes 24/7 長駐（有別於跑完即停的 Claude Code），背景任務、se
 
 - 原始資料：[[Hermes-Agent-NousResearch]]、[[Hermes-Agent-Token成本優化設定]]（token 成本拆解與設定）
 - 同源哲學：[[LLM-Wiki-知識管理模式]]（知識複利 vs. Hermes 的技能複利）
+- `llm-wiki` skill 治理細節與其他實作對照：[[LLM-Wiki-生態實作比較]]——sha256 漂移偵測、封閉 tag taxonomy、矛盾交使用者複核等機制在生態中的定位。
 - 記憶架構對照：[[Claude-Code-記憶系統六層比較]]——Hermes 屬「agent 自策展記憶 + skill」路線，且與其中 Level 3 的 openclaw 血緣相關（`hermes claw migrate` 自 OpenClaw 匯入）。
 - 人類 PKM 對照：[[第二大腦方法論比較]]——Hermes 的「有界核心記憶 vs. 外接 llm-wiki／provider」雙軸結構，與 BASB（資源/專案管理）vs. Zettelkasten（深度連結）的互補分工邏輯同構。

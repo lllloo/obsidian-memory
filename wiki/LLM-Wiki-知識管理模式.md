@@ -2,7 +2,7 @@
 title: LLM Wiki 知識管理模式
 description: Karpathy 提出的個人知識庫模式：LLM 漸進維護一套互聯 markdown wiki，把知識編譯一次後持續維護，與每次查詢重新檢索的 RAG 形成對比
 created: 2026-07-08
-updated: 2026-07-09
+updated: 2026-07-10
 parent: "[[wiki/01.index]]"
 tags:
   - wiki
@@ -56,7 +56,7 @@ schema 是關鍵設定：它讓 LLM 成為**有紀律的 wiki 維護者**，而�
 
 ## 已被獨立產品化
 
-2026 年中，Nous Research 的 [[Hermes-Agent]] 官方內建 `llm-wiki` skill，文件明言「Based on Andrej Karpathy's LLM Wiki pattern」，逐字複刻 raw／wiki／schema 三層架構——證明這套模式不是本 vault 的孤例，已被獨立的 AI agent 產品採用。差別在 Hermes 把它定位為「外接圖書館」，疊在自己的**有界核心記憶**（`MEMORY.md`／`USER.md`，session 級快照）之下，形成雙層結構；本 vault 目前沒有對應的核心記憶層，只有 wiki 本身。
+2026 年中，Nous Research 的 [[Hermes-Agent]] 官方內建 `llm-wiki` skill，文件明言「Based on Andrej Karpathy's LLM Wiki pattern」，逐字複刻 raw／wiki／schema 三層架構——證明這套模式不是本 vault 的孤例，已被獨立的 AI agent 產品採用。其後生態進一步展開（nvk/llm-wiki、Astro-Han 等多個獨立實作，加上多跳 QA 的受控實證），各實作的收斂與分歧見 [[LLM-Wiki-生態實作比較]]。差別在 Hermes 把它定位為「外接圖書館」，疊在自己的**有界核心記憶**（`MEMORY.md`／`USER.md`，session 級快照）之下，形成雙層結構；本 vault 目前沒有對應的核心記憶層，只有 wiki 本身。
 
 ## 選配工具
 
@@ -66,6 +66,7 @@ schema 是關鍵設定：它讓 LLM 成為**有紀律的 wiki 維護者**，而�
 ## 關聯
 
 - 來源全文：[[LLM-Wiki-Karpathy]]
+- 生態全景：[[LLM-Wiki-生態實作比較]]——各實作（nvk、Hermes skill、Astro-Han）的收斂設計、分歧點與實證證據，以及本 vault 的採用取捨。
 - 同源哲學的另一實作：[[Hermes-Agent]]——把「複利資產」用在 agent 自策展的 **skill 庫**，可與本頁「維護 markdown wiki」對照兩種複利路徑。
 - 架構定位：[[Claude-Code-記憶系統六層比較]] 把本 pattern 列為 **Level 5（自組織知識庫）**，並與其餘五層（原生 CLAUDE.md、hook 召回、語意搜尋、逐字宮殿、跨工具共腦）對照取捨。
 - 人類 PKM 方法論對照：[[第二大腦方法論比較]]——BASB、Zettelkasten 等人類第二大腦方法論同樣在解「擷取後如何維護」，差異在維護者是人還是 LLM。
