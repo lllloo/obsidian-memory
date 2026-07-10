@@ -20,7 +20,7 @@ git clone <repo-url> obsidian-memory
 
 ## 結構
 
-- `raw/` — 不可變原始來源（agent 只讀不改，事實來源）
+- `raw/` — 原始來源，write-once（agent 可新增、不可修改，事實來源）
   - `YouTube/` — 影片摘要，依頻道分組
   - `Clippings/` — 網頁剪貼
   - `Archive/` — 保留備查的原料

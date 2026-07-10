@@ -10,7 +10,7 @@
 
 | 層 | 角色 | agent 權限 |
 |---|---|---|
-| `raw/` | 不可變原始來源（你精選的原料，事實來源） | **只讀不改** |
+| `raw/` | 原始來源（你精選的原料，事實來源），write-once | **可新增、不可修改**：可抓外部來源轉 markdown 落地新檔，寫入後即凍結，不回頭改任何既有 raw 檔 |
 | `wiki/` | agent 完全掌管的活知識庫：摘要、實體、概念、比較、綜合 | **全權**：自由建頁、改頁、刪頁、交叉引用、維護 index |
 | schema | 本檔（root）+ `schema/SYSTEM-DESIGN.md` + `schema/vault-map.md` + `schema/MEMORY.md`（規範 agent 行為 + 跨 session 操作記憶） | 依規則維護 |
 
@@ -42,7 +42,14 @@ wiki 的維護就是這三個動作，全部只在 `raw/` + `wiki/` 上進行，
 
 ### Ingest（擷取）
 
-新來源進 `raw/` → agent 讀 → 直接在 `wiki/` 寫入或更新頁面，**不需要先開一輪討論才動筆**：
+新來源進 `raw/` → agent 讀 → 直接在 `wiki/` 寫入或更新頁面，**不需要先開一輪討論才動筆**。
+
+進料管道（raw 為 write-once，落地後不改）：
+
+- **使用者貼 URL**：agent 直接抓內容（優先 defuddle）轉 markdown，按 frontmatter 慣例（含 `source`、`published`）存 `raw/Clippings/`，再往下 ingest。
+- **Web Clipper 剪藏**、**使用者手動放檔**、**skill 同步**（如 `vault-youtube-sync`）：照舊。
+
+流程：
 
 1. 寫一頁摘要（或更新既有摘要）。
 2. 更新相關的實體頁 / 概念頁：整合新資訊、改寫舊摘要、**新資料與舊主張衝突時就地標記矛盾**。

@@ -46,7 +46,7 @@ tags:
 
 原文是三層，本 vault 照搬：
 
-1. **`raw/`（原始來源）** — 你精選的原料：文章、影片摘要、剪貼、資料。**不可變**，LLM 只讀不改，是事實來源。本 vault 分 `YouTube/`、`Clippings/`、`Archive/`。
+1. **`raw/`（原始來源）** — 你精選的原料：文章、影片摘要、剪貼、資料。**write-once**：人與 LLM 都可新增（貼 URL 由 LLM 抓內容落地、Web Clipper 剪藏、skill 同步），寫入後即凍結、不再修改，是事實來源。「不可變」約束的是修改，不是新增——與 Hermes bundled skill、nvk/llm-wiki 等主流實作一致（2026-07-10 查證跟進）。本 vault 分 `YouTube/`、`Clippings/`、`Archive/`。
 2. **`wiki/`（活知識庫）** — LLM 生成與維護的 markdown：摘要頁、實體頁、概念頁、比較頁、綜合頁。**LLM 完全掌管**——建頁、改頁、刪頁、交叉引用、維護 index，你只負責讀。
 3. **schema** — 規範文件（[`CLAUDE.md`](../CLAUDE.md) / `AGENTS.md`），告訴 LLM wiki 怎麼組織、慣例是什麼、Ingest/Query/Lint 各走什麼流程。這是把 LLM 從通用聊天機器人變成**有紀律的 wiki 維護者**的關鍵設定，你與 LLM 隨時間共同演進它。
 
@@ -69,7 +69,7 @@ wiki 是 LLM 幫你養的活知識庫（私有、只給你讀）；cards/topics 
 
 | 操作 | 做什麼 | 承載 |
 |---|---|---|
-| Ingest | 外部原料進 raw | `vault-youtube-sync`、`vault-updates-daily` |
+| Ingest | 外部原料進 raw | `vault-youtube-sync`、`vault-updates-daily`；貼 URL 時 agent 手動抓存 `raw/Clippings/` |
 | Ingest | 綜合維護進 wiki | 手動（原 `ob-write`／`vault-wiki-build` 已移除） |
 | Query | 問 wiki，附引用綜合；好答案回存 wiki | 手動（原 `ob-read` 已移除） |
 | Lint | 掃 wiki 孤立頁、死連結、矛盾、缺欄位等 | `vault-lint-daily`（報告制，產報告到 `lint/` 不改頁；修補仍手動、經使用者點頭） |

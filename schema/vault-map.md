@@ -25,7 +25,7 @@ tags:
 ```
 .
 ├── schema/      — schema 層敘述文件：SYSTEM-DESIGN.md（運作總綱）、vault-map.md（本檔，導航）；CLAUDE.md/AGENTS.md 因 harness 自動載入留 root
-├── raw/         — 不可變原始來源。agent 只讀不改，事實來源
+├── raw/         — 原始來源，write-once。agent 可新增、不可修改，事實來源
 │   ├── YouTube/   — 影片摘要，依頻道分組；各頻道 01.index.md + 02.影片清單.base 索引（含 last_sync_id checkpoint）
 │   │   ├── AIJasonZ/              — Claude 設計工作流、Skills、Agent 記憶體管理
 │   │   ├── AILABS-393/            — Claude Code 進階技巧、RAG
