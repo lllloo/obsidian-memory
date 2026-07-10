@@ -11,7 +11,7 @@ git clone <repo-url> obsidian-memory
 **Prerequisites**：
 
 - [Obsidian](https://obsidian.md/) — 編輯與圖譜瀏覽
-- Python 3（純 stdlib）— skill 腳本執行所需
+- Python 3（純 stdlib）— skill 腳本執行所需；Windows 建議先設機器級 `PYTHONUTF8=1`，避免 cp950 編碼問題
 - [Obsidian CLI](https://help.obsidian.md/cli)（選用）— 本地開檔輔助，不影響任何流程
 
 在 Obsidian 直接「Open folder as vault」開啟本 repo 即可閱讀編輯；skill 由 Claude Code 在 repo 根目錄喚起。
@@ -20,34 +20,41 @@ git clone <repo-url> obsidian-memory
 
 ## 結構
 
+三層系統（資料夾完整索引見 [`schema/vault-map.md`](./schema/vault-map.md)）：
+
 - `raw/` — 原始來源，write-once（agent 可新增、不可修改，事實來源）
   - `YouTube/` — 影片摘要，依頻道分組
-  - `Clippings/` — 網頁剪貼
+  - `Clippings/` — 網頁剪藏
   - `Archive/` — 保留備查的原料
-  - `Updates/` — 日常更新彙整
 - `wiki/` — 活知識庫（agent 綜合 raw 維護的摘要/實體/概念/綜合頁，含內容目錄 `01.index.md`）
-- `cards/`、`topics/` — **使用者私人策展區，agent 不管理**；同時是 Quartz 唯一對外公開的層。使用者自行從 wiki 撿選內容放入
-- 資料夾完整索引見 [`schema/vault-map.md`](./schema/vault-map.md)
+- `CLAUDE.md` + `schema/` — 治理規範層：`CLAUDE.md`（可執行規則）、`schema/SYSTEM-DESIGN.md`（系統全貌）、`schema/vault-map.md`（agent 用全局導航與 tag 查詢）、`schema/MEMORY.md`（agent 跨 session 操作記憶，checked-in 以確保跨工具可攜）
+
+三層之外：
+
+- `cards/`、`topics/` — **使用者私人策展區，agent 不管理**；同時是 Quartz 唯一對外公開的層。使用者自行從 wiki 撿選內容放入（Quartz 發佈設定與流程不在本 repo）
+- `updates/`、`lint/` — 獨立消費性 feed，**不屬三層系統、不是 ingest 原料**：每日工具更新日報與 vault 健檢報告，分別由對應 skill 寫入，按日一檔、寫完凍結
 - `index.md` — 真人讀者入口（Quartz 網站首頁，列主題與 tag 連結）
-- `schema/vault-map.md` — agent 用的全局導航與 tag 查詢
-- `.agents/skills/` — repo-local Claude Code skills（`.claude/skills` 為 symlink）
+- `.agents/skills/` — repo-local skills，遵循 [Agent Skills](https://agentskills.io) 開放標準（`.claude/skills` 為 symlink）
 
 ## 規則與工作流
 
 先看 [`schema/SYSTEM-DESIGN.md`](./schema/SYSTEM-DESIGN.md)——系統全貌：Karpathy LLM Wiki 心智模型、人/AI 分工、刻意不做的事。可執行規則（agent 維護規則、Ingest/Query/Lint、寫入慣例、唯一守門）見 [`CLAUDE.md`](./CLAUDE.md)，導航見 [`schema/vault-map.md`](./schema/vault-map.md)。
 
+**非 Claude Code 的 AI 工具**（Cursor、Codex 等）從 `AGENTS.md` 進入——它是 `CLAUDE.md` 的 symlink，內容完全相同（checkout 需 git 支援 symlink；Windows 請開 `core.symlinks`，否則會退化成只含檔名字串的純文字檔）。跨 session 操作記憶在 `schema/MEMORY.md`，checked-in 進 repo，任何工具打開 vault 都讀得到。
+
 ## Skills
 
-`.agents/skills/` 內提供 vault 操作 skills，在 Claude Code 以 `/<skill>` 喚起：
+`.agents/skills/` 內提供 vault 操作 skills，遵循 [Agent Skills](https://agentskills.io) 開放標準、可被支援該標準的其他 AI 工具載入；在 Claude Code 以 `/<skill>` 喚起：
 
 | 指令 | 用途 |
 |---|---|
-| `/vault-youtube-sync` | 同步 YouTube 影片摘要至 raw |
-| `/vault-updates-daily` | 彙整日常更新至 raw |
+| `/vault-youtube-sync` | 同步 YouTube 影片摘要至 `raw/` |
+| `/vault-updates-daily` | 彙整日常工具更新日報至 `updates/` |
+| `/vault-lint-daily` | 產出 vault 健檢報告至 `lint/`（機械項自動修、語意項只報告） |
 
 **使用契約**：cwd 必須是本 repo 根目錄（含 `CLAUDE.md` 的目錄），所有路徑 cwd-relative，不靠環境變數。從別的專案想呼叫 skill，先 `cd` 進來。
 
-> 原核心 skill `ob-write`、`ob-read`（global）、`vault-wiki-build`、`vault-lint` 已移除；Ingest（wiki 綜合）／Query／Lint 三動作目前由 agent 手動執行，後續按需重建。
+> 原核心 skill `ob-write`、`ob-read`（global）、`vault-wiki-build`、`vault-lint` 已移除；Ingest（wiki 綜合）與 Query 由 agent 手動執行，Lint 的掃描面已按需重建為報告制的 `/vault-lint-daily`。
 
 ## 兩個入口檔的差別
 
