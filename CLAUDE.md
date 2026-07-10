@@ -18,7 +18,7 @@
 
 **`updates/` 也不屬於三層系統。** 它是使用者每天瞄一眼「有什麼新工具更新」的消費性 feed，**不是 ingest 原料**。唯一寫入者是 `vault-updates-daily` skill（append 當日日報 + 讀 `updates/01.index.md` 的來源設定）；除此之外 agent **不把日報當原料 ingest 進 wiki、不 query、不 lint**。日報按日 append、彼此不互聯，寫完即凍結；要沉澱進 wiki 的知識由使用者另外指示，不自動化。
 
-**`lint/` 同上，不屬三層系統。** vault 健檢日報的消費性 feed，唯一寫入者是 `vault-lint-daily` skill（讀 `lint/01.index.md` 的設定）；報告**只列發現、不改頁**，修補由使用者看報告後另行指示才動 wiki。報告按日一檔、寫完即凍結，不 ingest、不 query、報告本身不 lint。
+**`lint/` 同上，不屬三層系統。** vault 健檢日報的消費性 feed，唯一寫入者是 `vault-lint-daily` skill（讀 `lint/01.index.md` 的設定）。**機械項**（死連結、index 漏登錄等可機械驗證的結構問題）掃到即順手修並在報告記錄「已修」；**語意項**（矛盾、過時、缺交叉引用等判斷類）只列發現、不改頁，修補由使用者看報告後另行指示才動 wiki。報告按日一檔、寫完即凍結，不 ingest、不 query、報告本身不 lint。
 
 ## 唯一守門：git push
 
@@ -26,7 +26,7 @@ agent 自主維護 wiki（含改頁、刪頁），**不需逐步拍板**——�
 
 > **執行 `git push` 或任何遠端推送前，必須先取得使用者明確同意。**
 
-`push` 會把 `raw/` 與 `wiki/`（皆不經 Quartz 發佈，但仍存在於 GitHub repo）一併推上遠端，該次 diff review 由使用者把關。除此之外沒有其他 agent 守門：不做 cards/topics 治理、不做品質 gate、不做敏感資料自檢 gate、不設「不自動刪」限制。
+`push` 會把 `raw/` 與 `wiki/`（皆不經 Quartz 發佈，但仍存在於 GitHub repo）一併推上遠端，該次 diff review 由使用者把關。除此之外沒有其他**硬**守門：不做 cards/topics 治理、不做品質 gate、不做敏感資料自檢 gate、不設「不自動刪」限制。（另有一個流程級確認點：單次 ingest 觸及 10+ 頁先問，見 Ingest 一節——那是確認節奏，不是守門。）
 
 ## CWD 契約
 
@@ -46,7 +46,7 @@ wiki 的維護就是這三個動作，全部只在 `raw/` + `wiki/` 上進行，
 
 進料管道（raw 為 write-once，落地後不改）：
 
-- **使用者貼 URL**：先 Grep `raw/Clippings/` 的 `source:` 查同 URL 是否已落地——已存在就不重複建檔，直接更新對應 wiki 頁。未存在才抓內容（優先 defuddle）轉 markdown，按 frontmatter 慣例（含 `source`、`published`）存 `raw/Clippings/`，再往下 ingest。抓到的內容明顯殘缺（登入牆、付費牆、重 JS 頁）時**不落地 raw**——write-once 塞進殘件即凍結——改請使用者用 Web Clipper 剪藏。
+- **使用者貼 URL**：先 Grep `raw/Clippings/` 的 `source:` 查同 URL 是否已落地。**已存在**：重抓內容算正文 sha256 與既有 `sha256` 欄位比對——一致就不重複建檔、直接更新對應 wiki 頁；不一致代表來源已變（source drift），raw 仍不回寫（write-once），改在對應 wiki 頁就地標註「來源內容已於 <日期> 變更」再往下 ingest 新內容。**未存在**才抓內容（優先 defuddle）轉 markdown，按 frontmatter 慣例（含 `source`、`published`、`sha256`）存 `raw/Clippings/`，再往下 ingest。抓到的內容明顯殘缺（登入牆、付費牆、重 JS 頁）時**不落地 raw**——write-once 塞進殘件即凍結——改請使用者用 Web Clipper 剪藏。
 - **Web Clipper 剪藏**、**使用者手動放檔**、**skill 同步**（如 `vault-youtube-sync`）：照舊。
 
 流程：
@@ -57,7 +57,7 @@ wiki 的維護就是這三個動作，全部只在 `raw/` + `wiki/` 上進行，
 4. 補交叉引用：新頁至少連 1–2 個相關既有頁，避免孤立。
 5. **收尾輕量 lint（只檢當輪動到的頁，不掃全庫）**：交叉引用是否雙向、有無與既有主張矛盾、有無因新頁產生的孤立頁。當輪頁本就在 context 裡，成本趨近於零；這是擋「漂移」（頁面 ingest 時未同步交叉引用而無聲過時）的主要防線，全庫成長掃描仍不做。
 
-單一來源可牽動多頁。agent 自主寫，不逐頁拍板；使用者在旁讀、隨時導引重點即可。可一次一源慢慢做，也可批次 ingest。
+單一來源可牽動多頁。agent 自主寫，不逐頁拍板；使用者在旁讀、隨時導引重點即可。可一次一源慢慢做，也可批次 ingest。**例外閘門：單次 ingest 預計觸及（建/改/刪）10 頁以上時，先列頁面清單問過使用者再動筆**——防單來源大面積改動失控；10 頁以下照常全自主。
 
 ### Query（查詢）
 
@@ -67,7 +67,7 @@ wiki 的維護就是這三個動作，全部只在 `raw/` + `wiki/` 上進行，
 
 ### Lint（健檢）
 
-定期掃 wiki（+ raw 索引）：矛盾、被新來源取代的過時主張、孤立頁、被提到卻沒專屬頁的概念、缺交叉引用、可用查證補的資料空缺。產出修補與新探究建議。只掃 raw/wiki，不碰 cards/topics。報告制掃描由 `vault-lint-daily` skill 承載（產報告到 `lint/`，不改頁）；修補在使用者看報告點頭後由 agent 執行。
+定期掃 wiki（+ raw 索引）：矛盾、被新來源取代的過時主張、孤立頁、被提到卻沒專屬頁的概念、缺交叉引用、可用查證補的資料空缺。產出修補與新探究建議。只掃 raw/wiki，不碰 cards/topics。掃描由 `vault-lint-daily` skill 承載（產報告到 `lint/`）：**機械項自動修、語意項只報告**（依據：死連結是 LLM wiki 實證的頭號結構錯誤，見 [`LLM-Wiki-生態實作比較`](wiki/LLM-Wiki-生態實作比較.md)），語意修補在使用者看報告點頭後由 agent 執行。
 
 ## wiki 頁面與索引
 
@@ -105,6 +105,7 @@ wiki 的維護就是這三個動作，全部只在 `raw/` + `wiki/` 上進行，
 | `updated` | 最後修改日期 | `YYYY-MM-DD` |
 | `source` | 來源 URL（網頁／影片連結；YouTube `index` 為頻道 URL）；回查用，非證據本體 | URL |
 | `published` | 原始內容發佈／上傳日，與 `created`（進 vault 日）區分；不明可留空 | `YYYY-MM-DD` 或空 |
+| `sha256` | 來源漂移偵測：正文（不含 frontmatter）的 sha256。僅 **agent 貼 URL 落地**的 Clippings 寫入；同 URL 重複 ingest 時重算比對，不一致即來源已變。偵測用，raw 本身不回寫 | 64 位十六進位字串 |
 | `parent` | Obsidian 圖譜用 wikilink，讓筆記出現在圖譜 | `"[[01.index]]"`；vault 內多個資料夾各有同名 `01.index.md`，重名歧義時用路徑限定（如 wiki 頁 `"[[wiki/01.index]]"`） |
 | `last_sync_id` | youtube-sync 增量同步 checkpoint，僅存於頻道 `01.index.md` | YouTube videoId |
 | `draft` | youtube-sync transcript 抓取失敗的占位待重抓標記；正常筆記不用 | `true`（省略 = 正常） |
@@ -130,7 +131,7 @@ wiki 的維護就是這三個動作，全部只在 `raw/` + `wiki/` 上進行，
 |---|---|
 | `vault-youtube-sync` | YouTube 影片摘要同步至 `raw/` |
 | `vault-updates-daily` | 日常更新彙整至 `updates/` |
-| `vault-lint-daily` | wiki+raw 健檢報告至 `lint/`（只報告、不改頁） |
+| `vault-lint-daily` | wiki+raw 健檢報告至 `lint/`（機械項自動修並記錄、語意項只報告） |
 
 優先使用 skill，不新增平行流程。新增或修改 skill 時，盡量遵循 [Agent Skills](https://agentskills.io) 開放標準，讓內容可跨工具移植。
 

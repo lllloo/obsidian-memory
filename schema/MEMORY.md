@@ -23,7 +23,7 @@ tags:
 判準見 [`SYSTEM-DESIGN.md`](SYSTEM-DESIGN.md) 的「Skill 升級訊號」一節：候選滿 3 次時，**主動提議使用者要不要寫成 skill，不擅自動筆**；使用者點頭才動手拆 `SKILL.md`／`references/*.md`。
 
 - ~~Lint checklist~~——2026-07-10 已 codify 成 `vault-lint-daily` skill（使用者主動提出，非滿 3 次觸發；`.base` 誤判排除已寫進掃描腳本 BASEIDX 邏輯），候選收掉
-- **deep-research 回存流程**（建頁→更新 index→補雙向交叉引用→同步 tag 表）——第 3 次出現已於 2026-07-09（跨專案協作機制研究）觸發提議，**使用者判定該輪查證結果沒有回存價值而回絕**；純出現次數不是自動觸發依據，下次候選需一併評估該輪產出是否值得回存，不要只看次數重提
+- **deep-research 回存流程**（建頁→更新 index→補雙向交叉引用→同步 tag 表）——2026-07-09 第 3 次觸發提議，使用者以該輪產出無回存價值回絕；2026-07-10 第 4 次（repo 方向研究）**產出有價值、使用者核可並完成回存**（wiki「LLM-Wiki-生態實作比較」）。價值判準已驗證可行：先評該輪產出值不值得存、再走流程；codify 與否待使用者點頭，不重複催
 - **貼 URL ingest 全流程**（抓內容→存 raw/Clippings→寫 wiki→更新 index→交叉引用→收尾 lint）——2026-07-10 schema 落地（raw write-once），目前 0 次手動執行；滿 3 次時評估 codify 成 skill（類 youtube-sync 的網頁版）
 
 ## 待追蹤的開放問題
