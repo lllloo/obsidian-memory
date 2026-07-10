@@ -59,3 +59,4 @@ Level 1–3 資料夾結構相近、**可疊加同跑**；Level 5、6 屬不同�
 - 人類 PKM 方法論對照：[[第二大腦方法論比較]]（BASB／PARA／Zettelkasten，與本頁討論的 agent 記憶方案分屬不同層次，但共享「擷取—組織—檢索」結構性問題）
 - coding agent 訂閱生態對照：[[LLM-方案定價與-coding-agent-比較]]（Claude Code 等三方案定價與模型天花板比較，與本頁的記憶系統選型同屬「怎麼選 coding agent」的決策脈絡）
 - harness 工程脈絡：[[Agent-Harness-Engineering-框架綜述]]——本頁六層記憶方案在 Anthropic context engineering 論述中對應 structured note-taking／agentic memory 技術，理論依據見該頁。
+- 記憶方案的共同風險實證：[[AI-自主工作流的實證檢驗]]——記憶檔過長會被 agent 忽略、compaction 靜默丟棄約束，是本頁各層方案共通的失效模式。

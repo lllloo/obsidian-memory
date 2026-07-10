@@ -108,6 +108,7 @@ Harness 是包裹在 LLM 外圍、負責「模型推理以外一切」的軟體�
 
 ## 相關頁
 
+- [[AI-自主工作流的實證檢驗]] — **本頁記錄業界主張該怎麼做，該頁檢驗這些主張有多少獨立證據**。特別是本頁「驗證迴路是品質關鍵」一節：該頁證實測試本身可被 agent 篡改（ImpossibleBench、Cursor 稽核），驗證迴路必要但不充分。
 - [[Claude-Code-記憶系統六層比較]] — 本頁 context engineering 一節的三類技術（note-taking／agentic memory）正是該頁六層記憶方案的理論依據。
 - [[Hermes-Agent]] — 自我進化 agent 實作，其 skill 生成與有界記憶設計可對照本頁的 harness 構件範疇。
 - [[LLM-Wiki-知識管理模式]] — 本 vault 的設計原型，屬 structured note-taking／agentic memory 路線的知識庫形態。
