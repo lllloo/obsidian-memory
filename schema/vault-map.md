@@ -26,8 +26,7 @@ tags:
 .
 ├── schema/      — schema 層敘述文件：SYSTEM-DESIGN.md（運作總綱）、vault-map.md（本檔，導航）；CLAUDE.md/AGENTS.md 因 harness 自動載入留 root
 ├── raw/         — 原始來源，write-once。agent 可新增、不可修改，事實來源
-│   ├── Clippings/ — 網頁剪貼參考庫（01.index.md + 清單.base 索引；agent 不主動消化，使用者明指才處理）
-│   └── Archive/   — 封存區：保留備查的原料（01.index.md + 清單.base 索引；agent 不主動掃描/消化/刪除）
+│   └── Clippings/ — 網頁剪貼參考庫（01.index.md + 清單.base 索引；agent 不主動消化，使用者明指才處理）
 ├── wiki/          — 活知識庫：agent 綜合 raw 維護的摘要/實體/概念/綜合頁（01.index.md 為內容目錄，每次 ingest 更新）
 ├── feeds/         — 【自動產物層，不屬三層系統】預設不 ingest／query／lint，不公開
 │   ├── youtube/   — YouTube 自動來源池；各頻道含 01.index.md + 02.影片清單.base，明確指定才綜合進 wiki
@@ -44,11 +43,10 @@ tags:
 | 主題 | Tags | 位置 |
 |------|------|------|
 | Claude Code 實作 | `claude-code` | `feeds/youtube/` + `raw/` + `wiki/` |
-| AI Agent 工作流 | `ai-agent` `agent-framework` `harness` | `feeds/youtube/` + `raw/Archive/` + `wiki/` |
-| 記憶系統 / Context | `memory`（僅 `wiki/`）、`context-engineering` | `feeds/youtube/` + `raw/Archive/` + `wiki/` |
+| AI Agent 工作流 | `ai-agent` `agent-framework` `harness` | `feeds/youtube/` + `wiki/` |
+| 記憶系統 / Context | `memory`（僅 `wiki/`）、`context-engineering` | `feeds/youtube/` + `wiki/` |
 | RAG / 知識圖譜 | `rag` `knowledge-graph` | `feeds/youtube/` + `wiki/` |
 | Obsidian 操作 | `obsidian` | `feeds/youtube/` + `wiki/` |
-| CLI / 部署類封存 | `cli` `deploy` `github-actions` | `raw/Archive/` |
 | Python / LLM 評測 | `python` `llm-eval` `llm-as-a-judge` | `feeds/youtube/daveebbelaar/` |
 | LLM 定價 / coding agent | `llm-pricing` `coding-agent` | `wiki/` |
 | 人類 PKM 方法論 | `pkm` `second-brain` | `wiki/` |

@@ -43,7 +43,7 @@ python3 .agents/skills/vault-lint-daily/scripts/lint_scan.py --days <semantic_da
 5. 整理機械層發現：
    - 未修的 `DEADLINK`／`INDEXGAP` 與全部 `ORPHAN`／`FM` 逐條列入報告。
    - `TAG` 盤點由主 agent 判讀**同義異寫漂移**（如單複數、連字號變體、語意重疊的 tag 對），只列疑似漂移對，不列全表。
-   - `RAWGAP`：`raw/Clippings/`、`raw/Archive/` 只彙總數量（agent 不主動消化區，列數字供參考即可）；`feeds/` 不掃描、不列待消化提醒。
+   - `RAWGAP`：`raw/Clippings/` 只彙總數量（agent 不主動消化區，列數字供參考即可）；`feeds/` 不掃描、不列待消化提醒。
    - 任何 `ERROR:` 行原樣寫進報告開頭。
 6. 語意層：取 `CHANGED` 清單（近 N 天變動的 wiki 頁），超過 `semantic_page_cap` 時取最近變動的前幾頁並在報告標注截斷。每頁備妥「目標頁全文 + 鄰接頁全文（目標頁 wikilink 指到的頁與連入它的頁，各至多 5 頁）」。可用 `Agent` 工具時以 `subagent_type: "general-purpose"` 平行審查，prompt = `references/semantic-review.md` 全文 + 該頁與鄰接頁內容（不要叫 subagent 自己讀檔）；無 Agent 工具時主 agent 直接照該 reference 逐頁審查。
 7. 組裝報告，段落順序：`## 摘要`（各類計數表，含已自動修補數）→ `## 已自動修補`（機械修補逐條：頁面、修了什麼；無則寫「無」）→ `## 機械層發現` → `## 語意層發現` → `## 建議修補清單`（合併兩層、按嚴重度排序，每條一句話 + 指向頁面）。無發現的段落寫「無發現」。

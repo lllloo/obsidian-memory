@@ -24,7 +24,6 @@ git clone <repo-url> obsidian-memory
 
 - `raw/` — 原始來源，write-once（agent 可新增、不可修改，事實來源）
   - `Clippings/` — 網頁剪藏
-  - `Archive/` — 保留備查的原料
 - `wiki/` — 活知識庫（agent 綜合 raw 維護的摘要/實體/概念/綜合頁，含內容目錄 `01.index.md`）
 - `CLAUDE.md` + `schema/` — 治理規範層：`CLAUDE.md`（可執行規則）、`schema/SYSTEM-DESIGN.md`（系統全貌）、`schema/vault-map.md`（agent 用全局導航與 tag 查詢）、`schema/MEMORY.md`（agent 跨 session 操作記憶，checked-in 以確保跨工具可攜）
 
