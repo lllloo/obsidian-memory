@@ -48,8 +48,8 @@ wiki 的維護就是這三個動作，只在 `raw/` + `wiki/` 上進行；不碰
 
 進料管道（raw 為 write-once，落地後不改）：
 
-- **使用者貼 URL**：先 Grep `raw/Clippings/` 的 `source:` 查同 URL 是否已落地。**已存在**：重抓內容算正文 sha256 與既有 `sha256` 欄位比對——一致就不重複建檔、直接更新對應 wiki 頁；不一致代表來源已變（source drift），raw 仍不回寫（write-once），改在對應 wiki 頁就地標註「來源內容已於 <日期> 變更」再往下 ingest 新內容。**未存在**才抓內容（優先 defuddle）轉 markdown，按 frontmatter 慣例（含 `source`、`published`、`sha256`）存 `raw/Clippings/`，再往下 ingest。抓到的內容明顯殘缺（登入牆、付費牆、重 JS 頁）時**不落地 raw**——write-once 塞進殘件即凍結——改請使用者用 Web Clipper 剪藏。
-- **Web Clipper 剪藏**、**使用者手動放檔**：照舊。
+- **使用者貼 URL**：先 Grep `raw/` 的 `source:` 查同 URL 是否已落地。**已存在**：重抓內容算正文 sha256 與既有 `sha256` 欄位比對——一致就不重複建檔、直接更新對應 wiki 頁；不一致代表來源已變（source drift），raw 仍不回寫（write-once），改在對應 wiki 頁就地標註「來源內容已於 <日期> 變更」再往下 ingest 新內容。**未存在**才抓內容（優先 defuddle）轉 markdown，按 frontmatter 慣例（含 `source`、`published`、`sha256`）存 `raw/fetched/`，再往下 ingest。抓到的內容明顯殘缺（登入牆、付費牆、重 JS 頁）時**不落地 raw**——write-once 塞進殘件即凍結——改請使用者用 Web Clipper 剪藏。
+- **Web Clipper 剪藏**、**使用者手動放檔**：存入 `raw/clippings/`。
 - **YouTube 自動同步**：`vault-youtube-sync` 只寫入 `feeds/youtube/`，不進 raw 或 wiki。
 
 流程：
@@ -103,7 +103,7 @@ wiki 的維護就是這三個動作，只在 `raw/` + `wiki/` 上進行；不碰
 | 欄位 | 用途 / 何時用 | 值格式 |
 |---|---|---|
 | `title` | 主題名，可含空格與中文；不加日期前綴（SKILL 範本可例外，如 `vault-updates-daily` 日報 `"<YYYY-MM-DD> Daily Updates"`） | 字串（檔名為其無空格、`-` 連接版） |
-| `description` | 一句話自我介紹，給 Obsidian Bases、AI 查詢用。**適用**：wiki 頁、feeds/youtube 影片摘要、raw/Clippings 網頁剪藏；其餘筆記可省 | 字串，30–80 字；不重複 title，避免「這篇／本文」自我指涉 |
+| `description` | 一句話自我介紹，給 Obsidian Bases、AI 查詢用。**適用**：wiki 頁、feeds/youtube 影片摘要、raw 網頁剪藏；其餘筆記可省 | 字串，30–80 字；不重複 title，避免「這篇／本文」自我指涉 |
 | `created` | 進 vault 日期 | `YYYY-MM-DD` |
 | `updated` | 最後修改日期 | `YYYY-MM-DD` |
 | `source` | 來源 URL（網頁／影片連結；YouTube `index` 為頻道 URL）；回查用，非證據本體 | URL |

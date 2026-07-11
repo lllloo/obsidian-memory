@@ -1,6 +1,6 @@
 filters:
   and:
-    - file.inFolder("raw/Clippings")
+    - file.inFolder("raw/fetched")
     - file.ext == "md"
     - file.name != "01.index"
 properties:
@@ -14,7 +14,7 @@ properties:
     displayName: 筆記
 views:
   - type: table
-    name: 剪藏清單
+    name: 擷取清單
     order:
       - file.name
       - description

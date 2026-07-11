@@ -42,5 +42,5 @@
 	],
 	"triggers": [],
 	"noteNameFormat": "{{title}}",
-	"path": "raw/Clippings"
+	"path": "raw/clippings"
 }

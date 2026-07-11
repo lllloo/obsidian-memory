@@ -46,7 +46,7 @@ tags:
 
 原文是三層，本 vault 照搬：
 
-1. **`raw/`（原始來源）** — 你精選的原料：文章、剪貼、資料。**write-once**：人與 LLM 都可新增（貼 URL 由 LLM 抓內容落地、Web Clipper 剪藏、使用者手動放檔），寫入後即凍結、不再修改，是事實來源。「不可變」約束的是修改，不是新增——與 Hermes bundled skill、nvk/llm-wiki 等主流實作一致（2026-07-10 查證跟進）。貼 URL 落地的 Clippings 另在 frontmatter 記正文 sha256，同 URL 重複 ingest 時比對以偵測來源漂移（偵測與標記用，raw 不回寫；借鏡 Hermes）。本 vault 目前僅 `Clippings/`（`Archive/` 封存區於 2026-07-11 因與 write-once 事實來源定位重複、長期零消化而移除）。
+1. **`raw/`（原始來源）** — 你精選的原料：文章、剪貼、資料。**write-once**：人與 LLM 都可新增（貼 URL 由 LLM 擷取至 `fetched/`、Web Clipper 剪藏與使用者手動放檔至 `clippings/`），寫入後即凍結、不再修改，是事實來源。「不可變」約束的是修改，不是新增——與 Hermes bundled skill、nvk/llm-wiki 等主流實作一致（2026-07-10 查證跟進）。貼 URL 落地的 `fetched/` 另在 frontmatter 記正文 sha256，同 URL 重複 ingest 時比對以偵測來源漂移（偵測與標記用，raw 不回寫；借鏡 Hermes）。`Archive/` 封存區於 2026-07-11 因與 write-once 事實來源定位重複、長期零消化而移除。
 2. **`wiki/`（活知識庫）** — LLM 生成與維護的 markdown：摘要頁、實體頁、概念頁、比較頁、綜合頁。**LLM 完全掌管**——建頁、改頁、刪頁、交叉引用、維護 index，你只負責讀。
 3. **schema** — 規範文件與操作記憶：root 的 [`CLAUDE.md`](../CLAUDE.md)（`AGENTS.md` 為其 symlink）+ 本檔 + `vault-map.md` + `MEMORY.md`，告訴 LLM wiki 怎麼組織、慣例是什麼、Ingest/Query/Lint 各走什麼流程。這是把 LLM 從通用聊天機器人變成**有紀律的 wiki 維護者**的關鍵設定，你與 LLM 隨時間共同演進它。
 
@@ -77,7 +77,7 @@ wiki 是 LLM 幫你養的活知識庫（私有、只給你讀）；cards/topics 
 
 | 操作 | 做什麼 | 承載 |
 |---|---|---|
-| Ingest | 精選外部原料進 raw | 貼 URL 時 agent 手動抓存 `raw/Clippings/`；Web Clipper／使用者手動放檔 |
+| Ingest | 精選外部原料進 raw | 貼 URL 時 agent 手動抓存 `raw/fetched/`；Web Clipper／使用者手動放入 `raw/clippings/` |
 | Feed | YouTube 自動蒐集 | `vault-youtube-sync` 產出至 `feeds/youtube/`，不進 raw 或 wiki |
 | Ingest | 綜合維護進 wiki | 手動；來源限 `raw/` |
 | Query | 問 wiki，附引用綜合；好答案回存 wiki | 手動（原 `ob-read` 已移除） |
@@ -108,7 +108,7 @@ wiki 長大後可能想要能更有效操作它的小工具，最明顯的是 **
 
 原文的實用招式與本 vault 對應現況：
 
-- **Obsidian Web Clipper**：瀏覽器擴充，把網頁轉 markdown 快速進 raw。本 vault 已用（`.clipper/`，產出進 `raw/Clippings/`）。
+- **Obsidian Web Clipper**：瀏覽器擴充，把網頁轉 markdown 快速進 raw。本 vault 已用（`.clipper/`，產出進 `raw/clippings/`）。
 - **本地下載圖片**：把附件路徑設成固定資料夾（如 `raw/assets/`）、綁快捷鍵下載，讓 LLM 能直接看圖而非依賴會失效的 URL（LLM 無法一次讀含內嵌圖的 markdown，須先讀文字、再分開看圖）。**本 vault 以文字為主，尚未採用**；來源含關鍵視覺時再開 `raw/assets/`。
 - **圖譜視圖（graph view）**：看 wiki 形狀的最佳方式——什麼連什麼、哪些是樞紐、哪些是孤島。要讓筆記進圖譜，frontmatter 加 `parent: "[[01.index]]"`。
 - **Marp**：markdown 投影片格式，Obsidian 有 plugin，可從 wiki 內容直接生簡報。本 vault 目前未用。
