@@ -2,7 +2,7 @@
 title: LLM Wiki 知識管理模式
 description: Karpathy 提出的個人知識庫模式：LLM 漸進維護一套互聯 markdown wiki，把知識編譯一次後持續維護，與每次查詢重新檢索的 RAG 形成對比
 created: 2026-07-08
-updated: 2026-07-10
+updated: 2026-07-11
 parent: "[[wiki/01.index]]"
 tags:
   - wiki
@@ -56,7 +56,7 @@ schema 是關鍵設定：它讓 LLM 成為**有紀律的 wiki 維護者**，而�
 
 ## 已被獨立產品化
 
-2026 年中，Nous Research 的 [[Hermes-Agent]] 官方內建 `llm-wiki` skill，文件明言「Based on Andrej Karpathy's LLM Wiki pattern」，逐字複刻 raw／wiki／schema 三層架構——證明這套模式不是本 vault 的孤例，已被獨立的 AI agent 產品採用。其後生態進一步展開（nvk/llm-wiki、Astro-Han 等多個獨立實作，加上多跳 QA 的受控實證），各實作的收斂與分歧見 [[LLM-Wiki-生態實作比較]]。差別在 Hermes 把它定位為「外接圖書館」，疊在自己的**有界核心記憶**（`MEMORY.md`／`USER.md`，session 級快照）之下，形成雙層結構；本 vault 目前沒有對應的核心記憶層，只有 wiki 本身。
+2026 年中，Nous Research 的 [[Hermes-Agent]] 官方內建 `llm-wiki` skill，文件明言「Based on Andrej Karpathy's LLM Wiki pattern」，逐字複刻 raw／wiki／schema 三層架構——證明這套模式不是本 vault 的孤例，已被獨立的 AI agent 產品採用。其後生態進一步展開（nvk/llm-wiki、Astro-Han 等多個獨立實作，加上多跳 QA 的受控實證），各實作的收斂與分歧見 [[LLM-Wiki-生態實作比較]]。差別在 Hermes 把它定位為「外接圖書館」，疊在自己的**有界核心記憶**（`MEMORY.md`／`USER.md`，session 級快照）之下，形成雙層結構；本 vault 現也有對應的有界核心記憶層（[[MEMORY]]，40 行上限、agent 逐回合即時寫），但份量遠小於 Hermes 的雙系統，仍以 wiki 為主要複利資產——兩者對照見 [[Hermes-Agent]] 任務管理一節。
 
 ## 選配工具
 

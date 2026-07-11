@@ -20,7 +20,7 @@
 
 - `feeds/youtube/`：`vault-youtube-sync` 的自動同步來源池。只有使用者明確指定、且不含 `draft: true` 的完整筆記，才可作為當輪 wiki 綜合來源；使用時保留筆記的 YouTube `source` URL，不複製回 raw。完整影片筆記寫入後凍結；draft 占位可由 skill 覆寫重試，頻道 index、Base 與 checkpoint 可由 skill 維護。
 - `feeds/updates/`：`vault-updates-daily` 的消費性日報與來源設定。日報不 ingest、不 query、不 lint；要沉澱進 wiki 由使用者另外指示。
-- `feeds/lint/`：`vault-lint-daily` 的健檢報告與設定。報告本身不 ingest、不 query、不 lint；語意項只報告，修補由使用者另行指示。
+- `feeds/lint/`：`vault-lint-daily` 的健檢報告與設定。報告本身不 ingest、不 query、不 lint；語意項只報告，修補由使用者另行指示。**單篇報告的語意項全部處理完（修補或拍板不動）後，agent 可自行判斷刪除該報告檔，不需使用者逐次指示**——報告是一次性工作清單，不是長期知識，處理完即失去留存價值。
 
 ## 唯一守門：git push
 

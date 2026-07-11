@@ -29,11 +29,13 @@ Nous Research 開源、MIT 授權的**自我進化 AI agent**，標語 *The agen
 | Skill self-improvement | skill 在使用過程中自我修正 |
 | Autonomous Curator | 自主策展人：評分、合併重疊、封存過時、寫每輪報告、保護 pinned skill |
 | `llm-wiki` skill（官方內建） | **逐字複刻 Karpathy 的 LLM Wiki 模式**（raw/wiki/schema 三層），文件明言「Based on Andrej Karpathy's LLM Wiki pattern」——見 [[LLM-Wiki-知識管理模式]] |
-| 外接長期知識庫 | 8 個 memory provider 外掛（Honcho、Mem0、Supermemory、ByteRover 等）可選接，對應核心記憶（大腦）之外的圖書館 |
+| 外接長期知識庫 | 8 個 memory provider 外掛（Honcho、Mem0、Supermemory、ByteRover 等）可選接，提供知識圖譜、語意檢索、自動事實抽取等，對應核心記憶（大腦）之外的圖書館 |
 
 > ⚠️ **更正**（2026-07-09 deep-research 對抗式驗證）：先前版本描述的「agent 靠週期性 nudge 記憶」與「FTS5 全文檢索過往對話＋LLM 摘要做跨 session 回憶」查無官方文件依據，已被驗證駁回（0–3 票），改以上表「有界核心記憶」的官方逐字描述取代。
 
 其中 **skill 相容 agentskills.io 開放標準**——與本 repo `CLAUDE.md` 遵循的同一標準，理論上 skill 可跨 Hermes / Claude Code / Cursor 等工具移植；但「skill 目錄結構與本 vault `.agents/skills` 慣例高度同構」一說同樣查無依據，已被驗證駁回，勿引用。
+
+> ⚠️ **待查風險**：背景 skill-review agent 曾有產生非預期副作用的案例，Autonomous skill creation／Autonomous Curator 的品質把關機制尚待確認失敗模式再借鑑（未解問題見 [[第二大腦方法論比較]]）。
 
 ## 架構組件
 
@@ -44,7 +46,7 @@ Nous Research 開源、MIT 授權的**自我進化 AI agent**，標語 *The agen
 - **Subagents** — 隔離、可平行的子代理
 - **SOUL.md**（全域人格）／**Context Files**（專案級脈絡）— 塑形對話行為
 
-記憶層可插拔：內建之外另有 8 個 memory provider 外掛（Honcho、Mem0、Supermemory、ByteRover 等），提供知識圖譜、語意檢索、自動事實抽取等。
+記憶層可插拔：內建之外另有多個 memory provider 外掛可選接（見上表「外接長期知識庫」）。
 
 ## 任務／待辦管理：Kanban board
 
@@ -82,5 +84,5 @@ Hermes 24/7 長駐（有別於跑完即停的 Claude Code），背景任務、se
 - 同源哲學：[[LLM-Wiki-知識管理模式]]（知識複利 vs. Hermes 的技能複利）
 - `llm-wiki` skill 治理細節與其他實作對照：[[LLM-Wiki-生態實作比較]]——sha256 漂移偵測、封閉 tag taxonomy、矛盾交使用者複核等機制在生態中的定位。
 - 記憶架構對照：[[Claude-Code-記憶系統六層比較]]——Hermes 屬「agent 自策展記憶 + skill」路線，且與其中 Level 3 的 OpenClaw 血緣相關（`hermes claw migrate` 自 OpenClaw 匯入）。
-- 人類 PKM 對照：[[第二大腦方法論比較]]——Hermes 的「有界核心記憶 vs. 外接 llm-wiki／provider」雙軸結構，與 BASB（資源/專案管理）vs. Zettelkasten（深度連結）的互補分工邏輯同構。
+- 人類 PKM 對照：[[第二大腦方法論比較]]——Hermes 的「有界核心記憶 vs. 外接 llm-wiki／provider」雙軸結構，與 BASB（資源/專案管理）vs. Zettelkasten（深度連結）的互補分工邏輯同構（中等信心，2026-07-09 對抗式驗證）。
 - harness 工程脈絡：[[Agent-Harness-Engineering-框架綜述]]——Hermes 的 loop、skill 生成與有界記憶等構件可對照該頁的 harness 定義範疇（tools／memory／guardrails）。
