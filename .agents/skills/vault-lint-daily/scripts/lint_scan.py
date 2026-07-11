@@ -25,15 +25,12 @@ from pathlib import Path
 sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 sys.stderr.reconfigure(encoding="utf-8", errors="replace")
 
-# 掃描邊界：cards/topics 與消費性 feeds 不掃。
-# feeds/youtube 只進連結解析 universe，讓 wiki 對已選用影片來源的 wikilink 仍可解析；
-# 後續 DEADLINK/FM/TAG/RAWGAP/INDEXGAP 各層規則都不把 feeds 當掃描目標。
+# 掃描邊界：cards/topics 與系統外 feeds 不掃、不解析。
 EXCLUDED_TOP = {
-    "cards", "topics",
+    "cards", "topics", "feeds",
     ".obsidian", ".clipper", ".agents", ".claude", ".git",
     "node_modules", "public", "quartz",
 }
-EXCLUDED_FEED_CHILDREN = {"updates", "lint"}
 
 REQUIRED_FIELDS = ("title", "created", "updated", "tags")
 
@@ -48,7 +45,7 @@ def is_excluded(path: Path) -> bool:
         return False
     if parts[0] in EXCLUDED_TOP or parts[0].startswith("."):
         return True
-    return len(parts) > 1 and parts[0] == "feeds" and parts[1] in EXCLUDED_FEED_CHILDREN
+    return False
 
 
 def read_text(path: Path) -> str:

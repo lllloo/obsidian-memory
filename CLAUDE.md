@@ -16,11 +16,11 @@
 
 **`cards/` 與 `topics/` 不屬於本系統。** 它們是使用者的私人資料夾，同時是 Quartz **唯一對外公開發佈**的層。agent 一律**不讀、不寫、不掃描、不維護、不索引** cards/topics——Ingest、Query、Lint 全部跳過它們。使用者自行從 wiki 手動撿選、複製想公開的內容進去；那是使用者的動作，不是系統的一環。
 
-**`feeds/` 也不屬於三層系統。** 它集中存放自動產物，整層不參與一般 Query／Lint，也不是預設 ingest 原料；Quartz 只應發佈 cards/topics，`feeds/**` 不得公開。
+**`feeds/` 也不屬於三層系統。** 它集中存放只供使用者瀏覽的自動產物；除各自的產出 skill 外，agent 一律不讀、不寫、不掃描、不索引。`feeds/` 不參與 Ingest／Query／Lint，不得作為 `raw/` 或 `wiki/` 的來源；Quartz 只應發佈 cards/topics，`feeds/**` 不得公開。
 
-- `feeds/youtube/`：`vault-youtube-sync` 的自動同步來源池。只有使用者明確指定、且不含 `draft: true` 的完整筆記，才可作為當輪 wiki 綜合來源；使用時保留筆記的 YouTube `source` URL，不複製回 raw。完整影片筆記寫入後凍結；draft 占位可由 skill 覆寫重試，頻道 index、Base 與 checkpoint 可由 skill 維護。
-- `feeds/updates/`：`vault-updates-daily` 的消費性日報與來源設定。日報不 ingest、不 query、不 lint；要沉澱進 wiki 由使用者另外指示。
-- `feeds/lint/`：`vault-lint-daily` 的健檢報告與設定。報告本身不 ingest、不 query、不 lint；語意項只報告，修補由使用者另行指示。**單篇報告的語意項全部處理完（修補或拍板不動）後，agent 可自行判斷刪除該報告檔，不需使用者逐次指示**——報告是一次性工作清單，不是長期知識，處理完即失去留存價值。
+- `feeds/youtube/`：`vault-youtube-sync` 的自動同步筆記。完整影片筆記寫入後凍結；draft 占位可由 skill 覆寫重試，頻道 index、Base 與 checkpoint 可由 skill 維護。
+- `feeds/updates/`：`vault-updates-daily` 的消費性日報與來源設定。
+- `feeds/lint/`：`vault-lint-daily` 的健檢報告與設定。語意項只報告，修補由使用者另行指示。**單篇報告的語意項全部處理完（修補或拍板不動）後，agent 可自行判斷刪除該報告檔，不需使用者逐次指示**——報告是一次性工作清單，不是長期知識，處理完即失去留存價值。
 
 ## 唯一守門：git push
 
@@ -40,7 +40,7 @@ agent 自主維護 wiki（含改頁、刪頁），**不需逐步拍板**——�
 
 ## 三個動作：Ingest / Query / Lint
 
-wiki 的維護就是這三個動作，預設只在 `raw/` + `wiki/` 上進行，不碰 cards/topics；`feeds/youtube/` 只有使用者明確指定完整筆記時才進入當輪 Ingest context。
+wiki 的維護就是這三個動作，只在 `raw/` + `wiki/` 上進行；不碰 cards/topics 或 feeds。
 
 ### Ingest（擷取）
 
@@ -50,7 +50,7 @@ wiki 的維護就是這三個動作，預設只在 `raw/` + `wiki/` 上進行，
 
 - **使用者貼 URL**：先 Grep `raw/Clippings/` 的 `source:` 查同 URL 是否已落地。**已存在**：重抓內容算正文 sha256 與既有 `sha256` 欄位比對——一致就不重複建檔、直接更新對應 wiki 頁；不一致代表來源已變（source drift），raw 仍不回寫（write-once），改在對應 wiki 頁就地標註「來源內容已於 <日期> 變更」再往下 ingest 新內容。**未存在**才抓內容（優先 defuddle）轉 markdown，按 frontmatter 慣例（含 `source`、`published`、`sha256`）存 `raw/Clippings/`，再往下 ingest。抓到的內容明顯殘缺（登入牆、付費牆、重 JS 頁）時**不落地 raw**——write-once 塞進殘件即凍結——改請使用者用 Web Clipper 剪藏。
 - **Web Clipper 剪藏**、**使用者手動放檔**：照舊。
-- **YouTube 自動同步**：`vault-youtube-sync` 寫入 `feeds/youtube/`，不自動 ingest。使用者明確指定頻道、影片或主題簇時，只讀其中非 draft 完整筆記綜合進 wiki，不複製回 raw。
+- **YouTube 自動同步**：`vault-youtube-sync` 只寫入 `feeds/youtube/`，不進 raw 或 wiki。
 
 流程：
 
@@ -64,7 +64,7 @@ wiki 的維護就是這三個動作，預設只在 `raw/` + `wiki/` 上進行，
 
 ### Query（查詢）
 
-向 wiki 提問 → agent 先讀 `wiki/01.index.md` 找相關頁 → 讀頁 → **附引用**綜合答案。一般 Query 不掃 `feeds/`；只有使用者明確要求查某個 feed 時才讀指定範圍。
+向 wiki 提問 → agent 先讀 `wiki/01.index.md` 找相關頁 → 讀頁 → **附引用**綜合答案。Query 一律不掃 feeds。
 
 好答案（比較表、綜合分析、發現的關聯）**可回存成新 wiki 頁**，讓探索跟來源一樣複利累積，不要消失在對話裡。回存只在 wiki 內，不寫進 cards/topics。
 
@@ -78,9 +78,9 @@ wiki 的維護就是這三個動作，預設只在 `raw/` + `wiki/` 上進行，
 - **`wiki/01.index.md`**：內容目錄——每頁一行摘要 + wikilink，按類別分組，每次 ingest 更新。查詢時先讀它再鑽細節（省 token，也避免重複建頁）。
 - **交叉引用是核心紀律**：wiki 的價值在互聯成網，不在單頁品質。
 
-## 寫入慣例（`raw/` + `wiki/`，以及 skill 指定的 `feeds/youtube/` 筆記）
+## 寫入慣例（`raw/` + `wiki/`，以及各 skill 指定的 feeds 筆記）
 
-這些是「怎麼寫」的品質慣例，**不是守門煞車**（不需拍板、不擋流程）。適用 agent 會寫的 raw/wiki；`feeds/youtube/` 由同步 skill 的自包含規則套用相同 frontmatter 慣例，日報則各自依 skill 範本。碰不到使用者私有的 cards/topics。
+這些是「怎麼寫」的品質慣例，**不是守門煞車**（不需拍板、不擋流程）。適用 agent 會寫的 raw/wiki；feeds 筆記只由各自 skill 依自包含規則維護。碰不到使用者私有的 cards/topics。
 
 ### 1. 語言
 

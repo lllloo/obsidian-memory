@@ -7,7 +7,7 @@ description: 將 YouTube 頻道影片批次轉成 Obsidian 筆記，支援指定
 
 將 YouTube 頻道影片批次轉換成 Obsidian vault 筆記。
 
-> 本 skill 產出進入 `feeds/youtube/`。這是未經人工確認、不預設有用的自動來源池；只有使用者明確指定、且不含 `draft: true` 的完整筆記，後續才由 agent 手動綜合進 `wiki/`。本 skill 只負責抓取，不負責消化。
+> 本 skill 產出進入 `feeds/youtube/`。這是系統外、只供使用者瀏覽的自動筆記；不進 `raw/` 或 `wiki/`。本 skill 只負責同步與維護 feeds。
 
 ## 資料夾規則
 

@@ -11,7 +11,7 @@ description: 每天彙整高信任 developer tooling 更新成一篇 Obsidian da
 
 - 日報：`feeds/updates/<YYYY-MM-DD>-daily-updates.md`
 - 來源設定：`feeds/updates/01.index.md`
-- 日報存於 `feeds/updates/`，是使用者每天瞄一眼的消費性 feed；不屬三層系統、不進 raw、不當 ingest 原料。
+- 日報存於 `feeds/updates/`，是使用者每天瞄一眼的消費性 feed；不屬三層系統，不進 raw 或 wiki。
 - 同日多次同步時追加新內容，不覆蓋舊日報；不要把日報 wikilink 追加回 index。
 
 日報 frontmatter：

@@ -28,8 +28,8 @@ tags:
 ├── raw/         — 原始來源，write-once。agent 可新增、不可修改，事實來源
 │   └── Clippings/ — 網頁剪貼參考庫（01.index.md + 清單.base 索引；agent 不主動消化，使用者明指才處理）
 ├── wiki/          — 活知識庫：agent 綜合 raw 維護的摘要/實體/概念/綜合頁（01.index.md 為內容目錄，每次 ingest 更新）
-├── feeds/         — 【自動產物層，不屬三層系統】預設不 ingest／query／lint，不公開
-│   ├── youtube/   — YouTube 自動來源池；各頻道含 01.index.md + 02.影片清單.base，明確指定才綜合進 wiki
+├── feeds/         — 【自動產物層，不屬三層系統】只供使用者瀏覽，不進 raw／wiki／ingest／query／lint
+│   ├── youtube/   — YouTube 自動同步筆記；各頻道含 01.index.md + 02.影片清單.base，只供使用者瀏覽
 │   ├── updates/   — 日常工具更新日報（vault-updates-daily 產出，01.index.md 為來源設定）
 │   └── lint/      — vault 健檢日報（vault-lint-daily 產出，01.index.md 為設定）
 ├── cards/         — 【使用者私人區，agent 不管理】使用者自存文件；Quartz 公開層之一
@@ -38,19 +38,16 @@ tags:
 
 ## Tag 查詢指南
 
-> agent 一般查詢範圍是 `raw/` + `wiki/`；`feeds/` 只有使用者明確指定時讀指定範圍。`cards/`、`topics/` 屬使用者私人區，不在 agent 查詢範圍內。
+> agent 查詢範圍只限 `raw/` + `wiki/`；`feeds/`、`cards/`、`topics/` 不在 agent 查詢範圍內。
 
 | 主題 | Tags | 位置 |
 |------|------|------|
-| Claude Code 實作 | `claude-code` | `feeds/youtube/` + `raw/` + `wiki/` |
-| AI Agent 工作流 | `ai-agent` `agent-framework` `harness` | `feeds/youtube/` + `wiki/` |
-| 記憶系統 / Context | `memory`（僅 `wiki/`）、`context-engineering` | `feeds/youtube/` + `wiki/` |
-| RAG / 知識圖譜 | `rag` `knowledge-graph` | `feeds/youtube/` + `wiki/` |
-| Obsidian 操作 | `obsidian` | `feeds/youtube/` + `wiki/` |
-| Python / LLM 評測 | `python` `llm-eval` `llm-as-a-judge` | `feeds/youtube/daveebbelaar/` |
+| Claude Code 實作 | `claude-code` | `raw/` + `wiki/` |
+| AI Agent 工作流 | `ai-agent` `agent-framework` `harness` | `wiki/` |
+| 記憶系統 / Context | `memory`（僅 `wiki/`）、`context-engineering` | `wiki/` |
+| RAG / 知識圖譜 | `rag` `knowledge-graph` | `wiki/` |
+| Obsidian 操作 | `obsidian` | `wiki/` |
 | LLM 定價 / coding agent | `llm-pricing` `coding-agent` | `wiki/` |
 | 人類 PKM 方法論 | `pkm` `second-brain` | `wiki/` |
-| 日常工具更新 | 見 `feeds/updates/01.index.md` | `feeds/updates/` |
-| vault 健檢日報 | `lint` | `feeds/lint/` |
 
 wiki 尚在成長，新主題頁隨 ingest 補入 `wiki/01.index.md`；查詢先讀該內容目錄再鑽細節。

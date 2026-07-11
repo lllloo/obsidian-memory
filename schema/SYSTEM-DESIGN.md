@@ -52,10 +52,10 @@ tags:
 
 ### 本 vault 的自動產物層：feeds（不在原文三層裡）
 
-`feeds/` 集中 skill 自動產物，預設不進 Query／Lint，也不視為值得 ingest：
+`feeds/` 集中只供使用者瀏覽的 skill 自動產物，不進 raw、wiki、Query 或 Lint：
 
-- `feeds/youtube/` 是未經人工確認的候選來源池；只有使用者明確指定、且非 draft 的完整筆記，才可直接作為當輪 wiki 綜合來源，不複製回 raw。完整影片筆記凍結，draft／index／Base／checkpoint 由同步 skill 維護。
-- `feeds/updates/` 與 `feeds/lint/` 是消費性日報；不 ingest、不 query、不 lint，寫完即凍結（同日重跑依各 skill 的 append 規則）。
+- `feeds/youtube/` 是使用者瀏覽的自動同步筆記；不進 raw 或 wiki。完整影片筆記凍結，draft／index／Base／checkpoint 由同步 skill 維護。
+- `feeds/updates/` 與 `feeds/lint/` 是使用者瀏覽的消費性日報；不 ingest、不 query、不 lint，寫完即凍結（同日重跑依各 skill 的 append 規則）。
 - Quartz 只應發佈 cards/topics，`feeds/**` 不公開；發佈設定在本 repo 外。
 
 ### 本 vault 的額外層：cards/topics（不在原文三層裡，系統不管）
@@ -78,8 +78,8 @@ wiki 是 LLM 幫你養的活知識庫（私有、只給你讀）；cards/topics 
 | 操作 | 做什麼 | 承載 |
 |---|---|---|
 | Ingest | 精選外部原料進 raw | 貼 URL 時 agent 手動抓存 `raw/Clippings/`；Web Clipper／使用者手動放檔 |
-| Feed | YouTube 自動蒐集 | `vault-youtube-sync` 產出至 `feeds/youtube/`，不自動 ingest |
-| Ingest | 綜合維護進 wiki | 手動；明確指定時可讀非 draft 的 `feeds/youtube/` 完整筆記 |
+| Feed | YouTube 自動蒐集 | `vault-youtube-sync` 產出至 `feeds/youtube/`，不進 raw 或 wiki |
+| Ingest | 綜合維護進 wiki | 手動；來源限 `raw/` |
 | Query | 問 wiki，附引用綜合；好答案回存 wiki | 手動（原 `ob-read` 已移除） |
 | Lint | 掃 wiki 孤立頁、死連結、矛盾、缺欄位等 | `vault-lint-daily`（產報告到 `feeds/lint/`；可唯一對應的死連結與 index 漏登錄自動修，其餘只報告、修補經使用者點頭——2026-07-10 依生態實證調整，見 wiki「LLM-Wiki-生態實作比較」） |
 

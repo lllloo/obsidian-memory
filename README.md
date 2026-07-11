@@ -29,8 +29,8 @@ git clone <repo-url> obsidian-memory
 
 三層之外：
 
-- `feeds/` — 自動產物層，**不屬三層系統、預設不是 ingest 原料**
-  - `youtube/` — 自動同步的候選來源；僅在使用者明確指定時綜合進 wiki
+- `feeds/` — 自動產物層，**不屬三層系統，只供使用者瀏覽，不進 raw 或 wiki**
+  - `youtube/` — 自動同步影片筆記
   - `updates/` — 每日工具更新日報，純消費
   - `lint/` — vault 健檢報告，純消費
 - `cards/`、`topics/` — **使用者私人策展區，agent 不管理**；同時是 Quartz 唯一對外公開的層。使用者自行從 wiki 撿選內容放入（Quartz 發佈設定與流程不在本 repo）

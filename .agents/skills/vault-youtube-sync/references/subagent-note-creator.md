@@ -90,7 +90,7 @@ Vault 會推上 GitHub 遠端 repo（`feeds/` 不屬公開層，但仍進 repo �
 - **敏感資料**：正文與 frontmatter 不得含 token / key（`sk-`、`sk-ant-`、`ghp_`、`gho_`、`AKIA`、`AIza`、`xox[baprs]-`、JWT `eyJ`）、`-----BEGIN ... PRIVATE KEY-----`、明文密碼、個資（身分證、私人電話、地址、內部 IP/網址）。transcript 命中 → 移除該段或跳過整筆，不寫入。
 - **tag 沿用既有**：寫入前優先沿用既有 tag（用 `Grep '^tags:' -A5` 查），避免同義異寫；真無合適才建新 tag（小寫、`-` 連接）。本類筆記固定含 `youtube`。
 - **`#` 開頭內容**：hex 色碼（`#57F287`）或其他 `#` 開頭字串在 Obsidian 會被當 tag，**必須用反引號包住**（寫成 `` `#57F287` ``）；前端/設計類影片易踩。
-- **不主動加 wikilink**：feeds/youtube 是自動來源池，完整影片筆記寫入後凍結，彼此不主動補 `[[wikilink]]`。即使主題重疊也**不要**掃 `NOTES_DIR` 找兄弟筆記補連結——只有使用者明確指定的完整筆記，才由主 agent 在 `wiki/` 建立跨來源綜合連結，不在本 skill 範圍。例外：`parent: "[[01.index]]"` 是 schema 必填，照寫。
+- **不主動加 wikilink**：feeds/youtube 是系統外的自動筆記，完整影片筆記寫入後凍結，彼此不主動補 `[[wikilink]]`，也不建立指向 raw 或 wiki 的連結。即使主題重疊也**不要**掃 `NOTES_DIR` 找兄弟筆記補連結。例外：`parent: "[[01.index]]"` 是 schema 必填，照寫。
 - **檔名命名**：
   - 繁體中文為主，技術名詞與品牌名保留英文
   - 不可含空格；英文/數字與中文間用 `-` 連接（例：`Claude-Code準確度提升技巧`）；中文詞間不加符號

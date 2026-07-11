@@ -11,7 +11,7 @@ description: 每日 vault 健檢報告：掃 wiki+raw 的死連結、孤立頁�
 
 - 日報：`feeds/lint/<YYYY-MM-DD>-lint.md`
 - 設定：`feeds/lint/01.index.md`（語意層掃描天數等）
-- 日報存於 `feeds/lint/`，是使用者瞄一眼的消費性 feed；不屬三層系統、不進 raw、不當 ingest 原料。
+- 日報存於 `feeds/lint/`，是使用者瞄一眼的消費性 feed；不屬三層系統，不進 raw 或 wiki。
 - 同日重跑時在當日報告 append 新發現、更新 `updated`，不覆蓋、不另開檔。
 
 日報 frontmatter：
