@@ -1,6 +1,6 @@
 filters:
   and:
-    - file.inFolder("raw/YouTube/AILABS-393")
+    - file.inFolder("feeds/youtube/Chase-H-AI")
     - file.ext == "md"
     - file.name != "01.index"
 properties:

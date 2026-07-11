@@ -4,7 +4,7 @@
 
 ## Source Index
 
-`updates/01.index.md` 是唯一來源真實值：追蹤哪些工具、抓哪些 changelog、是否啟用 starred 同步，都由此檔決定。不要在 skill 或腳本硬編碼工具清單。
+`feeds/updates/01.index.md` 是唯一來源真實值：追蹤哪些工具、抓哪些 changelog、是否啟用 starred 同步，都由此檔決定。不要在 skill 或腳本硬編碼工具清單。
 
 索引格式：
 
@@ -60,7 +60,7 @@ python3 .agents/skills/vault-updates-daily/scripts/fetch_updates.py
 常用參數：
 
 - `--since YYYY-MM-DD`：指定起始日。
-- `--index <path>`：指定來源 index，預設 `updates/01.index.md`。
+- `--index <path>`：指定來源 index，預設 `feeds/updates/01.index.md`。
 
 輸出格式：
 
@@ -227,7 +227,7 @@ tags:
 - 同工具只有一筆時，可省略 `###`，但仍要讓來源 URL 可見。
 - 工具之間用 `---` 分隔。
 - 同日已有日報時追加到檔尾，不覆蓋；同步合併 tags 並更新 `updated`。
-- 不把日報 wikilink 追加回 `updates/01.index.md`。
+- 不把日報 wikilink 追加回 `feeds/updates/01.index.md`。
 
 ## Final Response
 

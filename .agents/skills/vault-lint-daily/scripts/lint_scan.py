@@ -25,12 +25,15 @@ from pathlib import Path
 sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 sys.stderr.reconfigure(encoding="utf-8", errors="replace")
 
-# 掃描邊界：cards/topics 是使用者私人區、updates/lint 是消費層，一律不掃
+# 掃描邊界：cards/topics 與消費性 feeds 不掃。
+# feeds/youtube 只進連結解析 universe，讓 wiki 對已選用影片來源的 wikilink 仍可解析；
+# 後續 DEADLINK/FM/TAG/RAWGAP/INDEXGAP 各層規則都不把 feeds 當掃描目標。
 EXCLUDED_TOP = {
-    "cards", "topics", "updates", "lint",
+    "cards", "topics",
     ".obsidian", ".clipper", ".agents", ".claude", ".git",
     "node_modules", "public", "quartz",
 }
+EXCLUDED_FEED_CHILDREN = {"updates", "lint"}
 
 REQUIRED_FIELDS = ("title", "created", "updated", "tags")
 
@@ -41,7 +44,11 @@ INLINE_CODE_RE = re.compile(r"`[^`\n]*`")
 
 def is_excluded(path: Path) -> bool:
     parts = path.parts
-    return bool(parts) and (parts[0] in EXCLUDED_TOP or parts[0].startswith("."))
+    if not parts:
+        return False
+    if parts[0] in EXCLUDED_TOP or parts[0].startswith("."):
+        return True
+    return len(parts) > 1 and parts[0] == "feeds" and parts[1] in EXCLUDED_FEED_CHILDREN
 
 
 def read_text(path: Path) -> str:
@@ -145,7 +152,10 @@ def main() -> int:
     for p in texts:
         if top_of(p) != "wiki" or p.name == "01.index.md":
             continue
-        linkers = inbound.get(p.stem, set()) - {p}
+        linkers = {
+            q for q in inbound.get(p.stem, set()) - {p}
+            if top_of(q) in ("wiki", "raw", "schema")
+        }
         if not linkers:
             findings["ORPHAN"].append(f"ORPHAN:{rel[p]}")
 
@@ -216,7 +226,8 @@ def main() -> int:
     for key in ("DEADLINK", "ORPHAN", "FM", "RAWGAP", "INDEXGAP", "CHANGED"):
         print(f"SUMMARY:{key.lower()}={len(findings[key])}")
     print(f"SUMMARY:tags={len(tag_counts)}")
-    print(f"SUMMARY:scanned={len(texts)}")
+    scanned_targets = sum(1 for p in texts if top_of(p) in ("wiki", "raw", "schema"))
+    print(f"SUMMARY:scanned={scanned_targets}")
     return 0
 
 

@@ -16,9 +16,11 @@
 
 **`cards/` 與 `topics/` 不屬於本系統。** 它們是使用者的私人資料夾，同時是 Quartz **唯一對外公開發佈**的層。agent 一律**不讀、不寫、不掃描、不維護、不索引** cards/topics——Ingest、Query、Lint 全部跳過它們。使用者自行從 wiki 手動撿選、複製想公開的內容進去；那是使用者的動作，不是系統的一環。
 
-**`updates/` 也不屬於三層系統。** 它是使用者每天瞄一眼「有什麼新工具更新」的消費性 feed，**不是 ingest 原料**。唯一寫入者是 `vault-updates-daily` skill（append 當日日報 + 讀 `updates/01.index.md` 的來源設定）；除此之外 agent **不把日報當原料 ingest 進 wiki、不 query、不 lint**。日報按日 append、彼此不互聯，寫完即凍結；要沉澱進 wiki 的知識由使用者另外指示，不自動化。
+**`feeds/` 也不屬於三層系統。** 它集中存放自動產物，整層不參與一般 Query／Lint，也不是預設 ingest 原料；Quartz 只應發佈 cards/topics，`feeds/**` 不得公開。
 
-**`lint/` 同上，不屬三層系統。** vault 健檢日報的消費性 feed，唯一寫入者是 `vault-lint-daily` skill（讀 `lint/01.index.md` 的設定）。**機械項**（死連結、index 漏登錄等可機械驗證的結構問題）中**修法可唯一對應**者自動修並在報告記錄「已修」，無法唯一對應的只列發現；**語意項**（矛盾、過時、缺交叉引用等判斷類）只列發現、不改頁，修補由使用者看報告後另行指示才動 wiki。報告按日一檔、寫完即凍結，不 ingest、不 query、報告本身不 lint。
+- `feeds/youtube/`：`vault-youtube-sync` 的自動同步來源池。只有使用者明確指定、且不含 `draft: true` 的完整筆記，才可作為當輪 wiki 綜合來源；使用時保留筆記的 YouTube `source` URL，不複製回 raw。完整影片筆記寫入後凍結；draft 占位可由 skill 覆寫重試，頻道 index、Base 與 checkpoint 可由 skill 維護。
+- `feeds/updates/`：`vault-updates-daily` 的消費性日報與來源設定。日報不 ingest、不 query、不 lint；要沉澱進 wiki 由使用者另外指示。
+- `feeds/lint/`：`vault-lint-daily` 的健檢報告與設定。報告本身不 ingest、不 query、不 lint；語意項只報告，修補由使用者另行指示。
 
 ## 唯一守門：git push
 
@@ -26,7 +28,7 @@ agent 自主維護 wiki（含改頁、刪頁），**不需逐步拍板**——�
 
 > **執行 `git push` 或任何遠端推送前，必須先取得使用者明確同意。**
 
-`push` 會把 `raw/` 與 `wiki/`（皆不經 Quartz 發佈，但仍存在於 GitHub repo）一併推上遠端，該次 diff review 由使用者把關。除此之外沒有其他**硬**守門：不做 cards/topics 治理、不做品質 gate、不做敏感資料自檢 gate、不設「不自動刪」限制。（另有一個流程級確認點：單次 ingest 觸及 10+ 頁先問，見 Ingest 一節——那是確認節奏，不是守門。）
+`push` 會把 `raw/`、`wiki/` 與 `feeds/`（皆不應經 Quartz 發佈，但仍存在於 GitHub repo）一併推上遠端，該次 diff review 由使用者把關。除此之外沒有其他**硬**守門：不做 cards/topics 治理、不做品質 gate、不做敏感資料自檢 gate、不設「不自動刪」限制。（另有一個流程級確認點：單次 ingest 觸及 10+ 頁先問，見 Ingest 一節——那是確認節奏，不是守門。）
 
 ## CWD 契約
 
@@ -38,7 +40,7 @@ agent 自主維護 wiki（含改頁、刪頁），**不需逐步拍板**——�
 
 ## 三個動作：Ingest / Query / Lint
 
-wiki 的維護就是這三個動作，全部只在 `raw/` + `wiki/` 上進行，不碰 cards/topics。
+wiki 的維護就是這三個動作，預設只在 `raw/` + `wiki/` 上進行，不碰 cards/topics；`feeds/youtube/` 只有使用者明確指定完整筆記時才進入當輪 Ingest context。
 
 ### Ingest（擷取）
 
@@ -47,7 +49,8 @@ wiki 的維護就是這三個動作，全部只在 `raw/` + `wiki/` 上進行，
 進料管道（raw 為 write-once，落地後不改）：
 
 - **使用者貼 URL**：先 Grep `raw/Clippings/` 的 `source:` 查同 URL 是否已落地。**已存在**：重抓內容算正文 sha256 與既有 `sha256` 欄位比對——一致就不重複建檔、直接更新對應 wiki 頁；不一致代表來源已變（source drift），raw 仍不回寫（write-once），改在對應 wiki 頁就地標註「來源內容已於 <日期> 變更」再往下 ingest 新內容。**未存在**才抓內容（優先 defuddle）轉 markdown，按 frontmatter 慣例（含 `source`、`published`、`sha256`）存 `raw/Clippings/`，再往下 ingest。抓到的內容明顯殘缺（登入牆、付費牆、重 JS 頁）時**不落地 raw**——write-once 塞進殘件即凍結——改請使用者用 Web Clipper 剪藏。
-- **Web Clipper 剪藏**、**使用者手動放檔**、**skill 同步**（如 `vault-youtube-sync`）：照舊。
+- **Web Clipper 剪藏**、**使用者手動放檔**：照舊。
+- **YouTube 自動同步**：`vault-youtube-sync` 寫入 `feeds/youtube/`，不自動 ingest。使用者明確指定頻道、影片或主題簇時，只讀其中非 draft 完整筆記綜合進 wiki，不複製回 raw。
 
 流程：
 
@@ -61,13 +64,13 @@ wiki 的維護就是這三個動作，全部只在 `raw/` + `wiki/` 上進行，
 
 ### Query（查詢）
 
-向 wiki 提問 → agent 先讀 `wiki/01.index.md` 找相關頁 → 讀頁 → **附引用**綜合答案。
+向 wiki 提問 → agent 先讀 `wiki/01.index.md` 找相關頁 → 讀頁 → **附引用**綜合答案。一般 Query 不掃 `feeds/`；只有使用者明確要求查某個 feed 時才讀指定範圍。
 
 好答案（比較表、綜合分析、發現的關聯）**可回存成新 wiki 頁**，讓探索跟來源一樣複利累積，不要消失在對話裡。回存只在 wiki 內，不寫進 cards/topics。
 
 ### Lint（健檢）
 
-定期掃 wiki（+ raw 索引）：矛盾、被新來源取代的過時主張、孤立頁、被提到卻沒專屬頁的概念、缺交叉引用、可用查證補的資料空缺。產出修補與新探究建議。只掃 raw/wiki，不碰 cards/topics。掃描由 `vault-lint-daily` skill 承載（產報告到 `lint/`）：**機械項自動修、語意項只報告**（依據：死連結是 LLM wiki 實證的頭號結構錯誤，見 [`LLM-Wiki-生態實作比較`](wiki/LLM-Wiki-生態實作比較.md)），語意修補在使用者看報告點頭後由 agent 執行。
+定期掃 wiki（+ raw 索引）：矛盾、被新來源取代的過時主張、孤立頁、被提到卻沒專屬頁的概念、缺交叉引用、可用查證補的資料空缺。產出修補與新探究建議。只掃 raw/wiki，不碰 feeds/cards/topics。掃描由 `vault-lint-daily` skill 承載（產報告到 `feeds/lint/`）：**機械項自動修、語意項只報告**（依據：死連結是 LLM wiki 實證的頭號結構錯誤，見 [`LLM-Wiki-生態實作比較`](wiki/LLM-Wiki-生態實作比較.md)），語意修補在使用者看報告點頭後由 agent 執行。
 
 ## wiki 頁面與索引
 
@@ -75,9 +78,9 @@ wiki 的維護就是這三個動作，全部只在 `raw/` + `wiki/` 上進行，
 - **`wiki/01.index.md`**：內容目錄——每頁一行摘要 + wikilink，按類別分組，每次 ingest 更新。查詢時先讀它再鑽細節（省 token，也避免重複建頁）。
 - **交叉引用是核心紀律**：wiki 的價值在互聯成網，不在單頁品質。
 
-## 寫入慣例（只約束 `raw/` + `wiki/`）
+## 寫入慣例（`raw/` + `wiki/`，以及 skill 指定的 `feeds/youtube/` 筆記）
 
-這些是「怎麼寫」的品質慣例，**不是守門煞車**（不需拍板、不擋流程）。只適用 agent 會寫的 raw/wiki，碰不到使用者私有的 cards/topics。
+這些是「怎麼寫」的品質慣例，**不是守門煞車**（不需拍板、不擋流程）。適用 agent 會寫的 raw/wiki；`feeds/youtube/` 由同步 skill 的自包含規則套用相同 frontmatter 慣例，日報則各自依 skill 範本。碰不到使用者私有的 cards/topics。
 
 ### 1. 語言
 
@@ -100,7 +103,7 @@ wiki 的維護就是這三個動作，全部只在 `raw/` + `wiki/` 上進行，
 | 欄位 | 用途 / 何時用 | 值格式 |
 |---|---|---|
 | `title` | 主題名，可含空格與中文；不加日期前綴（SKILL 範本可例外，如 `vault-updates-daily` 日報 `"<YYYY-MM-DD> Daily Updates"`） | 字串（檔名為其無空格、`-` 連接版） |
-| `description` | 一句話自我介紹，給 Obsidian Bases、AI 查詢用。**適用**：wiki 頁、raw/YouTube 影片摘要、raw/Clippings 網頁剪藏；其餘筆記可省 | 字串，30–80 字；不重複 title，避免「這篇／本文」自我指涉 |
+| `description` | 一句話自我介紹，給 Obsidian Bases、AI 查詢用。**適用**：wiki 頁、feeds/youtube 影片摘要、raw/Clippings 網頁剪藏；其餘筆記可省 | 字串，30–80 字；不重複 title，避免「這篇／本文」自我指涉 |
 | `created` | 進 vault 日期 | `YYYY-MM-DD` |
 | `updated` | 最後修改日期 | `YYYY-MM-DD` |
 | `source` | 來源 URL（網頁／影片連結；YouTube `index` 為頻道 URL）；回查用，非證據本體 | URL |
@@ -133,9 +136,9 @@ deep-research 或其他對抗式查證的結果回存 wiki 時：每條主張就
 
 | Skill | 用途 |
 |---|---|
-| `vault-youtube-sync` | YouTube 影片摘要同步至 `raw/` |
-| `vault-updates-daily` | 日常更新彙整至 `updates/` |
-| `vault-lint-daily` | wiki+raw 健檢報告至 `lint/`（機械項自動修並記錄、語意項只報告） |
+| `vault-youtube-sync` | YouTube 影片摘要同步至 `feeds/youtube/` |
+| `vault-updates-daily` | 日常更新彙整至 `feeds/updates/` |
+| `vault-lint-daily` | wiki+raw 健檢報告至 `feeds/lint/`（機械項自動修並記錄、語意項只報告） |
 
 優先使用 skill，不新增平行流程。新增或修改 skill 時，盡量遵循 [Agent Skills](https://agentskills.io) 開放標準，讓內容可跨工具移植。
 

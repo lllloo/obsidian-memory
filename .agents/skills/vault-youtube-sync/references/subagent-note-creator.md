@@ -1,6 +1,6 @@
 # Subagent：YouTube 影片轉 Obsidian 筆記
 
-> **路徑契約**：任務 prompt 會傳入 `NOTES_DIR`（repo root 相對路徑：`raw/YouTube/<頻道名>/`）。所有讀寫以 `NOTES_DIR` 為 base，cwd 必為 repo root（subagent 繼承父 agent cwd）。腳本路徑一律從 repo root 起算的完整相對路徑（`.agents/skills/vault-youtube-sync/scripts/...`）。
+> **路徑契約**：任務 prompt 會傳入 `NOTES_DIR`（repo root 相對路徑：`feeds/youtube/<頻道名>/`）。所有讀寫以 `NOTES_DIR` 為 base，cwd 必為 repo root（subagent 繼承父 agent cwd）。腳本路徑一律從 repo root 起算的完整相對路徑（`.agents/skills/vault-youtube-sync/scripts/...`）。
 >
 > **NOTES_DIR 自檢**：開工前確認 `NOTES_DIR` 已被主 skill 展開。若含字面 `<`、`>` 或仍是占位符，視為傳錯，**立即回報並停止**，不寫入任何檔案。用 `Read schema/vault-map.md` 確認 cwd 為 vault root。
 >
@@ -84,13 +84,13 @@ tags:
 
 ## 筆記規則（必須嚴格遵守）
 
-Vault 會推上 GitHub 遠端 repo（`raw/` 不經 Quartz 公開，但仍進 repo 歷史），敏感資料零容忍。以下為本 subagent 必守規則（自包含，不依賴外部檔案）：
+Vault 會推上 GitHub 遠端 repo（`feeds/` 不屬公開層，但仍進 repo 歷史），敏感資料零容忍。以下為本 subagent 必守規則（自包含，不依賴外部檔案）：
 
 - **語言**：正文一律**繁體中文**；技術名詞、品牌名、工具名保留英文（例：Claude Code、OpenAI、defuddle）。defuddle 取得英文 transcript 須翻譯整理為繁中再寫入。
 - **敏感資料**：正文與 frontmatter 不得含 token / key（`sk-`、`sk-ant-`、`ghp_`、`gho_`、`AKIA`、`AIza`、`xox[baprs]-`、JWT `eyJ`）、`-----BEGIN ... PRIVATE KEY-----`、明文密碼、個資（身分證、私人電話、地址、內部 IP/網址）。transcript 命中 → 移除該段或跳過整筆，不寫入。
 - **tag 沿用既有**：寫入前優先沿用既有 tag（用 `Grep '^tags:' -A5` 查），避免同義異寫；真無合適才建新 tag（小寫、`-` 連接）。本類筆記固定含 `youtube`。
 - **`#` 開頭內容**：hex 色碼（`#57F287`）或其他 `#` 開頭字串在 Obsidian 會被當 tag，**必須用反引號包住**（寫成 `` `#57F287` ``）；前端/設計類影片易踩。
-- **不主動加 wikilink**：raw/ 是不可變原始來源，筆記彼此不主動補 `[[wikilink]]`。即使主題重疊也**不要**掃 `NOTES_DIR` 找兄弟筆記補連結——跨影片的綜合連結由 wiki 綜合流程讀多篇 raw 後在 `wiki/` 頁建立（原 `vault-wiki-build` 已移除，目前由 agent 手動執行），不在本 skill 範圍。例外：`parent: "[[01.index]]"` 是 schema 必填，照寫。
+- **不主動加 wikilink**：feeds/youtube 是自動來源池，完整影片筆記寫入後凍結，彼此不主動補 `[[wikilink]]`。即使主題重疊也**不要**掃 `NOTES_DIR` 找兄弟筆記補連結——只有使用者明確指定的完整筆記，才由主 agent 在 `wiki/` 建立跨來源綜合連結，不在本 skill 範圍。例外：`parent: "[[01.index]]"` 是 schema 必填，照寫。
 - **檔名命名**：
   - 繁體中文為主，技術名詞與品牌名保留英文
   - 不可含空格；英文/數字與中文間用 `-` 連接（例：`Claude-Code準確度提升技巧`）；中文詞間不加符號

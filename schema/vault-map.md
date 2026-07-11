@@ -1,7 +1,7 @@
 ---
 title: Vault Map
 created: 2026-04-15
-updated: 2026-07-10
+updated: 2026-07-11
 tags:
   - index
 ---
@@ -20,43 +20,39 @@ tags:
 
 ## 資料夾索引
 
-> 路徑以 repo root 為基準（即 vault root）。agent 只維護 `raw/` + `wiki/`；`cards/`、`topics/` 是使用者私人區，agent 不讀不寫不掃。
+> 路徑以 repo root 為基準（即 vault root）。agent 維護 `raw/` + `wiki/`，指定 skills 維護 `feeds/`；`cards/`、`topics/` 是使用者私人區，agent 不讀不寫不掃。
 
 ```
 .
 ├── schema/      — schema 層敘述文件：SYSTEM-DESIGN.md（運作總綱）、vault-map.md（本檔，導航）；CLAUDE.md/AGENTS.md 因 harness 自動載入留 root
 ├── raw/         — 原始來源，write-once。agent 可新增、不可修改，事實來源
-│   ├── YouTube/   — 影片摘要，依頻道分組；各頻道 01.index.md + 02.影片清單.base 索引（含 last_sync_id checkpoint）
-│   │   ├── AIJasonZ/              — Claude 設計工作流、Skills、Agent 記憶體管理
-│   │   ├── AILABS-393/            — Claude Code 進階技巧、RAG
-│   │   ├── AgentcrewAcademy/      — Claude Code Windows 安裝、MCP 整合、Sub-Agent 與新手教學
-│   │   ├── Chase-H-AI/            — Claude Code 實戰、RAG、Obsidian 整合
-│   │   └── daveebbelaar/          — Python、LLM Evals、API 整合
 │   ├── Clippings/ — 網頁剪貼參考庫（01.index.md + 清單.base 索引；agent 不主動消化，使用者明指才處理）
 │   └── Archive/   — 封存區：保留備查的原料（01.index.md + 清單.base 索引；agent 不主動掃描/消化/刪除）
 ├── wiki/          — 活知識庫：agent 綜合 raw 維護的摘要/實體/概念/綜合頁（01.index.md 為內容目錄，每次 ingest 更新）
-├── updates/       — 【獨立消費層，不屬三層系統】日常工具更新日報（vault-updates-daily 產出，01.index.md 為來源設定；使用者瀏覽用，agent 不 ingest／query／lint）
-├── lint/          — 【獨立消費層，不屬三層系統】vault 健檢日報（vault-lint-daily 產出，01.index.md 為設定；只報告不改頁，修補由使用者另行指示）
+├── feeds/         — 【自動產物層，不屬三層系統】預設不 ingest／query／lint，不公開
+│   ├── youtube/   — YouTube 自動來源池；各頻道含 01.index.md + 02.影片清單.base，明確指定才綜合進 wiki
+│   ├── updates/   — 日常工具更新日報（vault-updates-daily 產出，01.index.md 為來源設定）
+│   └── lint/      — vault 健檢日報（vault-lint-daily 產出，01.index.md 為設定）
 ├── cards/         — 【使用者私人區，agent 不管理】使用者自存文件；Quartz 公開層之一
 └── topics/        — 【使用者私人區，agent 不管理】使用者自存主題資料夾；Quartz 公開層之一
 ```
 
 ## Tag 查詢指南
 
-> agent 查詢範圍是 `raw/` + `wiki/`。`cards/`、`topics/` 屬使用者私人區，不在 agent 查詢範圍內。
+> agent 一般查詢範圍是 `raw/` + `wiki/`；`feeds/` 只有使用者明確指定時讀指定範圍。`cards/`、`topics/` 屬使用者私人區，不在 agent 查詢範圍內。
 
 | 主題 | Tags | 位置 |
 |------|------|------|
-| Claude Code 實作 | `claude-code` | `raw/` 各區 + `wiki/` |
-| AI Agent 工作流 | `ai-agent` `agent-framework` `harness` | `raw/YouTube/` + `raw/Archive/` + `wiki/` |
-| 記憶系統 / Context | `memory`（僅 `wiki/`）、`context-engineering` | `raw/YouTube/` + `raw/Archive/` + `wiki/` |
-| RAG / 知識圖譜 | `rag` `knowledge-graph` | `raw/YouTube/` + `wiki/` |
-| Obsidian 操作 | `obsidian` | `raw/YouTube/` + `wiki/` |
+| Claude Code 實作 | `claude-code` | `feeds/youtube/` + `raw/` + `wiki/` |
+| AI Agent 工作流 | `ai-agent` `agent-framework` `harness` | `feeds/youtube/` + `raw/Archive/` + `wiki/` |
+| 記憶系統 / Context | `memory`（僅 `wiki/`）、`context-engineering` | `feeds/youtube/` + `raw/Archive/` + `wiki/` |
+| RAG / 知識圖譜 | `rag` `knowledge-graph` | `feeds/youtube/` + `wiki/` |
+| Obsidian 操作 | `obsidian` | `feeds/youtube/` + `wiki/` |
 | CLI / 部署類封存 | `cli` `deploy` `github-actions` | `raw/Archive/` |
-| Python / LLM 評測 | `python` `llm-eval` `llm-as-a-judge` | `raw/YouTube/daveebbelaar/` |
+| Python / LLM 評測 | `python` `llm-eval` `llm-as-a-judge` | `feeds/youtube/daveebbelaar/` |
 | LLM 定價 / coding agent | `llm-pricing` `coding-agent` | `wiki/` |
 | 人類 PKM 方法論 | `pkm` `second-brain` | `wiki/` |
-| 日常工具更新 | 見 `updates/01.index.md` | `updates/` |
-| vault 健檢日報 | `lint` | `lint/` |
+| 日常工具更新 | 見 `feeds/updates/01.index.md` | `feeds/updates/` |
+| vault 健檢日報 | `lint` | `feeds/lint/` |
 
 wiki 尚在成長，新主題頁隨 ingest 補入 `wiki/01.index.md`；查詢先讀該內容目錄再鑽細節。

@@ -23,7 +23,6 @@ git clone <repo-url> obsidian-memory
 三層系統（資料夾完整索引見 [`schema/vault-map.md`](./schema/vault-map.md)）：
 
 - `raw/` — 原始來源，write-once（agent 可新增、不可修改，事實來源）
-  - `YouTube/` — 影片摘要，依頻道分組
   - `Clippings/` — 網頁剪藏
   - `Archive/` — 保留備查的原料
 - `wiki/` — 活知識庫（agent 綜合 raw 維護的摘要/實體/概念/綜合頁，含內容目錄 `01.index.md`）
@@ -31,8 +30,11 @@ git clone <repo-url> obsidian-memory
 
 三層之外：
 
+- `feeds/` — 自動產物層，**不屬三層系統、預設不是 ingest 原料**
+  - `youtube/` — 自動同步的候選來源；僅在使用者明確指定時綜合進 wiki
+  - `updates/` — 每日工具更新日報，純消費
+  - `lint/` — vault 健檢報告，純消費
 - `cards/`、`topics/` — **使用者私人策展區，agent 不管理**；同時是 Quartz 唯一對外公開的層。使用者自行從 wiki 撿選內容放入（Quartz 發佈設定與流程不在本 repo）
-- `updates/`、`lint/` — 獨立消費性 feed，**不屬三層系統、不是 ingest 原料**：每日工具更新日報與 vault 健檢報告，分別由對應 skill 寫入，按日一檔、寫完凍結
 - `index.md` — 真人讀者入口（Quartz 網站首頁，列主題與 tag 連結）
 - `.agents/skills/` — repo-local skills，遵循 [Agent Skills](https://agentskills.io) 開放標準（`.claude/skills` 為 symlink）
 
@@ -48,9 +50,9 @@ git clone <repo-url> obsidian-memory
 
 | 指令 | 用途 |
 |---|---|
-| `/vault-youtube-sync` | 同步 YouTube 影片摘要至 `raw/` |
-| `/vault-updates-daily` | 彙整日常工具更新日報至 `updates/` |
-| `/vault-lint-daily` | 產出 vault 健檢報告至 `lint/`（機械項自動修、語意項只報告） |
+| `/vault-youtube-sync` | 同步 YouTube 影片摘要至 `feeds/youtube/` |
+| `/vault-updates-daily` | 彙整日常工具更新日報至 `feeds/updates/` |
+| `/vault-lint-daily` | 產出 vault 健檢報告至 `feeds/lint/`（機械項自動修、語意項只報告） |
 
 **使用契約**：cwd 必須是本 repo 根目錄（含 `CLAUDE.md` 的目錄），所有路徑 cwd-relative，不靠環境變數。從別的專案想呼叫 skill，先 `cd` 進來。
 
