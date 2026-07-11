@@ -2,7 +2,7 @@
 title: LLM Wiki 生態實作比較
 description: nvk、Hermes、Astro-Han 等 Karpathy LLM Wiki 實作與 Letta MemFS 等相鄰記憶系統的收斂設計、分歧點與實證證據對照
 created: 2026-07-10
-updated: 2026-07-10
+updated: 2026-07-11
 parent: "[[wiki/01.index]]"
 tags:
   - wiki
@@ -58,3 +58,4 @@ tags:
 - 模式本體：[[LLM-Wiki-知識管理模式]]（原文提煉）；來源全文 [[LLM-Wiki-Karpathy]]
 - 實作之一的完整實體頁：[[Hermes-Agent]]（其 `llm-wiki` skill 治理細節本頁已展開）
 - 記憶系統全景定位：[[Claude-Code-記憶系統六層比較]]——本頁的「markdown＋git 家族」對應其 Level 5，MemSearch 對應 Level 3（memsearch 同源）
+- 交換格式取捨：[[OKF-與本-vault-的相容性]]——OKF 的互通性價值保留給未來獨立匯出層，不影響本頁已拍板的不採雙連結決定。
