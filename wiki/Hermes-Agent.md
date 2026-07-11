@@ -2,7 +2,7 @@
 title: Hermes Agent
 description: Nous Research 開源的自我進化 AI agent：學習迴路自動生成並改良 skill，跨 session 累積記憶與使用者模型
 created: 2026-07-08
-updated: 2026-07-10
+updated: 2026-07-11
 parent: "[[wiki/01.index]]"
 tags:
   - ai-agent
@@ -46,6 +46,17 @@ Nous Research 開源、MIT 授權的**自我進化 AI agent**，標語 *The agen
 
 記憶層可插拔：內建之外另有 8 個 memory provider 外掛（Honcho、Mem0、Supermemory、ByteRover 等），提供知識圖譜、語意檢索、自動事實抽取等。
 
+## 任務／待辦管理：Kanban board
+
+待辦事項、roadmap、task 不是放在有界核心記憶（`MEMORY.md`／`USER.md`）裡，而是另立一套獨立子系統：**SQLite 存儲的多 profile 持久任務佇列**（`~/.hermes/kanban.db`，WAL 模式；多板時 `~/.hermes/kanban/boards/<slug>/kanban.db`）。核心設計是「每次交接是一列任何 profile（或人）都能讀寫」，用以區分更輕量的 `delegate_task`（RPC 式、父層阻擋等子層返回、失敗即失敗、無審計軌跡）。原始細節見 [[Hermes-Agent-Kanban]]。
+
+- **Task 狀態機**：`triage → todo → ready → running → blocked → done → archived`，欄位含 `assignee`、`priority`、`workspace`（scratch/dir:\<path\>/worktree）、`max_retries`、`goal_mode` 等；`task_links`／`task_comments`／`task_runs`／`task_events` 等附屬表提供依賴、協作留言、重試歷史、審計日誌。
+- **Agent 工具**：`kanban_show`／`kanban_list`／`kanban_complete`／`kanban_block`／`kanban_heartbeat`／`kanban_comment`／`kanban_create`／`kanban_link`／`kanban_unblock`，worker 與 orchestrator 走不同典型流程。
+- **Dispatcher** 每 60 秒巡一輪：回收逾時聲明與崩潰 worker、依 `task_links` 自動把父層 `done` 的子任務從 `todo` 升到 `ready`、控管全板／per-profile 並行上限。
+- 定位：Kanban 給「跨 agent 邊界、需存活重啟、可能要人工介入、需事後可探知」的工作；純同步子推理仍用 `delegate_task`。
+
+這與本 vault [[MEMORY]] 的角色形成對照：本 vault 目前把「操作狀態」與「待追蹤開放問題」混記在同一份有界快照檔；Hermes 則是**有界核心記憶（穩定事實/偏好）與任務佇列（進行中工作、需要跨 session 存活的 to-do）分屬兩個獨立子系統**，前者小而穩定，後者專門承載狀態機與協作審計。
+
 ## 部署與 Model
 
 - **Terminal backends**：Local、Docker、SSH、Singularity、**Modal**（serverless、閒置近零成本）、**Daytona**（serverless、閒置休眠）——serverless 後端讓 agent 長駐又省錢。
@@ -67,7 +78,7 @@ Hermes 24/7 長駐（有別於跑完即停的 Claude Code），背景任務、se
 
 ## 關聯
 
-- 原始資料：[[Hermes-Agent-NousResearch]]、[[Hermes-Agent-Token成本優化設定]]（token 成本拆解與設定）
+- 原始資料：[[Hermes-Agent-NousResearch]]、[[Hermes-Agent-Token成本優化設定]]（token 成本拆解與設定）、[[Hermes-Agent-Kanban]]（任務佇列技術細節）
 - 同源哲學：[[LLM-Wiki-知識管理模式]]（知識複利 vs. Hermes 的技能複利）
 - `llm-wiki` skill 治理細節與其他實作對照：[[LLM-Wiki-生態實作比較]]——sha256 漂移偵測、封閉 tag taxonomy、矛盾交使用者複核等機制在生態中的定位。
 - 記憶架構對照：[[Claude-Code-記憶系統六層比較]]——Hermes 屬「agent 自策展記憶 + skill」路線，且與其中 Level 3 的 OpenClaw 血緣相關（`hermes claw migrate` 自 OpenClaw 匯入）。
