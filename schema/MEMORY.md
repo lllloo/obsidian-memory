@@ -1,7 +1,7 @@
 ---
 title: Agent Memory
 created: 2026-07-09
-updated: 2026-07-11
+updated: 2026-07-13
 tags:
   - meta
 ---
@@ -32,3 +32,4 @@ tags:
 - 成長面 Lint 自動化（SYSTEM-DESIGN.md「不做自動成長掃描」）：2026-07-10 已採**限縮版**——結構性 lint 綁進 ingest 收尾、只檢當輪動到的頁（見 CLAUDE.md Ingest 第 5 步），由 Karpathy 社群生產經驗（漂移是頭號失敗模式）佐證。更重的**背景全庫成長掃描**仍不做（7/9 決定不變，token 成本不成比例）。
 - 2026-07-10 七線全面審核結案（含第二輪複審通過）：批次 A（README）、B（強度標註/措辭）、D（複審殘留三項）已修；**倉庫衛生兩項使用者拍板不動、勿重複提議**——`.gitignore` 不補 `.env`/金鑰類規則、`.obsidian/plugins/obsidian-git/` bundle 維持 tracked（換機開箱即用優先）。
 - YouTube 自動產物位於 `feeds/youtube/`，是系統外、只供使用者瀏覽的內容，不進 raw 或 wiki。`raw/Archive/` 已於 2026-07-11 整個移除（原地說明「永久留存供回查」與治理規則的「不主動刪除」互相矛盾，經使用者拍板刪除並同步改掉 README/SYSTEM-DESIGN/vault-map/vault-lint-daily 的相關敘述）。
+- 2026-07-13 `vault-lint-daily` 改制：以持久 `feeds/lint/BACKLOG.md`（待你決定／已婉拒兩區、去重、解決即移除、熔斷、心跳）取代每日快照報告，機械可修自動修、**語意仍只報告**（零治理變更）。此為「第一段 MVP」。**第二段**（語意自動修＋獨立 refuter 對抗驗證＋暫存修法經 merge 把關，經 5 輪對抗式分析定稿）**刻意未實作**：觸發＝使用者主動 felt-need（待你決定語意項堆積且想交給 AI）＋簽署治理位移（語意只報告→暫存修法，接受不可根除的殘留汙染風險）。定稿 spec 僅在當時 scratchpad（易失），未存進 repo。
