@@ -25,11 +25,11 @@ vault 健檢的**待處理清單**,由 `vault-lint-daily` skill 每輪讀寫。f
 ## 執行狀態
 
 - **上次執行**:2026-07-13
-- **狀態**:初始化(尚未跑第一輪)
+- **狀態**:ok(死連結 0、孤立頁 0、frontmatter 缺欄 0、index 漏登 0;語意層審 1 頁無發現)
 
 ## 待你決定
 
-_(目前無項目)_
+- [低] RAWGAP | `raw/clippings/` | 5 篇 clipping 尚未消化(依 CLAUDE.md,clippings 由你明指才處理,此處僅告知數量);首見 2026-07-13
 
 ## 已婉拒
 
