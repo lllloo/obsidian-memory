@@ -12,6 +12,7 @@
   BASEIDX:<dir>              該 index 用 .base 動態清單，跳過漏登檢查
   CHANGED:<file>             近 N 天有 git 變動的 wiki 頁（語意層輸入）
   SUMMARY:<key>=<value>      各類計數
+  SCAN:complete              掃描正常跑完的標記（熔斷用：無此行或有 ERROR: 行 → 該輪不退場）
 
 用法：python3 .agents/skills/vault-lint-daily/scripts/lint_scan.py [--days 7]
 """
@@ -225,6 +226,7 @@ def main() -> int:
     print(f"SUMMARY:tags={len(tag_counts)}")
     scanned_targets = sum(1 for p in texts if top_of(p) in ("wiki", "raw", "schema"))
     print(f"SUMMARY:scanned={scanned_targets}")
+    print("SCAN:complete")
     return 0
 
 
