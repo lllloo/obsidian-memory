@@ -33,7 +33,6 @@ git clone <repo-url> obsidian-memory
 - `feeds/` — 自動產物層，**不屬三層系統，只供使用者瀏覽，不進 raw 或 wiki**
   - `youtube/` — 自動同步影片筆記
   - `updates/` — 每日工具更新日報，純消費
-  - `lint/` — vault 健檢報告，純消費
 - `cards/`、`topics/` — **使用者私人策展區，agent 不管理**；同時是 Quartz 唯一對外公開的層。使用者自行從 wiki 撿選內容放入（Quartz 發佈設定與流程不在本 repo）
 - `index.md` — 真人讀者入口（Quartz 網站首頁，列主題與 tag 連結）
 - `.agents/skills/` — repo-local skills，遵循 [Agent Skills](https://agentskills.io) 開放標準（`.claude/skills` 為 symlink）
@@ -52,7 +51,7 @@ git clone <repo-url> obsidian-memory
 |---|---|
 | `/vault-youtube-sync` | 同步 YouTube 影片摘要至 `feeds/youtube/` |
 | `/vault-updates-daily` | 彙整日常工具更新日報至 `feeds/updates/` |
-| `/vault-lint-daily` | 產出 vault 健檢報告至 `feeds/lint/`（機械項自動修、語意項只報告） |
+| `/vault-lint-daily` | vault 健檢，findings 維護於 `schema/BACKLOG.md`（機械可修項自動修、語意項只報告） |
 
 **使用契約**：cwd 必須是本 repo 根目錄（含 `CLAUDE.md` 的目錄），所有路徑 cwd-relative，不靠環境變數。從別的專案想呼叫 skill，先 `cd` 進來。
 

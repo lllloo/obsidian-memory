@@ -55,7 +55,7 @@ tags:
 `feeds/` 集中只供使用者瀏覽的 skill 自動產物，不進 raw、wiki、Query 或 Lint：
 
 - `feeds/youtube/` 是使用者瀏覽的自動同步筆記；不進 raw 或 wiki。完整影片筆記凍結，draft／index／Base／checkpoint 由同步 skill 維護。
-- `feeds/updates/` 與 `feeds/lint/` 是使用者瀏覽的消費性日報；不 ingest、不 query、不 lint，寫完即凍結（同日重跑依各 skill 的 append 規則）。
+- `feeds/updates/` 是使用者瀏覽的消費性日報；不 ingest、不 query、不 lint，寫完即凍結（同日重跑依 skill 的 append 規則）。lint 不產 feeds 產物——健檢的待處理清單是 `schema/BACKLOG.md`（agent 每輪讀回來約束自身行為的操作狀態，與 `MEMORY.md` 同層）。
 - Quartz 只應發佈 cards/topics，`feeds/**` 不公開；發佈設定在本 repo 外。
 
 ### 本 vault 的額外層：cards/topics（不在原文三層裡，系統不管）
@@ -81,7 +81,7 @@ wiki 是 LLM 幫你養的活知識庫（私有、只給你讀）；cards/topics 
 | Feed | YouTube 自動蒐集 | `vault-youtube-sync` 產出至 `feeds/youtube/`，不進 raw 或 wiki |
 | Ingest | 綜合維護進 wiki | 手動；來源限 `raw/` |
 | Query | 問 wiki，附引用綜合；好答案回存 wiki | 手動（原 `ob-read` 已移除） |
-| Lint | 掃 wiki 孤立頁、死連結、矛盾、缺欄位等 | `vault-lint-daily`（產報告到 `feeds/lint/`；可唯一對應的死連結與 index 漏登錄自動修，其餘只報告、修補經使用者點頭——2026-07-10 依生態實證調整，見 wiki「LLM-Wiki-生態實作比較」） |
+| Lint | 掃 wiki 孤立頁、死連結、矛盾、缺欄位等 | `vault-lint-daily`（findings 去重維護於 `schema/BACKLOG.md`，解決即移除；可唯一對應的死連結與 index 漏登錄自動修，其餘只報告、修補經使用者點頭——2026-07-10 依生態實證調整，見 wiki「LLM-Wiki-生態實作比較」；2026-07-13 由每日快照報告改制為持久 BACKLOG） |
 
 （`vault-updates-daily` 不在表內：它產出的是消費層 `feeds/updates/` 日報，不進 raw、不屬三動作。）
 

@@ -24,15 +24,14 @@ tags:
 
 ```
 .
-├── schema/      — schema 層敘述文件：SYSTEM-DESIGN.md（運作總綱）、vault-map.md（本檔，導航）；CLAUDE.md/AGENTS.md 因 harness 自動載入留 root
+├── schema/      — schema 層：SYSTEM-DESIGN.md（運作總綱）、vault-map.md（本檔，導航）、MEMORY.md（跨 session 操作記憶）、BACKLOG.md（lint 待處理清單，agent 每輪讀回來約束自身行為）；CLAUDE.md/AGENTS.md 因 harness 自動載入留 root
 ├── raw/         — 原始來源，write-once。agent 可新增、不可修改，事實來源
 │   ├── clippings/ — 使用者以 Web Clipper 或手動放入的來源（01.index.md + 清單.base 索引；agent 不主動消化，使用者明指才處理）
 │   └── fetched/   — agent 依使用者提供 URL 擷取的來源（01.index.md + 清單.base 索引；落地後直接 ingest）
 ├── wiki/          — 活知識庫：agent 綜合 raw 維護的摘要/實體/概念/綜合頁（01.index.md 為內容目錄，每次 ingest 更新）
 ├── feeds/         — 【自動產物層，不屬三層系統】只供使用者瀏覽，不進 raw／wiki／ingest／query／lint
 │   ├── youtube/   — YouTube 自動同步筆記；各頻道含 01.index.md + 02.影片清單.base，只供使用者瀏覽
-│   ├── updates/   — 日常工具更新日報（vault-updates-daily 產出，01.index.md 為來源設定）
-│   └── lint/      — vault 健檢日報（vault-lint-daily 產出，01.index.md 為設定）
+│   └── updates/   — 日常工具更新日報（vault-updates-daily 產出，01.index.md 為來源設定）
 ├── cards/         — 【使用者私人區，agent 不管理】使用者自存文件；Quartz 公開層之一
 └── topics/        — 【使用者私人區，agent 不管理】使用者自存主題資料夾；Quartz 公開層之一
 ```
