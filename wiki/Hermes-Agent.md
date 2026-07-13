@@ -2,7 +2,7 @@
 title: Hermes Agent
 description: Nous Research 開源的自我進化 AI agent：學習迴路自動生成並改良 skill，跨 session 累積記憶與使用者模型
 created: 2026-07-08
-updated: 2026-07-11
+updated: 2026-07-13
 parent: "[[wiki/01.index]]"
 tags:
   - ai-agent
@@ -66,7 +66,7 @@ Nous Research 開源、MIT 授權的**自我進化 AI agent**，標語 *The agen
 
 ## 成本控制
 
-Hermes 24/7 長駐（有別於跑完即停的 Claude Code），背景任務、self-evolving memory 與 90+ 預裝 skill 的 header 都持續吃 token，成本靠設定治理（拆解見 [[Hermes-Agent-Token成本優化設定]]）：
+Hermes 24/7 長駐（有別於跑完即停的 Claude Code），背景任務、self-evolving memory 與 90+ 預裝 skill 的 header 都持續吃 token，成本靠設定治理（token 成本拆解與各項設定細節見官方文件）：
 
 - **模型路由是帳單最大槓桿**：auxiliary tasks 與 subagents 預設 fallback 到主模型，改指便宜模型；effort level 依任務調，簡單任務關 thinking。
 - **Context 瘦身**：調低壓縮門檻與 target ratio、精簡 memory/agent files、一次性指令用 ephemeral system prompt 不寫進 context files。
@@ -80,7 +80,7 @@ Hermes 24/7 長駐（有別於跑完即停的 Claude Code），背景任務、se
 
 ## 關聯
 
-- 原始資料：[[Hermes-Agent-NousResearch]]、[[Hermes-Agent-Token成本優化設定]]（token 成本拆解與設定）、[[Hermes-Agent-Kanban]]（任務佇列技術細節）
+- 原始資料：[[Hermes-Agent-NousResearch]]、[[Hermes-Agent-Kanban]]（任務佇列技術細節）；token 成本拆解與設定細節目前尚未落地 raw／wiki，暫以官方文件為準
 - 同源哲學：[[LLM-Wiki-知識管理模式]]（知識複利 vs. Hermes 的技能複利）
 - `llm-wiki` skill 治理細節與其他實作對照：[[LLM-Wiki-生態實作比較]]——sha256 漂移偵測、封閉 tag taxonomy、矛盾交使用者複核等機制在生態中的定位。
 - 記憶架構對照：[[Claude-Code-記憶系統六層比較]]——Hermes 屬「agent 自策展記憶 + skill」路線，且與其中 Level 3 的 OpenClaw 血緣相關（`hermes claw migrate` 自 OpenClaw 匯入）。
