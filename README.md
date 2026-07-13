@@ -51,11 +51,11 @@ git clone <repo-url> obsidian-memory
 |---|---|
 | `/vault-youtube-sync` | 同步 YouTube 影片摘要至 `feeds/youtube/` |
 | `/vault-updates-daily` | 彙整日常工具更新日報至 `feeds/updates/` |
-| `/vault-lint-daily` | vault 健檢，findings 維護於 `schema/BACKLOG.md`（機械可修項自動修、語意項只報告） |
+| `/vault-lint` | vault 健檢，findings 維護於 `schema/BACKLOG.md`（機械可修項自動修、語意項只報告）；手動／排程共用同一流程，本身不碰 git |
 
 **使用契約**：cwd 必須是本 repo 根目錄（含 `CLAUDE.md` 的目錄），所有路徑 cwd-relative，不靠環境變數。從別的專案想呼叫 skill，先 `cd` 進來。
 
-> 原核心 skill `ob-write`、`ob-read`（global）、`vault-wiki-build`、`vault-lint` 已移除；Ingest（wiki 綜合）與 Query 由 agent 手動執行，Lint 的掃描面已按需重建為報告制的 `/vault-lint-daily`。
+> 原核心 skill `ob-write`、`ob-read`（global）、`vault-wiki-build`、舊版 `vault-lint` 已移除；Ingest（wiki 綜合）與 Query 由 agent 手動執行，Lint 的掃描面已按需重建為報告制的 `/vault-lint`（與同名舊版無血緣，是重寫的另一套）。
 
 ## 兩個入口檔的差別
 

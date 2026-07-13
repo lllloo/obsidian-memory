@@ -81,7 +81,7 @@ wiki 是 LLM 幫你養的活知識庫（私有、只給你讀）；cards/topics 
 | Feed | YouTube 自動蒐集 | `vault-youtube-sync` 產出至 `feeds/youtube/`，不進 raw 或 wiki |
 | Ingest | 綜合維護進 wiki | 手動；來源限 `raw/` |
 | Query | 問 wiki，附引用綜合；好答案回存 wiki | 手動（原 `ob-read` 已移除） |
-| Lint | 掃 wiki 孤立頁、死連結、矛盾、缺欄位等 | `vault-lint-daily`（findings 去重維護於 `schema/BACKLOG.md`，解決即移除；可唯一對應的死連結與 index 漏登錄自動修，其餘只報告、修補經使用者點頭——2026-07-10 依生態實證調整，見 wiki「LLM-Wiki-生態實作比較」；2026-07-13 由每日快照報告改制為持久 BACKLOG） |
+| Lint | 掃 wiki 孤立頁、死連結、矛盾、缺欄位等 | `vault-lint`（findings 去重維護於 `schema/BACKLOG.md`，解決即移除；可唯一對應的死連結與 index 漏登錄自動修，其餘只報告、修補經使用者點頭——2026-07-10 依生態實證調整，見 wiki「LLM-Wiki-生態實作比較」；2026-07-13 由每日快照報告改制為持久 BACKLOG，並改名去掉 `-daily`：手動／排程共用一條流程，skill 本身不碰 git） |
 
 （`vault-updates-daily` 不在表內：它產出的是消費層 `feeds/updates/` 日報，不進 raw、不屬三動作。）
 

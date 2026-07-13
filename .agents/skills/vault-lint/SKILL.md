@@ -1,15 +1,17 @@
 ---
-name: vault-lint-daily
-description: 每日 vault 健檢:掃 wiki+raw 的死連結、孤立頁、frontmatter 缺欄、tag 漂移、raw 消化缺口(機械層),加近期變動頁的矛盾／過時／交叉引用缺口審查(語意層)。機械可修項(可唯一對應的死連結、index 漏登)自動修;需判斷與語意項去重後進 schema/BACKLOG.md 待處理清單(語意項只報告,修補由使用者另行指示)。取代舊的每日快照報告,同一問題不重複洗版。使用時機:使用者要求「vault 健檢」「lint 報告」「每日健檢」「掃一下 wiki」「檢查 vault 健康」,或直接呼叫 /vault-lint-daily。
+name: vault-lint
+description: vault 健檢:掃 wiki+raw 的死連結、孤立頁、frontmatter 缺欄、tag 漂移、raw 消化缺口(機械層),加近期變動頁的矛盾／過時／交叉引用缺口審查(語意層)。機械可修項(可唯一對應的死連結、index 漏登)自動修;需判斷與語意項去重後進 schema/BACKLOG.md 待處理清單(語意項只報告,修補由使用者另行指示),同一問題不重複洗版。可隨時手動跑,也可掛排程;兩者行為完全一致、不需參數。使用時機:使用者要求「vault 健檢」「lint 報告」「掃一下 wiki」「檢查 vault 健康」「跑一下健檢」,或直接呼叫 /vault-lint。
 ---
 
-# Vault Lint Daily
+# Vault Lint
 
 維護一份 wiki+raw 健檢的**待處理清單** `schema/BACKLOG.md`。**機械可修項自動修、語意項只報告**——對 `wiki/` 的寫入僅限下方「機械修補」明列的類別;`raw/` 零寫入。清單放 `schema/`(agent 每輪讀回來約束自身行為的操作狀態),不放 `feeds/`(agent 不讀區)。
 
+**手動與排程共用同一條流程,無模式分支、無參數差異。** 本 skill **不執行任何 git 動作**(不 commit、不 push、不開 PR),因此無人值守時不會卡在需要人拍板的守門上。跑完只留檔案變更;要不要落成 commit／PR 由呼叫端決定——手動時由使用者指示,排程時寫進該排程自己的 prompt(**該 prompt 即使用者對 push 的明確同意**,不由本 skill 代行)。
+
 ## 產出
 
-- 待處理清單 + 設定:`schema/BACKLOG.md`(單一持久檔,去重後留未解決項,解決即移除)。**不產每日快照報告檔,不寫入 `feeds/`。**
+- 待處理清單 + 設定:`schema/BACKLOG.md`(單一持久檔,去重後留未解決項,解決即移除)。**不產快照報告檔,不寫入 `feeds/`。**
 
 `BACKLOG.md` 結構:
 
@@ -27,7 +29,7 @@ description: 每日 vault 健檢:掃 wiki+raw 的死連結、孤立頁、frontma
 3. 執行機械層掃描:
 
 ```
-python3 .agents/skills/vault-lint-daily/scripts/lint_scan.py --days <semantic_days>
+python3 .agents/skills/vault-lint/scripts/lint_scan.py --days <semantic_days>
 ```
 
 4. **熔斷檢查**:掃描輸出**有任何 `ERROR:` 行、或缺 `SCAN:complete` 行** → 本輪視為掃描異常:**只新增、不退場**(不移除 BACKLOG 既有項),心跳狀態記 `scan-error`。正常則往下。
@@ -45,8 +47,8 @@ python3 .agents/skills/vault-lint-daily/scripts/lint_scan.py --days <semantic_da
    - `RAWGAP`:`raw/clippings/` 只彙總數量;`raw/fetched/` 未被引用時逐條列;`feeds/` 不列。
 8. 語意層:取 `CHANGED` 清單,超過 `semantic_page_cap` 時取最近變動前幾頁並標注截斷。每頁備妥「目標頁全文 + 鄰接頁全文(wikilink 指到的頁與連入它的頁,各至多 5 頁)」**加上該頁在 BACKLOG 的既有語意項**(供去重)。可用 `Agent` 工具時以 `subagent_type: "general-purpose"` 平行審查,prompt = `references/semantic-review.md` 全文 + 該頁與鄰接頁內容 + 既有語意項(不要叫 subagent 自己讀檔);無 Agent 工具時主 agent 直接照該 reference 逐頁審查。語意發現去重後寫入 `待你決定`。
 9. 更新 `## 執行狀態` 區(上次執行日期、狀態 `ok`/`no-op`)與 frontmatter `updated`。寫回 `schema/BACKLOG.md`。
-10. **開 PR**:本輪 BACKLOG 或 wiki 有變動 → commit 並開一個 per-run PR(分區:機械修補略讀、待你決定細看);全無變動 → 心跳仍更新但可不開 PR。**不 push/merge 到保護分支**(需使用者明確同意)。
-11. 機械修補以外不執行任何修補。語意項使用者要修時另行指示,屆時才動 wiki。
+10. 機械修補以外不執行任何修補。語意項使用者要修時另行指示,屆時才動 wiki。
+11. **止於檔案變更**:不 commit、不 push、不開 PR、不建分支。跑完照下方「固定回覆」報告即可,git 交由呼叫端處理。
 
 ## 資源
 
@@ -61,3 +63,4 @@ python3 .agents/skills/vault-lint-daily/scripts/lint_scan.py --days <semantic_da
 - 心跳狀態(ok / scan-error / no-op)。
 - `待你決定` 前 3 條(高嚴重度優先)。
 - 語意層有截斷時明講掃了幾頁、略過幾頁。
+- **本輪實際寫入的檔案清單**(未 commit)——本 skill 不開 PR,這份清單就是使用者的 review 入口。

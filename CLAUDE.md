@@ -14,7 +14,7 @@
 | `wiki/` | agent 完全掌管的活知識庫：摘要、實體、概念、比較、綜合 | **全權**：自由建頁、改頁、刪頁、交叉引用、維護 index |
 | schema | 本檔（root）+ `schema/SYSTEM-DESIGN.md` + `schema/vault-map.md` + `schema/MEMORY.md` + `schema/BACKLOG.md`（規範 agent 行為 + 跨 session 操作記憶） | 依規則維護 |
 
-`schema/BACKLOG.md` 是 `vault-lint-daily` 的健檢待處理清單:agent **每輪讀回來約束自身行為**的操作狀態(去重、跳過已婉拒、判斷退場),與 `MEMORY.md` 同層,不是給人瀏覽的 feed 產物。**語意項只報告**,修補由使用者另行指示;使用者退回的修法記入「已婉拒」,agent 之後不再重提。寫入該檔時頁面引用一律用反引號、不得用 wikilink(`schema/` 在死連結掃描範圍內)。
+`schema/BACKLOG.md` 是 `vault-lint` 的健檢待處理清單:agent **每輪讀回來約束自身行為**的操作狀態(去重、跳過已婉拒、判斷退場),與 `MEMORY.md` 同層,不是給人瀏覽的 feed 產物。**語意項只報告**,修補由使用者另行指示;使用者退回的修法記入「已婉拒」,agent 之後不再重提。寫入該檔時頁面引用一律用反引號、不得用 wikilink(`schema/` 在死連結掃描範圍內)。
 
 **`cards/` 與 `topics/` 不屬於本系統。** 它們是使用者的私人資料夾，同時是 Quartz **唯一對外公開發佈**的層。agent 一律**不讀、不寫、不掃描、不維護、不索引** cards/topics——Ingest、Query、Lint 全部跳過它們。使用者自行從 wiki 手動撿選、複製想公開的內容進去；那是使用者的動作，不是系統的一環。
 
@@ -22,7 +22,7 @@
 
 - `feeds/youtube/`：`vault-youtube-sync` 的自動同步筆記。完整影片筆記寫入後凍結；draft 占位可由 skill 覆寫重試，頻道 index、Base 與 checkpoint 可由 skill 維護。
 - `feeds/updates/`：`vault-updates-daily` 的消費性日報與來源設定。
-（`vault-lint-daily` 不再產 feeds 產物：健檢的待處理清單改放 `schema/BACKLOG.md`，見下方 schema 一節。）
+（`vault-lint` 不再產 feeds 產物：健檢的待處理清單改放 `schema/BACKLOG.md`，見下方 schema 一節。）
 
 ## 唯一守門：git push
 
@@ -72,7 +72,7 @@ wiki 的維護就是這三個動作，只在 `raw/` + `wiki/` 上進行；不碰
 
 ### Lint（健檢）
 
-定期掃 wiki（+ raw 索引）：矛盾、被新來源取代的過時主張、孤立頁、被提到卻沒專屬頁的概念、缺交叉引用、可用查證補的資料空缺。產出修補與新探究建議。只掃 raw/wiki/schema，不碰 feeds/cards/topics。掃描由 `vault-lint-daily` skill 承載（findings 去重後維護在 `schema/BACKLOG.md`，解決即移除，不產每日快照報告）：**機械可修項自動修、語意項只報告**（依據：死連結是 LLM wiki 實證的頭號結構錯誤，見 [`LLM-Wiki-生態實作比較`](wiki/LLM-Wiki-生態實作比較.md)），語意修補在使用者點頭後由 agent 執行；使用者退回的修法記入「已婉拒」不再重提。
+定期掃 wiki（+ raw 索引）：矛盾、被新來源取代的過時主張、孤立頁、被提到卻沒專屬頁的概念、缺交叉引用、可用查證補的資料空缺。產出修補與新探究建議。只掃 raw/wiki/schema，不碰 feeds/cards/topics。掃描由 `vault-lint` skill 承載（findings 去重後維護在 `schema/BACKLOG.md`，解決即移除，不產快照報告；可手動跑亦可掛排程，行為一致且不碰 git）：**機械可修項自動修、語意項只報告**（依據：死連結是 LLM wiki 實證的頭號結構錯誤，見 [`LLM-Wiki-生態實作比較`](wiki/LLM-Wiki-生態實作比較.md)），語意修補在使用者點頭後由 agent 執行；使用者退回的修法記入「已婉拒」不再重提。
 
 ## wiki 頁面與索引
 
@@ -141,11 +141,11 @@ deep-research 或其他對抗式查證的結果回存 wiki 時：每條主張就
 |---|---|
 | `vault-youtube-sync` | YouTube 影片摘要同步至 `feeds/youtube/` |
 | `vault-updates-daily` | 日常更新彙整至 `feeds/updates/` |
-| `vault-lint-daily` | wiki+raw 健檢，findings 維護於 `schema/BACKLOG.md`（機械可修項自動修、語意項只報告） |
+| `vault-lint` | wiki+raw 健檢，findings 維護於 `schema/BACKLOG.md`（機械可修項自動修、語意項只報告）；手動／排程共用同一流程，本身不執行 git 動作 |
 
 優先使用 skill，不新增平行流程。新增或修改 skill 時，盡量遵循 [Agent Skills](https://agentskills.io) 開放標準，讓內容可跨工具移植。
 
-> **已移除的核心 skill**：`ob-write`、`ob-read`、`vault-wiki-build`、`vault-lint`（含 `ob-write`／`ob-read` 兩個全域 symlink）已於重整時移除。三動作（Ingest／Query／Lint）的模型仍是本 vault 的架構；其中 Lint 的掃描面已按需重建為報告制的 `vault-lint-daily`（2026-07-10），其餘（wiki 綜合、查詢、修補）仍由 agent 手動執行。
+> **已移除的核心 skill**：`ob-write`、`ob-read`、`vault-wiki-build`、舊版 `vault-lint`（含 `ob-write`／`ob-read` 兩個全域 symlink）已於重整時移除。三動作（Ingest／Query／Lint）的模型仍是本 vault 的架構；其中 Lint 的掃描面已按需重建為報告制的 skill（2026-07-10 以 `vault-lint-daily` 之名重建，2026-07-13 改名回 `vault-lint`——它不專為排程而生，手動隨時可跑，「daily」是誤導）。與同名的舊版無血緣，是重寫的另一套。其餘（wiki 綜合、查詢、修補）仍由 agent 手動執行。
 
 ### 新增 / 修改 skill 的本 repo 約束
 

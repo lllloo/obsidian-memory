@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""vault-lint-daily 機械層掃描：死連結、孤立頁、frontmatter、tag 盤點、raw 消化缺口。
+"""vault-lint 機械層掃描：死連結、孤立頁、frontmatter、tag 盤點、raw 消化缺口。
 
 在 vault root 執行；輸出 machine-readable lines（一行一發現），由主 agent 組裝報告：
 
@@ -14,7 +14,7 @@
   SUMMARY:<key>=<value>      各類計數
   SCAN:complete              掃描正常跑完的標記（熔斷用：無此行或有 ERROR: 行 → 該輪不退場）
 
-用法：python3 .agents/skills/vault-lint-daily/scripts/lint_scan.py [--days 7]
+用法：python3 .agents/skills/vault-lint/scripts/lint_scan.py [--days 7]
 """
 
 import argparse
