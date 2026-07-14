@@ -10,6 +10,8 @@ tags:
 ## schema 層治理檔
 
 > `CLAUDE.md`（+ `AGENTS.md` symlink）因 harness 從 repo root 自動載入而留在 root；敘述文件 `SYSTEM-DESIGN.md` 與本檔已移入 `schema/`。CWD 契約的哨兵檔是 `schema/vault-map.md`（本檔）——此路徑只存在於本 vault，能同時擋「不在 root」與「跑錯 repo」。
+>
+> **本表是 schema 各檔職責的單一權威清單。** 新增／移除 schema 檔只改這裡；`CLAUDE.md`、`SYSTEM-DESIGN.md` 概念性提及即可，不重列檔案清單（避免像過去 `BACKLOG.md` 那樣一處新增、他處漏同步的漂移）。
 
 | 檔案 | 職責 |
 |---|---|

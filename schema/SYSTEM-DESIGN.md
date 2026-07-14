@@ -48,7 +48,7 @@ tags:
 
 1. **`raw/`（原始來源）** — 你精選的原料：文章、剪貼、資料。**write-once**：人與 LLM 都可新增（貼 URL 由 LLM 擷取至 `fetched/`、Web Clipper 剪藏與使用者手動放檔至 `clippings/`），寫入後即凍結、不再修改，是事實來源。「不可變」約束的是修改，不是新增——與 Hermes bundled skill、nvk/llm-wiki 等主流實作一致（2026-07-10 查證跟進）。來源過時（凍結的 raw 落後於活來源）不在來源層設機制偵測，改由 lint 語意層＋git 歷史兜底，與 Karpathy／nvk／Astro-Han 多數派一致（曾採 sha256 漂移偵測，2026-07-14 移除，理由見 [[LLM-Wiki-生態實作比較]]）。`Archive/` 封存區於 2026-07-11 因與 write-once 事實來源定位重複、長期零消化而移除。
 2. **`wiki/`（活知識庫）** — LLM 生成與維護的 markdown：摘要頁、實體頁、概念頁、比較頁、綜合頁。**LLM 完全掌管**——建頁、改頁、刪頁、交叉引用、維護 index，你只負責讀。
-3. **schema** — 規範文件與操作記憶：root 的 [`CLAUDE.md`](../CLAUDE.md)（`AGENTS.md` 為其 symlink）+ 本檔 + `vault-map.md` + `MEMORY.md` + `BACKLOG.md`（lint 待處理清單，agent 每輪讀回來約束自身行為），告訴 LLM wiki 怎麼組織、慣例是什麼、Ingest/Query/Lint 各走什麼流程。這是把 LLM 從通用聊天機器人變成**有紀律的 wiki 維護者**的關鍵設定，你與 LLM 隨時間共同演進它。
+3. **schema** — 規範文件與操作記憶（root 的 [`CLAUDE.md`](../CLAUDE.md) + `schema/` 下數檔；**各檔職責的權威清單在 [`vault-map.md`](vault-map.md) 治理表，此處不重列**），告訴 LLM wiki 怎麼組織、慣例是什麼、Ingest/Query/Lint 各走什麼流程。這是把 LLM 從通用聊天機器人變成**有紀律的 wiki 維護者**的關鍵設定，你與 LLM 隨時間共同演進它。
 
 ### 本 vault 的自動產物層：feeds（不在原文三層裡）
 
@@ -73,17 +73,7 @@ wiki 是 LLM 幫你養的活知識庫（私有、只給你讀）；cards/topics 
 - **Query（查詢）** — 向 wiki 提問，LLM 先讀 index → 找相關頁 → 讀頁 → **附引用**綜合答案。答案形式依問題而定（markdown 頁、比較表、投影片、圖表、canvas）。關鍵洞見：**好答案可回存成新 wiki 頁**——你要的比較、分析、發現的關聯很有價值，不該消失在對話裡；這樣探索跟來源一樣複利累積。
 - **Lint（健檢）** — 定期請 LLM 體檢 wiki：矛盾、被新來源取代的過時主張、無入連的孤立頁、被提到卻缺專屬頁的概念、缺交叉引用、可用 web 搜尋補的資料空缺。LLM 也擅長提議「該再查的問題」與「該找的來源」，讓 wiki 隨成長保持健康。
 
-三動作的模型是本 vault 架構；自動蒐集與健檢掃描有專屬 skill，其餘（wiki 綜合、查詢、修補）由 agent 手動執行：
-
-| 操作 | 做什麼 | 承載 |
-|---|---|---|
-| Ingest | 精選外部原料進 raw | 貼 URL 時 agent 手動抓存 `raw/fetched/`；Web Clipper／使用者手動放入 `raw/clippings/` |
-| Feed | YouTube 自動蒐集 | `vault-youtube-sync` 產出至 `feeds/youtube/`，不進 raw 或 wiki |
-| Ingest | 綜合維護進 wiki | 手動；來源限 `raw/` |
-| Query | 問 wiki，附引用綜合；好答案回存 wiki | 手動（原 `ob-read` 已移除） |
-| Lint | 掃 wiki 孤立頁、死連結、矛盾、缺欄位等 | `vault-lint`（findings 去重維護於 `schema/BACKLOG.md`，解決即移除；可唯一對應的死連結與 index 漏登錄自動修，其餘只報告、修補經使用者點頭——2026-07-10 依生態實證調整，見 wiki「LLM-Wiki-生態實作比較」；2026-07-13 由每日快照報告改制為持久 BACKLOG，並改名去掉 `-daily`：手動／排程共用一條流程，skill 本身不碰 git） |
-
-（`vault-updates-daily` 不在表內：它產出的是消費層 `feeds/updates/` 日報，不進 raw、不屬三動作。）
+三動作的模型是本 vault 架構。概念上：Ingest 與 Query 由 agent 手動執行；自動蒐集（`vault-youtube-sync`）與健檢掃描（`vault-lint`）有專屬 skill。**各動作走哪個流程／skill、寫入哪個資料夾、lint 的自動修範圍與改制沿革，都是可執行細節，單一來源在 [`CLAUDE.md`](../CLAUDE.md)（三動作、Skills 表），此處不重列。**
 
 ## Skill 升級訊號
 
