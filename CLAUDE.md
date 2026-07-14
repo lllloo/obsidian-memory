@@ -150,6 +150,8 @@ deep-research 或其他對抗式查證的結果回存 wiki 時：每條主張就
 
 **新增或修改 skill（含既有 skill 的 bug 修正、一致性調整）一律先問過使用者再動手，不比照 wiki 全權自主。** skill 改的是 agent 之後怎麼行動，影響範圍比一頁 wiki 內容大，值得每次都讓你點頭。
 
+**怎麼問**：一次一題、走決策樹逐一解依賴，每題附上推薦答案；事實能查（filesystem／既有 skill／工具）就自己查，只把**決策**擺給使用者；未達共識不動筆。
+
 - subagent 一律 `Agent` + `subagent_type: "general-purpose"`，prompt = `references/*.md` 全文 + 本次需求（不要叫 subagent 自己 Read）
 - 工具限制等規則寫在 references 正文，自包含、不引用命名 agent
 - 補 fallback 條款：「無 Agent 工具時主 agent 直接 Read references 跑同一流程」
