@@ -46,7 +46,7 @@ tags:
 
 原文是三層，本 vault 照搬：
 
-1. **`raw/`（原始來源）** — 你精選的原料：文章、剪貼、資料。**write-once**：人與 LLM 都可新增（貼 URL 由 LLM 擷取至 `fetched/`、Web Clipper 剪藏與使用者手動放檔至 `clippings/`），寫入後即凍結、不再修改，是事實來源。「不可變」約束的是修改，不是新增——與 Hermes bundled skill、nvk/llm-wiki 等主流實作一致（2026-07-10 查證跟進）。貼 URL 落地的 `fetched/` 另在 frontmatter 記正文 sha256，同 URL 重複 ingest 時比對以偵測來源漂移（偵測與標記用，raw 不回寫；借鏡 Hermes）。`Archive/` 封存區於 2026-07-11 因與 write-once 事實來源定位重複、長期零消化而移除。
+1. **`raw/`（原始來源）** — 你精選的原料：文章、剪貼、資料。**write-once**：人與 LLM 都可新增（貼 URL 由 LLM 擷取至 `fetched/`、Web Clipper 剪藏與使用者手動放檔至 `clippings/`），寫入後即凍結、不再修改，是事實來源。「不可變」約束的是修改，不是新增——與 Hermes bundled skill、nvk/llm-wiki 等主流實作一致（2026-07-10 查證跟進）。來源過時（凍結的 raw 落後於活來源）不在來源層設機制偵測，改由 lint 語意層＋git 歷史兜底，與 Karpathy／nvk／Astro-Han 多數派一致（曾採 sha256 漂移偵測，2026-07-14 移除，理由見 [[LLM-Wiki-生態實作比較]]）。`Archive/` 封存區於 2026-07-11 因與 write-once 事實來源定位重複、長期零消化而移除。
 2. **`wiki/`（活知識庫）** — LLM 生成與維護的 markdown：摘要頁、實體頁、概念頁、比較頁、綜合頁。**LLM 完全掌管**——建頁、改頁、刪頁、交叉引用、維護 index，你只負責讀。
 3. **schema** — 規範文件與操作記憶：root 的 [`CLAUDE.md`](../CLAUDE.md)（`AGENTS.md` 為其 symlink）+ 本檔 + `vault-map.md` + `MEMORY.md` + `BACKLOG.md`（lint 待處理清單，agent 每輪讀回來約束自身行為），告訴 LLM wiki 怎麼組織、慣例是什麼、Ingest/Query/Lint 各走什麼流程。這是把 LLM 從通用聊天機器人變成**有紀律的 wiki 維護者**的關鍵設定，你與 LLM 隨時間共同演進它。
 
@@ -126,7 +126,7 @@ wiki 長大後可能想要能更有效操作它的小工具，最明顯的是 **
 - **你**：蒐集來源、提出問題、判斷價值、從 wiki 撿選公開進 cards/topics、拍板 `git push`。
 - **AI**：讀、摘要、整理、交叉引用、歸檔、維護 wiki 一致性、結構健檢。
 
-AI 承擔重複、瑣碎、容易被延後的維護工作，自主維護 wiki（含刪頁）不需逐步拍板——這正是「維護成本趨近於零」的重點。唯一硬守門是 **`git push` 前要你同意**（見 [`CLAUDE.md`](../CLAUDE.md)）；另有一個流程級確認點——單次 ingest 觸及 10+ 頁先列清單問過（2026-07-10 借鏡 Hermes，防單來源大面積改動失控），那是確認節奏、不是守門。
+AI 承擔重複、瑣碎、容易被延後的維護工作，自主維護 wiki（含刪頁）不需逐步拍板——這正是「維護成本趨近於零」的重點。唯一硬守門是 **`git push` 前要你同意**（見 [`CLAUDE.md`](../CLAUDE.md)）；另有一個流程級確認點——單次 ingest 觸及超過 15 頁先列清單問過（2026-07-10 借鏡 Hermes，防單來源大面積改動失控；門檻訂在典型 10–15 頁之上，只攔異常大改），那是確認節奏、不是守門。
 
 ## 版本抗性
 

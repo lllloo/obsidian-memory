@@ -30,7 +30,7 @@ agent 自主維護 wiki（含改頁、刪頁），**不需逐步拍板**——�
 
 > **執行 `git push` 或任何遠端推送前，必須先取得使用者明確同意。**
 
-`push` 會把 `raw/`、`wiki/` 與 `feeds/`（皆不應經 Quartz 發佈，但仍存在於 GitHub repo）一併推上遠端，該次 diff review 由使用者把關。除此之外沒有其他**硬**守門：不做 cards/topics 治理、不做品質 gate、不做敏感資料自檢 gate、不設「不自動刪」限制。（另有一個流程級確認點：單次 ingest 觸及 10+ 頁先問，見 Ingest 一節——那是確認節奏，不是守門。）
+`push` 會把 `raw/`、`wiki/` 與 `feeds/`（皆不應經 Quartz 發佈，但仍存在於 GitHub repo）一併推上遠端，該次 diff review 由使用者把關。除此之外沒有其他**硬**守門：不做 cards/topics 治理、不做品質 gate、不做敏感資料自檢 gate、不設「不自動刪」限制。（另有一個流程級確認點：單次 ingest 觸及超過 15 頁先問，見 Ingest 一節——那是確認節奏，不是守門。）
 
 ## CWD 契約
 
@@ -50,7 +50,7 @@ wiki 的維護就是這三個動作，只在 `raw/` + `wiki/` 上進行；不碰
 
 進料管道（raw 為 write-once，落地後不改）：
 
-- **使用者貼 URL**：先 Grep `raw/` 的 `source:` 查同 URL 是否已落地。**已存在**：重抓內容算正文 sha256 與既有 `sha256` 欄位比對——一致就不重複建檔、直接更新對應 wiki 頁；不一致代表來源已變（source drift），raw 仍不回寫（write-once），改在對應 wiki 頁就地標註「來源內容已於 <日期> 變更」再往下 ingest 新內容。**未存在**才抓內容（優先 defuddle）轉 markdown，按 frontmatter 慣例（含 `source`、`published`、`sha256`）存 `raw/fetched/`，再往下 ingest。抓到的內容明顯殘缺（登入牆、付費牆、重 JS 頁）時**不落地 raw**——write-once 塞進殘件即凍結——改請使用者用 Web Clipper 剪藏。
+- **使用者貼 URL**：先 Grep `raw/` 的 `source:` 查同 URL 是否已落地。**已存在**：不重複建檔，直接更新對應 wiki 頁（重讀來源、與現有 wiki 內容對照，實質變了就在頁面就地更新——來源過時靠此處人眼＋lint 語意層兜底，不做雜湊比對）。**未存在**才抓內容（優先 defuddle）轉 markdown，按 frontmatter 慣例（含 `source`、`published`）存 `raw/fetched/`，再往下 ingest。抓到的內容明顯殘缺（登入牆、付費牆、重 JS 頁）時**不落地 raw**——write-once 塞進殘件即凍結——改請使用者用 Web Clipper 剪藏。
 - **Web Clipper 剪藏**、**使用者手動放檔**：存入 `raw/clippings/`。
 - **YouTube 自動同步**：`vault-youtube-sync` 只寫入 `feeds/youtube/`，不進 raw 或 wiki。
 
@@ -62,7 +62,7 @@ wiki 的維護就是這三個動作，只在 `raw/` + `wiki/` 上進行；不碰
 4. 補交叉引用：新頁至少連 1–2 個相關既有頁，避免孤立。
 5. **收尾輕量 lint（只檢當輪動到的頁，不掃全庫）**：交叉引用是否雙向、有無與既有主張矛盾、有無因新頁產生的孤立頁。當輪頁本就在 context 裡，成本趨近於零；這是擋「漂移」（頁面 ingest 時未同步交叉引用而無聲過時）的主要防線，全庫成長掃描仍不做。
 
-單一來源可牽動多頁。agent 自主寫，不逐頁拍板；使用者在旁讀、隨時導引重點即可。可一次一源慢慢做，也可批次 ingest。**例外閘門：單次 ingest 預計觸及（建/改/刪）10 頁以上時，先列頁面清單問過使用者再動筆**——防單來源大面積改動失控；10 頁以下照常全自主。
+單一來源可牽動多頁（典型 10–15 頁，屬正常，見 [`SYSTEM-DESIGN.md`](schema/SYSTEM-DESIGN.md)）。agent 自主寫，不逐頁拍板；使用者在旁讀、隨時導引重點即可。可一次一源慢慢做，也可批次 ingest。**例外閘門：單次 ingest 預計觸及（建/改/刪）超過 15 頁時，先列頁面清單問過使用者再動筆**——閘門刻意訂在典型範圍之上，只攔真正異常的大面積改動；15 頁以內照常全自主。
 
 ### Query（查詢）
 
@@ -110,13 +110,12 @@ wiki 的維護就是這三個動作，只在 `raw/` + `wiki/` 上進行；不碰
 | `updated` | 最後修改日期 | `YYYY-MM-DD` |
 | `source` | 來源 URL（網頁／影片連結；YouTube `index` 為頻道 URL）；回查用，非證據本體 | URL |
 | `published` | 原始內容發佈／上傳日，與 `created`（進 vault 日）區分；不明可留空 | `YYYY-MM-DD` 或空 |
-| `sha256` | 來源漂移偵測：正文（不含 frontmatter）的 sha256。僅 **agent 貼 URL 落地**的 Clippings 寫入；同 URL 重複 ingest 時重算比對，不一致即來源已變。偵測用，raw 本身不回寫 | 64 位十六進位字串 |
 | `parent` | Obsidian 圖譜用 wikilink，讓筆記出現在圖譜 | `"[[01.index]]"`；vault 內多個資料夾各有同名 `01.index.md`，重名歧義時用路徑限定（如 wiki 頁 `"[[wiki/01.index]]"`） |
 | `last_sync_id` | youtube-sync 增量同步 checkpoint，僅存於頻道 `01.index.md` | YouTube videoId |
 | `draft` | youtube-sync transcript 抓取失敗的占位待重抓標記；正常筆記不用 | `true`（省略 = 正常） |
 | `tags` | 主題分類 + 必要的功能性 tag | YAML list |
 
-一般筆記需有 `title`、`created`、`updated`、`tags`。`tags` 一律用 YAML list，不用 inline array 或字串。Clippings 中 **Web Clipper 產出**的 `description` 為自動帶入的外站文案，豁免 30–80 字與風格要求，agent 不回頭修；**agent 貼 URL 落地**的 Clippings 則照正常 `description` 規則寫。
+一般筆記需有 `title`、`created`、`updated`、`tags`。`tags` 一律用 YAML list，不用 inline array 或字串。Clippings 中 **Web Clipper 產出**的 `description` 為自動帶入的外站文案，豁免 30–80 字與風格要求，agent 不回頭修；**agent 貼 URL 落地**的 `fetched/` 來源則照正常 `description` 規則寫。
 
 修改 `.md` 內容時盡量同步 `updated` 為今日日期（`YYYY-MM-DD`），但不為此中斷流程。
 

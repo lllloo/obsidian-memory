@@ -2,7 +2,7 @@
 title: LLM Wiki 生態實作比較
 description: nvk、Hermes、Astro-Han 等 Karpathy LLM Wiki 實作與 Letta MemFS 等相鄰記憶系統的收斂設計、分歧點與實證證據對照
 created: 2026-07-10
-updated: 2026-07-11
+updated: 2026-07-14
 parent: "[[wiki/01.index]]"
 tags:
   - wiki
@@ -50,7 +50,8 @@ tags:
 ## 對本 vault 的含意（2026-07-10 拍板）
 
 - **保留**：三層、三動作、git push 硬守門、git log 代替 log.md、grep（wiki 破百頁再評估 qmd 類）。
-- **採用**：raw sha256 漂移偵測（只偵測標記、不回寫，與 write-once 相容）、單次 ingest 10+ 頁確認閘、lint 機械項窄版自動修。
+- **採用**：單次 ingest 超過 15 頁確認閘、lint 機械項窄版自動修。
+- **採用後移除**：raw sha256 漂移偵測（2026-07-10 採用）——**2026-07-14 移除**。原因：規則只寫「算正文 sha256」但**正文正規化未定義**，易假漂移（專業界 content hash 前必先剝空白／廣告／動態屬性正規化，手動協定做不到）；6 個 fetched 檔僅 2 個實際採用；重貼同 URL 屬低頻。來源過時改由 **lint 語意層＋git 歷史**兜底——此即 Karpathy／nvk／Astro-Han 多數派做法（四大實作僅 Hermes 做來源 hash）。既有 fetched 檔殘留的 sha256 值為 vestigial、不再讀取，raw write-once 不回頭刪。
 - **不採**：nvk 雙連結（讀者是 Obsidian＋agent，wikilink 解析無礙，代價大於收益）、Hermes contested frontmatter 欄位（現規模過度工程，首次真矛盾出現再議）、封閉 tag taxonomy（開放式沿用既有暫夠用）。
 
 ## 關聯
