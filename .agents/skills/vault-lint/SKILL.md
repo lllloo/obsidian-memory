@@ -35,7 +35,7 @@ python3 .agents/skills/vault-lint/scripts/lint_scan.py --days <semantic_days>
 
 4. **熔斷檢查**:掃描輸出**有任何 `ERROR:` 行、或缺 `SCAN:complete` 行** → 本輪視為掃描異常:**只新增、不退場**(不移除 BACKLOG 既有項),並在 `待你決定` 補一條高嚴重度項「機械掃描異常,本輪只新增不退場」(附錯誤摘要與首見日;去重規則同其他項,已在清單就不重複加)。異常排除後該項照常退場。正常則往下。
 5. 機械修補(僅限以下兩類可**唯一對應**者,自動修並記錄;其餘一律不修):
-   - `DEADLINK`:目標檔實際存在、只是名稱或路徑寫錯且**可唯一對應**(漏資料夾限定、大小寫差異)→ 直接修 wikilink。**目標不存在、多候選、或目標在 `feeds/` 等範圍外(wiki 不得引用 feeds)→ 不修,當「需判斷」項進 BACKLOG**。
+   - `DEADLINK`:目標檔實際存在、只是名稱或路徑寫錯且**可唯一對應**(漏資料夾限定、大小寫差異)→ 直接修該連結(wikilink 或 markdown 式路徑,依原文語法修)。**目標不存在、多候選、或目標在 `feeds/` 等範圍外(wiki 不得引用 feeds)→ 不修,當「需判斷」項進 BACKLOG**。
    - `INDEXGAP`:wiki 頁存在但未登錄 `wiki/01.index.md`,且該頁 frontmatter **有 `description` 可複製** → 補一行登錄。無 `description` 需生摘要 → 不自動修,進 BACKLOG。
    - 修補動到的頁同步 `updated` 為今日。
 6. **對 BACKLOG「待你決定」做 reconcile**(去重 + 退場):

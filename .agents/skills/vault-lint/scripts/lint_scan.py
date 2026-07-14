@@ -3,7 +3,7 @@
 
 在 vault root 執行；輸出 machine-readable lines（一行一發現），由主 agent 組裝報告：
 
-  DEADLINK:<file>:<target>   wikilink 指向不存在的檔案
+  DEADLINK:<file>:<target>   wikilink 或 markdown 式內部連結指向不存在的檔案
   ORPHAN:<file>              wiki 頁無任何入連（01.index 除外）
   FM:<file>:<問題>           frontmatter 缺必要欄位 / tags 非 YAML list
   TAG:<tag>:<count>          tag 盤點（同義異寫漂移由主 agent 判讀）
@@ -36,6 +36,7 @@ EXCLUDED_TOP = {
 REQUIRED_FIELDS = ("title", "created", "updated", "tags")
 
 WIKILINK_RE = re.compile(r"\[\[([^\[\]]+?)\]\]")
+MDLINK_RE = re.compile(r"\]\(([^)]+)\)")
 FENCE_RE = re.compile(r"^```.*?^```", re.MULTILINE | re.DOTALL)
 INLINE_CODE_RE = re.compile(r"`[^`\n]*`")
 
@@ -88,6 +89,25 @@ def extract_links(text: str) -> list:
     return targets
 
 
+def extract_md_targets(text: str) -> list:
+    """抽 markdown 式內部 .md/.base 連結目標；剝 code 後濾外部 URL 與純錨點。
+
+    治理層（CLAUDE.md、schema/*）的互連按慣例是 markdown 式而非 wikilink，
+    這些連結不在 extract_links 的偵測面內，故另抽並以相對路徑解析。
+    """
+    body = FENCE_RE.sub("", text)
+    body = INLINE_CODE_RE.sub("", body)
+    targets = []
+    for raw in MDLINK_RE.findall(body):
+        t = raw.strip()
+        if t.startswith(("http://", "https://", "mailto:", "#")):
+            continue
+        t = t.split("#", 1)[0].strip()
+        if t.endswith(".md") or t.endswith(".base"):
+            targets.append(t)
+    return targets
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--days", type=int, default=7, help="語意層取近 N 天變動的 wiki 頁")
@@ -116,13 +136,14 @@ def main() -> int:
             resolvable.add(rel[p])
 
     # ---- 逐檔抽連結、frontmatter ----
-    texts, fms, outlinks = {}, {}, {}
+    texts, fms, outlinks, mdlinks = {}, {}, {}, {}
     for p in universe:
         if p.suffix != ".md":
             continue
         texts[p] = read_text(p)
         fms[p] = parse_frontmatter(texts[p])
         outlinks[p] = extract_links(texts[p])
+        mdlinks[p] = extract_md_targets(texts[p])
 
     inbound: dict = {}
     for p, targets in outlinks.items():
@@ -136,15 +157,22 @@ def main() -> int:
     def top_of(p: Path) -> str:
         return rel[p].split("/", 1)[0]
 
-    # ---- DEADLINK：wiki/raw/schema 內指向不存在檔案的 wikilink ----
+    # ---- DEADLINK：wiki/raw/schema + root CLAUDE.md 內指向不存在檔案的連結 ----
+    # wikilink 用 basename 解析（Obsidian 慣例）；markdown 式內部連結用相對 containing file 的路徑解析。
+    def is_linkcheck_target(p: Path) -> bool:
+        return top_of(p) in ("wiki", "raw", "schema") or rel[p] == "CLAUDE.md"
+
     for p in texts:
-        if top_of(p) not in ("wiki", "raw", "schema"):
+        if not is_linkcheck_target(p):
             continue
         for t in outlinks[p]:
             key = t[:-3] if t.endswith(".md") else t
             if key in resolvable or key.split("/")[-1] in resolvable:
                 continue
             findings["DEADLINK"].append(f"DEADLINK:{rel[p]}:{t}")
+        for t in mdlinks[p]:
+            if not (p.parent / t).is_file():
+                findings["DEADLINK"].append(f"DEADLINK:{rel[p]}:{t}")
 
     # ---- ORPHAN：wiki 頁（01.index 除外）無任何入連 ----
     for p in texts:
@@ -224,7 +252,7 @@ def main() -> int:
     for key in ("DEADLINK", "ORPHAN", "FM", "RAWGAP", "INDEXGAP", "CHANGED"):
         print(f"SUMMARY:{key.lower()}={len(findings[key])}")
     print(f"SUMMARY:tags={len(tag_counts)}")
-    scanned_targets = sum(1 for p in texts if top_of(p) in ("wiki", "raw", "schema"))
+    scanned_targets = sum(1 for p in texts if is_linkcheck_target(p))
     print(f"SUMMARY:scanned={scanned_targets}")
     print("SCAN:complete")
     return 0
