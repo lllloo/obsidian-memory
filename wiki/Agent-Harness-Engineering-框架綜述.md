@@ -2,7 +2,7 @@
 title: Agent Harness Engineering 框架綜述
 description: 以 Anthropic 系列工程論述與 arXiv 原始碼級 taxonomy 為主幹的 harness 工程綜述：定義範疇、方法論主軸、實作橫向比較與 meta-harness 演進方向
 created: 2026-07-10
-updated: 2026-07-10
+updated: 2026-07-14
 parent: "[[wiki/01.index]]"
 tags:
   - ai-agent
@@ -29,7 +29,7 @@ Harness 是包裹在 LLM 外圍、負責「模型推理以外一切」的軟體�
 - **五種具名 workflow 編排模式**：prompt chaining、routing、parallelization（sectioning／voting）、orchestrator-workers、**evaluator-optimizer**（即 generator-evaluator 迴路的原型論述）。
 - **方法論立場**：據與數十個團隊合作經驗，最成功的實作不是用複雜框架，而是簡單、可組合的模式；由簡入繁。（強度：vendor 觀察性經驗宣稱，非受控實證。）
 
-來源：[Building Effective Agents](https://www.anthropic.com/research/building-effective-agents)
+來源：[Building Effective Agents](https://www.anthropic.com/engineering/building-effective-agents)——augmented LLM 基石、各模式適用時機、ACI／工具 prompt engineering 與兩個應用域等完整內容見 [[Building-Effective-Agents-Anthropic]]。
 
 ### 2. Multi-agent research system（2025-06）——orchestration 與經濟性
 

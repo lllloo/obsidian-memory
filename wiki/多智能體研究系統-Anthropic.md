@@ -108,6 +108,7 @@ Anthropic 官方工程文章，拆解 Claude 的 **Research 功能**如何從原
 ## 交叉引用
 
 - 綜述定位：[[Agent-Harness-Engineering-框架綜述]]——該頁已把本文的 token 經濟性與 long-horizon 技術納入 harness 工程主軸；本頁補上此文**完整的搜尋方法論與 agent 分工細節**。
+- 模式原型：[[Building-Effective-Agents-Anthropic]]——本系統是該文 **orchestrator-workers** workflow 模式的生產級落地（lead 動態拆解、平行 subagent、綜合結果）；可對照「模式原型」與「本頁實作細節」兩層。
 - 實證對照：[[AI-自主工作流的實證檢驗]]——本文的 resume/checkpoint、end-state 評測正屬其「驗證迴路／狀態持久化」的盤點範疇，可比對 vendor 敘事與獨立實證的落差。
 - 檢索範式對照：[[LLM-Wiki-知識管理模式]]——本文「動態多步搜尋 vs 靜態 RAG」與該頁「知識編譯一次持續維護 vs 每次查詢重檢索」是同一組張力的不同切面。
 - 記憶機制對照：[[Claude-Code-記憶系統六層比較]]——本文的 external memory／乾淨 context 新 subagent handoff，可對應其記憶分層。
