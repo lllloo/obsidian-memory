@@ -84,6 +84,27 @@ Anthropic 官方工程文章，拆解 Claude 的 **Research 功能**如何從原
 - **token 經濟性**：agent 約耗 chat 4 倍 token，多 agent 系統約 **15 倍**；只在「任務價值夠高」時划算。多數 coding 任務可平行性低，未必適合。（強度：Anthropic 生產遙測、屬自陳成本承認，被多方轉引無爭議。）
 - BrowseComp 分析中三因素解釋 95% 表現變異，**單是 token 用量就解釋 80%**，其餘為工具呼叫數與模型選擇。（強度：第一方分析，佐證「多 agent 靠分散 context 擴充平行推理容量」的架構主張。）
 
+## 實作層 prompt（cookbook）
+
+官方 [anthropic-cookbook](https://github.com/anthropics/anthropic-cookbook) 的 `patterns/agents/prompts/` 公開了這套系統的三個實際 prompt，補足部落格未寫的實作細節（逐字內容落地 `raw/fetched/Anthropic-Cookbook-Research-Prompts.md`）。（強度：官方 cookbook 範例 prompt，可能與生產版本有出入，但為第一方公開的實作參考。）
+
+**research_lead_agent（協調者）**——先判 query 類型再定計畫：
+- **query 三分類**：depth-first（單一問題多視角，平行探不同觀點／方法）、breadth-first（可拆成獨立子問題，平行各研究一塊）、straightforward（單一聚焦調查即可）。
+- depth-first 定 3–5 種方法論視角；breadth-first 列出所有可獨立研究的子任務並劃清邊界防重疊；**預設 3 個 subagent**，依複雜度增減。
+
+**research_subagent（搜尋工作者）**——即〈搜尋方法〉的實作：
+- **research budget**：規劃時先估工具呼叫預算，依複雜度分級（簡單 <5、中 ~5、難 ~10、極難 ≤15），超支觸限。
+- **OODA loop**（observe–orient–decide–act）迭代；**最少 5 次、至多 10 次**工具呼叫。
+- 查詢啟發式：**廣優於窄、每則查詢 <5 字**、太少再放寬／太多再收窄；核心迴圈 `web_search`（拿 snippet）→ `web_fetch`（取全文）；絕不重複相同查詢。
+- source quality：要求標註推測語氣（could／may、未來式）、辨識聚合站 vs 原始來源、衝突資訊帶回 lead 裁決。
+- **硬上限**：20 次工具呼叫、~100 來源，逼近就 `complete_task`。
+
+**citations_agent（引用歸屬）**——CitationAgent 的真正機制：
+- 輸入 `<synthesized_text>`（已綜合但未附引用的報告）＋來源文件；輸出 `<exact_text_with_citation>`。
+- **逐字不改**：內容 100% 相同、連空白都不增減——輸出去掉引用標記後與原文**逐字比對，不一致整份 reject**。
+- 引用準則：只在來源直接支持處加、引用「完整語意單元」而非片段、優先句尾、同句同源只標一次。
+- 印證了架構把「找資料」（subagent）與「掛引用」（citations agent）**拆成可獨立評測的關卡**，對應評測 rubric 的 citation accuracy。
+
 ## 交叉引用
 
 - 綜述定位：[[Agent-Harness-Engineering-框架綜述]]——該頁已把本文的 token 經濟性與 long-horizon 技術納入 harness 工程主軸；本頁補上此文**完整的搜尋方法論與 agent 分工細節**。
