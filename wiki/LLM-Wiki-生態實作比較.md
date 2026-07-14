@@ -60,3 +60,4 @@ tags:
 - 實作之一的完整實體頁：[[Hermes-Agent]]（其 `llm-wiki` skill 治理細節本頁已展開）
 - 記憶系統全景定位：[[Claude-Code-記憶系統六層比較]]——本頁的「markdown＋git 家族」對應其 Level 5，MemSearch 對應 Level 3（memsearch 同源）
 - 交換格式取捨：[[OKF-與本-vault-的相容性]]——OKF 的互通性價值保留給未來獨立匯出層，不影響本頁已拍板的不採雙連結決定。
+- 整合工具實作：[[第二大腦整合的現成工具與做法]]——把知識庫接進 coding agent／對外發佈的現成 MCP 工具與 injection 契約；其「wiki 比 RAG 更有深度」否決與本頁「compiled wiki 全面勝過 RAG 不成立」拍板互相印證。

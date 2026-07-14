@@ -2,7 +2,7 @@
 title: 第二大腦實踐與本 vault 優化
 description: 比較 PARA、Zettelkasten、Evergreen notes、LYT 與 Digital Garden，將其轉成此 LLM Wiki 的最小可行優化
 created: 2026-07-11
-updated: 2026-07-11
+updated: 2026-07-14
 parent: "[[wiki/01.index]]"
 tags:
   - pkm
@@ -87,3 +87,4 @@ Ingest 時，wiki 摘要的開頭或結尾至少回答一項：它改變了哪�
 - [[LLM-Wiki-知識管理模式]] — 說明為何 raw、wiki、schema 三層適合承接「概念累積」而非個人任務管理。
 - [[LLM-Wiki-生態實作比較]] — 從 agentic memory 角度檢視此 vault 的生態實作與維護風險。
 - [[跨專案第二大腦整合模式]] — 將本頁的知識／行動分工延伸到多 repo，比較 context manifest、ADR、聯邦查詢、軟體目錄與可攜 bundle 的採用門檻。
+- [[第二大腦整合的現成工具與做法]] — 本頁 Digital Garden 節的「選擇性公開」對應的發佈工具 Quartz Syncer 在該頁；另收餵 coding agent 的現成 MCP 工具。
