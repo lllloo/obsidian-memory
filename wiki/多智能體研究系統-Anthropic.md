@@ -14,7 +14,7 @@ tags:
 
 # 多智能體研究系統（Anthropic）
 
-Anthropic 官方工程文章，拆解 Claude 的 **Research 功能**如何從原型走到生產。核心是一套 **orchestrator-worker（協調者—工作者）多 agent 架構**：一個 lead agent 規劃並拆解任務，spawn 多個 subagent 平行搜尋，最後由 CitationAgent 補上引用。是第一方（vendor 自陳）的方法論來源，原文落地於 `raw/fetched/Anthropic-Multi-Agent-Research-System.md`。
+Anthropic 官方工程文章，拆解 Claude 的 **Research 功能**如何從原型走到生產。核心是一套 **orchestrator-worker（協調者—工作者）多 agent 架構**：一個 lead agent 規劃並拆解任務，spawn 多個 subagent 平行搜尋，最後由 CitationAgent 補上引用。是第一方（vendor 自陳）的方法論來源，原文落地於 [[Anthropic-Multi-Agent-Research-System]]。
 
 > 使用者問的「CitationAgent 關於搜尋的方法」其實橫跨兩件事：**搜尋由 subagent 執行**（見〈搜尋方法〉），**CitationAgent 不搜尋、只做引用歸屬**（見〈CitationAgent〉）。本頁兩者都收。
 
@@ -86,7 +86,7 @@ Anthropic 官方工程文章，拆解 Claude 的 **Research 功能**如何從原
 
 ## 實作層 prompt（cookbook）
 
-官方 [anthropic-cookbook](https://github.com/anthropics/anthropic-cookbook) 的 `patterns/agents/prompts/` 公開了這套系統的三個實際 prompt，補足部落格未寫的實作細節（逐字內容落地 `raw/fetched/Anthropic-Cookbook-Research-Prompts.md`）。（強度：官方 cookbook 範例 prompt，可能與生產版本有出入，但為第一方公開的實作參考。）
+官方 [anthropic-cookbook](https://github.com/anthropics/anthropic-cookbook) 的 `patterns/agents/prompts/` 公開了這套系統的三個實際 prompt，補足部落格未寫的實作細節（逐字內容落地 [[Anthropic-Cookbook-Research-Prompts]]）。（強度：官方 cookbook 範例 prompt，可能與生產版本有出入，但為第一方公開的實作參考。）
 
 **research_lead_agent（協調者）**——先判 query 類型再定計畫：
 - **query 三分類**：depth-first（單一問題多視角，平行探不同觀點／方法）、breadth-first（可拆成獨立子問題，平行各研究一塊）、straightforward（單一聚焦調查即可）。
