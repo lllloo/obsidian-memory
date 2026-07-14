@@ -37,7 +37,7 @@ Harness 是包裹在 LLM 外圍、負責「模型推理以外一切」的軟體�
 - 內部評測中 Opus 4（lead）＋Sonnet 4（subagents）比單一 Opus 4 agent **高 90.2%**，優勢集中於可平行探索的廣度型查詢。（強度：第一方內部評測、未經獨立複現，勿當通用結論引用。）
 - **token 經濟性**：agent 約耗 chat 的 4 倍 token，多 agent 系統約 15 倍。（強度：Anthropic 內部生產遙測、非產業平均；屬自陳成本承認，被多方轉引無爭議。）
 
-來源：[Multi-agent research system](https://www.anthropic.com/engineering/multi-agent-research-system)
+來源：[Multi-agent research system](https://www.anthropic.com/engineering/multi-agent-research-system)——完整搜尋方法論、CitationAgent 與 prompt 工程細節見 [[多智能體研究系統-Anthropic]]。
 
 ### 3. Context engineering（2025-09）——context 是有限資源
 

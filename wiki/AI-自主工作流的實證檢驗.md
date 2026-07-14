@@ -94,6 +94,7 @@ agent 能以 50% 可靠度完成的任務長度，過去六年約**每 7 個月�
 - **同作者約 10 個月後[部分收回](https://cognition.com/blog/multi-agents-working)**：特定結構的多 agent 可行——**寫入保持單線程、額外 agent 只提供智能建議而非直接行為**。可行模式：獨立 context 的 code review agent（宣稱平均每 PR 抓 2 個 bug、58% 為嚴重問題）。仍認為「平行寫入群體」多數場景不成立。
 - Anthropic 自身列出的多 agent 局限（同一手來源，誠實揭露）：非決定性難 debug、單步失敗導致軌跡發散、lead agent 無法在中途操控 subagent。
 - token 經濟性（**high**，vendor 自陳成本）：多 agent 約 15 倍 token，只在「問題夠大、方向夠獨立、答案夠值錢」時划算。
+- 此節多 agent 局限與 token 數字的第一方完整出處：[[多智能體研究系統-Anthropic]]（Anthropic Research 系統的搜尋方法論、CitationAgent 與生產可靠性）。
 
 ## 必須停止引用的「空氣數字」
 
