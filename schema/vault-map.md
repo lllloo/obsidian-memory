@@ -1,7 +1,7 @@
 ---
 title: Vault Map
 created: 2026-04-15
-updated: 2026-07-11
+updated: 2026-07-14
 tags:
   - index
 ---
@@ -17,6 +17,7 @@ tags:
 | `schema/SYSTEM-DESIGN.md` | 運作總綱：Karpathy LLM Wiki 心智模型、人/AI 分工、刻意不做的事、skill 升級判準 |
 | `schema/vault-map.md` | 本檔：全局導航與 tag 查詢地圖 |
 | `schema/MEMORY.md` | 有界跨 session 操作記憶：skill 升級訊號追蹤、待辦開放問題（非治理規則、非 wiki 內容；checked-in 進 repo，是 vault 唯一跨工具可攜的操作記憶載體） |
+| `schema/BACKLOG.md` | `vault-lint` 待處理清單：待你決定／已婉拒兩區，agent 每輪讀回來約束自身行為（去重、解決即移除；頁面引用一律反引號、不用 wikilink） |
 
 ## 資料夾索引
 
