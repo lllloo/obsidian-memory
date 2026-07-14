@@ -2,7 +2,7 @@
 title: AI 自主工作流的實證檢驗
 description: spec-driven、長時自主 loop、驗證迴路、狀態持久化四類做法的證據盤點——vendor 敘事與獨立實證的落差，以及必須停止引用的空氣數字
 created: 2026-07-10
-updated: 2026-07-10
+updated: 2026-07-14
 parent: "[[wiki/01.index]]"
 tags:
   - ai-agent
@@ -144,3 +144,4 @@ agent 能以 50% 可靠度完成的任務長度，過去六年約**每 7 個月�
 - [[Agent-Harness-Engineering-框架綜述]] — 業界（主要是 Anthropic）主張該怎麼設計 harness；本頁檢驗那些主張有多少證據。兩頁的證據限制一節可對照閱讀。
 - [[Claude-Code-記憶系統六層比較]] — 本頁「記憶檔會被忽略」「compaction 丟資訊」是該頁各層方案的共同風險。
 - [[LLM-Wiki-知識管理模式]] — 本 vault 自身即「沉澱回知識庫」那一步的實作。
+- [[Context-優先與多-agent-的適用邊界]] — 同屬「vendor 敘事 vs 獨立實證」路線；該頁的 UC Berkeley MAST 多 agent 失敗率（41–86.7%）可與本頁長任務可靠度崩落並讀。

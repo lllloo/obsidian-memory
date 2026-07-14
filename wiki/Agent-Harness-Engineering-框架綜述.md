@@ -112,3 +112,4 @@ Harness 是包裹在 LLM 外圍、負責「模型推理以外一切」的軟體�
 - [[Claude-Code-記憶系統六層比較]] — 本頁 context engineering 一節的三類技術（note-taking／agentic memory）正是該頁六層記憶方案的理論依據。
 - [[Hermes-Agent]] — 自我進化 agent 實作，其 skill 生成與有界記憶設計可對照本頁的 harness 構件範疇。
 - [[LLM-Wiki-知識管理模式]] — 本 vault 的設計原型，屬 structured note-taking／agentic memory 路線的知識庫形態。
+- [[Context-優先與多-agent-的適用邊界]] — **直接補救本頁「來源集中 Anthropic」的證據限制**：引入 Cognition（別建多 agent）與 UC Berkeley MAST 失敗實證兩個非 Anthropic 來源，界定多 agent 的適用邊界。
