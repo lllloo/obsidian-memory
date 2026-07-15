@@ -82,3 +82,4 @@ tags:
 - 交換格式取捨：[[OKF-與本-vault-的相容性]]——OKF 的互通性價值保留給未來獨立匯出層，不影響本頁已拍板的不採雙連結決定。
 - 整合工具實作：[[第二大腦整合的現成工具與做法]]——把知識庫接進 coding agent／對外發佈的現成 MCP 工具與 injection 契約；其「wiki 比 RAG 更有深度」否決與本頁「compiled wiki 全面勝過 RAG 不成立」拍板互相印證。
 - 路線定位：[[Agent-記憶兩大路線-知識庫與-memory-bank]]——本頁細比的各實作屬「A：知識資產複利」路線；該頁把 A 與「B：coding-agent memory bank」兩條目的不同的路線擺一起對比。
+- 編排層分野：[[pi-workflow-編排-harness-與本-vault-分野]]——本頁比的是知識層實作，該頁補的是 pi-workflow 這類工作流編排 harness 屬「編排層」、與本 vault 知識層的分野。
