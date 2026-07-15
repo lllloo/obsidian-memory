@@ -2,7 +2,7 @@
 title: Claude Code 記憶系統六層比較
 description: 從原生 CLAUDE.md 到跨工具統一大腦，六個層級的 AI 記憶方案沿「儲存位置」與「召回機制」兩軸拆解，含各層適用情境與升級門檻
 created: 2026-07-08
-updated: 2026-07-10
+updated: 2026-07-14
 parent: "[[wiki/01.index]]"
 tags:
   - claude-code
@@ -60,3 +60,4 @@ Level 1–3 資料夾結構相近、**可疊加同跑**；Level 5、6 屬不同�
 - coding agent 訂閱生態對照：[[LLM-方案定價與-coding-agent-比較]]（Claude Code 等三方案定價與模型天花板比較，與本頁的記憶系統選型同屬「怎麼選 coding agent」的決策脈絡）
 - harness 工程脈絡：[[Agent-Harness-Engineering-框架綜述]]——本頁六層記憶方案在 Anthropic context engineering 論述中對應 structured note-taking／agentic memory 技術，理論依據見該頁。
 - 記憶方案的共同風險實證：[[AI-自主工作流的實證檢驗]]——記憶檔過長會被 agent 忽略、compaction 靜默丟棄約束，是本頁各層方案共通的失效模式。
+- 按「目的」切的互補視角：[[Agent-記憶兩大路線-知識庫與-memory-bank]]——本頁按「儲存／召回」技術光譜切六層，該頁按「知識資產複利 vs 專案工作記憶」切兩路線，並補收本頁未正面收的 coding-agent memory bank（Cline 等）。
