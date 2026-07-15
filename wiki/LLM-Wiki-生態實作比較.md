@@ -35,9 +35,29 @@ tags:
 
 ## 明確分歧點（未收斂）
 
-- **log 載體**：Hermes 與 Astro-Han 用 append-only `log.md`（Hermes 超 500 條按年輪替，與 index 並列導航骨幹）；Letta MemFS 與本 vault 用 git 歷史。兩路線並存，取捨在「log.md 對不吃 git 的工具仍可讀」vs「git log 零維護成本」。
+- **log 載體**：Hermes 與 Astro-Han 用 append-only `log.md`（Hermes 超 500 條按年輪替，與 index 並列導航骨幹）；Letta MemFS 與本 vault 用 git 歷史。兩路線並存，取捨在「log.md 對不吃 git 的工具仍可讀」vs「git log 零維護成本」。（這只是「近期性怎麼承載」的一角，完整光譜見下節。）
 - **lint 修補權**：LLM-Wiki 論文的 Error Book 與 nvk 的 structural guardian 支持「瑣碎結構項自動修」；本 vault 原採純報告制，2026-07-10 起改窄版自動修（機械項放行、語意項仍報告制）。
 - **自主權邊界**：Hermes 全面較保守——封閉 tag taxonomy、矛盾交使用者複核（僅日期可判定的取代可自主裁決）、10+ 頁大改動先問；本 vault 走「唯一守門 git push、其餘全自主」。無實證分高下，屬治理風格選擇。
+
+## 近期/熱脈絡層的承載光譜（2026-07-14 掃描）
+
+上節的 log 載體之爭，其實是更大問題的一角：**消費端（尤其跨專案 coding agent）進來時先讀什麼、能不能只讀一小層就省 token**。這正是本 vault 評估中的 hot.md 構想（見 [[第二大腦整合的現成工具與做法]]）要解的問題。對 9 個實作做 mini-research（各一 subagent、單票附來源、**無對抗查證**），依「有無濃縮熱層」與「有無先讀熱檔→降級的省 token 契約」掃出五段光譜：
+
+| 承載方式 | 實作 | 機制 |
+|---|---|---|
+| 濃縮熱檔＋降級契約（完整 hot.md） | claude-obsidian | `hot.md` ~500 字，`hot→index→page` 降級，每 session＋ingest 刷新，另有 PostCompact hook 於 context 壓縮後重注 |
+| 熱層檔但不降級（每次讀全部） | Cline Memory Bank | `activeContext.md`＋`progress.md`，但契約是每任務無條件讀全部檔，刻意不省 token |
+| runtime warm-start（靠 hook／自我編輯，非靜態檔） | ai-memory、Letta | ai-memory 的 briefing／`_slots` 經 SessionStart hook 注入；Letta core memory／MemFS `system/` 由 runtime 自我編輯，內容偏**持久狀態**非近期快照 |
+| log／session digest（有近期性但非熱層） | nvk、Hermes | `log.md` 動作時序／`.sessions` digest，服務單會話續接或稽核，入口仍是 full index |
+| 無熱層（git／log 承載近期性） | Karpathy 原 gist、Astro-Han、DiffMem | 入口即 index；近期性靠 append-only `log.md` 或 git diff，無濃縮先讀層 |
+
+判讀：
+
+- **「熱脈絡層」這個載體是主流、非奇招**（Cline／ai-memory／Letta 皆有），但**「熱檔＋省 token 降級」的特定組合只有 claude-obsidian 一家**，且它依賴本 vault 沒有的 runtime（PostCompact hook、session 生命週期）。
+- **LLM-wiki 家族主流是用 log／git 承載近期性、不做濃縮熱檔**（Karpathy／Hermes／Astro-Han／nvk／DiffMem）——這是「不新增獨立熱檔、改在 index 開『最近變動』區塊或靠 git 承載」路線的家族背書。
+- 值得記進 backlog 的細節：claude-obsidian 的 **PostCompact hook（context 壓縮後重注熱脈絡）**——本 vault 目前無對應機制。
+
+**證據強度**：各實作機制皆有 primary source（repo／官方 docs）；但「有熱層 vs 持久狀態」「自覺先讀 vs hook 注入」的分類含詮釋成分，邊界案例（如 Letta core memory 算不算「近期」）可辯。**關鍵空白：無任一實作公布「熱層省多少 token」的實測數字**，hot.md 效益量級仍無實證。此節為單票 mini-research、未經對抗查證，強度低於本頁其餘經三票查證的主張。
 
 ## 實證證據（含強度標註）
 
