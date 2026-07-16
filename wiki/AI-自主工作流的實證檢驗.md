@@ -51,7 +51,7 @@ agent 能以 50% 可靠度完成的任務長度，過去六年約**每 7 個月�
 
 ### Spec-driven development
 
-流程結構（**high**，多來源一致）：Spec Kit 走 `constitution → specify → clarify → plan → tasks → analyze → implement`；Kiro 三檔（需求／設計／任務）最輕量；OpenSpec 定位為 Spec Kit 的輕量替代（propose → apply → archive）；Tessl 唯一朝 spec-as-source 走；BMAD 最重、最強調角色編排，走 Analyst→PM→PO→Architect→Scrum Master→Developer→QA 的多 agent 鏈（story files 在角色間交接），各角色是帶「互動指示」的 YAML 模板，靠 advanced elicitation（六頂帽子、五個 W、事後諸葛 hindsight-2020 等結構化提問法）逼 LLM 產出離開語料平均值，並把 PRD／架構大文件 shard 成小檔供下游 dev agent 按需載入、控 context 膨脹。
+流程結構（**high**，多來源一致）：Spec Kit 走 `constitution → specify → clarify → plan → tasks → analyze → implement`；Kiro 三檔（需求／設計／任務）最輕量；[[OpenSpec]] 定位為 Spec Kit 的輕量替代（完整五步 explore → propose → apply → sync → archive，見專屬頁）；Tessl 唯一朝 spec-as-source 走；BMAD 最重、最強調角色編排，走 Analyst→PM→PO→Architect→Scrum Master→Developer→QA 的多 agent 鏈（story files 在角色間交接），各角色是帶「互動指示」的 YAML 模板，靠 advanced elicitation（六頂帽子、五個 W、事後諸葛 hindsight-2020 等結構化提問法）逼 LLM 產出離開語料平均值，並把 PRD／架構大文件 shard 成小檔供下游 dev agent 按需載入、控 context 膨脹。
 
 **效果證據幾乎不存在**：找不到任何一個工具有隨機分組、多受試者、統計檢定的獨立效果驗證。唯一的量化論文（arXiv 2605.01160）**無對照組**、作者自承數字是「近似估計」（**low**）。
 
