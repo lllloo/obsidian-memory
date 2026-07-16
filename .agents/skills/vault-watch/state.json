@@ -1,0 +1,51 @@
+{
+  "anthropics/claude-code#6235": {
+    "type": "issue",
+    "state": "open",
+    "labels": [
+      "area:core",
+      "enhancement",
+      "memory"
+    ],
+    "title": "Feature Request: Support AGENTS.md.",
+    "last_official_id": null,
+    "last_official_at": null,
+    "checked_ts": "2026-07-16T01:30:37Z",
+    "checked_date": "2026-07-16"
+  },
+  "anthropics/claude-code#31005": {
+    "type": "issue",
+    "state": "open",
+    "labels": [
+      "area:core",
+      "duplicate",
+      "enhancement",
+      "memory"
+    ],
+    "title": "Support for AGENTS.md and .agents/skills/, the community has been asking since August 2025",
+    "last_official_id": null,
+    "last_official_at": null,
+    "checked_ts": "2026-07-16T01:30:37Z",
+    "checked_date": "2026-07-16"
+  },
+  "anomalyco/opencode#15617": {
+    "type": "issue",
+    "state": "open",
+    "labels": [],
+    "title": "[FEATURE]: Support inline skill invocation using $skill-name",
+    "last_official_id": null,
+    "last_official_at": null,
+    "checked_ts": "2026-07-16T01:30:37Z",
+    "checked_date": "2026-07-16"
+  },
+  "anomalyco/opencode#7846": {
+    "type": "issue",
+    "state": "open",
+    "labels": [],
+    "title": "[FEATURE]: Add /skills command to list and quick-invoke skills",
+    "last_official_id": null,
+    "last_official_at": null,
+    "checked_ts": "2026-07-16T01:30:37Z",
+    "checked_date": "2026-07-16"
+  }
+}

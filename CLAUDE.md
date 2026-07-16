@@ -22,6 +22,7 @@
 
 - `feeds/youtube/`：`vault-youtube-sync` 的自動同步筆記。完整影片筆記寫入後凍結；draft 占位可由 skill 覆寫重試，頻道 index、Base 與 checkpoint 可由 skill 維護。
 - `feeds/updates/`：`vault-updates-daily` 的消費性日報與來源設定。
+- `feeds/watch/`：`vault-watch` 的 GitHub issue/PR 追蹤看板（`01.index.md`）與變更 digest；追蹤清單以看板為準，不硬編碼。
 （`vault-lint` 不再產 feeds 產物：健檢的待處理清單改放 `schema/BACKLOG.md`，見下方 schema 一節。）
 
 ## 唯一守門：git push
@@ -141,6 +142,7 @@ deep-research 或其他對抗式查證的結果回存 wiki 時：每條主張就
 | `vault-youtube-sync` | YouTube 影片摘要同步至 `feeds/youtube/` |
 | `vault-updates-daily` | 日常更新彙整至 `feeds/updates/` |
 | `vault-lint` | wiki+raw 健檢，findings 維護於 `schema/BACKLOG.md`（機械可修項自動修、語意項只報告）；手動／排程共用同一流程，本身不執行 git 動作 |
+| `vault-watch` | 追蹤一批 GitHub issue/PR 狀態，`gh` 抓現況與快照比對，精選訊號（state 轉換、官方回應、label 變動）有變才回報並更新 `feeds/watch/` 看板；本身不執行 git 動作 |
 | `ask-vault` | 從**其他專案**向本 vault 發「請求/回應」查詢：起 headless Claude 在 vault root 走 Query（唯讀、附引用），答完即退、不需常駐 |
 
 > **`ask-vault` 與上三者不同**：它是**全域 skill**（源碼 checked-in 於 `.agents/skills/ask-vault/`，symlink 到 `~/.claude/skills/` 供所有專案自動載入；無 PATH 指令，SKILL.md 以文字說明引導 agent 取 skill 的 Base directory 組出絕對路徑、以 `python3` 執行 bundled 的 `scripts/ask_vault.py`（純 stdlib 跨平台，非綁 bash；不寫死路徑亦不用 Claude 專屬變數）），由**別的專案**呼叫、cwd 不在 vault root，故**不受下方 CWD 契約直接約束**——契約改由腳本以 vault root 為 subprocess cwd 執行、並檢查哨兵檔 `schema/vault-map.md` 滿足。上三者則是只在 vault 內執行的維護型 skill。此外它是 **cross-CLI**：腳本以 caller-match（`CLAUDECODE`／`CODEX_SANDBOX`／`OPENCODE*` 環境標記，`ASK_VAULT_BACKEND` 可覆寫）偵測呼叫端,分派到 claude／codex／opencode 各自的 headless 唯讀查詢（三者皆已端到端驗證;codex／opencode 的進度走 stderr、答案走 stdout,以 stderr 導流取乾淨輸出,codex 另用 `-o` 只取最終訊息)。**注意**：codex 與 opencode 共用同一 ChatGPT oauth,背靠背呼叫會互相輪替作廢 refresh token——實際使用因 caller-match 一次只在一個工具內、不衝突;要並用需給 opencode 獨立憑證。
