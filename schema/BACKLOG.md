@@ -61,6 +61,39 @@ vault 健檢的**待處理清單**,由 `vault-lint` skill 每輪讀寫(手動或
 
 _(2026-07-16 語意層 13 項——2 過時、9 交叉引用缺口、2 低優先群組——經使用者「全都修」指示已全數修補落地,退場。)_
 
+### 2026-07-16 語意層例行審查(排程,近 10 頁)
+
+**矛盾**
+
+- [高] 矛盾 | `wiki/多智能體研究系統-Anthropic.md` | 交叉引用區描述 `wiki/pi-workflow-編排-harness-與本-vault-分野.md` 為「foreach/reduce 對照 orchestrator-worker」,但該頁本文主張其較貼近 `dynamic` pattern(子任務非預先定義、動態委派),兩頁對同一技術判斷描述相反。建議修正本頁交叉引用敘述以符合對方實際主張
+- [中] 矛盾 | `wiki/第二大腦整合的現成工具與做法.md` | 第33行將 MCP 工具接入 vault 框定為「若採用」的條件式,第47行卻斷言本 vault 已有「MCP 可達(直連層)」,與現況(僅 `ask-vault` headless 查詢、非 MCP protocol)不符。建議統一條件語氣或註明尚未落地
+- [中] 矛盾 | `wiki/設計品質的可量化檢測.md` | 第17/36行將「AI agent 模擬使用者」與其餘三項純工具量測並列為「非 LLM 自評」,但該項本質仍是 LLM 判斷,未呼應鄰接頁 `wiki/AI-自主工作流的實證檢驗.md` 對 LLM-as-judge self-preference bias 的提醒。建議補說明規避同源偏袒風險或收斂措辭
+
+**引用缺口**
+
+- [中] XREF | `wiki/LLM-Wiki-知識管理模式.md` | 「關聯」節未回連 `wiki/第二大腦整合的現成工具與做法.md`(引用本頁定義三層架構原型)與 `wiki/多智能體研究系統-Anthropic.md`(引用本頁比較檢索範式),兩處皆單向
+- [中] XREF | `wiki/AI-自主工作流的實證檢驗.md` | 第 48、132 行「五步迴圈」一詞全文未定義、無其他頁連結說明所指。建議補定義或連到 `wiki/Agent-Harness-Engineering-框架綜述.md` 對應迴圈(需核對步數是否吻合)
+- [中] XREF | `wiki/Building-Effective-Agents-Anthropic.md` | `wiki/pi-workflow-編排-harness-與本-vault-分野.md` 兩處引用本頁定位其 workflows/agents 二分法框架,但本頁「交叉引用」清單未回連該頁
+- [低] XREF | `wiki/Agent-Harness-Engineering-框架綜述.md` | 「相關頁」清單未回連 `wiki/pi-workflow-編排-harness-與本-vault-分野.md`(該頁引用本頁作編排職能定位依據)
+- [低][低信心] XREF | `wiki/AI-自主工作流的實證檢驗.md` | 「相關頁」對 pi-workflow 頁的摘述用詞與該頁實際引用語境略有落差,建議覆核措辭精準度
+- [低][低信心] XREF | `wiki/第二大腦方法論比較.md` | 「侷限與存疑」未解問題句與 `wiki/第二大腦整合的現成工具與做法.md` 證據強度小節實質為同一問題最新印證,但未互相點出
+
+**過時／時間脆弱**
+
+- [低] STALE | `wiki/AI-自主工作流的實證檢驗.md` | 第 54 行稱 OpenSpec 為「完整五步」,但 `wiki/OpenSpec.md` 明確標 explore 為可選,措辭易誤導為五步皆必經
+- [低] STALE | `wiki/跨專案第二大腦整合模式.md` | 第45行「不建獨立熱檔」決定敘述未標日期,鄰接頁(`wiki/LLM-Wiki-生態實作比較.md`、`wiki/第二大腦整合的現成工具與做法.md`)皆標「2026-07-15 拍板」
+- [低] STALE | `wiki/多智能體研究系統-Anthropic.md` | 第23行 200K token 上限數字未標時間前提;同頁模型配置已做「2025-06 快照」時間抗性標註,唯此數字未同等處理
+- [中][低信心編輯判斷] STALE | `wiki/Building-Effective-Agents-Anthropic.md` | SWE-bench Verified 佐證「輸出品質可客觀衡量」缺對 OpenAI 審計缺陷率(59.4% 有實質缺陷、SWE-bench-Live 成功率腰斬)的強度標註呼應,依 CLAUDE.md 寫入慣例第 6 條可能需就地補註
+- [低][低信心] STALE | `wiki/OpenSpec.md` | 第132行「31 個工具中 28 個」為快照數字,頁面已標「30+ 為下界」部分緩解,殘留風險低
+- [低][低信心] STALE | `wiki/pi-workflow-編排-harness-與本-vault-分野.md` | 「6 種 stage pattern」「4 個內建命名流程」等功能計數未標查核時間
+- [低][低信心] STALE | `wiki/第二大腦方法論比較.md` | Hermes 雙軸類比(2026-07-09 驗證)未提及該頁 2026-07-14 新增的 Kanban board 任務佇列子系統
+- [低][低信心] STALE/疑慮 | `wiki/第二大腦整合的現成工具與做法.md`↔`wiki/LLM-Wiki-生態實作比較.md` | 兩輪日期主題皆不同的 deep-research,統計數字(22 來源、25 條主張)完全相同,不排除巧合,亦可能複製前次框架未更新;建議之後回查原始記錄核實
+- [低][低信心] STALE | `wiki/多智能體研究系統-Anthropic.md` | 「一次 spin up 3–5 個 subagent」與分級表「複雜研究 10+ 個」數字用語有張力,可能非真矛盾,屬一般情境 vs 上限情境的措辭問題
+
+本輪已重審並確認**仍開啟、內容不變**:`wiki/跨專案第二大腦整合模式.md`↔`wiki/OKF-與本-vault-的相容性.md` XREF、`wiki/OpenSpec.md`↔`wiki/Agent-Harness-Engineering-框架綜述.md` XREF、`wiki/設計品質的可量化檢測.md`↔`wiki/AI-生成流程圖與架構圖.md` XREF(三者皆列於本節上方「wiki 織網缺口」段落)。
+
+本輪截斷:20 頁 `CHANGED`(7 天內有 git 變動)依 `semantic_page_cap: 10` 只審最近變動的 10 頁;略過 10 頁(`wiki/第二大腦實踐與本-vault-優化.md`、`wiki/Context-優先與多-agent-的適用邊界.md`、`wiki/Agent-Harness-Engineering-框架綜述.md`、`wiki/Hermes-Agent.md`、`wiki/OKF-與本-vault-的相容性.md`、`wiki/LLM-方案定價與-coding-agent-比較.md`、`wiki/LLM-Wiki-知識管理模式.md`、`wiki/LLM-Wiki-生態實作比較.md`、`wiki/Claude-Code-記憶系統六層比較.md`、`wiki/Agent-記憶兩大路線-知識庫與-memory-bank.md`)留待下輪。
+
 ## 已婉拒
 
 _(目前無項目)_
