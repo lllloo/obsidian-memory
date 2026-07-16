@@ -25,8 +25,6 @@ vault 健檢的**待處理清單**,由 `vault-lint` skill 每輪讀寫(手動或
 
 ## 待你決定
 
-- [中] 過時 | `wiki/第二大腦整合的現成工具與做法.md` | hot.md 一節仍稱「尚未拍板採用,列為可評估項」,但同批動到的 `wiki/跨專案第二大腦整合模式.md` 與 `wiki/01.index.md`「最近更新」已記錄 2026-07-15 拍板「方案 A」(index 最近更新區塊承載近期性、刻意不建獨立 hot.md)。建議把該節措辭更新為已拍板結果(不採用 hot.md),並回連決定出處。首見日 2026-07-15
-- [低] 引用缺口 | `wiki/Agent-記憶兩大路線-知識庫與-memory-bank.md` | 關聯區塊稱 memory bank 檔(如 activeContext)細節「在該頁(`wiki/第二大腦整合的現成工具與做法.md`)與 `wiki/LLM-Wiki-生態實作比較.md`」,但前者實際未涵蓋 activeContext/Cline 六檔細節(只有後者的「近期熱脈絡層承載光譜」節有)。建議修正該指向,只留 `wiki/LLM-Wiki-生態實作比較.md`。首見日 2026-07-15
 - [低] RAWGAP | `raw/clippings/` | 剩 2 篇真未消化新料待 ingest:`Claude-Code-Best-Practice-—-Threads-Carousel-Cards`(82 條最佳實務,參考型清單)、`The-Official-BMad-Method-Masterclass`(BMAD 完整 IDE 工作流;主題部分已散見 `wiki/AI-自主工作流的實證檢驗.md` 的 spec-driven 一節,ingest 前先評增量)。2026-07-15 已處理原 5 篇中 3 篇:`AI-做的設計` ingest 成 `wiki/設計品質的可量化檢測.md`;`Every-Claude-Code-Memory-System`(→`wiki/Claude-Code-記憶系統六層比較.md`)、`Harness-Engineering`(→`wiki/Agent-Harness-Engineering-框架綜述.md`)、`Copilot...spec-kit`(→`wiki/AI-自主工作流的實證檢驗.md` spec-driven 節)三篇主題已由一手來源頁深涵蓋、二次中文導讀無新主張,判定已消化不重 ingest。原項首見 2026-07-13
 
 ## 已婉拒

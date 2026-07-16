@@ -2,7 +2,7 @@
 title: Agent 記憶的兩大路線：知識庫與 memory bank
 description: 以「知識資產複利」與「專案工作記憶」兩種目的，對比 LLM-wiki 編譯式知識庫與 coding-agent memory bank 兩條 markdown 記憶路線的結構、讀取契約與適用場景
 created: 2026-07-14
-updated: 2026-07-14
+updated: 2026-07-16
 parent: "[[wiki/01.index]]"
 tags:
   - ai-agent
@@ -74,4 +74,4 @@ tags:
 - [[Claude-Code-記憶系統六層比較]] — 記憶方案按「儲存／召回」的技術光譜（Mem0／MemPalace／OpenBrain…）；與本頁按「目的」切的兩路線互補、切軸不同。
 - [[LLM-Wiki-知識管理模式]] — A 路線的原型定義（raw/wiki/schema 三層與三動作）。
 - [[跨專案第二大腦整合模式]] — 本頁「什麼進 vault、什麼留專案」的邊界，正是該頁知識／行動單向交接的展開。
-- [[第二大腦整合的現成工具與做法]] — B 路線的 memory bank 檔（如 activeContext）與「近期熱脈絡層」承載方式的細節在該頁與 [[LLM-Wiki-生態實作比較]]。
+- [[第二大腦整合的現成工具與做法]] — B 路線「近期熱脈絡層」（hot.md）承載方式的現成工具與拍板在該頁；memory bank 六檔（如 activeContext）的結構細節則在 [[LLM-Wiki-生態實作比較]]，非本連結頁涵蓋。
