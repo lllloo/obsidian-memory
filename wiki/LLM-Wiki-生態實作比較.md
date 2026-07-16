@@ -2,7 +2,7 @@
 title: LLM Wiki 生態實作比較
 description: nvk、Hermes、Astro-Han 等 Karpathy LLM Wiki 實作與 Letta MemFS 等相鄰記憶系統的收斂設計、分歧點與實證證據對照
 created: 2026-07-10
-updated: 2026-07-14
+updated: 2026-07-16
 parent: "[[wiki/01.index]]"
 tags:
   - wiki
@@ -41,7 +41,7 @@ tags:
 
 ## 近期/熱脈絡層的承載光譜（2026-07-14 掃描）
 
-上節的 log 載體之爭，其實是更大問題的一角：**消費端（尤其跨專案 coding agent）進來時先讀什麼、能不能只讀一小層就省 token**。這正是本 vault 評估中的 hot.md 構想（見 [[第二大腦整合的現成工具與做法]]）要解的問題。對 9 個實作做 mini-research（各一 subagent、單票附來源、**無對抗查證**），依「有無濃縮熱層」與「有無先讀熱檔→降級的省 token 契約」掃出五段光譜：
+上節的 log 載體之爭，其實是更大問題的一角：**消費端（尤其跨專案 coding agent）進來時先讀什麼、能不能只讀一小層就省 token**。這正是 hot.md 這類獨立熱檔（見 [[第二大腦整合的現成工具與做法]]）要解的問題。本 vault 掃過整條承載光譜後，**最終決定不建獨立熱檔**（2026-07-15 拍板）——近期脈絡改由 `wiki/01.index.md` 的「最近更新」滾動區塊承載（有界、保留最近 5 筆），走的正是下方 LLM-wiki 家族主流的「不新增獨立熱檔、改在 index 開近期區塊或靠 git 承載」路線。對 9 個實作做 mini-research（各一 subagent、單票附來源、**無對抗查證**），依「有無濃縮熱層」與「有無先讀熱檔→降級的省 token 契約」掃出五段光譜：
 
 | 承載方式 | 實作 | 機制 |
 |---|---|---|
@@ -83,3 +83,5 @@ tags:
 - 整合工具實作：[[第二大腦整合的現成工具與做法]]——把知識庫接進 coding agent／對外發佈的現成 MCP 工具與 injection 契約；其「wiki 比 RAG 更有深度」否決與本頁「compiled wiki 全面勝過 RAG 不成立」拍板互相印證。
 - 路線定位：[[Agent-記憶兩大路線-知識庫與-memory-bank]]——本頁細比的各實作屬「A：知識資產複利」路線；該頁把 A 與「B：coding-agent memory bank」兩條目的不同的路線擺一起對比。
 - 編排層分野：[[pi-workflow-編排-harness-與本-vault-分野]]——本頁比的是知識層實作，該頁補的是 pi-workflow 這類工作流編排 harness 屬「編排層」、與本 vault 知識層的分野。
+- 跨 repo 應用：[[跨專案第二大腦整合模式]]——把本頁「近期/熱脈絡層承載光譜」的結論（不建獨立熱檔、改用 index 有界近期區塊）延伸到跨 repo 知識交接模式，並與本頁共同承載 hot.md 不採用的取捨理由。
+- PKM 實踐面：[[第二大腦實踐與本-vault-優化]]——從個人知識管理（PKM）實踐角度、以 agentic memory 視角連向本頁的維護風險與收斂設計討論。

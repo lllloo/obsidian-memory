@@ -2,7 +2,7 @@
 title: 多智能體研究系統（Anthropic）
 description: Anthropic Research 功能的 orchestrator-worker 多 agent 架構解剖：subagent 平行動態搜尋、CitationAgent 引用歸屬、prompt 工程八原則、LLM-as-judge 評測與生產可靠性
 created: 2026-07-14
-updated: 2026-07-14
+updated: 2026-07-16
 source: "https://www.anthropic.com/engineering/multi-agent-research-system"
 published: 2025-06-13
 parent: "[[wiki/01.index]]"
@@ -25,6 +25,8 @@ Anthropic 官方工程文章，拆解 Claude 的 **Research 功能**如何從原
 3. 每個 Subagent 獨立跑 web 搜尋、用 **interleaved thinking** 評估工具結果，把發現回傳給 lead。
 4. Lead 綜合結果，判斷是否需要更多研究——需要就再建 subagent 或調整策略，形成**迭代 loop**。
 5. 資訊足夠後退出 loop，把所有發現交給 **CitationAgent** 處理引用，最終帶引用的結果回傳使用者。
+
+（上述 lead 用 Claude Opus 4、subagent 用 Claude Sonnet 4 是**原文 2025-06 當時記載的配置快照**，非架構的行為分水嶺——架構重點在 orchestrator-worker 的分工與平行，不在具體版本號；模型換代後配置預期會變，確切版本以官方文章為準。）
 
 對比傳統 **RAG 的靜態檢索**（取與查詢最相似的 chunk 一次生成），此架構是**動態多步搜尋**：邊找邊調整、依新發現轉向、分析後才形成高品質答案。
 
@@ -113,3 +115,4 @@ Anthropic 官方工程文章，拆解 Claude 的 **Research 功能**如何從原
 - 實證對照：[[AI-自主工作流的實證檢驗]]——本文的 resume/checkpoint、end-state 評測正屬其「驗證迴路／狀態持久化」的盤點範疇，可比對 vendor 敘事與獨立實證的落差。
 - 檢索範式對照：[[LLM-Wiki-知識管理模式]]——本文「動態多步搜尋 vs 靜態 RAG」與該頁「知識編譯一次持續維護 vs 每次查詢重檢索」是同一組張力的不同切面。
 - 記憶機制對照：[[Claude-Code-記憶系統六層比較]]——本文的 external memory／乾淨 context 新 subagent handoff，可對應其記憶分層。
+- 編排 pattern 對照：[[pi-workflow-編排-harness-與本-vault-分野]]——該頁以 foreach/reduce 的 fan-out／匯總同構，把 pi-workflow 的編排 pattern 對照本頁的 orchestrator-worker 架構（lead 拆解、平行 subagent、reduce 綜合）。

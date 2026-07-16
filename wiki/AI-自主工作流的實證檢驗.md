@@ -91,7 +91,7 @@ agent 能以 50% 可靠度完成的任務長度，過去六年約**每 7 個月�
 ### 多 agent：連提出者都自我修正
 
 - Cognition 的 [Don't Build Multi-Agents](https://cognition.com/blog/dont-build-multi-agents)（2025-06，Walden Yan）：「Actions carry implicit decisions, and conflicting decisions carry bad results」，主張單線程線性 agent。
-- **同作者約 10 個月後[部分收回](https://cognition.com/blog/multi-agents-working)**：特定結構的多 agent 可行——**寫入保持單線程、額外 agent 只提供智能建議而非直接行為**。可行模式：獨立 context 的 code review agent（宣稱平均每 PR 抓 2 個 bug、58% 為嚴重問題）。仍認為「平行寫入群體」多數場景不成立。
+- **同作者約一年後[部分收回](https://cognition.com/blog/multi-agents-working)**：特定結構的多 agent 可行——**寫入保持單線程、額外 agent 只提供智能建議而非直接行為**。可行模式：獨立 context 的 code review agent（宣稱平均每 PR 抓 2 個 bug、58% 為嚴重問題）。仍認為「平行寫入群體」多數場景不成立。
 - Anthropic 自身列出的多 agent 局限（同一手來源，誠實揭露）：非決定性難 debug、單步失敗導致軌跡發散、lead agent 無法在中途操控 subagent。
 - token 經濟性（**high**，vendor 自陳成本）：多 agent 約 15 倍 token，只在「問題夠大、方向夠獨立、答案夠值錢」時划算。
 - 此節多 agent 局限與 token 數字的第一方完整出處：[[多智能體研究系統-Anthropic]]（Anthropic Research 系統的搜尋方法論、CitationAgent 與生產可靠性）。
@@ -146,3 +146,5 @@ agent 能以 50% 可靠度完成的任務長度，過去六年約**每 7 個月�
 - [[LLM-Wiki-知識管理模式]] — 本 vault 自身即「沉澱回知識庫」那一步的實作。
 - [[Context-優先與多-agent-的適用邊界]] — 同屬「vendor 敘事 vs 獨立實證」路線；該頁的 UC Berkeley MAST 多 agent 失敗率（41–86.7%）可與本頁長任務可靠度崩落並讀。
 - [[設計品質的可量化檢測]] — 本頁「驗證用 agent 改不到的東西」在設計領域的具體落地：眼動預測、WCAG、CSS 統計四項皆為 agent 無法從內部造假的外部 evaluator，是「加一個 agent 無法從內部滿足的判準」的正面範例。
+- [[Building-Effective-Agents-Anthropic]] — 本頁 evaluator-optimizer 迴路與 LLM-as-judge self-preference 的討論，檢驗的正是該頁提出的 evaluator-optimizer 模式在證據上的邊界（同家族 evaluator 恐系統性偏袒，需跨模型或搭可執行測試）。
+- [[pi-workflow-編排-harness-與本-vault-分野]] — 該頁引本頁的實證（vendor 敘事與獨立證據落差、驗證迴路可被 agent 從內部滿足）作為「不引入命名 workflow 機制」反過度工程紀律的依據。

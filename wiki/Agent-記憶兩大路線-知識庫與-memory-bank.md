@@ -20,7 +20,7 @@ tags:
 
 ## 路線 A：LLM-wiki／編譯式知識庫
 
-**目的**：把知識**編譯一次、持續維護**成互聯 markdown wiki，取代 RAG 每次重檢索——「累積並複利」。三層（raw 只讀／wiki LLM 全權／schema）＋三動作（Ingest／Query／Lint），query-first、raw write-once、markdown 為事實來源。代表：Karpathy 原 gist、nvk、Hermes llm-wiki skill、Astro-Han、本 vault。
+**目的**：把知識**編譯一次、持續維護**成互聯 markdown wiki，取代 RAG 每次重檢索——「累積並複利」。三層（raw 只讀／wiki LLM 全權／schema）＋三動作（Ingest／Query／Lint），query-first、raw write-once、markdown 為事實來源。代表：Karpathy 原 gist、nvk、[[Hermes-Agent]] 官方內建的 llm-wiki skill（把 Karpathy 模式複刻成產品化實例）、Astro-Han、本 vault。
 
 細節見 [[LLM-Wiki-知識管理模式]]（原型）與 [[LLM-Wiki-生態實作比較]]（各實作＋實證與風險：多跳 QA 對 RAG 有 preprint 級優勢、但大規模盲目編譯有 53–60% 災難失敗率、錯誤複利是核心風險）。
 

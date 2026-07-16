@@ -2,7 +2,7 @@
 title: pi-workflow 編排 harness 與本 vault 的分野
 description: pi-workflow 這類命名工作流編排器定性為「編排層」prior art，說明它與本 vault「知識組織層」的分野，及為何其命名 workflow 目錄機制不宜引入
 created: 2026-07-15
-updated: 2026-07-15
+updated: 2026-07-16
 source: "https://github.com/AgwaB/pi-workflow"
 published: ""
 parent: "[[wiki/01.index]]"
@@ -22,9 +22,9 @@ tags:
 
 - **6 種 stage pattern**：`single`（單步）／`foreach`（扇出）／`reduce`（綜合）／`loop`（有界重複）／`dag`（巢狀圖）／`dynamic`（自適應編排）。
 - **4 個內建命名流程**：deep-research（查證＋附引用建議）、deep-review（多視角 code/design 審查）、spec-review（需求可追溯）、impact-review（變更風險分析）。
-- run artifact 存 `.pi/workflows/`，可檢視可續跑；`workflow-guide` skill 供自建專案流程的 scaffold＋validate。安裝需 Node ≥22.19。
+- run artifact 存 `.pi/workflows/`，可檢視可續跑；`workflow-guide` skill 供自建專案流程的 scaffold＋validate。安裝需 Node 22+（確切 minor/patch 版以官方 changelog 為準）。
 
-用 [[Building-Effective-Agents-Anthropic]] 的二分法定位：pi-workflow 屬 **workflow**（LLM 與工具走**預先定義的程式碼路徑**、路徑固定可預測），不是動態自主的 agent。其 stage pattern 直接對應該文五種編排模式（`foreach`＋`reduce` = parallelization／orchestrator-workers），與 [[多智能體研究系統-Anthropic]] 的 orchestrator-worker 同構。
+用 [[Building-Effective-Agents-Anthropic]] 的二分法定位：pi-workflow 屬 **workflow**（LLM 與工具走**預先定義的程式碼路徑**、路徑固定可預測），不是動態自主的 agent。其 stage pattern 直接對應該文五種編排模式：`foreach`＋`reduce` 是**路徑固定**的 parallelization（扇出項目預先定義、再綜合），而 [[多智能體研究系統-Anthropic]] 的 orchestrator-worker 關鍵在**子任務非預先定義、由主控動態委派**，較貼近 pi-workflow 的 `dynamic`（自適應編排）pattern，不是 `foreach`＋`reduce`。
 
 ## 兩層分野
 
@@ -37,7 +37,7 @@ tags:
 
 **知識層無可借**：本 vault 的價值在知識編譯一次後持續互聯維護（複利資產），pi-workflow 完全不處理這件事。
 
-**編排層已被覆蓋**：stage graph（扇出→驗證→綜合、loop-until、resume）在本環境已有——(1) Claude Code 內建 **Workflow 工具**本身就是 stage graph 編排器（`pipeline`／`parallel`、loop-until-dry、對抗式 verify、`resumeFromRunId`），功能上是 pi-workflow 的對應甚至超集；(2) 具體流程也已 codify 成 skill：`deep-research`（扇出＋多票對抗查證＋綜合）≈ pi-workflow 的 deep-research，`mini-research`（一項目一 subagent、成本可控）是它沒有的省成本變體。
+**編排層已被覆蓋**：stage graph（扇出→驗證→綜合、loop-until、resume）在本環境已有——(1) Claude Code 內建 **Workflow 工具**本身就是 stage graph 編排器：能做 stage graph 串接、fan-out/pipeline 平行、loop-until 迴圈、對抗式 verify，run 可 resume 續跑（介面識別名隨版本可變），功能上是 pi-workflow 的對應甚至超集；(2) 具體流程也已 codify 成 skill：`deep-research`（扇出＋多票對抗查證＋綜合）≈ pi-workflow 的 deep-research，`mini-research`（一項目一 subagent、成本可控）是它沒有的省成本變體。
 
 ## 為何不引入其命名 workflow 目錄機制
 
@@ -51,6 +51,8 @@ tags:
 ## 交叉引用
 
 - [[Building-Effective-Agents-Anthropic]]——pi-workflow 在 workflows/agents 二分法中的定位與五種編排模式對應。
-- [[多智能體研究系統-Anthropic]]——orchestrator-worker 架構，pi-workflow 的 `foreach`／`reduce` 同構參照。
+- [[多智能體研究系統-Anthropic]]——orchestrator-worker 架構（子任務動態委派），對應 pi-workflow 的 `dynamic` pattern；其 `foreach`／`reduce` 則較接近路徑固定的 parallelization。
 - [[LLM-Wiki-生態實作比較]]——本 vault 採用拍板的相鄰比較頁（那頁比的是知識層實作，本頁補的是編排層工具的分野）。
 - [[LLM-Wiki-知識管理模式]]——本 vault 知識層的設計原型，pi-workflow 不觸及的那一層。
+- [[Agent-Harness-Engineering-框架綜述]]——harness 工程的 workflows/agents 二分綜述，本頁「編排職能已被 harness 覆蓋」的定位即座落於此主軸。
+- [[Context-優先與多-agent-的適用邊界]]——多 agent 何時才划算的判準頁（含 Cognition／MAST 反面實證），支撐本頁「先鋪一層命名 workflow 違反反過度工程紀律」的論點。

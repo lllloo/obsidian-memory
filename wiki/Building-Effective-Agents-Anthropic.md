@@ -2,7 +2,7 @@
 title: Building Effective Agents（Anthropic）
 description: Anthropic 建 agent 的基礎指南：workflows 與 agents 之分、augmented LLM 基石、五種 workflow 編排模式（含各自適用時機），與 ACI／工具 prompt engineering 實務、由簡入繁三原則
 created: 2026-07-14
-updated: 2026-07-14
+updated: 2026-07-16
 source: "https://www.anthropic.com/engineering/building-effective-agents"
 published: 2024-12-19
 parent: "[[wiki/01.index]]"
@@ -91,3 +91,4 @@ agent 通常就是**在 loop 中依環境回饋使用工具的 LLM**：從人的
 - 實證對照：[[AI-自主工作流的實證檢驗]]——本文「只在複雜度能實證改善時才加」「用測試結果當回饋迭代」的主張，該頁以獨立證據檢驗其邊界（測試本身可被 agent 篡改，驗證迴路必要但不充分）。
 - 記憶／context 對照：[[Claude-Code-記憶系統六層比較]]——本文 augmented LLM 的 memory 增強，是該頁記憶分層的最小前身。
 - 判準延伸：[[Context-優先與多-agent-的適用邊界]]——把本文「由簡入繁」原則落成可操作的決策清單，並補上「加複雜度（多 agent）實測會怎麼壞」的獨立證據（Cognition、MAST）。
+- evaluator-optimizer 落地：[[設計品質的可量化檢測]]——該頁把本文 **evaluator-optimizer** 的「生成→評估→回饋」迴路落到設計品質領域，用可執行、客觀的 evaluator（自動化檢測）撐起「報告→修正→重跑」閉環，是本文抽象模式在特定領域的具體落地案例。

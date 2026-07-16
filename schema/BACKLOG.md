@@ -27,6 +27,8 @@ vault 健檢的**待處理清單**,由 `vault-lint` skill 每輪讀寫(手動或
 
 - [低] RAWGAP | `raw/clippings/` | **現存 clippings 全數判定已消化,無待 ingest**(機械層仍會逐篇 flag,因未加 wikilink;此註記為判斷錨點,防重複洗版)。2026-07-16 結清最後 2 篇:`Claude-Code-Best-Practice-—-Threads-Carousel-Cards`(82 條操作最佳實務)判定**不 ingest**——純操作 cheatsheet、大量版本專屬易過期內容與 wiki 時間抗性相斥,概念層已由 harness/記憶/多-agent/實證四側面 5–7 頁涵蓋,屬使用者自撿進 topics 公開層的料;`The-Official-BMad-Method-Masterclass`(BMAD IDE 工作流示範逐字稿)行銷示範品質撐不起一手實體頁,已將其角色鏈(Analyst→…→QA)＋advanced elicitation＋doc sharding 最小增補進 `wiki/AI-自主工作流的實證檢驗.md` spec-driven 節,不建專頁。原項首見 2026-07-13
 
+_(2026-07-16 語意層 13 項——2 過時、9 交叉引用缺口、2 低優先群組——經使用者「全都修」指示已全數修補落地,退場。)_
+
 ## 已婉拒
 
 _(目前無項目)_

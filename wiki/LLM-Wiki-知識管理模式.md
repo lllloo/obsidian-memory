@@ -2,7 +2,7 @@
 title: LLM Wiki 知識管理模式
 description: Karpathy 提出的個人知識庫模式：LLM 漸進維護一套互聯 markdown wiki，把知識編譯一次後持續維護，與每次查詢重新檢索的 RAG 形成對比
 created: 2026-07-08
-updated: 2026-07-11
+updated: 2026-07-16
 parent: "[[wiki/01.index]]"
 tags:
   - wiki
@@ -70,5 +70,7 @@ schema 是關鍵設定：它讓 LLM 成為**有紀律的 wiki 維護者**，而�
 - 同源哲學的另一實作：[[Hermes-Agent]]——把「複利資產」用在 agent 自策展的 **skill 庫**，可與本頁「維護 markdown wiki」對照兩種複利路徑。
 - 架構定位：[[Claude-Code-記憶系統六層比較]] 把本 pattern 列為 **Level 5（自組織知識庫）**，並與其餘五層（原生 CLAUDE.md、hook 召回、語意搜尋、逐字宮殿、跨工具共腦）對照取捨。
 - 人類 PKM 方法論對照：[[第二大腦方法論比較]]——BASB、Zettelkasten 等人類第二大腦方法論同樣在解「擷取後如何維護」，差異在維護者是人還是 LLM。
+- 放進 PKM 光譜的本 vault 實踐：[[第二大腦實踐與本-vault-優化]]——把本頁的 Karpathy LLM Wiki 模式放進人類 PKM 方法論光譜對照，據此提出本 vault 的優化方向。
+- Agent 記憶路線定位：[[Agent-記憶兩大路線-知識庫與-memory-bank]]——以本頁模式作為知識庫路線（路線 A）的代表原型，與 memory-bank 路線對照。
 - harness 工程脈絡：[[Agent-Harness-Engineering-框架綜述]]——本 pattern 屬該頁 context engineering 三技術中的 structured note-taking／agentic memory 路線（筆記持久化到 context window 外再拉回）。
 - 實證檢驗：[[AI-自主工作流的實證檢驗]]——本 pattern 對應「沉澱回知識庫」那一步；該頁盤點整條自主工作流各環節的證據強度與已知失效模式。
