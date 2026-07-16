@@ -230,8 +230,12 @@ def main() -> int:
 
     # ---- CHANGED：近 N 天 git 變動的 wiki 頁（語意層輸入）----
     try:
+        # core.quotepath=false：關掉 git 對非 ASCII 檔名的 octal 逃逸，
+        # 否則中文檔名頁面會被輸出成 "\346\226\207..." 逃逸字串，
+        # 使下方 startswith("wiki/") 過濾靜默漏抓，語意層形同半殘。
         r = subprocess.run(
-            ["git", "log", f"--since={args.days} days ago", "--name-only", "--pretty=format:"],
+            ["git", "-c", "core.quotepath=false", "log",
+             f"--since={args.days} days ago", "--name-only", "--pretty=format:"],
             capture_output=True, text=True, encoding="utf-8", errors="replace",
         )
         changed = sorted({
