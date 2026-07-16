@@ -148,3 +148,4 @@ agent 能以 50% 可靠度完成的任務長度，過去六年約**每 7 個月�
 - [[設計品質的可量化檢測]] — 本頁「驗證用 agent 改不到的東西」在設計領域的具體落地：眼動預測、WCAG、CSS 統計四項皆為 agent 無法從內部造假的外部 evaluator，是「加一個 agent 無法從內部滿足的判準」的正面範例。
 - [[Building-Effective-Agents-Anthropic]] — 本頁 evaluator-optimizer 迴路與 LLM-as-judge self-preference 的討論，檢驗的正是該頁提出的 evaluator-optimizer 模式在證據上的邊界（同家族 evaluator 恐系統性偏袒，需跨模型或搭可執行測試）。
 - [[pi-workflow-編排-harness-與本-vault-分野]] — 該頁引本頁的實證（vendor 敘事與獨立證據落差、驗證迴路可被 agent 從內部滿足）作為「不引入命名 workflow 機制」反過度工程紀律的依據。
+- [[AI-生成流程圖與架構圖]] — 該頁「AI／靜態生的架構圖只反映設計、非執行期真實行為，需人眼驗證」與本頁「生成物需 agent 改不到的外部判準把關」同源；AI 生圖正是「vendor 敘事 vs 需獨立驗證」在視覺化工具上的又一實例。
