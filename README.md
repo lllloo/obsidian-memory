@@ -2,6 +2,67 @@
 
 個人 Obsidian vault，採 Karpathy [LLM Wiki](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f) 工作流：agent 讀不可變的 `raw/` 原料，漸進維護一套互聯的 `wiki/` 活知識庫。`cards/`、`topics/` 是使用者私人策展區，也是對外公開的層。公開版本在 [bugloop.com](https://bugloop.com)。
 
+## 系統概覽
+
+vault 的維護就是三個動作（Ingest／Query／Lint），只在 `raw/`＋`wiki/` 上進行，不碰 `cards/topics/feeds`。（`schema/` 是規範層、不是維護標的；只有 Lint 會額外掃它，findings 落在 `schema/BACKLOG.md`——見圖 1 的 Lint 節點與其輸出。）
+
+```mermaid
+%%{init: {"theme": "neutral", "flowchart": {"curve": "basis", "nodeSpacing": 40, "rankSpacing": 50}}}%%
+flowchart TD
+    URL[貼 URL] -->|defuddle 抓取| FE[raw/fetched/]
+    CLIP[Web Clipper 剪藏] --> CL[raw/clippings/]
+    MAN[手動放檔] --> CL
+    subgraph ING["① Ingest（agent 全自主）"]
+        direction TB
+        W[寫/更新 wiki 頁] --> IDX[更新 01.index<br/>最近更新滾 5 筆] --> XREF[補交叉引用] --> LT[收尾輕量 lint]
+    end
+    FE & CL --> W
+    LT --> WIKI[("wiki/ · 活知識庫<br/>三動作的樞紐")]:::hub
+    WIKI --> RD["② Query<br/>讀 01.index → 讀頁"]
+    RD --> ANS[附引用綜合答案]
+    ANS -.->|好答案回存| WIKI
+    WIKI --> LINT["③ Lint 健檢<br/>掃 raw·wiki·schema"]
+    LINT -->|findings 落點| BL[schema/BACKLOG.md<br/>機械項自動修·語意項只報告]
+    classDef hub fill:#e6f4ea,stroke:#34a853,stroke-width:2px,color:#111
+```
+
+三層架構與 agent 的寫入邊界——唯一硬守門是 `git push`，其餘皆 agent 自主：
+
+```mermaid
+%%{init: {"theme": "neutral", "flowchart": {"curve": "basis", "nodeSpacing": 45, "rankSpacing": 60}}}%%
+flowchart TD
+    subgraph SYS["三層系統 · 各層 agent 權限不同"]
+        SCHN["schema/ · 規範層 — 依規則維護<br/>CLAUDE·SYSTEM-DESIGN·MEMORY·BACKLOG"]:::rule
+        RAWN["raw/ — 可新增·不可改<br/>（write-once 事實來源）"]:::wo
+        WIKIN["wiki/ — 全權建改刪<br/>（活知識庫）"]:::full
+        SCHN -.->|約束 agent 行為| RAWN & WIKIN
+        RAWN -->|ingest| WIKIN
+    end
+    subgraph OUT["agent 不寫·不索引·不掃描"]
+        CARDS["cards/"]:::off
+        TOPICS["topics/<br/>（回答時可唯讀查）"]:::off
+        FEEDS["feeds/ — 各 skill 自維護<br/>youtube·updates·watch"]:::off
+    end
+    WIKIN -->|使用者手動撿選複製| CARDS & TOPICS
+    CARDS & TOPICS ==>|唯一對外| QZ([Quartz 發佈 · bugloop.com])
+    GP{{git push<br/>唯一硬守門·需明確同意}}
+    WIKIN & RAWN & FEEDS --> GP
+
+    classDef full fill:#e6f4ea,stroke:#34a853,color:#111
+    classDef wo fill:#fef7e0,stroke:#f9ab00,color:#111
+    classDef rule fill:#e8f0fe,stroke:#4285f4,color:#111
+    classDef off fill:#f1f3f4,stroke:#9aa0a6,color:#444
+```
+
+圖 2 的顏色即 agent 權限，三層權限刻意不同：
+
+- 🟦 **schema/（規範層）** — 定義 agent 怎麼維護這個 vault 的規則層。它**約束** agent、不是 agent 的產出物；agent 只在規則允許下維護其中的操作狀態（`MEMORY.md`、`BACKLOG.md`），治理文件（`CLAUDE.md`、`SYSTEM-DESIGN.md`）由使用者定調。箭頭朝下＝schema 管 raw／wiki，不是反過來。
+- 🟨 **raw/（write-once）** — 事實來源，agent 可新增、落地後凍結不改。
+- 🟩 **wiki/（全權）** — 活知識庫，agent 自由建改刪，是唯一被 agent 完全掌管的層。
+- ⬜ **cards・topics・feeds** — 三動作全部跳過：cards／topics 是使用者私人策展＋唯一對外發佈層（agent 只在回答時可唯讀查 topics），feeds 由各 skill 自維護。
+
+唯一硬守門是 **`git push`**——它會把 raw／wiki／feeds 一併推上遠端，該次 diff 由使用者把關；除此之外 agent 全自主。
+
 ## 安裝與使用
 
 ```bash
