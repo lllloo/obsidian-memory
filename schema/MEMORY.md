@@ -1,7 +1,7 @@
 ---
 title: Agent Memory
 created: 2026-07-09
-updated: 2026-07-14
+updated: 2026-07-17
 tags:
   - meta
 ---
@@ -24,7 +24,7 @@ tags:
 
 - ~~Lint checklist~~——2026-07-10 已 codify 成 `vault-lint` skill（使用者主動提出，非滿 3 次觸發；`.base` 誤判排除已寫進掃描腳本 BASEIDX 邏輯），候選收掉
 - ~~deep-research 回存流程~~——2026-07-10 第 4 次（repo 方向研究）結案：主體流程與 CLAUDE.md Ingest 重合，**不開 skill**；特有的「強度標註」寫法已 codify 進 CLAUDE.md 寫入慣例第 6 條（使用者核可）。重開條件：回存變每週例行、或流程長出 CLAUDE.md 沒有的專屬結構。價值判準沿用：先評該輪產出值不值得存
-- **貼 URL ingest 全流程**（抓內容→存 raw/fetched→寫 wiki→更新 index→交叉引用→收尾 lint）——2026-07-10 schema 落地（raw write-once），目前 0 次手動執行；滿 3 次時評估 codify 成 skill（類 youtube-sync 的網頁版）
+- ~~貼 URL ingest 全流程~~——2026-07-17 退場（使用者核可）：手動 ingest 無具名入口可累積次數，結構上永遠踩不到「滿 3 次」；fetch 段已由全域 `defuddle` 覆蓋，其餘與 CLAUDE.md Ingest 重合。重開條件：日後真的要做網頁版 ingest skill 時另起
 
 ## 待追蹤的開放問題
 
@@ -33,3 +33,4 @@ tags:
 - **勿再提議**為 lint/BACKLOG 加「上次執行／心跳」欄（已拍板移除）：與「安靜的一輪零變更、不開雜訊 PR」天生不相容；routine 存活靠 claude.ai 執行紀錄判斷，不靠 in-repo 紀錄。
 - `vault-lint` **第二段（語意自動修＋獨立 refuter 對抗驗證）刻意未實作**；重開觸發＝使用者主動 felt-need（語意項堆積且想交給 AI）＋簽署治理位移（語意只報告→暫存修法，接受殘留汙染風險）。
 - `vault-lint` **skill 本身不碰 git**；排程走雲端 routine（`trig_018QPWmi5K8hiV7ghMvKnTU9`，每天台北 05:00，claude-sonnet-5），其 prompt 自帶 commit+push+開 PR 且不依賴 Skill 工具（改讀 `SKILL.md`）——此即使用者對該 routine push 的明確同意（憲法唯一守門不因此鬆動）。
+- `vault-updates-daily` 雲端 routine **已由使用者自行排定**（2026-07-17 告知，agent 未經手、無 trigger id）；**勿再提議排程**。其 starred 同步在本 vault 刻意停用（純雲端 atom 遭 proxy 擋），`starred-repos.txt` 快照留著但不靠它跑。

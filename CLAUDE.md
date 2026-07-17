@@ -6,6 +6,8 @@
 
 @schema/MEMORY.md
 
+> **非 Claude Code 工具**（Codex／Cursor／opencode 等，經 `AGENTS.md` symlink 讀到本檔）：上面那行 `@` 匯入是 Claude Code 專屬語法，你的工具不會解析。請**手動 Read `schema/MEMORY.md` 與 `schema/BACKLOG.md`**——那是 agent 跨 session 的操作記憶與待處理清單（含使用者已拍板、勿重複提議的項目），漏讀會重提已婉拒的修法。
+
 ## 三層架構
 
 | 層 | 角色 | agent 權限 |

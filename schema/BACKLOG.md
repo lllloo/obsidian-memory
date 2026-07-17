@@ -26,19 +26,17 @@ vault 健檢的**待處理清單**,由 `vault-lint` skill 每輪讀寫(手動或
 
 ## 待你決定(真正需要使用者,其餘見 `Agent 已判`)
 
-這三件因 push 授權／治理決定／repo「改 skill 一律先問」硬規則而卡在使用者,不由 agent 自主:
-
-- [中] SKILL | `vault-updates-daily` 雲端 routine 未排 | 該 skill 的 `starred-repos.txt` snapshot fallback 存在的唯一理由就是雲端 token-free 排程跑,基建做好卻只有 vault-lint 一支 routine。**卡點**:須先本機 `--snapshot-starred` 一次並授權推送(排 routine 會 push 遠端,憲法唯一守門)——無使用者不能動
-- [中] SKILL | MEMORY「貼 URL ingest 全流程」候選計數退場 | 手動 ingest 無具名入口累積次數,結構上永遠踩不到「滿 3 次」門檻、無限期卡在 0 次;fetch 段已被全域 `defuddle` 覆蓋。**這是使用者的 `MEMORY.md` 升級訊號治理決定**:退場(agent 建議),或保留「日後做網頁版 ingest skill」的種子改用時間／成長訊號
-- [低] SKILL | 兩個一行文件補丁(可批) | 皆只記錄既有行為、零行為改變,但按 repo「改 skill 一律先問」需點頭:(1) 跨工具可攜縫——`AGENTS.md` 加一句「非 Claude Code 工具請先 Read `schema/MEMORY.md`、`schema/BACKLOG.md`」(`@import` 為 Claude Code 專屬,Codex／Cursor／opencode 不解析);(2) `ask-vault` 在 `SKILL.md` 補一行 `OBSIDIAN_VAULT` 逃生口說明(腳本已支援、文件沒提)
+_(目前無項目)_
 
 ## Agent 已判(維持現狀／待觸發,不再每輪問)
 
-**新頁候選——agent 判暫不開,待觸發**(反過度工程判斷屬 wiki 全權;有新料或被再次引用才重開):
+**新頁候選——開不開由 agent 全權自行決定,不問使用者**(2026-07-17 使用者明示授權,先前的「先不開」意見一併撤回、不再構成約束):
 
-- NEWPAGE | OpenClaw | 記憶六層與 Hermes 頁點名「值得日後專門對照」,橫跨兩簇的樞紐;inline 提及暫足夠,待被更多次引用再開(使用者 2026-07-17 亦「先不開」)
-- NEWPAGE | SDD 工具橫向對照(Spec Kit／Kiro／Tessl／BMAD／OpenSpec) | AI-自主頁聚焦「效果證據」、對照頁聚焦「工具功能」切面不同,BMAD 當初刻意折進;非急件(使用者 2026-07-17 亦「先不開」)
-- NEWPAGE | route B 記憶(Cline Memory Bank) | route A 有 `wiki/LLM-Wiki-生態實作比較.md` 撐,route B 與相鄰 Letta MemFS 只有 inline;待再被引用再開
+判準沿用 wiki 全權與反過度工程:被再次引用、或有新料撐得起一頁時就**直接開,不報備**;仍嫌單薄就續留 inline。本節條目只是 agent 自己的錨點(防重複重議、防機械層洗版),不是待辦、更不是待批。
+
+- NEWPAGE | OpenClaw | 記憶六層與 Hermes 頁點名「值得日後專門對照」,橫跨兩簇的樞紐;目前 inline 提及暫足夠
+- NEWPAGE | SDD 工具橫向對照(Spec Kit／Kiro／Tessl／BMAD／OpenSpec) | AI-自主頁聚焦「效果證據」、對照頁聚焦「工具功能」切面不同,BMAD 當初刻意折進;非急件
+- NEWPAGE | route B 記憶(Cline Memory Bank) | route A 有 `wiki/LLM-Wiki-生態實作比較.md` 撐,route B 與相鄰 Letta MemFS 只有 inline
 
 **frontmatter／一致性——agent 判維持現狀**(動既有 raw 反違反 write-once;此註記為錨點,防機械層重複洗版):
 
@@ -60,7 +58,9 @@ vault 健檢的**待處理清單**,由 `vault-lint` skill 每輪讀寫(手動或
 
 - _(2026-07-16 全專案改進審視語意層 13 項——2 過時、9 交叉引用缺口、2 低優先群組——經「全都修」指示全數落地退場。)_
 - _(2026-07-17「修問題」批次:全專案改進審視的 3 條 XREF、07-16 語意層的 3 矛盾 + 6 XREF + 4 過時、07-17 的 4 條低信心新發現,均已修補落地;`feeds/watch/` 漏登已補進 `schema/vault-map.md`、`schema/SYSTEM-DESIGN.md`;`published` 空值統一為 `""`。低信心「AI-自主 相關頁 pi-workflow 措辭」與「OpenSpec 31 工具」覆核後判定原敘述已足、退場。)_
+- _(2026-07-17 逐件問診:MEMORY「貼 URL ingest 全流程」升級訊號候選經使用者核可退場(已於 `schema/MEMORY.md` 劃線註記);跨工具可攜縫補丁已落地——`AGENTS.md` 為 `CLAUDE.md` 的 symlink,故該句寫在 `CLAUDE.md` 的 `@import` 行旁。)_
+- _(2026-07-17 `vault-updates-daily` 雲端 routine 條目退場:使用者已自行排定並在跑。該條敘述經查有兩處誤述,勿據以重開——snapshot `.agents/skills/vault-updates-daily/starred-repos.txt` 早於 2026-07-04 存在且 tracked(非「須先本機跑一次」);且 `references/daily-runbook.md` 明載本 vault **刻意停用 starred 同步**(純雲端 atom fallback 遭 proxy 擋、結構性不通),故 snapshot 存在的理由不是「為雲端排程」。)_
 
 ## 已婉拒
 
-_(目前無項目)_
+- 2026-07-17 | `ask-vault` `SKILL.md` 補 `OBSIDIAN_VAULT` 環境變數說明 | 使用者判不需要;腳本仍支援該逃生口,只是不寫進文件。**不再提**
