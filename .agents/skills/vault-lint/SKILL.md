@@ -46,7 +46,7 @@ python3 .agents/skills/vault-lint/scripts/lint_scan.py --days <semantic_days>
    - `DEADLINK`:目標檔存在、可**唯一對應**(漏資料夾限定、大小寫差異)→ 直接修(wikilink 或 markdown 式路徑,依原文語法修)。多候選 → 讀上下文判斷正確目標再修。目標不存在 → 依內容處置:改外部 URL、改純文字,或值得建頁就建(建頁屬語意修補,照第 8 步紀律)。目標在 `feeds/` 等範圍外(wiki 不得引用 feeds)→ 移除或改寫該引用。
    - `INDEXGAP`:有 `description` 直接複製登錄 `wiki/01.index.md`;無 `description` → 讀頁寫一行摘要登錄,順手補該頁 `description`。
    - `ORPHAN`:只有其他 wiki 內容頁的入連才代表知識圖譜互連;`wiki/01.index.md`、raw、schema 與自連都不算。讀頁找 1–2 個相關既有頁補雙向引用;真的無處可連才記 `Agent 已判` 錨點。
-   - `FM`:缺欄可補值者直接補(如缺 `updated` 取 git 最後變動日)。
+   - `FM`:缺欄可補值者直接補(如缺 `updated` 取 git 最後變動日)。wiki 內容頁另須有 30–80 字 `description`、`parent: "[[wiki/01.index]]"`，且已出現的白名單欄位依 schema 固定順序排列；這些 wiki-only 檢查不套用 raw，避免違反 write-once 與 Web Clipper description 豁免。
    - `TAG`:同義異寫漂移由主 agent 判讀後直接正規化(沿用既有 tag,改少數就多數)。
    - `RAWGAP`:`raw/clippings/` 彙總檢視、`raw/fetched/` 逐條檢視;值得消化的走 Ingest 流程;判定不值得的記 `Agent 已判` 錨點。
    - 修補動到的頁同步 `updated` 為今日。

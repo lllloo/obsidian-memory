@@ -20,6 +20,26 @@
           "description": "其他 wiki 內容頁的有效入連會清除 ORPHAN"
         }
       ]
+    },
+    {
+      "id": 2,
+      "prompt": "執行 vault lint 時，請檢查 wiki 內容頁的 description、parent 與 frontmatter 欄位順序，同時維持 raw write-once 與 wiki/01.index.md 的豁免。",
+      "expected_output": "wiki 內容頁缺 description/parent、description 不在 30–80 字、parent 錯誤或欄位錯序時輸出 FM；合法 quoted scalar 通過，raw 與 wiki index 不套用這些 wiki-only 規則。",
+      "files": [],
+      "assertions": [
+        {
+          "name": "wiki metadata 約束完整",
+          "description": "檢出 description 缺失或長度越界、parent 錯誤與欄位錯序"
+        },
+        {
+          "name": "YAML scalar 字數正確",
+          "description": "description 去除成對外引號後以 Unicode 字元計算 30–80 字"
+        },
+        {
+          "name": "wiki-only 邊界",
+          "description": "raw 與 wiki/01.index.md 不套用 description、parent 或欄位順序檢查"
+        }
+      ]
     }
   ]
 }

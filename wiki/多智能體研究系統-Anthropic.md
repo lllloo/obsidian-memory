@@ -1,6 +1,6 @@
 ---
 title: 多智能體研究系統（Anthropic）
-description: Anthropic Research 功能的 orchestrator-worker 多 agent 架構解剖：subagent 平行動態搜尋、CitationAgent 引用歸屬、prompt 工程八原則、LLM-as-judge 評測與生產可靠性
+description: 拆解 Research 的 orchestrator-worker 架構、平行搜尋、CitationAgent、評測方法與生產可靠性
 created: 2026-07-14
 updated: 2026-07-17
 source: "https://www.anthropic.com/engineering/multi-agent-research-system"

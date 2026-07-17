@@ -1,6 +1,6 @@
 ---
 title: pi-workflow 編排 harness 與本 vault 的分野
-description: pi-workflow 這類命名工作流編排器定性為「編排層」prior art，說明它與本 vault「知識組織層」的分野，及為何其命名 workflow 目錄機制不宜引入
+description: 把命名工作流 CLI 定位為編排層，對照知識組織層的職責，評估既有工具覆蓋、可借鑑處與不引入理由
 created: 2026-07-15
 updated: 2026-07-17
 source: "https://github.com/AgwaB/pi-workflow"

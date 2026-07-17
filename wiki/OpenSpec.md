@@ -1,6 +1,6 @@
 ---
 title: OpenSpec
-description: Fission-AI 的輕量 spec 層工具，讓開發者與 AI coding agent 在寫碼前先就「要建什麼」達成共識；含安裝、目錄結構、五步工作流與 CLI 全貌
+description: 說明 Fission-AI 輕量規格工具的安裝、目錄、delta spec 與五步工作流，並標示流程可信但效果未實證
 created: 2026-07-16
 updated: 2026-07-17
 source: https://github.com/Fission-AI/OpenSpec

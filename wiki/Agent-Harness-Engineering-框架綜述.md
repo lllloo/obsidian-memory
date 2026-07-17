@@ -1,6 +1,6 @@
 ---
 title: Agent Harness Engineering 框架綜述
-description: 以 Anthropic 系列工程論述與 arXiv 原始碼級 taxonomy 為主幹的 harness 工程綜述：定義範疇、方法論主軸、實作橫向比較與 meta-harness 演進方向
+description: 整合 Anthropic 工程論述與原始碼 taxonomy，梳理 agent 外圍基礎設施的範疇、方法、實作比較與演進方向
 created: 2026-07-10
 updated: 2026-07-17
 parent: "[[wiki/01.index]]"
