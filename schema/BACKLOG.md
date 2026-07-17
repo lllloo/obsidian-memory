@@ -1,7 +1,7 @@
 ---
 title: Vault Lint Backlog
 created: 2026-07-13
-updated: 2026-07-16
+updated: 2026-07-17
 tags:
   - meta
   - lint
@@ -93,6 +93,19 @@ _(2026-07-16 語意層 13 項——2 過時、9 交叉引用缺口、2 低優先
 本輪已重審並確認**仍開啟、內容不變**:`wiki/跨專案第二大腦整合模式.md`↔`wiki/OKF-與本-vault-的相容性.md` XREF、`wiki/OpenSpec.md`↔`wiki/Agent-Harness-Engineering-框架綜述.md` XREF、`wiki/設計品質的可量化檢測.md`↔`wiki/AI-生成流程圖與架構圖.md` XREF(三者皆列於本節上方「wiki 織網缺口」段落)。
 
 本輪截斷:20 頁 `CHANGED`(7 天內有 git 變動)依 `semantic_page_cap: 10` 只審最近變動的 10 頁;略過 10 頁(`wiki/第二大腦實踐與本-vault-優化.md`、`wiki/Context-優先與多-agent-的適用邊界.md`、`wiki/Agent-Harness-Engineering-框架綜述.md`、`wiki/Hermes-Agent.md`、`wiki/OKF-與本-vault-的相容性.md`、`wiki/LLM-方案定價與-coding-agent-比較.md`、`wiki/LLM-Wiki-知識管理模式.md`、`wiki/LLM-Wiki-生態實作比較.md`、`wiki/Claude-Code-記憶系統六層比較.md`、`wiki/Agent-記憶兩大路線-知識庫與-memory-bank.md`)留待下輪。
+
+### 2026-07-17 語意層例行審查(手動,近 10 頁)
+
+**新發現(皆低信心,與既有輪次頁面互補)**
+
+- [低][低信心] 矛盾 | `wiki/第二大腦整合的現成工具與做法.md` | 第47行稱 manifest 與 hot.md「互補、角色不同」,第79行關聯卻稱「MCP 工具與 hot.md 是其模式1 的具體工具實現」,頁內表述不一;且 hot.md 已 2026-07-15 拍板不採用,關聯行仍以其為「本頁工具」略顯過時。建議統一措辭並移除過時指涉。首見 2026-07-17
+- [低][低信心] 矛盾 | `wiki/OpenSpec.md` | 第102行同段先稱 design 可跳過、又稱 tasks 需要 specs 和 design 兩者;design 被跳過時 tasks 依賴描述即不成立。建議改「tasks 依賴 specs 與 design(若存在)」消除張力。首見 2026-07-17
+- [低][低信心] 過時 | `wiki/多智能體研究系統-Anthropic.md` | 第98–102行三個「工具呼叫」上限並存且措辭衝突(budget 極難 ≤15、OODA ≤10、硬上限 20),疑為「OODA 迭代次數 vs 總工具呼叫 vs 硬天花板」不同構念被壓成同一單位。建議就地標明各數字所指層級(源自 cookbook prompt 原文,可能本為不同構念,故低信心)。首見 2026-07-17
+- [低][低信心] XREF | `wiki/LLM-Wiki-知識管理模式.md` | `wiki/跨專案第二大腦整合模式.md`(第108行)同以「定義 raw/wiki/schema 三層原型」措辭引用本頁卻未回連,與既有 XREF 項點名的 現成工具/多智能體 屬同類遺漏,可併入既有項一併補(惟本頁為 13 反鏈 hub、關聯節精選,是否全回連可辯)。首見 2026-07-17
+
+本輪覆核:07-16 兩節既有語意項凡落在本輪 `CHANGED` 前 10 頁者逐一重審,**全部仍成立、無退場**(含 [高] 矛盾 `wiki/多智能體研究系統-Anthropic.md` 第118行 vs pi-workflow)。
+
+本輪截斷:19 頁 `CHANGED`(7 天內有 git 變動)依 `semantic_page_cap: 10` 只審最近變動的 10 頁;略過 9 頁(`wiki/LLM-Wiki-生態實作比較.md`、`wiki/Claude-Code-記憶系統六層比較.md`、`wiki/Building-Effective-Agents-Anthropic.md`、`wiki/Agent-記憶兩大路線-知識庫與-memory-bank.md`、`wiki/第二大腦實踐與本-vault-優化.md`、`wiki/Context-優先與多-agent-的適用邊界.md`、`wiki/Agent-Harness-Engineering-框架綜述.md`、`wiki/Hermes-Agent.md`、`wiki/OKF-與本-vault-的相容性.md`)留待下輪。
 
 ## 已婉拒
 
