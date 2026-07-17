@@ -2,7 +2,7 @@
 title: Hermes Agent
 description: Nous Research 開源的自我進化 AI agent：學習迴路自動生成並改良 skill，跨 session 累積記憶與使用者模型
 created: 2026-07-08
-updated: 2026-07-14
+updated: 2026-07-17
 parent: "[[wiki/01.index]]"
 tags:
   - ai-agent
@@ -28,8 +28,8 @@ Nous Research 開源、MIT 授權的**自我進化 AI agent**，標語 *The agen
 | Autonomous skill creation | 完成複雜任務（5+ 次工具呼叫）成功、解決錯誤、使用者糾正、或發現非顯而易見流程時觸發，自動把流程萃取成可重用 skill；預設免人工核准即可寫入 |
 | Skill self-improvement | skill 在使用過程中自我修正 |
 | Autonomous Curator | 自主策展人：評分、合併重疊、封存過時、寫每輪報告、保護 pinned skill |
-| `llm-wiki` skill（官方內建） | **逐字複刻 Karpathy 的 LLM Wiki 模式**（raw/wiki/schema 三層），文件明言「Based on Andrej Karpathy's LLM Wiki pattern」——見 [[LLM-Wiki-知識管理模式]] |
-| 外接長期知識庫 | 8 個 memory provider 外掛（Honcho、Mem0、Supermemory、ByteRover 等）可選接，提供知識圖譜、語意檢索、自動事實抽取等，對應核心記憶（大腦）之外的圖書館 |
+| `llm-wiki` skill（官方內建） | **逐字複刻 Karpathy 的 LLM Wiki 模式**（raw/wiki/schema 三層），文件明言「Based on Andrej Karpathy's LLM Wiki pattern」——見 [[LLM-Wiki-知識管理模式]]；另維護 append-only `log.md`（超 500 條按年輪替，與 index 並列導航骨幹），在生態中的治理定位見 [[LLM-Wiki-生態實作比較]] |
+| 外接長期知識庫 | 多個 memory provider 外掛（來源快照時 8 個：Honcho、Mem0、Supermemory、ByteRover 等）可選接，提供知識圖譜、語意檢索、自動事實抽取等，對應核心記憶（大腦）之外的圖書館 |
 
 > ⚠️ **更正**（2026-07-09 deep-research 對抗式驗證）：先前版本描述的「agent 靠週期性 nudge 記憶」與「FTS5 全文檢索過往對話＋LLM 摘要做跨 session 回憶」查無官方文件依據，已被驗證駁回（0–3 票），改以上表「有界核心記憶」的官方逐字描述取代。
 
@@ -66,7 +66,7 @@ Nous Research 開源、MIT 授權的**自我進化 AI agent**，標語 *The agen
 
 ## 成本控制
 
-Hermes 24/7 長駐（有別於跑完即停的 Claude Code），背景任務、self-evolving memory 與 90+ 預裝 skill 的 header 都持續吃 token，成本靠設定治理（token 成本拆解與各項設定細節見官方文件）：
+Hermes 24/7 長駐（有別於跑完即停的 Claude Code），背景任務、self-evolving memory 與 90+ 預裝 skill 的 header 都持續吃 token，成本靠設定治理（以下為 2026-07 官方文件快照，設定名與預設值隨版本可變；token 成本拆解與各項設定細節見官方文件）：
 
 - **模型路由是帳單最大槓桿**：auxiliary tasks 與 subagents 預設 fallback 到主模型，改指便宜模型；effort level 依任務調，簡單任務關 thinking。
 - **Context 瘦身**：調低壓縮門檻與 target ratio、精簡 memory/agent files、一次性指令用 ephemeral system prompt 不寫進 context files。
@@ -84,5 +84,6 @@ Hermes 24/7 長駐（有別於跑完即停的 Claude Code），背景任務、se
 - 同源哲學：[[LLM-Wiki-知識管理模式]]（知識複利 vs. Hermes 的技能複利）
 - `llm-wiki` skill 治理細節與其他實作對照：[[LLM-Wiki-生態實作比較]]——sha256 漂移偵測、封閉 tag taxonomy、矛盾交使用者複核等機制在生態中的定位。
 - 記憶架構對照：[[Claude-Code-記憶系統六層比較]]——Hermes 屬「agent 自策展記憶 + skill」路線，且與其中 Level 3 的 OpenClaw 血緣相關（`hermes claw migrate` 自 OpenClaw 匯入）。
+- 路線定位：[[Agent-記憶兩大路線-知識庫與-memory-bank]]——Hermes 的記憶子系統橫跨該頁兩條路線：`llm-wiki` skill 是路線 A（知識資產複利）的產品化代表，有界核心記憶則偏路線 B 的工作記憶性質。
 - 人類 PKM 對照：[[第二大腦方法論比較]]——Hermes 的「有界核心記憶 vs. 外接 llm-wiki／provider」雙軸結構，與 BASB（資源/專案管理）vs. Zettelkasten（深度連結）的互補分工邏輯同構（中等信心，2026-07-09 對抗式驗證）。
 - harness 工程脈絡：[[Agent-Harness-Engineering-框架綜述]]——Hermes 的 loop、skill 生成與有界記憶等構件可對照該頁的 harness 定義範疇（tools／memory／guardrails）。

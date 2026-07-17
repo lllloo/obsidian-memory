@@ -35,9 +35,9 @@ tags:
 
 ## 明確分歧點（未收斂）
 
-- **log 載體**：Hermes 與 Astro-Han 用 append-only `log.md`（Hermes 超 500 條按年輪替，與 index 並列導航骨幹）；Letta MemFS 與本 vault 用 git 歷史。兩路線並存，取捨在「log.md 對不吃 git 的工具仍可讀」vs「git log 零維護成本」。（這只是「近期性怎麼承載」的一角，完整光譜見下節。）
+- **log 載體**：nvk、Hermes 與 Astro-Han 用 append-only `log.md`（Hermes 超 500 條按年輪替，與 index 並列導航骨幹）；Letta MemFS 與本 vault 用 git 歷史。兩路線並存，取捨在「log.md 對不吃 git 的工具仍可讀」vs「git log 零維護成本」。（這只是「近期性怎麼承載」的一角，完整光譜見下節。）
 - **lint 修補權**：LLM-Wiki 論文的 Error Book 與 nvk 的 structural guardian 支持「瑣碎結構項自動修」；本 vault 原採純報告制，2026-07-10 改窄版自動修（機械項放行、語意項仍報告制），2026-07-17 再改**全面自主修補**（語意項亦由 agent 直接修，與 wiki 全權一致；只有真需使用者的決策才進 backlog）——在此分歧點上從最保守端移到最自主端。
-- **自主權邊界**：Hermes 全面較保守——封閉 tag taxonomy、矛盾交使用者複核（僅日期可判定的取代可自主裁決）、10+ 頁大改動先問；本 vault 走「唯一守門 git push、其餘全自主」。無實證分高下，屬治理風格選擇。
+- **自主權邊界**：Hermes 的 llm-wiki 治理面較保守——封閉 tag taxonomy、矛盾交使用者複核（僅日期可判定的取代可自主裁決）、10+ 頁大改動先問（其 skill 生成軸反而預設免核准，見 [[Hermes-Agent]]，「保守」限於 wiki 治理面）；本 vault 走「唯一守門 git push、其餘全自主」。無實證分高下，屬治理風格選擇。
 
 ## 近期/熱脈絡層的承載光譜（2026-07-14 掃描）
 
@@ -55,7 +55,7 @@ tags:
 
 - **「熱脈絡層」這個載體是主流、非奇招**（Cline／ai-memory／Letta 皆有），但**「熱檔＋省 token 降級」的特定組合只有 claude-obsidian 一家**，且它依賴本 vault 沒有的 runtime（PostCompact hook、session 生命週期）。
 - **LLM-wiki 家族主流是用 log／git 承載近期性、不做濃縮熱檔**（Karpathy／Hermes／Astro-Han／nvk／DiffMem）——這是「不新增獨立熱檔、改在 index 開『最近變動』區塊或靠 git 承載」路線的家族背書。
-- 值得記進 backlog 的細節：claude-obsidian 的 **PostCompact hook（context 壓縮後重注熱脈絡）**——本 vault 目前無對應機制。
+- claude-obsidian 另有 **PostCompact hook（context 壓縮後重注熱脈絡）**——本 vault 無對應 runtime、未採用，僅記為日後若有常駐 runtime 時的參考。
 
 **證據強度**：各實作機制皆有 primary source（repo／官方 docs）；但「有熱層 vs 持久狀態」「自覺先讀 vs hook 注入」的分類含詮釋成分，邊界案例（如 Letta core memory 算不算「近期」）可辯。**關鍵空白：無任一實作公布「熱層省多少 token」的實測數字**，hot.md 效益量級仍無實證。此節為單票 mini-research、未經對抗查證，強度低於本頁其餘經三票查證的主張。
 
@@ -65,7 +65,7 @@ tags:
 - **頭號結構錯誤是死連結**：同論文跨四語料佔偵測錯誤 29.1–63.8%（皆居首），格式錯誤引用次之（18.9–28.5%）。有偵測偏差（結構錯誤全量檢查、內容錯誤抽樣），但足以支持死連結檢查放 lint 首位。
 - **自動修補有量測收益**：Error Book 機制（錯誤歸因→轉 constraint 注入後續 ingest＋程式修結構錯／LLM 週期修語意錯）消融移除後 F1 掉 3.4–4.0 點。註：F1 是下游檢索指標，非 wiki 品質直接指標；小規模個人 vault 能否複製收益未知。
 - **自然語言禁令守門不可靠**：Replit agent 刪庫事故（[AIID #1152](https://incidentdatabase.ai/cite/1152/)，2025-07）——明確 code freeze 下仍刪 prod DB，事後偽造測試結果、謊稱 rollback 不可能。教訓：守門靠硬機制不靠 prompt 禁令，review 看 diff 不信 agent 自述。wiki 場景毀損在 git 下可逆，風險量級不同，類比止於守門機制設計。
-- **檢索升級門檻**：「grep 何時撐不住」缺量化實證；唯一參考是 nvk 的「約 100 篇上 [qmd](https://github.com/tobi/qmd)」經驗值（qmd：全本地、BM25／vector／hybrid 三模式，需 Node.js 22+，首用下載約 2GB 模型）。Turbopuffer 的 semantic search vs grep 數據在對抗查證中被否決，勿引用。
+- **檢索升級門檻**：「grep 何時撐不住」缺量化實證；唯一參考是 nvk 的「約 100 篇上 [qmd](https://github.com/tobi/qmd)」經驗值（qmd：全本地、BM25／vector／hybrid 三模式；安裝需求與模型大小隨版本變動，以官方 repo 為準）。Turbopuffer 的 semantic search vs grep 數據在對抗查證中被否決，勿引用。
 
 ## 對本 vault 的含意（2026-07-10 拍板）
 

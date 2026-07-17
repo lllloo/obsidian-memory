@@ -2,7 +2,7 @@
 title: Claude Code 記憶系統六層比較
 description: 從原生 CLAUDE.md 到跨工具統一大腦，六個層級的 AI 記憶方案沿「儲存位置」與「召回機制」兩軸拆解，含各層適用情境與升級門檻
 created: 2026-07-08
-updated: 2026-07-16
+updated: 2026-07-17
 parent: "[[wiki/01.index]]"
 tags:
   - claude-code
@@ -43,7 +43,7 @@ Level 1–3 資料夾結構相近、**可疊加同跑**；Level 5、6 屬不同�
 ## 幾個關鍵取捨
 
 - **markdown 優先 vs. vector/MCP**：memsearch 把一切存成可讀 markdown 並自動注入；ClaudeMem 走 MCP，需 Claude 主動決定呼叫搜尋工具，功能多（dashboard、團隊、費用追蹤）但較重。
-- **本地擁有 vs. 代管租用**：MemPalace、OpenBrain 讓你完全擁有資料；Recall、Mem0 資料活在對方伺服器（可匯出 markdown，但等於租）。
+- **本地擁有 vs. 代管租用**：MemPalace 全本地；OpenBrain 是自有 DB 實例（跑在 Supabase 代管平台上，但 schema 與資料歸你、可遷移自管）；Recall、Mem0 則是 vendor 的記憶即服務，資料活在對方伺服器（可匯出 markdown，但等於租）。
 - **摘要 vs. 逐字**：Level 3 存摘要（省空間、可能漏細節）；Level 4 逐字不摘要，理論上什麼都不丟，但取回內容非 markdown、不可直讀。
 
 ## 在本 vault 的定位
@@ -61,5 +61,5 @@ Level 1–3 資料夾結構相近、**可疊加同跑**；Level 5、6 屬不同�
 - harness 工程脈絡：[[Agent-Harness-Engineering-框架綜述]]——本頁六層記憶方案在 Anthropic context engineering 論述中對應 structured note-taking／agentic memory 技術，理論依據見該頁。
 - 記憶方案的共同風險實證：[[AI-自主工作流的實證檢驗]]——記憶檔過長會被 agent 忽略、compaction 靜默丟棄約束，是本頁各層方案共通的失效模式。
 - 按「目的」切的互補視角：[[Agent-記憶兩大路線-知識庫與-memory-bank]]——本頁按「儲存／召回」技術光譜切六層，該頁按「知識資產複利 vs 專案工作記憶」切兩路線，並補收本頁未正面收的 coding-agent memory bank（Cline 等）。
-- 記憶分層的觀念前身：[[Building-Effective-Agents-Anthropic]]——該頁將本頁六層記憶方案視為其「最小前身」，即 agent 只需最小、可組合的 context 元件，本頁把該原則展開成完整的儲存／召回光譜。
+- 記憶分層的觀念前身：[[Building-Effective-Agents-Anthropic]]——該文 augmented LLM 的 memory 增強是本頁六層方案的最小前身；本頁把「最小、可組合的 context 元件」原則展開成完整的儲存／召回光譜。
 - 多 agent 場景的記憶對應：[[多智能體研究系統-Anthropic]]——該系統的 external memory 與 subagent handoff（把成果寫回共享記憶再交棒）正對應本頁的記憶分層，是六層方案在多智能體協作下的落地形態。

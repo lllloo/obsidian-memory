@@ -50,7 +50,7 @@ vault 健檢的**待處理清單**,由 `vault-lint` skill 每輪讀寫(手動或
 
 ## 本輪語意層截斷(下輪續審)
 
-- 2026-07-17(手動,近 10 頁):19 頁 `CHANGED` 依 `semantic_page_cap: 10` 只審 10 頁;略過 9 頁待下輪——`wiki/LLM-Wiki-生態實作比較.md`、`wiki/Claude-Code-記憶系統六層比較.md`、`wiki/Building-Effective-Agents-Anthropic.md`、`wiki/Agent-記憶兩大路線-知識庫與-memory-bank.md`、`wiki/第二大腦實踐與本-vault-優化.md`、`wiki/Context-優先與多-agent-的適用邊界.md`、`wiki/Agent-Harness-Engineering-框架綜述.md`、`wiki/Hermes-Agent.md`、`wiki/OKF-與本-vault-的相容性.md`
+- 2026-07-17(第二輪,手動):20 頁 `CHANGED` 依 `semantic_page_cap: 10` 審 10 頁(上輪欠審 9 頁全數補審＋最近變動的 `wiki/第二大腦方法論比較.md`);略過 10 頁待下輪——`wiki/AI-生成流程圖與架構圖.md`、`wiki/AI-自主工作流的實證檢驗.md`、`wiki/LLM-Wiki-知識管理模式.md`、`wiki/LLM-方案定價與-coding-agent-比較.md`、`wiki/OpenSpec.md`、`wiki/pi-workflow-編排-harness-與本-vault-分野.md`、`wiki/多智能體研究系統-Anthropic.md`、`wiki/第二大腦整合的現成工具與做法.md`、`wiki/設計品質的可量化檢測.md`、`wiki/跨專案第二大腦整合模式.md`
 
 ## 已修退場紀錄(精簡,細節見 git log)
 
@@ -58,6 +58,7 @@ vault 健檢的**待處理清單**,由 `vault-lint` skill 每輪讀寫(手動或
 - _(2026-07-17「修問題」批次:全專案改進審視的 3 條 XREF、07-16 語意層的 3 矛盾 + 6 XREF + 4 過時、07-17 的 4 條低信心新發現,均已修補落地;`feeds/watch/` 漏登已補進 `schema/vault-map.md`、`schema/SYSTEM-DESIGN.md`;`published` 空值統一為 `""`。低信心「AI-自主 相關頁 pi-workflow 措辭」與「OpenSpec 31 工具」覆核後判定原敘述已足、退場。)_
 - _(2026-07-17 逐件問診:MEMORY「貼 URL ingest 全流程」升級訊號候選經使用者核可退場(已於 `schema/MEMORY.md` 劃線註記);跨工具可攜縫補丁已落地——`AGENTS.md` 為 `CLAUDE.md` 的 symlink,故該句寫在 `CLAUDE.md` 的 `@import` 行旁。)_
 - _(2026-07-17 治理改制:使用者拍板 vault-lint 語意項改**全面自動修**(不加對抗驗證),「語意項只報告」制退場;原「維持現狀:vault-lint 第二段刻意延遲」條目隨之結案。STALE `wiki/第二大腦方法論比較.md` 缺 Hermes Kanban 補充,依新制當場修補退場。)_
+- _(2026-07-17 第二輪語意層(上輪欠審 9 頁＋第二大腦方法論比較):subagent 平行審出約 22 項獨立發現(1 高、8 中、13 低——指向錯誤、歸屬錯誤、方向倒置、措辭過寬、版本釘死、回連缺口等),全數當輪自主修補落地,動 12 個 wiki 頁;無新增待決項。)_
 - _(2026-07-17 `vault-updates-daily` 雲端 routine 條目退場:使用者已自行排定並在跑。該條敘述經查有兩處誤述,勿據以重開——snapshot `.agents/skills/vault-updates-daily/starred-repos.txt` 早於 2026-07-04 存在且 tracked(非「須先本機跑一次」);且 `references/daily-runbook.md` 明載本 vault **刻意停用 starred 同步**(純雲端 atom fallback 遭 proxy 擋、結構性不通),故 snapshot 存在的理由不是「為雲端排程」。)_
 
 ## 已婉拒
