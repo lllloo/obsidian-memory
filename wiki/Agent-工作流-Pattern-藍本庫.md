@@ -118,7 +118,8 @@ tags:
 ## 未解與待補
 
 - **`loop-until-dry` 至今無正式出處**。20 條存活主張中無一為其提供定義來源，唯一相關的只有其失效條件（單 agent 無盡迴圈、MAST FM-1.5「Unaware of termination conditions」）。目前定位：**社群實務、無論文出處、強度弱**，保留但標明。
-- **領域二（知識管理流程方法論）與領域三（軟體開發概念型流程）待補**——來源其實已被抓取（Forte Labs、zettelkasten.de、spec-driven 批評文等），但主張未進入查證階段。
+- **領域二（知識管理流程方法論）與領域三（軟體開發概念型流程）已跑第二輪，但仍只覆蓋三個角落**：成果分別回存至 [[第二大腦方法論比較]] 的「流程方法論的證據強度盤點」（GTD 五步、spacing effect、retrieval practice 爭議）與 [[AI-自主工作流的實證檢驗]] 的 spec-driven 節（Kiro 三階段閘門）。PARA、Zettelkasten、CODE、Evergreen notes、MOC、Shape Up、TDD、ADR、event storming、pre-mortem 等仍零存活主張。
+- **這不是主題的問題，是工具的結構限制**：兩輪 deep-research 分別抽出 119／135 條主張，但**皆只有 25 條進入查證**——這是 harness 的固定上限，與主題無關。故「窮舉一個 pattern 藍本庫」與 deep-research 在結構上互斥：它適合把**少數幾條主張查到極深**，不適合把**大量 pattern 掃得很廣**。要補齊廣度應改用一個 pattern 派一個 subagent 的輕量掃描（見 `mini-research` skill），把多票對抗查證這個乘數換成覆蓋率。
 
 ## 交叉引用
 
@@ -128,4 +129,5 @@ tags:
 - orchestrator-worker 的生產級落地：[[多智能體研究系統-Anthropic]]——本頁把 orchestrator-worker 與 parallelization 的分界定在「子任務能否事先定義」，該系統正是「不能事先定義」側的實例（lead 動態拆解、平行 subagent、綜合結果）。
 - 評測基礎設施的必要性：[[AI-自主工作流的實證檢驗]]——本頁第一層 gate 的「demonstrably improves outcomes」預設了評估基礎設施，該頁給出「驗證迴路必要但不充分」（測試本身可被 agent 篡改）的獨立證據，是這條 gate 的現實折扣。
 - evaluator-optimizer 的領域落地：[[設計品質的可量化檢測]]——本頁 evaluator-optimizer 的可組合性欄位是空的，該頁提供了一個實際跑起來的閉環（自動化檢測當 evaluator）作為參考實例。
+- 同構想的另兩塊（人類流程側）：[[第二大腦方法論比較]] 的「流程方法論的證據強度盤點」與 [[AI-自主工作流的實證檢驗]] 的 spec-driven 節——同一次「概念流程藍本庫」構想下的知識管理與軟體開發側，同樣逐條標強度、同樣覆蓋不全。三處合起來才是藍本庫的現況。
 - 編排層 prior art：[[pi-workflow-編排-harness-與本-vault-分野]]——該頁用 workflows／agents 二分定位 pi-workflow，與本頁第二層的「branches 與 stop conditions 是否靜態可知」測試是同一判準的兩種表述。

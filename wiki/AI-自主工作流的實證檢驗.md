@@ -53,6 +53,10 @@ agent 能以 50% 可靠度完成的任務長度，過去六年約**每 7 個月�
 
 流程結構（**high**，多來源一致）：Spec Kit 走 `constitution → specify → clarify → plan → tasks → analyze → implement`；Kiro 三檔（需求／設計／任務）最輕量；[[OpenSpec]] 定位為 Spec Kit 的輕量替代（explore（可選）→ propose → apply → sync → archive，見專屬頁）；Tessl 唯一朝 spec-as-source 走；BMAD 最重、最強調角色編排，走 Analyst→PM→PO→Architect→Scrum Master→Developer→QA 的多 agent 鏈（story files 在角色間交接），各角色是帶「互動指示」的 YAML 模板，靠 advanced elicitation（六頂帽子、五個 W、事後諸葛 hindsight-2020 等結構化提問法）逼 LLM 產出離開語料平均值，並把 PRD／架構大文件 shard 成小檔供下游 dev agent 按需載入、控 context 膨脹。
 
+**Kiro 的流程細節**（2026-07-17 deep-research 補；**弱～中，廠商自述流程模型、無獨立採用佐證**，查證者對標「中」或「弱」有分歧，此處從嚴取弱）：三階段 **Requirements（或 Bug Analysis）→ Design → Tasks**，每階段**以一份具名 markdown 落地為推進界標**（`requirements.md`／`bugfix.md`、`design.md`、`tasks.md`），**階段間預設人為核准閘門**（3-0）。官方另明列適用／不適用條件（Specs vs Vibe）與 Requirements-First／Design-First 兩種順序變體（3-0）。這是本輪唯一拿到「何時該用、何時不該用、如何選路」三欄俱全的 spec-driven 實例，可當設計自家流程時的**參照藍本**——但它是 Kiro 一家的實例，**不是 spec-driven 的通用定義**；且 Kiro 是活產品文件，流程隨時可能變動。
+
+至於 SDD 的哲學主張——**spec 為 single source of truth、code 降為可再生成的表達、需求變更因此是 regeneration 而非干擾、除錯對象從程式碼轉為規格**（Spec Kit 表述，3-0）——它是**流程哲學的權力反轉，屬倡議者立場宣言，非對照實證**，與下述證據缺口並存。
+
 **效果證據幾乎不存在**：找不到任何一個工具有隨機分組、多受試者、統計檢定的獨立效果驗證。唯一的量化論文（arXiv 2605.01160）**無對照組**、作者自承數字是「近似估計」（**low**）。
 
 反面證據反而較實（皆 **medium**，單一案例或一手 issue，不可推廣為通則）：
@@ -108,6 +112,8 @@ agent 能以 50% 可靠度完成的任務長度，過去六年約**每 7 個月�
 | 「151 個 repo 的同儕審查研究反駁 GitClear churn 敘事」 | 僅搜尋摘要提及，取不到論文連結與作者 | **未證實，勿引用** |
 | Claude 3.7 Sonnet「寫死測試答案」出自 Anthropic system card | 僅二手轉述，未核實原文 | **未證實，勿引用** |
 | Cursor 稽核「63% 檢索已知修復」 | 本輪查原文裁決：正確數字為 **57% 公網 ＋ 9% .git** | **數字已更正** |
+| 「Spec Kit 走五階段序列（規格建立→實作計畫→任務產生→程式碼產生→回饋整合），由 `/speckit.specify`／`/speckit.plan`／`/speckit.tasks` 三指令驅動前三階段」 | 2026-07-17 查證 0-3 否決。本頁上方記載的**七步** `constitution → specify → clarify → plan → tasks → analyze → implement` 未被本輪動搖，仍為現行記載 | **五階段版勿引用** |
+| 「Spec Kit 以 `memory/constitution.md` 九條 articles 治理，並強制三道 pre-implementation gates（Simplicity ≤3 projects／Anti-Abstraction／Integration-First）」 | 2026-07-17 查證 1-2 否決，未能在一手來源核實 | **勿引用（本輪無法確立）** |
 
 另標註利益衝突來源：GitClear 的 code churn 研究（clone 比例 8.3%→12.3%、churn 3.3%→7.1%）核心指標 Diff Delta 是**商標黑盒方法論、外部無法稽核**，且 GitClear 賣的就是程式碼分析工具（**medium，利益衝突**）。Martinelli 的「spec-driven 在企業失敗」一文作者是競品創辦人、無數據，**不宜作為獨立證據**。
 
