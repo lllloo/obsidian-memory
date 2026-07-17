@@ -8,7 +8,7 @@
   FM:<file>:<問題>           frontmatter 缺必要欄位 / tags 非 YAML list
   TAG:<tag>:<count>          tag 盤點（同義異寫漂移由主 agent 判讀）
   RAWGAP:<file>              raw 檔未被任何 wiki 頁引用（待消化原料）
-  INDEXGAP:<dir>:<file>      raw 資料夾 literal index 漏登
+  INDEXGAP:<dir>:<file>      index 漏登（raw 各資料夾 literal index；wiki 頁未登錄 wiki/01.index.md）
   BASEIDX:<dir>              該 index 用 .base 動態清單，跳過漏登檢查
   CHANGED:<file>             近 N 天有 git 變動的 wiki 頁（語意層輸入）
   SUMMARY:<key>=<value>      各類計數
@@ -227,6 +227,14 @@ def main() -> int:
                 continue
             if f.stem not in idx_text:
                 findings["INDEXGAP"].append(f"INDEXGAP:{drel}:{f.name}")
+
+    # ---- INDEXGAP（wiki）：wiki 頁存在但未登錄 wiki/01.index.md ----
+    # wiki 索引是查詢入口與去重防線,漏登的頁對 Query 形同不存在。
+    wiki_idx_text = next((texts[p] for p in texts if rel[p] == "wiki/01.index.md"), "")
+    if wiki_idx_text:
+        for p in texts:
+            if top_of(p) == "wiki" and p.name != "01.index.md" and p.stem not in wiki_idx_text:
+                findings["INDEXGAP"].append(f"INDEXGAP:wiki:{p.name}")
 
     # ---- CHANGED：近 N 天 git 變動的 wiki 頁（語意層輸入）----
     try:
