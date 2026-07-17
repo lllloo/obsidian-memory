@@ -4,7 +4,7 @@
 在 vault root 執行；輸出 machine-readable lines（一行一發現），由主 agent 組裝報告：
 
   DEADLINK:<file>:<target>   wikilink 或 markdown 式內部連結指向不存在的檔案
-  ORPHAN:<file>              wiki 頁無任何入連（01.index 除外）
+  ORPHAN:<file>              wiki 內容頁無其他 wiki 內容頁入連（index/raw/schema/自連不算）
   FM:<file>:<問題>           frontmatter 缺必要欄位 / tags 非 YAML list
   TAG:<tag>:<count>          tag 盤點（同義異寫漂移由主 agent 判讀）
   RAWGAP:<file>              raw 檔未被任何 wiki 頁引用（待消化原料）
@@ -157,6 +157,10 @@ def main() -> int:
     def top_of(p: Path) -> str:
         return rel[p].split("/", 1)[0]
 
+    def is_wiki_content_page(p: Path) -> bool:
+        """wiki 知識圖譜中的內容頁；目錄頁只負責導航，不算知識互連。"""
+        return top_of(p) == "wiki" and p.name != "01.index.md"
+
     # ---- DEADLINK：wiki/raw/schema + root CLAUDE.md 內指向不存在檔案的連結 ----
     # wikilink 用 basename 解析（Obsidian 慣例）；markdown 式內部連結用相對 containing file 的路徑解析。
     def is_linkcheck_target(p: Path) -> bool:
@@ -174,13 +178,15 @@ def main() -> int:
             if not (p.parent / t).is_file():
                 findings["DEADLINK"].append(f"DEADLINK:{rel[p]}:{t}")
 
-    # ---- ORPHAN：wiki 頁（01.index 除外）無任何入連 ----
+    # ---- ORPHAN：wiki 內容頁無其他 wiki 內容頁入連 ----
+    # index 是每頁必登錄的導航入口；raw/schema 也不是知識圖譜中的內容頁。
+    # 若把它們算成有效入連，只有目錄或治理文件指向的頁會被誤判為已互連。
     for p in texts:
-        if top_of(p) != "wiki" or p.name == "01.index.md":
+        if not is_wiki_content_page(p):
             continue
         linkers = {
             q for q in inbound.get(p.stem, set()) - {p}
-            if top_of(q) in ("wiki", "raw", "schema")
+            if is_wiki_content_page(q)
         }
         if not linkers:
             findings["ORPHAN"].append(f"ORPHAN:{rel[p]}")
