@@ -15,6 +15,7 @@ vault 健檢的**待處理清單**,由 `vault-lint` skill 每輪讀寫(手動或
 
 - 機械可修項(路徑錯的死連結、缺欄位、有 `description` 的 index 漏登)由 skill **自動修**,不進本清單。
 - 需判斷 / 語意項進 `待你決定`;你退回的修法進 `已婉拒`,skill 之後不再重提。
+- **agent 自己判維持現狀／待觸發的**進 `Agent 已判`——不每輪浮上來問你,除非有新資料或被再次引用才重開。
 - **頁面引用一律用反引號**(如 `` `wiki/某頁.md` ``),**不得用 wikilink**——`schema/` 在死連結掃描範圍內,用 wikilink 會被自己的 lint 掃成死連結。
 - **沒有「上次執行」欄位,無發現的一輪本檔零變更**——那是排程器的營運狀態,不是 vault 的知識;記在這裡會讓每輪都產生 diff、天天開一個「今天沒事」的 PR。排程是否還活著,去排程器的執行紀錄看。
 
@@ -23,35 +24,33 @@ vault 健檢的**待處理清單**,由 `vault-lint` skill 每輪讀寫(手動或
 - `semantic_days: 7` — 語意層只審近 N 天有 git 變動的 wiki 頁
 - `semantic_page_cap: 10` — 語意層單次最多審幾頁,超過取最近變動者並標注截斷
 
-## 待你決定
+## 待你決定(真正需要使用者,其餘見 `Agent 已判`)
 
-### 覆蓋缺口 / 可延伸新頁(需先確認不觸犯反過度工程)
+這三件因 push 授權／治理決定／repo「改 skill 一律先問」硬規則而卡在使用者,不由 agent 自主:
 
-- [中] NEWPAGE | OpenClaw | `wiki/Claude-Code-記憶系統六層比較.md` 第 52 行自我點名「Hermes 與 OpenClaw 同血緣,值得日後專門對照」;OpenClaw 另在 memsearch 移植、`hermes claw migrate` 多次被提卻無實體頁。橫跨記憶六層與 Hermes 兩簇的樞紐
-- [低] NEWPAGE | SDD 工具橫向對照 | Spec Kit／Kiro／Tessl／BMAD／OpenSpec 散在 `wiki/AI-自主工作流的實證檢驗.md` 第 54 行 prose + 獨立 OpenSpec 頁,而平行的 wiki 工具簇已有 `wiki/LLM-Wiki-生態實作比較.md` 對照表。**權衡**:AI-自主聚焦「效果證據」、對照頁聚焦「工具功能」,切面不同不算重複,但 BMAD 當初刻意折進而非開頁——非急件
-- [低] NEWPAGE | route B 記憶實作 | `wiki/Agent-記憶兩大路線-知識庫與-memory-bank.md` 的 route A 有 `wiki/LLM-Wiki-生態實作比較.md` 撐實作細節,route B(Cline Memory Bank)與相鄰 Letta MemFS 只有 inline 描述、無對等實作頁。可待再被引用時再開
+- [中] SKILL | `vault-updates-daily` 雲端 routine 未排 | 該 skill 的 `starred-repos.txt` snapshot fallback 存在的唯一理由就是雲端 token-free 排程跑,基建做好卻只有 vault-lint 一支 routine。**卡點**:須先本機 `--snapshot-starred` 一次並授權推送(排 routine 會 push 遠端,憲法唯一守門)——無使用者不能動
+- [中] SKILL | MEMORY「貼 URL ingest 全流程」候選計數退場 | 手動 ingest 無具名入口累積次數,結構上永遠踩不到「滿 3 次」門檻、無限期卡在 0 次;fetch 段已被全域 `defuddle` 覆蓋。**這是使用者的 `MEMORY.md` 升級訊號治理決定**:退場(agent 建議),或保留「日後做網頁版 ingest skill」的種子改用時間／成長訊號
+- [低] SKILL | 兩個一行文件補丁(可批) | 皆只記錄既有行為、零行為改變,但按 repo「改 skill 一律先問」需點頭:(1) 跨工具可攜縫——`AGENTS.md` 加一句「非 Claude Code 工具請先 Read `schema/MEMORY.md`、`schema/BACKLOG.md`」(`@import` 為 Claude Code 專屬,Codex／Cursor／opencode 不解析);(2) `ask-vault` 在 `SKILL.md` 補一行 `OBSIDIAN_VAULT` 逃生口說明(腳本已支援、文件沒提)
 
-### skill／系統層(改 agent 行為,依 repo 規則須逐項拍板)
+## Agent 已判(維持現狀／待觸發,不再每輪問)
 
-- [中] SKILL | `vault-updates-daily` 雲端 routine 未排 | 該 skill 的 `starred-repos.txt` snapshot fallback 存在的唯一理由就是雲端 token-free 排程跑,基建做好卻只有 vault-lint 一支 routine。前置:須先本機 `--snapshot-starred` 一次並授權推送
-- [中] SKILL | MEMORY「貼 URL ingest 全流程」候選計數失效 | 手動 ingest 無具名入口累積次數,結構上永遠踩不到「滿 3 次」門檻、無限期卡在 0 次;fetch 段已被全域 `defuddle` 覆蓋。建議做決策:退場 or 改用「時間／成長」訊號
-- [低] SKILL | 跨工具可攜縫 | `schema/MEMORY.md` 自稱唯一跨工具可攜操作記憶,但靠 `CLAUDE.md` 的 `@schema/MEMORY.md` 自動載入,而 `@import` 為 Claude Code 專屬;Codex／Cursor／opencode 讀 `AGENTS.md` 不解析。可在 `AGENTS.md` 正文加一句「非 Claude Code 工具請先 Read `schema/MEMORY.md`、`schema/BACKLOG.md`」
-- [低] SKILL | `ask-vault` 缺 `OBSIDIAN_VAULT` 逃生口說明 | 腳本支援該環境變數覆寫 vault 路徑,但 `SKILL.md` 沒提;非預設路徑時 agent 只會拿到「工具未就緒」。補一行
+**新頁候選——agent 判暫不開,待觸發**(反過度工程判斷屬 wiki 全權;有新料或被再次引用才重開):
 
-### frontmatter／一致性(注意 `raw/` write-once 約束)
+- NEWPAGE | OpenClaw | 記憶六層與 Hermes 頁點名「值得日後專門對照」,橫跨兩簇的樞紐;inline 提及暫足夠,待被更多次引用再開(使用者 2026-07-17 亦「先不開」)
+- NEWPAGE | SDD 工具橫向對照(Spec Kit／Kiro／Tessl／BMAD／OpenSpec) | AI-自主頁聚焦「效果證據」、對照頁聚焦「工具功能」切面不同,BMAD 當初刻意折進;非急件(使用者 2026-07-17 亦「先不開」)
+- NEWPAGE | route B 記憶(Cline Memory Bank) | route A 有 `wiki/LLM-Wiki-生態實作比較.md` 撐,route B 與相鄰 Letta MemFS 只有 inline;待再被引用再開
 
-- [低] FRONTMATTER | `sha256` 為白名單外欄位 | 只在 `raw/fetched/Anthropic-Cookbook-Research-Prompts.md`、`raw/fetched/Anthropic-Multi-Agent-Research-System.md` 出現,同資料夾其餘 3 檔沒有。**注意**:移除會改既有 raw、違反 write-once;現實解是納入 CLAUDE.md 白名單(當內容指紋)或接受現狀
-- [低] FRONTMATTER | fetched 檔全掛 `tags: clippings` | 語意與資料夾矛盾(fetched 是 agent 貼 URL、clippings 是 Web Clipper);跨資料夾 tag 查詢會混淆。同受 raw write-once 約束,傾向接受或改慣例、不回改既有檔
-- [低] FRONTMATTER | clippings 回連紀律不對稱 | 6 個 fetched 全有 wiki 回連,6 個 clippings 僅 1 個有——正是機械層每輪 flag clippings 的根因。立慣例「clipping 種子某 wiki 頁時在該頁補 `[[clipping]]` 回連」可讓 linter 自動消 flag
+**frontmatter／一致性——agent 判維持現狀**(動既有 raw 反違反 write-once;此註記為錨點,防機械層重複洗版):
 
-### 待回查 / 低信心(需原始記錄或跨頁核對)
+- FRONTMATTER | `sha256`(白名單外,見兩個 `raw/fetched/` cookbook 檔)、fetched 檔 `tags: clippings`(語意與資料夾矛盾)、clippings 回連不對稱(6 clippings 僅 1 有 wiki 回連)——三者同受 raw write-once 約束,正解是接受現狀;唯 `sha256` 若要正式納 `CLAUDE.md` 白名單(當內容指紋)才需使用者動憲法檔,不納亦無妨
 
-- [低] RAWGAP | `raw/clippings/` | **現存 clippings 全數判定已消化,無待 ingest**(機械層仍會逐篇 flag,因未加 wikilink;此註記為判斷錨點,防重複洗版)。原項首見 2026-07-13,最後結清 2026-07-16(2 篇判定不 ingest／最小增補,見 git log)
-- [低][低信心] STALE | `wiki/LLM-方案定價與-coding-agent-比較.md` | 孤立(入連太少)已修——補了 `wiki/Context-優先與多-agent-的適用邊界.md`、`wiki/AI-自主工作流的實證檢驗.md` 兩條反鏈。**殘留**:定價數字仍為 2026-05~07 快照(頁面已標「回官網查」),真要刷新須逐一 re-fetch 11+ 廠商即時價、且月月會再過期——屬「值不值得例行 re-ingest」的決策,非機械修
-- [低][低信心] STALE/疑慮 | `wiki/第二大腦整合的現成工具與做法.md`↔`wiki/LLM-Wiki-生態實作比較.md` | 兩輪日期主題皆不同的 deep-research,統計數字(22 來源、25 條主張)完全相同,不排除巧合,亦可能複製前次框架未更新;建議之後回查原始記錄核實
-- [低][低信心] STALE | `wiki/第二大腦方法論比較.md` | Hermes 雙軸類比(2026-07-09 驗證)未提及 `wiki/Hermes-Agent.md` 2026-07-14 新增的 Kanban board 任務佇列子系統;屬可補充的 enrichment、非錯誤,待再動該頁時順手
+**其餘 agent 判斷不動**:
 
-**審視後判斷維持現狀(不動)**:vault-lint 第二段語意自動修(刻意延遲、重開條件明確)、無 in-vault 全文搜尋(21 頁 Grep 夠用)、evals 覆蓋不均(機械掃描與外部 API 相依 skill 補 eval 邊際價值低)。
+- STALE | `wiki/LLM-方案定價與-coding-agent-比較.md` | 孤立已修(補 2 條反鏈);定價數字仍為 2026-05~07 快照,頁面已標「回官網查」,agent 判**不值得例行 re-fetch**(11+ 廠商即時價、月月再過期)——要新快照再指示
+- STALE | `wiki/第二大腦方法論比較.md` | Hermes 雙軸類比未提 `wiki/Hermes-Agent.md` 2026-07-14 新增的 Kanban board 子系統;屬 enrichment 非錯誤,待再動該頁順手補
+- RAWGAP | `raw/clippings/` | 現存 clippings 全數判定已消化、無待 ingest(機械層仍逐篇 flag 因未加 wikilink;此為判斷錨點);首見 2026-07-13,最後結清 2026-07-16
+- 待回查 | `wiki/第二大腦整合的現成工具與做法.md`↔`wiki/LLM-Wiki-生態實作比較.md` | 兩輪不同主題 deep-research 的統計數字(22 來源、25 主張)完全相同,需使用者當初原始記錄才能核實,agent 無解、留 watch-flag
+- 維持現狀:vault-lint 第二段語意自動修(刻意延遲、重開條件明確)、無 in-vault 全文搜尋(21 頁 Grep 夠用)、evals 覆蓋不均(邊際價值低)
 
 ## 本輪語意層截斷(下輪續審)
 
@@ -60,7 +59,7 @@ vault 健檢的**待處理清單**,由 `vault-lint` skill 每輪讀寫(手動或
 ## 已修退場紀錄(精簡,細節見 git log)
 
 - _(2026-07-16 全專案改進審視語意層 13 項——2 過時、9 交叉引用缺口、2 低優先群組——經「全都修」指示全數落地退場。)_
-- _(2026-07-17「修問題」批次:全專案改進審視的 3 條 XREF(跨專案↔OKF、OpenSpec↔Agent-Harness、設計品質↔AI-生成流程圖)、07-16 語意層例行審查的 3 矛盾 + 6 XREF + 4 過時、07-17 例行審查的 4 條低信心新發現,均已修補落地;`feeds/watch/` 漏登已補進 `schema/vault-map.md`、`schema/SYSTEM-DESIGN.md`;`published` 空值寫法已統一為 `""`。低信心 XREF「AI-自主工作流 相關頁 pi-workflow 措辭」與過時「OpenSpec 31 工具」覆核後判定原敘述已足、退場。)_
+- _(2026-07-17「修問題」批次:全專案改進審視的 3 條 XREF、07-16 語意層的 3 矛盾 + 6 XREF + 4 過時、07-17 的 4 條低信心新發現,均已修補落地;`feeds/watch/` 漏登已補進 `schema/vault-map.md`、`schema/SYSTEM-DESIGN.md`;`published` 空值統一為 `""`。低信心「AI-自主 相關頁 pi-workflow 措辭」與「OpenSpec 31 工具」覆核後判定原敘述已足、退場。)_
 
 ## 已婉拒
 
