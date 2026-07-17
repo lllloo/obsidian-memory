@@ -9,13 +9,13 @@ tags:
 
 # Vault Lint Backlog
 
-vault 健檢的**待處理清單**,由 `vault-lint` skill 每輪讀寫(手動或排程觸發皆同)。findings 去重後留在此,解決即移除;你的決定(婉拒)留在此,約束 agent 之後的行為。
+vault 健檢的**待處理清單**,由 `vault-lint` skill 每輪讀寫(手動或排程觸發皆同)。健檢發現由 agent **自主修補**(機械項與語意項皆然,2026-07-17 拍板取代原「語意項只報告」制);**只有真正需要使用者的決策**去重後留在此,解決即移除;你的決定(婉拒)留在此,約束 agent 之後的行為。
 
 放 `schema/` 而非 `feeds/`:這不是「給人瀏覽的自動產物」,而是 **agent 每輪讀回來、用來約束自己行為的跨 session 操作狀態**——與 [`MEMORY.md`](MEMORY.md) 同層。`feeds/` 的規則是 agent 不讀,把行為約束放進去會自相矛盾,別的工具打開 vault 也看不到你的決定。
 
-- 機械可修項(路徑錯的死連結、缺欄位、有 `description` 的 index 漏登)由 skill **自動修**,不進本清單。
-- 需判斷 / 語意項進 `待你決定`;你退回的修法進 `已婉拒`,skill 之後不再重提。
-- **agent 自己判維持現狀／待觸發的**進 `Agent 已判`——不每輪浮上來問你,除非有新資料或被再次引用才重開。
+- 修得掉的不進本清單——agent 當輪直接修(需查證就自己查),review 面在呼叫端的 commit／PR diff。
+- **真正需要使用者的決策**才進 `待你決定`:需你才有的資訊、正解動到 raw write-once／憲法檔／skill、或會推翻你已表態的方向。你退回的修法進 `已婉拒`,skill 之後不再重提。
+- **agent 自己判維持現狀／待觸發的**進 `Agent 已判`——去重錨點,不每輪浮上來問你,除非依據的頁／基礎實際變動才重新評估。
 - **頁面引用一律用反引號**(如 `` `wiki/某頁.md` ``),**不得用 wikilink**——`schema/` 在死連結掃描範圍內,用 wikilink 會被自己的 lint 掃成死連結。
 - **沒有「上次執行」欄位,無發現的一輪本檔零變更**——那是排程器的營運狀態,不是 vault 的知識;記在這裡會讓每輪都產生 diff、天天開一個「今天沒事」的 PR。排程是否還活著,去排程器的執行紀錄看。
 
@@ -26,7 +26,7 @@ vault 健檢的**待處理清單**,由 `vault-lint` skill 每輪讀寫(手動或
 
 ## 待你決定(真正需要使用者,其餘見 `Agent 已判`)
 
-_(目前無項目)_
+- 待回查 | `wiki/第二大腦整合的現成工具與做法.md`↔`wiki/LLM-Wiki-生態實作比較.md` | 兩輪不同主題 deep-research 的統計數字(22 來源、25 主張)完全相同,需你當初的原始記錄才能核實,agent 無解(首見 2026-07-16;若無記錄可查,回覆一聲即改列兩頁「數字待考」註記後退場)
 
 ## Agent 已判(維持現狀／待觸發,不再每輪問)
 
@@ -45,10 +45,8 @@ _(目前無項目)_
 **其餘 agent 判斷不動**:
 
 - STALE | `wiki/LLM-方案定價與-coding-agent-比較.md` | 孤立已修(補 2 條反鏈);定價數字仍為 2026-05~07 快照,頁面已標「回官網查」,agent 判**不值得例行 re-fetch**(11+ 廠商即時價、月月再過期)——要新快照再指示
-- STALE | `wiki/第二大腦方法論比較.md` | Hermes 雙軸類比未提 `wiki/Hermes-Agent.md` 2026-07-14 新增的 Kanban board 子系統;屬 enrichment 非錯誤,待再動該頁順手補
 - RAWGAP | `raw/clippings/` | 現存 clippings 全數判定已消化、無待 ingest(機械層仍逐篇 flag 因未加 wikilink;此為判斷錨點);首見 2026-07-13,最後結清 2026-07-16
-- 待回查 | `wiki/第二大腦整合的現成工具與做法.md`↔`wiki/LLM-Wiki-生態實作比較.md` | 兩輪不同主題 deep-research 的統計數字(22 來源、25 主張)完全相同,需使用者當初原始記錄才能核實,agent 無解、留 watch-flag
-- 維持現狀:vault-lint 第二段語意自動修(刻意延遲、重開條件明確)、無 in-vault 全文搜尋(21 頁 Grep 夠用)、evals 覆蓋不均(邊際價值低)
+- 維持現狀:無 in-vault 全文搜尋(21 頁 Grep 夠用)、evals 覆蓋不均(邊際價值低)
 
 ## 本輪語意層截斷(下輪續審)
 
@@ -59,6 +57,7 @@ _(目前無項目)_
 - _(2026-07-16 全專案改進審視語意層 13 項——2 過時、9 交叉引用缺口、2 低優先群組——經「全都修」指示全數落地退場。)_
 - _(2026-07-17「修問題」批次:全專案改進審視的 3 條 XREF、07-16 語意層的 3 矛盾 + 6 XREF + 4 過時、07-17 的 4 條低信心新發現,均已修補落地;`feeds/watch/` 漏登已補進 `schema/vault-map.md`、`schema/SYSTEM-DESIGN.md`;`published` 空值統一為 `""`。低信心「AI-自主 相關頁 pi-workflow 措辭」與「OpenSpec 31 工具」覆核後判定原敘述已足、退場。)_
 - _(2026-07-17 逐件問診:MEMORY「貼 URL ingest 全流程」升級訊號候選經使用者核可退場(已於 `schema/MEMORY.md` 劃線註記);跨工具可攜縫補丁已落地——`AGENTS.md` 為 `CLAUDE.md` 的 symlink,故該句寫在 `CLAUDE.md` 的 `@import` 行旁。)_
+- _(2026-07-17 治理改制:使用者拍板 vault-lint 語意項改**全面自動修**(不加對抗驗證),「語意項只報告」制退場;原「維持現狀:vault-lint 第二段刻意延遲」條目隨之結案。STALE `wiki/第二大腦方法論比較.md` 缺 Hermes Kanban 補充,依新制當場修補退場。)_
 - _(2026-07-17 `vault-updates-daily` 雲端 routine 條目退場:使用者已自行排定並在跑。該條敘述經查有兩處誤述,勿據以重開——snapshot `.agents/skills/vault-updates-daily/starred-repos.txt` 早於 2026-07-04 存在且 tracked(非「須先本機跑一次」);且 `references/daily-runbook.md` 明載本 vault **刻意停用 starred 同步**(純雲端 atom fallback 遭 proxy 擋、結構性不通),故 snapshot 存在的理由不是「為雲端排程」。)_
 
 ## 已婉拒

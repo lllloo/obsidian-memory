@@ -16,7 +16,7 @@
 | `wiki/` | agent 完全掌管的活知識庫：摘要、實體、概念、比較、綜合 | **全權**：自由建頁、改頁、刪頁、交叉引用、維護 index |
 | schema | 本檔（root）+ `schema/SYSTEM-DESIGN.md` + `schema/vault-map.md` + `schema/MEMORY.md` + `schema/BACKLOG.md`（規範 agent 行為 + 跨 session 操作記憶） | 依規則維護 |
 
-`schema/BACKLOG.md` 是 `vault-lint` 的健檢待處理清單:agent **每輪讀回來約束自身行為**的操作狀態(去重、跳過已婉拒、判斷退場),與 `MEMORY.md` 同層,不是給人瀏覽的 feed 產物。**語意項只報告**,修補由使用者另行指示;使用者退回的修法記入「已婉拒」,agent 之後不再重提。寫入該檔時頁面引用一律用反引號、不得用 wikilink(`schema/` 在死連結掃描範圍內)。
+`schema/BACKLOG.md` 是 `vault-lint` 的健檢待處理清單:agent **每輪讀回來約束自身行為**的操作狀態(去重、跳過已婉拒、判斷退場),與 `MEMORY.md` 同層,不是給人瀏覽的 feed 產物。lint 發現由 agent 自主修補;**只有真正需要使用者的決策**(需使用者才有的資訊、動 raw write-once、動憲法檔／skill)才進清單;使用者退回的修法記入「已婉拒」,agent 之後不再重提。寫入該檔時頁面引用一律用反引號、不得用 wikilink(`schema/` 在死連結掃描範圍內)。
 
 **`cards/` 與 `topics/` 不屬於本系統。** 它們是使用者的私人資料夾，同時是 Quartz **唯一對外公開發佈**的層。agent 一律**不寫、不維護、不索引** cards/topics——系統三動作（Ingest、Query、Lint）全部跳過它們，不得作為 `raw/`／`wiki/` 的來源、不寫入、不納入 lint。使用者自行從 wiki 手動撿選、複製想公開的內容進去；那是使用者的動作，不是系統的一環。
 
@@ -77,7 +77,7 @@ wiki 的維護就是這三個動作，只在 `raw/` + `wiki/` 上進行；不碰
 
 ### Lint（健檢）
 
-定期掃 wiki（+ raw 索引）：矛盾、被新來源取代的過時主張、孤立頁、被提到卻沒專屬頁的概念、缺交叉引用、可用查證補的資料空缺。產出修補與新探究建議。只掃 raw/wiki/schema，不碰 feeds/cards/topics。掃描由 `vault-lint` skill 承載（findings 去重後維護在 `schema/BACKLOG.md`，解決即移除，不產快照報告；可手動跑亦可掛排程，行為一致且不碰 git）：**機械可修項自動修、語意項只報告**（依據：死連結是 LLM wiki 實證的頭號結構錯誤，見 [`LLM-Wiki-生態實作比較`](wiki/LLM-Wiki-生態實作比較.md)），語意修補在使用者點頭後由 agent 執行；使用者退回的修法記入「已婉拒」不再重提。
+定期掃 wiki（+ raw 索引）：矛盾、被新來源取代的過時主張、孤立頁、被提到卻沒專屬頁的概念、缺交叉引用、可用查證補的資料空缺。只掃 raw/wiki/schema，不碰 feeds/cards/topics。掃描由 `vault-lint` skill 承載（findings 去重後維護在 `schema/BACKLOG.md`，解決即移除，不產快照報告；可手動跑亦可掛排程，行為一致且不碰 git）。**健檢即整理：機械項與語意項一律由 agent 自主修補**（與 wiki 全權一致；需要查證就自己查，2026-07-17 拍板取代原「語意項只報告」制），**只有真正需要使用者的決策才進 BACKLOG**——需使用者才有的資訊、動 raw write-once、動憲法檔／skill、或會推翻使用者已表態方向的項；使用者退回的修法記入「已婉拒」不再重提。死連結列機械層之首有實證依據：LLM wiki 的頭號結構錯誤，見 [`LLM-Wiki-生態實作比較`](wiki/LLM-Wiki-生態實作比較.md)。
 
 ## wiki 頁面與索引
 
@@ -145,7 +145,7 @@ deep-research 或其他對抗式查證的結果回存 wiki 時：每條主張就
 |---|---|
 | `vault-youtube-sync` | YouTube 影片摘要同步至 `feeds/youtube/` |
 | `vault-updates-daily` | 日常更新彙整至 `feeds/updates/` |
-| `vault-lint` | wiki+raw 健檢，findings 維護於 `schema/BACKLOG.md`（機械可修項自動修、語意項只報告）；手動／排程共用同一流程，本身不執行 git 動作 |
+| `vault-lint` | wiki+raw 健檢，機械項與語意項皆由 agent 自主修補，真需使用者決策的才進 `schema/BACKLOG.md`；手動／排程共用同一流程，本身不執行 git 動作 |
 | `vault-watch` | 追蹤一批 GitHub issue/PR 狀態，`gh` 抓現況與快照比對，精選訊號（state 轉換、官方回應、label 變動）有變才回報並更新 `feeds/watch/` 看板；本身不執行 git 動作 |
 | `ask-vault` | 從**其他專案**向本 vault 發「請求/回應」查詢：起 headless Claude 在 vault root 走 Query（唯讀、附引用），答完即退、不需常駐 |
 
