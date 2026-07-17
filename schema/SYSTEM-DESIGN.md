@@ -56,6 +56,7 @@ tags:
 
 - `feeds/youtube/` 是使用者瀏覽的自動同步筆記；不進 raw 或 wiki。完整影片筆記凍結，draft／index／Base／checkpoint 由同步 skill 維護。
 - `feeds/updates/` 是使用者瀏覽的消費性日報；不 ingest、不 query、不 lint，寫完即凍結（同日重跑依 skill 的 append 規則）。lint 不產 feeds 產物——健檢的待處理清單是 `schema/BACKLOG.md`（agent 每輪讀回來約束自身行為的操作狀態，與 `MEMORY.md` 同層）。
+- `feeds/watch/` 是 `vault-watch` 的 GitHub issue/PR 追蹤看板（`01.index.md`）與變更 digest；不進 raw 或 wiki，追蹤清單以看板為準。
 - Quartz 只應發佈 cards/topics，`feeds/**` 不公開；發佈設定在本 repo 外。
 
 ### 本 vault 的額外層：cards/topics（不在原文三層裡，系統不管）

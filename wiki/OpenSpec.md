@@ -2,9 +2,9 @@
 title: OpenSpec
 description: Fission-AI 的輕量 spec 層工具，讓開發者與 AI coding agent 在寫碼前先就「要建什麼」達成共識；含安裝、目錄結構、五步工作流與 CLI 全貌
 created: 2026-07-16
-updated: 2026-07-16
+updated: 2026-07-17
 source: https://github.com/Fission-AI/OpenSpec
-published: 
+published: ""
 parent: "[[wiki/01.index]]"
 tags:
   - coding-agent
@@ -99,7 +99,7 @@ core profile 五步序列：
 | **sync** | 把 delta specs 套用回主 specs |
 | **archive** | 最終合併並移入 `archive/` |
 
-Artifact 產生順序為 `proposal → specs → design → tasks → implement`，各階段建構在前者脈絡上，但是「dependency enablers」而**非 rigid gates**：`design` 可跳過；`specs` 與 `design` 都只依賴 `proposal`；`tasks` 需要 `specs` 和 `design` 兩者。
+Artifact 產生順序為 `proposal → specs → design → tasks → implement`，各階段建構在前者脈絡上，但是「dependency enablers」而**非 rigid gates**：`design` 可跳過；`specs` 與 `design` 都只依賴 `proposal`；`tasks` 依賴 `specs`，並在 `design` 存在時一併依賴它（`design` 被跳過時則僅依賴 `specs`）。
 
 ## CLI 指令（high）
 

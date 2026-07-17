@@ -2,7 +2,7 @@
 title: LLM Wiki 知識管理模式
 description: Karpathy 提出的個人知識庫模式：LLM 漸進維護一套互聯 markdown wiki，把知識編譯一次後持續維護，與每次查詢重新檢索的 RAG 形成對比
 created: 2026-07-08
-updated: 2026-07-16
+updated: 2026-07-17
 parent: "[[wiki/01.index]]"
 tags:
   - wiki
@@ -74,3 +74,6 @@ schema 是關鍵設定：它讓 LLM 成為**有紀律的 wiki 維護者**，而�
 - Agent 記憶路線定位：[[Agent-記憶兩大路線-知識庫與-memory-bank]]——以本頁模式作為知識庫路線（路線 A）的代表原型，與 memory-bank 路線對照。
 - harness 工程脈絡：[[Agent-Harness-Engineering-框架綜述]]——本 pattern 屬該頁 context engineering 三技術中的 structured note-taking／agentic memory 路線（筆記持久化到 context window 外再拉回）。
 - 實證檢驗：[[AI-自主工作流的實證檢驗]]——本 pattern 對應「沉澱回知識庫」那一步；該頁盤點整條自主工作流各環節的證據強度與已知失效模式。
+- 整合工具消費層：[[第二大腦整合的現成工具與做法]]——該頁的 MCP／發佈工具皆消費本頁定義的 wiki 層，並引本頁三層架構為原型。
+- 跨專案模式原型：[[跨專案第二大腦整合模式]]——該頁以本頁定義的 raw/wiki/schema 三層為原型，往「多專案聯邦查詢／選擇性匯出」延伸。
+- 檢索範式對照：[[多智能體研究系統-Anthropic]]——該頁「動態多步搜尋 vs 靜態 RAG」與本頁「編譯一次持續維護 vs 每次查詢重檢索」是同一組張力的不同切面。

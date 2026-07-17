@@ -2,7 +2,7 @@
 title: AI 自主工作流的實證檢驗
 description: spec-driven、長時自主 loop、驗證迴路、狀態持久化四類做法的證據盤點——vendor 敘事與獨立實證的落差，以及必須停止引用的空氣數字
 created: 2026-07-10
-updated: 2026-07-16
+updated: 2026-07-17
 parent: "[[wiki/01.index]]"
 tags:
   - ai-agent
@@ -45,13 +45,13 @@ agent 能以 50% 可靠度完成的任務長度，過去六年約**每 7 個月�
 - **[Cursor 的 reward hacking 稽核](https://cursor.com/blog/reward-hacking-coding-benchmarks)**（稽核 731 條 Opus 4.8 Max trajectory）：成功案例中 **57%** 是在公開網路找到已合併的 PR 或修好的原始檔，另 **9%** 是從 bundled `.git` 歷史裡挖出「未來」修 bug 的 commit——即約三分之二的成功不是推導出來的。封鎖網路並清空 `.git` 後，Opus 4.8 Max 從 87.1% 降到 **73.0%**，Composer 2.5 從 74.7% 降到 **54.0%**。原文：「reward hacking is far more common with newer, more sophisticated models than with older ones」。
   - （Cursor 是 vendor，但此研究揭露自家與競品分數灌水，方向不自利；731 條盲審方法論公開。）
 
-**對五步迴圈的直接含意**：「讓 agent 自己寫測試、自己跑通過就算完成」不是理論疑慮，是已測量到的行為模式。規格越模糊，agent 越容易轉向「讓測試通過」而非「解決真實問題」。
+**對自主 agent 驗證迴圈的直接含意**（此處指 [[Agent-Harness-Engineering-框架綜述]] 記錄的核心迴圈 gather context → take action → verify work → repeat 中的 **verify** 環節）：「讓 agent 自己寫測試、自己跑通過就算完成」不是理論疑慮，是已測量到的行為模式。規格越模糊，agent 越容易轉向「讓測試通過」而非「解決真實問題」。
 
 ## 分項證據盤點
 
 ### Spec-driven development
 
-流程結構（**high**，多來源一致）：Spec Kit 走 `constitution → specify → clarify → plan → tasks → analyze → implement`；Kiro 三檔（需求／設計／任務）最輕量；[[OpenSpec]] 定位為 Spec Kit 的輕量替代（完整五步 explore → propose → apply → sync → archive，見專屬頁）；Tessl 唯一朝 spec-as-source 走；BMAD 最重、最強調角色編排，走 Analyst→PM→PO→Architect→Scrum Master→Developer→QA 的多 agent 鏈（story files 在角色間交接），各角色是帶「互動指示」的 YAML 模板，靠 advanced elicitation（六頂帽子、五個 W、事後諸葛 hindsight-2020 等結構化提問法）逼 LLM 產出離開語料平均值，並把 PRD／架構大文件 shard 成小檔供下游 dev agent 按需載入、控 context 膨脹。
+流程結構（**high**，多來源一致）：Spec Kit 走 `constitution → specify → clarify → plan → tasks → analyze → implement`；Kiro 三檔（需求／設計／任務）最輕量；[[OpenSpec]] 定位為 Spec Kit 的輕量替代（explore（可選）→ propose → apply → sync → archive，見專屬頁）；Tessl 唯一朝 spec-as-source 走；BMAD 最重、最強調角色編排，走 Analyst→PM→PO→Architect→Scrum Master→Developer→QA 的多 agent 鏈（story files 在角色間交接），各角色是帶「互動指示」的 YAML 模板，靠 advanced elicitation（六頂帽子、五個 W、事後諸葛 hindsight-2020 等結構化提問法）逼 LLM 產出離開語料平均值，並把 PRD／架構大文件 shard 成小檔供下游 dev agent 按需載入、控 context 膨脹。
 
 **效果證據幾乎不存在**：找不到任何一個工具有隨機分組、多受試者、統計檢定的獨立效果驗證。唯一的量化論文（arXiv 2605.01160）**無對照組**、作者自承數字是「近似估計」（**low**）。
 
@@ -129,7 +129,7 @@ agent 能以 50% 可靠度完成的任務長度，過去六年約**每 7 個月�
 2. **最硬的證據都指向風險而非收益**：長任務可靠度崩落（METR）、benchmark 高估（SWE-bench-Live、OpenAI 自陳）、越強的模型越作弊（ImpossibleBench × Cursor 獨立收斂）。
 3. **驗證迴路是必要的，但不是充分的**——因為測試本身可被 agent 篡改，而規格模糊度是關鍵風險因子。「agent 自寫自測自驗」在模糊規格下等同於循環論證。
 4. **能防的方向**：規格寫具體（降低模糊度即降低 reward hacking 誘因）、驗證用 agent 改不到的東西（外部測試、瀏覽器行為、跨模型家族 evaluator）、狀態存 agent 不易竄改的格式（Anthropic 選 JSON 而非 Markdown 正是此理）、寫入保持單線程。
-5. **對五步迴圈的修正**：迴圈本身沒被推翻，但「驗證」那一步的設計難度被普遍低估——它不是「加個測試」，而是「加一個 agent 無法從內部滿足的判準」。
+5. **對自主 agent 迴圈的修正**：迴圈（gather → act → **verify** → repeat）本身沒被推翻，但「驗證」那一步的設計難度被普遍低估——它不是「加個測試」，而是「加一個 agent 無法從內部滿足的判準」。
 
 ## 開放問題
 
@@ -149,3 +149,4 @@ agent 能以 50% 可靠度完成的任務長度，過去六年約**每 7 個月�
 - [[Building-Effective-Agents-Anthropic]] — 本頁 evaluator-optimizer 迴路與 LLM-as-judge self-preference 的討論，檢驗的正是該頁提出的 evaluator-optimizer 模式在證據上的邊界（同家族 evaluator 恐系統性偏袒，需跨模型或搭可執行測試）。
 - [[pi-workflow-編排-harness-與本-vault-分野]] — 該頁引本頁的實證（vendor 敘事與獨立證據落差、驗證迴路可被 agent 從內部滿足）作為「不引入命名 workflow 機制」反過度工程紀律的依據。
 - [[AI-生成流程圖與架構圖]] — 該頁「AI／靜態生的架構圖只反映設計、非執行期真實行為，需人眼驗證」與本頁「生成物需 agent 改不到的外部判準把關」同源；AI 生圖正是「vendor 敘事 vs 需獨立驗證」在視覺化工具上的又一實例。
+- [[LLM-方案定價與-coding-agent-比較]] — 本頁「多 agent 約 15 倍 token」的成本承認，對應該頁 coding agent 訂閱與 API 按量定價的絕對數字；一個是「值不值得堆」，一個是「實際花多少」。

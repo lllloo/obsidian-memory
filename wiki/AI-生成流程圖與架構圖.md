@@ -115,7 +115,7 @@ GitHub 自 **2022-02** 起原生渲染 Mermaid（涵蓋 README/issue/PR/comment/
 
 ## 五、準確度與 prompt 減錯（生成物一律驗證）
 
-> ⚠️ **準確度警訊（高信心，工具自陳非行銷語）**：靜態分析工具坦承「無法對動態語言產生完美呼叫圖」（code2flow README 列出 function factory、namespace collision、renamed/imported 函式等失敗模式），且**只反映「設計的架構」而非執行期真實行為**（Codex CLI 亦明列 "Static analysis only, no runtime observation"）。**AI／靜態生的圖一律當草稿驗證，不當事實。** 此懷疑論與 [[AI-自主工作流的實證檢驗]] 對 benchmark 高估、驗證迴路必要性的收斂主軸同源——生成物需人眼把關。
+> ⚠️ **準確度警訊（高信心，工具自陳非行銷語）**：靜態分析工具坦承「無法對動態語言產生完美呼叫圖」（code2flow README 列出 function factory、namespace collision、renamed/imported 函式等失敗模式），且**只反映「設計的架構」而非執行期真實行為**（Codex CLI 亦明列 "Static analysis only, no runtime observation"）。**AI／靜態生的圖一律當草稿驗證，不當事實。** 此懷疑論與 [[AI-自主工作流的實證檢驗]] 對 benchmark 高估、驗證迴路必要性的收斂主軸同源——生成物需人眼把關。同一「生成物需外部判準」原則在設計領域的並行落地見 [[設計品質的可量化檢測]]（眼動／WCAG／CSS 統計四項外部 evaluator）。
 
 **避免 AI 生圖出錯的 prompt 技法**：
 

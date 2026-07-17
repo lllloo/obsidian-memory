@@ -2,7 +2,7 @@
 title: OKF 與本 vault 的相容性
 description: Open Knowledge Format 對本 vault 的適用邊界：內部維持 Obsidian LLM Wiki，未來需要交換時再建立 OKF 匯出層
 created: 2026-07-11
-updated: 2026-07-11
+updated: 2026-07-17
 source: https://github.com/GoogleCloudPlatform/knowledge-catalog/blob/main/okf/SPEC.md
 parent: "[[wiki/01.index]]"
 tags:
@@ -30,7 +30,7 @@ tags:
 
 **不將 `wiki/` 遷移為 OKF bundle，也不全面加入 `type` 或雙寫連結。** 現有結構服務 Obsidian 圖譜、raw write-once 證據鏈與 agent 綜合流程，直接套用 OKF 的互通性成本目前沒有明確受益者。
 
-**保留 OKF 作為未來的匯出 profile。** 若需要讓外部 agent、工具或組織消費選定知識時，另建獨立 bundle：映射既有 `title`、`description`、`tags`、`updated`，補 `type`，將 wikilink 轉成 bundle-relative Markdown links，並保留來源 citation。這不改動內部 wiki，也不影響 [[LLM-Wiki-生態實作比較]] 已拍板的不採 nvk 雙連結決定。
+**保留 OKF 作為未來的匯出 profile。** 若需要讓外部 agent、工具或組織消費選定知識時，另建獨立 bundle（對應 [[跨專案第二大腦整合模式]] 的「模式 5：可攜知識 bundle」對外交換邊界層）：映射既有 `title`、`description`、`tags`、`updated`，補 `type`，將 wikilink 轉成 bundle-relative Markdown links，並保留來源 citation。這不改動內部 wiki，也不影響 [[LLM-Wiki-生態實作比較]] 已拍板的不採 nvk 雙連結決定。
 
 ## 重新評估條件
 

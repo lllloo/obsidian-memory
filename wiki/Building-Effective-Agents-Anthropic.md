@@ -2,7 +2,7 @@
 title: Building Effective Agents（Anthropic）
 description: Anthropic 建 agent 的基礎指南：workflows 與 agents 之分、augmented LLM 基石、五種 workflow 編排模式（含各自適用時機），與 ACI／工具 prompt engineering 實務、由簡入繁三原則
 created: 2026-07-14
-updated: 2026-07-16
+updated: 2026-07-17
 source: "https://www.anthropic.com/engineering/building-effective-agents"
 published: 2024-12-19
 parent: "[[wiki/01.index]]"
@@ -68,7 +68,7 @@ agent 通常就是**在 loop 中依環境回饋使用工具的 LLM**：從人的
 兩個特別有價值的應用，共同點是**同時需要對話與行動、有明確成功準則、能形成回饋迴路、且有意義的人類監督**：
 
 - **客服**：對話流天生契合開放式 agent；工具拉取客戶資料／訂單／知識庫，退款／改單可程式化執行，成功可由「使用者定義的解決」明確衡量。已有公司採「僅對成功解決收費」的用量計價，顯示對成效的信心。
-- **coding agent**：程式解可由**自動測試驗證**、agent 能以測試結果為回饋迭代、問題空間結構良好、輸出品質可客觀衡量。Anthropic 自家實作已能僅憑 PR 描述解 SWE-bench Verified 的真實 GitHub issue；但自動測試驗功能之餘，**人審對「解是否合乎更廣系統需求」仍關鍵**。
+- **coding agent**：程式解可由**自動測試驗證**、agent 能以測試結果為回饋迭代、問題空間結構良好、輸出品質可客觀衡量。Anthropic 自家實作已能僅憑 PR 描述解 SWE-bench Verified 的真實 GitHub issue；但自動測試驗功能之餘，**人審對「解是否合乎更廣系統需求」仍關鍵**。（強度但書：SWE-bench Verified 這條「輸出可客觀衡量」的佐證本身有雜訊——OpenAI 後來審計發現該 benchmark 59.4% 題目有實質缺陷、35.5% 測試過嚴，見 [[AI-自主工作流的實證檢驗]]；「可客觀衡量」在原則上成立，但不宜把單一 benchmark 分數當效果鐵證。）
 
 ## ACI：為工具做 prompt engineering（附錄二）
 
@@ -92,3 +92,4 @@ agent 通常就是**在 loop 中依環境回饋使用工具的 LLM**：從人的
 - 記憶／context 對照：[[Claude-Code-記憶系統六層比較]]——本文 augmented LLM 的 memory 增強，是該頁記憶分層的最小前身。
 - 判準延伸：[[Context-優先與多-agent-的適用邊界]]——把本文「由簡入繁」原則落成可操作的決策清單，並補上「加複雜度（多 agent）實測會怎麼壞」的獨立證據（Cognition、MAST）。
 - evaluator-optimizer 落地：[[設計品質的可量化檢測]]——該頁把本文 **evaluator-optimizer** 的「生成→評估→回饋」迴路落到設計品質領域，用可執行、客觀的 evaluator（自動化檢測）撐起「報告→修正→重跑」閉環，是本文抽象模式在特定領域的具體落地案例。
+- 二分法定位引用：[[pi-workflow-編排-harness-與本-vault-分野]]——該頁以本文 workflows／agents 二分法與五種編排模式，把 pi-workflow 定位為路徑固定的 **workflow**（`foreach`＋`reduce` 屬 parallelization），對照 orchestrator-workers 的子任務動態委派。

@@ -2,7 +2,7 @@
 title: 多智能體研究系統（Anthropic）
 description: Anthropic Research 功能的 orchestrator-worker 多 agent 架構解剖：subagent 平行動態搜尋、CitationAgent 引用歸屬、prompt 工程八原則、LLM-as-judge 評測與生產可靠性
 created: 2026-07-14
-updated: 2026-07-16
+updated: 2026-07-17
 source: "https://www.anthropic.com/engineering/multi-agent-research-system"
 published: 2025-06-13
 parent: "[[wiki/01.index]]"
@@ -20,7 +20,7 @@ Anthropic 官方工程文章，拆解 Claude 的 **Research 功能**如何從原
 
 ## 架構：orchestrator-worker
 
-1. **LeadResearcher**（用 Claude Opus 4）分析查詢、擬定策略，並**先把計畫存進 Memory**——因為 context window 一旦超過 20 萬 token 會被截斷，計畫必須持久化以免遺失。
+1. **LeadResearcher**（用 Claude Opus 4）分析查詢、擬定策略，並**先把計畫存進 Memory**——因為 context window 一旦超過 20 萬 token 會被截斷，計畫必須持久化以免遺失。（20 萬為原文 2025-06 記載的當時上限，非恆值，隨模型換代可變，確切數字以官方為準。）
 2. Lead 依查詢**建立數個 Subagent**（用 Claude Sonnet 4），各帶明確子任務，**平行**探索不同面向。
 3. 每個 Subagent 獨立跑 web 搜尋、用 **interleaved thinking** 評估工具結果，把發現回傳給 lead。
 4. Lead 綜合結果，判斷是否需要更多研究——需要就再建 subagent 或調整策略，形成**迭代 loop**。
@@ -36,7 +36,7 @@ Anthropic 官方工程文章，拆解 Claude 的 **Research 功能**如何從原
 
 - **搜尋的本質是壓縮**：subagent 各自擁有獨立 context window，平行探索問題的不同面向，再把最重要的 token 濃縮回傳給 lead。這種 separation of concerns（各自的工具、prompt、探索軌跡）降低 path dependency，換得更徹底的獨立調查。
 - **先廣後窄（start wide, then narrow）**：模仿專家做研究——先鋪陳全景再鑽細節。agent 天生傾向用**過長、過窄的查詢**，結果返回稀少；因此在 prompt 裡要求先下**短而廣**的查詢、評估可得資訊、再逐步聚焦。
-- **平行化大幅提速**：兩層平行——(1) lead 一次 spin up 3–5 個 subagent 而非序列；(2) subagent 一次用 3+ 個工具。複雜查詢的研究時間最多**降 90%**。
+- **平行化大幅提速**：兩層平行——(1) lead 典型一次 spin up 3–5 個 subagent 而非序列（複雜研究可再往上，見下條 scaling 規則的 10+）；(2) subagent 一次用 3+ 個工具。複雜查詢的研究時間最多**降 90%**。
 - **依查詢複雜度調配努力**：把 scaling 規則寫進 prompt——簡單事實查找 1 個 agent、3–10 次工具呼叫；直接比較 2–4 個 subagent、各 10–15 次；複雜研究 10+ 個 subagent 分工。防止對簡單查詢過度投入（早期常見失效模式：對簡單查詢 spawn 50 個 subagent）。
 - **interleaved thinking 精煉查詢**：subagent 在拿到工具結果後用交錯思考評估品質、辨識缺口、修正下一次查詢，使其能適應任務。
 - **工具選擇是成敗關鍵**：給 agent 明確 heuristic——先檢視所有可用工具、把用途對應使用者意圖、廣泛外部探索用 web、專用工具優先於通用工具。工具描述品質差會把 agent 帶往完全錯誤的路徑。
@@ -101,6 +101,8 @@ Anthropic 官方工程文章，拆解 Claude 的 **Research 功能**如何從原
 - source quality：要求標註推測語氣（could／may、未來式）、辨識聚合站 vs 原始來源、衝突資訊帶回 lead 裁決。
 - **硬上限**：20 次工具呼叫、~100 來源，逼近就 `complete_task`。
 
+> 上述三個數字屬**不同層級、非互相矛盾**（皆源自 cookbook prompt 原文）：research budget 的 ≤15 是**規劃期依複雜度估的軟預算**、OODA 的 5–10 是**單輪 loop 的迭代次數區間**、20 則是**絕對硬天花板**（逼近即強制收尾）。
+
 **citations_agent（引用歸屬）**——CitationAgent 的真正機制：
 - 輸入 `<synthesized_text>`（已綜合但未附引用的報告）＋來源文件；輸出 `<exact_text_with_citation>`。
 - **逐字不改**：內容 100% 相同、連空白都不增減——輸出去掉引用標記後與原文**逐字比對，不一致整份 reject**。
@@ -115,4 +117,4 @@ Anthropic 官方工程文章，拆解 Claude 的 **Research 功能**如何從原
 - 實證對照：[[AI-自主工作流的實證檢驗]]——本文的 resume/checkpoint、end-state 評測正屬其「驗證迴路／狀態持久化」的盤點範疇，可比對 vendor 敘事與獨立實證的落差。
 - 檢索範式對照：[[LLM-Wiki-知識管理模式]]——本文「動態多步搜尋 vs 靜態 RAG」與該頁「知識編譯一次持續維護 vs 每次查詢重檢索」是同一組張力的不同切面。
 - 記憶機制對照：[[Claude-Code-記憶系統六層比較]]——本文的 external memory／乾淨 context 新 subagent handoff，可對應其記憶分層。
-- 編排 pattern 對照：[[pi-workflow-編排-harness-與本-vault-分野]]——該頁以 foreach/reduce 的 fan-out／匯總同構，把 pi-workflow 的編排 pattern 對照本頁的 orchestrator-worker 架構（lead 拆解、平行 subagent、reduce 綜合）。
+- 編排 pattern 對照：[[pi-workflow-編排-harness-與本-vault-分野]]——該頁指出本頁 orchestrator-worker 的關鍵在「子任務非預先定義、由主控動態委派」，較貼近 pi-workflow 的 `dynamic`（自適應編排）pattern；其路徑固定的 `foreach`／`reduce`（扇出項目預先定義再綜合）則屬 parallelization，不等同本頁架構。

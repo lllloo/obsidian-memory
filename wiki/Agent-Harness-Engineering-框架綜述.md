@@ -2,7 +2,7 @@
 title: Agent Harness Engineering 框架綜述
 description: 以 Anthropic 系列工程論述與 arXiv 原始碼級 taxonomy 為主幹的 harness 工程綜述：定義範疇、方法論主軸、實作橫向比較與 meta-harness 演進方向
 created: 2026-07-10
-updated: 2026-07-14
+updated: 2026-07-17
 parent: "[[wiki/01.index]]"
 tags:
   - ai-agent
@@ -113,3 +113,5 @@ Harness 是包裹在 LLM 外圍、負責「模型推理以外一切」的軟體�
 - [[Hermes-Agent]] — 自我進化 agent 實作，其 skill 生成與有界記憶設計可對照本頁的 harness 構件範疇。
 - [[LLM-Wiki-知識管理模式]] — 本 vault 的設計原型，屬 structured note-taking／agentic memory 路線的知識庫形態。
 - [[Context-優先與多-agent-的適用邊界]] — **直接補救本頁「來源集中 Anthropic」的證據限制**：引入 Cognition（別建多 agent）與 UC Berkeley MAST 失敗實證兩個非 Anthropic 來源，界定多 agent 的適用邊界。
+- [[pi-workflow-編排-harness-與本-vault-分野]] — 該頁把 pi-workflow 定位為編排層 prior art，其「編排職能已被 harness 覆蓋」的論點即座落於本頁的 workflows/agents 二分主軸。
+- [[OpenSpec]] — spec-driven 工具的具體實作，該頁以本頁作「業界怎麼說該建 agent」的框架層綜述互補，本頁回指其工具細節。

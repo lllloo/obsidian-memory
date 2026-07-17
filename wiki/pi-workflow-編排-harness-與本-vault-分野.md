@@ -2,7 +2,7 @@
 title: pi-workflow 編排 harness 與本 vault 的分野
 description: pi-workflow 這類命名工作流編排器定性為「編排層」prior art，說明它與本 vault「知識組織層」的分野，及為何其命名 workflow 目錄機制不宜引入
 created: 2026-07-15
-updated: 2026-07-16
+updated: 2026-07-17
 source: "https://github.com/AgwaB/pi-workflow"
 published: ""
 parent: "[[wiki/01.index]]"
@@ -20,8 +20,8 @@ tags:
 
 ## 它是什麼（編排層）
 
-- **6 種 stage pattern**：`single`（單步）／`foreach`（扇出）／`reduce`（綜合）／`loop`（有界重複）／`dag`（巢狀圖）／`dynamic`（自適應編排）。
-- **4 個內建命名流程**：deep-research（查證＋附引用建議）、deep-review（多視角 code/design 審查）、spec-review（需求可追溯）、impact-review（變更風險分析）。
+- **6 種 stage pattern**（截至查核時 README 列舉，數量與命名以官方為準）：`single`（單步）／`foreach`（扇出）／`reduce`（綜合）／`loop`（有界重複）／`dag`（巢狀圖）／`dynamic`（自適應編排）。
+- **4 個內建命名流程**（同上，數量隨版本可增減）：deep-research（查證＋附引用建議）、deep-review（多視角 code/design 審查）、spec-review（需求可追溯）、impact-review（變更風險分析）。
 - run artifact 存 `.pi/workflows/`，可檢視可續跑；`workflow-guide` skill 供自建專案流程的 scaffold＋validate。安裝需 Node 22+（確切 minor/patch 版以官方 changelog 為準）。
 
 用 [[Building-Effective-Agents-Anthropic]] 的二分法定位：pi-workflow 屬 **workflow**（LLM 與工具走**預先定義的程式碼路徑**、路徑固定可預測），不是動態自主的 agent。其 stage pattern 直接對應該文五種編排模式：`foreach`＋`reduce` 是**路徑固定**的 parallelization（扇出項目預先定義、再綜合），而 [[多智能體研究系統-Anthropic]] 的 orchestrator-worker 關鍵在**子任務非預先定義、由主控動態委派**，較貼近 pi-workflow 的 `dynamic`（自適應編排）pattern，不是 `foreach`＋`reduce`。

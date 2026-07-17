@@ -34,7 +34,8 @@ tags:
 ├── wiki/          — 活知識庫：agent 綜合 raw 維護的摘要/實體/概念/綜合頁（01.index.md 為內容目錄，每次 ingest 更新）
 ├── feeds/         — 【自動產物層，不屬三層系統】只供使用者瀏覽，不進 raw／wiki／ingest／query／lint
 │   ├── youtube/   — YouTube 自動同步筆記；各頻道含 01.index.md + 02.影片清單.base，只供使用者瀏覽
-│   └── updates/   — 日常工具更新日報（vault-updates-daily 產出，01.index.md 為來源設定）
+│   ├── updates/   — 日常工具更新日報（vault-updates-daily 產出，01.index.md 為來源設定）
+│   └── watch/     — GitHub issue/PR 追蹤看板與變更 digest（vault-watch 產出，01.index.md 為追蹤清單）
 ├── cards/         — 【使用者私人區，agent 不管理】使用者自存文件；Quartz 公開層之一
 └── topics/        — 【使用者私人區，agent 不管理】使用者自存主題資料夾；Quartz 公開層之一
 ```
