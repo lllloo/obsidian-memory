@@ -99,7 +99,17 @@ GitHub 自 **2022-02** 起原生渲染 Mermaid（涵蓋 README/issue/PR/comment/
 
 **呈現與討論：生 mermaid.live 連結（本 vault 固化做法）**
 
-上述管道**生出圖之後、還沒定稿落地時**，要先看渲染結果來討論——典型情境是**使用者要一張架構圖，agent 先生一版範例供討論迭代**——就用官方線上編輯器 [mermaid.live](https://mermaid.live) 呈現：它把整張圖的 state 以 pako（deflate＋base64）編進 URL fragment，連結**自包含、無需伺服器儲存、也無需本機 render 或匯出圖片**，貼 `mermaid.live/view#pako:…` 對方點開即見渲染（`view` 純檢視、`edit` 可續改）。這正落在 5 步 SOP 的 **Present（呈現）→ Iterate（迭代）**：生圖 → 貼連結看範例 → 據此討論修改 → 定稿後才用 `mermaid` fenced code block 落地進 Obsidian／GitHub 原生渲染（本頁開頭全景圖即走完此流程的成品）。屬工具官方功能＋本 vault 實踐約定，非本輪 deep-research 查證主張。
+上述管道**生出圖之後、還沒定稿落地時**，要先看渲染結果來討論——典型情境是**使用者要一張架構圖，agent 先生一版範例供討論迭代**——就用官方線上編輯器 [mermaid.live](https://mermaid.live) 呈現：它把整張圖的 state 以 pako（deflate＋base64）編進 URL fragment，連結**自包含、無需伺服器儲存、也無需本機 render 或匯出圖片**，貼 `mermaid.live/view#pako:…` 對方點開即見渲染（`view` 純檢視、`edit` 可續改）。這正落在 5 步 SOP 的 **Present（呈現）→ Iterate（迭代）**：生圖 → 貼連結看範例 → 據此討論修改 → 定稿後才用 `mermaid` fenced code block 落地進 Obsidian／GitHub 原生渲染（本頁開頭全景圖即走完此流程的成品）。此「做法」本身屬本 vault 實踐約定、非查證主張；mermaid.live **工具本身**的可用性與限制見下方 2026-07-17 deep-research 查證。
+
+**mermaid.live 可用性與限制（2026-07-17 deep-research 回存：5 搜尋角度、7 主張對抗查證——6 確認（含 1 條中信心）、1 條否決）**
+
+- **可正常使用（高信心，官方 repo＋官網交叉確認）**：mermaid-js 官方團隊維護的 Live Editor，開源 **MIT**、**免費**、基本使用**免註冊登入**；官網 mermaid.js.org 首頁「Open Editor」直連，issue tracker 活躍至 2026-05。
+- **隱私＝這條做法的關鍵利多（高信心，官方原始碼 `serde.ts`＋維護者 discussion 確認）**：pako 把整張圖壓縮後編進 URL 的 **fragment（`#` 之後）**，依 HTTP 規範 **fragment 不送伺服器**、圖在瀏覽器本地渲染——貼 `view#pako:`／`edit#pako:` 連結時**圖內容不落任何遠端伺服器**，含專案內部資訊的架構圖可安心分享。**唯一外洩例外**：主動選「存成 GitHub gist」會落到 GitHub 基礎設施，敏感內容勿用此選項。
+- **主要限制＝URL 長度（中信心，官方 issue #52/#439/#1348 承認；長度數字部分為單一 blog，取保守值）**：整張圖編進 URL，**複雜大圖產生超長連結而失效**，實務安全門檻約 **2000 字元**（瓶頸多在中途 CDN/proxy 或聊天平台截斷，非瀏覽器本身——現代瀏覽器可承受 32K–64K+）。超限時改用 `mermaid` fenced code block 貼進 Obsidian／GitHub 原生渲染。
+- **可離線／自架（高信心）**：官方 Docker 映像 `ghcr.io/mermaid-js/mermaid-live-editor`，本質純靜態 SPA，核心作圖與渲染 100% client-side（PNG/SVG 匯出預設打 mermaid.ink，可用 `MERMAID_RENDERER_URL` 改指自架 renderer）。
+- **免費／付費界線（高信心）**：即時協作與版本歷史屬付費 **Mermaid Chart**（同團隊 SaaS），不在免費 Live Editor；免費作圖＋pako 分享已足本 vault 用途。
+- **⚠️ 認站（高信心）**：官方唯一為 **mermaid.live**（對應 repo `mermaid-js/mermaid-live-editor`）；`mermaidonline.org`、`mermaideditor.com` 等為**非官方第三方 clone**，其隱私政策不適用官方站。
+- **❌ 勿引用（本輪對抗查證否決 1-2）**：「Mermaid 不存在付費層」——核心函式庫確為 MIT 開源，但生態**有**付費 Mermaid Chart，兩者須分清。
 
 把生圖接進 vault/coding agent 的實作層，與 [[第二大腦整合的現成工具與做法]]（obsidian-claude-code-mcp、Quartz Syncer 等）同屬「餵知識給 agent、把產物落回 vault」的管道家族；本頁補足其中「生圖」這條。
 
@@ -123,7 +133,8 @@ GitHub 自 **2022-02** 起原生渲染 Mermaid（涵蓋 README/issue/PR/comment/
 2. 逆向生圖工具在大型/多語言 monorepo 的實際準確率與 token 成本無獨立 benchmark（各工具僅自陳限制）。
 3. 把 AI 生圖固化進 vault 日常（自動為 wiki 概念頁生關係圖並串既有 Mermaid 原生渲染）**無現成方案，需自建**。
 4. 「業務流程文字轉圖」相較 codebase 逆向生圖**缺乏專屬工具**——多數工具聚焦程式碼。
+5. mermaid.live 超長 pako 連結的**實務可靠字元上限、與圖節點數的大致換算**未有定論（2000 字元為保守值，真正瓶頸常在中途 CDN/proxy 而非瀏覽器）；`view` 與 `edit` 模式除唯讀／可編輯外的行為差異亦未實測。
 
 ## 時效提醒
 
-AI coding-agent 生圖生態變動極快（swark、oh-my-mermaid、walkthrough 皆 2024–2025 新興 repo/skill），功能與 star 數會快速變動；swark「零成本」僅在 Copilot 免費額度內成立。逆向工具與 Obsidian 外掛的功能宣稱多為各自 repo README（primary 但屬自陳），適合「工具有什麼功能」、非獨立效能背書。
+AI coding-agent 生圖生態變動極快（swark、oh-my-mermaid、walkthrough 皆 2024–2025 新興 repo/skill），功能與 star 數會快速變動；swark「零成本」僅在 Copilot 免費額度內成立。逆向工具與 Obsidian 外掛的功能宣稱多為各自 repo README（primary 但屬自陳），適合「工具有什麼功能」、非獨立效能背書。mermaid.live 的授權（MIT）與架構（pako fragment 不上伺服器、靜態 SPA）屬穩定事實，但免費／付費界線與 issue 數屬可能隨版本變動的浮動事實，確切以官方為準。
