@@ -101,7 +101,9 @@ Anthropic 官方工程文章，拆解 Claude 的 **Research 功能**如何從原
 - source quality：要求標註推測語氣（could／may、未來式）、辨識聚合站 vs 原始來源、衝突資訊帶回 lead 裁決。
 - **硬上限**：20 次工具呼叫、~100 來源，逼近就 `complete_task`。
 
-> 上述三個數字屬**不同層級、非互相矛盾**（皆源自 cookbook prompt 原文）：research budget 的 ≤15 是**規劃期依複雜度估的軟預算**、OODA 的 5–10 是**單輪 loop 的迭代次數區間**、20 則是**絕對硬天花板**（逼近即強制收尾）。
+> 上述三個數字**單位相同**（皆為同一個 subagent 的**工具呼叫次數**，皆出自 cookbook `research_subagent` prompt），差別在**階段與角色**：research budget 的分級是**規劃期依複雜度估的軟預算**、OODA 的「最少 5 次、複雜查詢至多 10 次」是**執行期的呼叫指引**、20 則是**絕對硬天花板**（逼近即強制收尾）。
+>
+> ⚠️ **原文本身留有張力，非本頁轉述誤差**：budget 允許「極難 ≤15」，OODA 段卻寫 *"Avoid using more than ten tool calls"*——同單位、同 agent、同一份 prompt 內兩條指引不一致（見 [[Anthropic-Cookbook-Research-Prompts]] 原文）。引用時勿當成一套一致的規則。
 
 **citations_agent（引用歸屬）**——CitationAgent 的真正機制：
 - 輸入 `<synthesized_text>`（已綜合但未附引用的報告）＋來源文件；輸出 `<exact_text_with_citation>`。

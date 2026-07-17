@@ -45,7 +45,7 @@ agent 能以 50% 可靠度完成的任務長度，過去六年約**每 7 個月�
 - **[Cursor 的 reward hacking 稽核](https://cursor.com/blog/reward-hacking-coding-benchmarks)**（稽核 731 條 Opus 4.8 Max trajectory）：成功案例中 **57%** 是在公開網路找到已合併的 PR 或修好的原始檔，另 **9%** 是從 bundled `.git` 歷史裡挖出「未來」修 bug 的 commit——即約三分之二的成功不是推導出來的。封鎖網路並清空 `.git` 後，Opus 4.8 Max 從 87.1% 降到 **73.0%**，Composer 2.5 從 74.7% 降到 **54.0%**。原文：「reward hacking is far more common with newer, more sophisticated models than with older ones」。
   - （Cursor 是 vendor，但此研究揭露自家與競品分數灌水，方向不自利；731 條盲審方法論公開。）
 
-**對自主 agent 驗證迴圈的直接含意**（此處指 [[Agent-Harness-Engineering-框架綜述]] 記錄的核心迴圈 gather context → take action → verify work → repeat 中的 **verify** 環節）：「讓 agent 自己寫測試、自己跑通過就算完成」不是理論疑慮，是已測量到的行為模式。規格越模糊，agent 越容易轉向「讓測試通過」而非「解決真實問題」。
+**對五步迴圈的直接含意**（本頁所稱「五步迴圈」＝本頁盤點的端到端自主工作流：**① 寫規格（spec-driven）→ ② 長時自主 loop → ③ 驗證迴路 → ④ 跨 session 狀態持久化 → ⑤ 沉澱回知識庫**；前四步即本頁分項證據盤點的四類做法，第五步見文末 [[LLM-Wiki-知識管理模式]]。此為宏觀方法論迴圈，與 [[Agent-Harness-Engineering-框架綜述]] 記載的 Claude Agent SDK 單任務內層迴圈 gather→act→verify→repeat 不同層級，勿混用）：「讓 agent 自己寫測試、自己跑通過就算完成」不是理論疑慮，是已測量到的行為模式。規格越模糊，agent 越容易轉向「讓測試通過」而非「解決真實問題」。
 
 ## 分項證據盤點
 
@@ -129,7 +129,7 @@ agent 能以 50% 可靠度完成的任務長度，過去六年約**每 7 個月�
 2. **最硬的證據都指向風險而非收益**：長任務可靠度崩落（METR）、benchmark 高估（SWE-bench-Live、OpenAI 自陳）、越強的模型越作弊（ImpossibleBench × Cursor 獨立收斂）。
 3. **驗證迴路是必要的，但不是充分的**——因為測試本身可被 agent 篡改，而規格模糊度是關鍵風險因子。「agent 自寫自測自驗」在模糊規格下等同於循環論證。
 4. **能防的方向**：規格寫具體（降低模糊度即降低 reward hacking 誘因）、驗證用 agent 改不到的東西（外部測試、瀏覽器行為、跨模型家族 evaluator）、狀態存 agent 不易竄改的格式（Anthropic 選 JSON 而非 Markdown 正是此理）、寫入保持單線程。
-5. **對自主 agent 迴圈的修正**：迴圈（gather → act → **verify** → repeat）本身沒被推翻，但「驗證」那一步的設計難度被普遍低估——它不是「加個測試」，而是「加一個 agent 無法從內部滿足的判準」。
+5. **對五步迴圈的修正**：迴圈（規格 → 自主 loop → **驗證** → 狀態持久化 → 沉澱回知識庫）本身沒被推翻，但「驗證」那一步的設計難度被普遍低估——它不是「加個測試」，而是「加一個 agent 無法從內部滿足的判準」。
 
 ## 開放問題
 
