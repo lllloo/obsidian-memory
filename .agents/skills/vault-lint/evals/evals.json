@@ -40,6 +40,30 @@
           "description": "raw 與 wiki/01.index.md 不套用 description、parent 或欄位順序檢查"
         }
       ]
+    },
+    {
+      "id": 3,
+      "prompt": "vault-lint 近七天有 20 個變動 wiki 頁，semantic_page_cap 是 10；第一天審完 10 頁但沒有任何 finding。請說明下一天如何選頁，且不能靠寫回 BACKLOG 的 carryover 推進。",
+      "expected_output": "由唯讀 selector 依日期選下一個穩定批次；候選集合不變時，連續兩天各選 10 個不重複頁面並覆蓋全部 20 頁，同日重跑結果一致，BACKLOG 維持零變更。",
+      "files": [],
+      "assertions": [
+        {
+          "name": "無發現仍會跨日推進",
+          "description": "20 頁、cap 10 的連續兩日批次不重複且聯集涵蓋全部頁面"
+        },
+        {
+          "name": "同日選擇穩定",
+          "description": "相同日期與候選集合重跑會得到相同批次"
+        },
+        {
+          "name": "零持久選頁狀態",
+          "description": "selector 不修改 BACKLOG 或其他 vault 檔案"
+        },
+        {
+          "name": "新頁最終可進入審查",
+          "description": "候選加入新頁後，會在新的完整批次週期內入選"
+        }
+      ]
     }
   ]
 }
