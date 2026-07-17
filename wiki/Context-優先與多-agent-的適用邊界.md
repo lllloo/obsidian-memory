@@ -81,3 +81,4 @@ vault 外的獨立證據，界定「多 agent 何時反而更糟」：
 - 證據平衡：[[Agent-Harness-Engineering-框架綜述]]——該頁自陳「來源集中 Anthropic」，本頁引入 Cognition／MAST 兩個非 Anthropic 來源，是對那條證據限制的直接補救。
 - 實證脈絡：[[AI-自主工作流的實證檢驗]]——同屬「vendor 敘事 vs 獨立實證」的檢驗路線；本頁的 MAST 失敗率可與該頁的長任務可靠度崩落並讀。
 - 成本落地：[[LLM-方案定價與-coding-agent-比較]]——本頁「多 agent 約 15 倍 token」是相對成本，該頁給 coding agent 訂閱月費與 API 按量單價的絕對數字，合看「要不要堆 agent」與「這樣花多少錢」兩個決策軸。
+- 反過度工程實證：[[pi-workflow-編排-harness-與本-vault-分野]]——該頁「先鋪一層命名 workflow 違反反過度工程紀律」的論點引用本頁的 Cognition／MAST 反面實證作為支撐。

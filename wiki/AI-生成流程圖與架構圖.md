@@ -78,7 +78,7 @@ graph TD
 
 GitHub 自 **2022-02** 起原生渲染 Mermaid（涵蓋 README/issue/PR/comment/wiki，官方 blog 確認）。另有 Excalidraw（手繪白板草圖）、Lucidchart（付費團隊協作）補位。
 
-> 版本註：Mermaid「modern syntax」隨版本演進，確切語法變更以官方 changelog 為準；此處只留「LLM 常吐舊語法」這個行為約束（見「五、準確度與 prompt 減錯」）。
+> 版本註：Mermaid「modern syntax」隨版本演進，確切語法變更以官方 changelog 為準；此處只留「LLM 常吐舊語法」這個行為約束（見「五、準確度與 prompt 減錯」）。PlantUML「GitHub 需外部 proxy/預生圖」同屬平台支援現況、非本頁固定事實，若 GitHub 日後擴大原生渲染涵蓋範圍需回官方文件核實。
 
 ## 三、Obsidian 端（知識筆記視覺化）
 

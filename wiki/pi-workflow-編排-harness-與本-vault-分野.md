@@ -37,7 +37,7 @@ tags:
 
 **知識層無可借**：本 vault 的價值在知識編譯一次後持續互聯維護（複利資產），pi-workflow 完全不處理這件事。
 
-**編排層已被覆蓋**：stage graph（扇出→驗證→綜合、loop-until、resume）在本環境已有——(1) Claude Code 內建 **Workflow 工具**本身就是 stage graph 編排器：能做 stage graph 串接、fan-out/pipeline 平行、loop-until 迴圈、對抗式 verify，run 可 resume 續跑（介面識別名隨版本可變），功能上是 pi-workflow 的對應甚至超集；(2) 具體流程也已 codify 成 skill：`deep-research`（扇出＋多票對抗查證＋綜合）≈ pi-workflow 的 deep-research，`mini-research`（一項目一 subagent、成本可控）是它沒有的省成本變體。
+**編排層已被覆蓋**：stage graph（扇出→驗證→綜合、loop-until、resume）在本環境已有——(1) Claude Code 內建 **Workflow 工具**本身就是 stage graph 編排器：能做 stage graph 串接、fan-out/pipeline 平行、loop-until 迴圈、對抗式 verify，run 可 resume 續跑（介面識別名隨版本可變，本段為 2026-07 查核時的功能現況、非固定事實，確切能力以官方文件為準），功能上是 pi-workflow 的對應甚至超集；(2) 具體流程也已 codify 成 skill：`deep-research`（扇出＋多票對抗查證＋綜合）≈ pi-workflow 的 deep-research，`mini-research`（一項目一 subagent、成本可控）是它沒有的省成本變體。
 
 ## 為何不引入其命名 workflow 目錄機制
 
@@ -56,3 +56,4 @@ tags:
 - [[LLM-Wiki-知識管理模式]]——本 vault 知識層的設計原型，pi-workflow 不觸及的那一層。
 - [[Agent-Harness-Engineering-框架綜述]]——harness 工程的 workflows/agents 二分綜述，本頁「編排職能已被 harness 覆蓋」的定位即座落於此主軸。
 - [[Context-優先與多-agent-的適用邊界]]——多 agent 何時才划算的判準頁（含 Cognition／MAST 反面實證），支撐本頁「先鋪一層命名 workflow 違反反過度工程紀律」的論點。
+- [[AI-自主工作流的實證檢驗]]——本頁「違反反過度工程紀律」一節引用的實證支撐（vendor 敘事與獨立證據落差、驗證迴路可被 agent 從內部滿足）出處。

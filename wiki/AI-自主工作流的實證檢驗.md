@@ -27,7 +27,7 @@ tags:
 
 > "Current models have almost 100% success rate on tasks taking humans less than 4 minutes, but succeed <10% of the time on tasks taking more than around 4 hours."
 
-agent 能以 50% 可靠度完成的任務長度，過去六年約**每 7 個月翻倍**。含意：「持續自主工作」的瓶頸不在單步能力，而在**任務長度**——所有 harness 設計本質上都是在對抗這條崩落曲線。
+agent 能以 50% 可靠度完成的任務長度，截至 METR 該報告發布（2025-03）為止的過去六年約**每 7 個月翻倍**。含意：「持續自主工作」的瓶頸不在單步能力，而在**任務長度**——所有 harness 設計本質上都是在對抗這條崩落曲線。
 
 （限制：作者自陳估計依賴任務選擇與人類基準的方法論選擇，承認有顯著模型誤差可能。）
 
@@ -145,7 +145,8 @@ agent 能以 50% 可靠度完成的任務長度，過去六年約**每 7 個月�
 - [[Claude-Code-記憶系統六層比較]] — 本頁「記憶檔會被忽略」「compaction 丟資訊」是該頁各層方案的共同風險。
 - [[LLM-Wiki-知識管理模式]] — 本 vault 自身即「沉澱回知識庫」那一步的實作。
 - [[Context-優先與多-agent-的適用邊界]] — 同屬「vendor 敘事 vs 獨立實證」路線；該頁的 UC Berkeley MAST 多 agent 失敗率（41–86.7%）可與本頁長任務可靠度崩落並讀。
-- [[設計品質的可量化檢測]] — 本頁「驗證用 agent 改不到的東西」在設計領域的具體落地：眼動預測、WCAG、CSS 統計四項皆為 agent 無法從內部造假的外部 evaluator，是「加一個 agent 無法從內部滿足的判準」的正面範例。
+- [[設計品質的可量化檢測]] — 本頁「驗證用 agent 改不到的東西」在設計領域的具體落地：眼動預測、WCAG、CSS 統計三項為 agent 無法從內部造假的外部 evaluator；第四項任務模擬雖仍屬 LLM 判斷，但因評的是行為結果、與生成方非同一任務而規避 self-preference bias，同樣是「加一個 agent 無法從內部滿足的判準」的範例。
+- [[多智能體研究系統-Anthropic]] — Anthropic Research 系統的搜尋方法論、CitationAgent 與生產可靠性，是本頁「多 agent 局限」與「15 倍 token」兩項成本／風險數字的第一方完整出處。
 - [[Building-Effective-Agents-Anthropic]] — 本頁 evaluator-optimizer 迴路與 LLM-as-judge self-preference 的討論，檢驗的正是該頁提出的 evaluator-optimizer 模式在證據上的邊界（同家族 evaluator 恐系統性偏袒，需跨模型或搭可執行測試）。
 - [[pi-workflow-編排-harness-與本-vault-分野]] — 該頁引本頁的實證（vendor 敘事與獨立證據落差、驗證迴路可被 agent 從內部滿足）作為「不引入命名 workflow 機制」反過度工程紀律的依據。
 - [[AI-生成流程圖與架構圖]] — 該頁「AI／靜態生的架構圖只反映設計、非執行期真實行為，需人眼驗證」與本頁「生成物需 agent 改不到的外部判準把關」同源；AI 生圖正是「vendor 敘事 vs 需獨立驗證」在視覺化工具上的又一實例。

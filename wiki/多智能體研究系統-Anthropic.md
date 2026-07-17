@@ -36,7 +36,7 @@ Anthropic 官方工程文章，拆解 Claude 的 **Research 功能**如何從原
 
 - **搜尋的本質是壓縮**：subagent 各自擁有獨立 context window，平行探索問題的不同面向，再把最重要的 token 濃縮回傳給 lead。這種 separation of concerns（各自的工具、prompt、探索軌跡）降低 path dependency，換得更徹底的獨立調查。
 - **先廣後窄（start wide, then narrow）**：模仿專家做研究——先鋪陳全景再鑽細節。agent 天生傾向用**過長、過窄的查詢**，結果返回稀少；因此在 prompt 裡要求先下**短而廣**的查詢、評估可得資訊、再逐步聚焦。
-- **平行化大幅提速**：兩層平行——(1) lead 典型一次 spin up 3–5 個 subagent 而非序列（複雜研究可再往上，見下條 scaling 規則的 10+）；(2) subagent 一次用 3+ 個工具。複雜查詢的研究時間最多**降 90%**。
+- **平行化大幅提速**：兩層平行——(1) lead 典型一次 spin up 3–5 個 subagent 而非序列（複雜研究可再往上，見下條 scaling 規則的 10+）；(2) subagent 一次用 3+ 個工具。複雜查詢的研究時間最多**降 90%**。（強度：第一方內部評測、未經獨立複現，與「關鍵數據與強度標註」節其餘數字同級。）
 - **依查詢複雜度調配努力**：把 scaling 規則寫進 prompt——簡單事實查找 1 個 agent、3–10 次工具呼叫；直接比較 2–4 個 subagent、各 10–15 次；複雜研究 10+ 個 subagent 分工。防止對簡單查詢過度投入（早期常見失效模式：對簡單查詢 spawn 50 個 subagent）。
 - **interleaved thinking 精煉查詢**：subagent 在拿到工具結果後用交錯思考評估品質、辨識缺口、修正下一次查詢，使其能適應任務。
 - **工具選擇是成敗關鍵**：給 agent 明確 heuristic——先檢視所有可用工具、把用途對應使用者意圖、廣泛外部探索用 web、專用工具優先於通用工具。工具描述品質差會把 agent 帶往完全錯誤的路徑。
@@ -53,7 +53,7 @@ Anthropic 官方工程文章，拆解 Claude 的 **Research 功能**如何從原
 1. **像你的 agent 一樣思考**：用 Console 以真實 prompt/工具模擬，逐步觀察 agent，才能建立準確心智模型、看出失效模式。
 2. **教會協調者如何委派**：每個 subagent 需要目標、輸出格式、工具與來源指引、清楚的任務邊界；指令含糊會導致重工或漏洞。
 3. **依查詢複雜度調配努力**（同上搜尋節）。
-4. **工具設計與選擇至關重要**：agent-工具介面等同人機介面；壞的工具描述會誤導 agent。他們甚至做了會自我改寫工具描述的 tool-testing agent，讓後續 agent 任務完成時間**降 40%**。
+4. **工具設計與選擇至關重要**：agent-工具介面等同人機介面；壞的工具描述會誤導 agent。他們甚至做了會自我改寫工具描述的 tool-testing agent，讓後續 agent 任務完成時間**降 40%**。（強度：第一方內部評測、未經獨立複現。）
 5. **讓 agent 自我改進**：Claude 4 能當稱職的 prompt engineer，給它 prompt 與失效模式就能診斷並提出改進。
 6. **先廣後窄**（同上搜尋節）。
 7. **引導思考過程**：extended thinking 當可控 scratchpad，lead 用它規劃；subagent 用 interleaved thinking 在工具結果後評估與精煉。
@@ -64,7 +64,7 @@ Anthropic 官方工程文章，拆解 Claude 的 **Research 功能**如何從原
 ## 評測
 
 - **立刻用小樣本開始**：早期改動效果巨大（成功率可能 30%→80%），約 **20 個代表真實用法的查詢**就能看出變化；別等湊滿數百案例才建 eval。
-- **LLM-as-judge 做得好就能規模化**：研究輸出是自由文本、少有單一正解。用一個 LLM judge 依 rubric 評——factual accuracy、citation accuracy、completeness、source quality、tool efficiency。實測發現**單次 LLM 呼叫、單一 prompt、輸出 0.0–1.0 分數加 pass/fail** 最一致、最貼近人判。
+- **LLM-as-judge 做得好就能規模化**：研究輸出是自由文本、少有單一正解。用一個 LLM judge 依 rubric 評——factual accuracy、citation accuracy、completeness、source quality、tool efficiency。實測發現**單次 LLM 呼叫、單一 prompt、輸出 0.0–1.0 分數加 pass/fail** 最一致、最貼近人判。⚠️ 此評測情境是「Claude 判 Claude 產出」的同源評測；[[AI-自主工作流的實證檢驗]] 引多篇獨立論文（強度 high）證實 LLM-as-judge 存在 self-preference bias 與 position bias，「evaluator-optimizer 迴圈若用同家族模型當 evaluator，對 generator 的產出可能系統性偏袒」——本文未揭露是否有跨模型家族或人評交叉驗證此風險，下一條「人評補自動化漏洞」部分緩解但未針對此偏誤設計。
 - **人評補自動化漏洞**：人測抓到自動化漏掉的邊角（幻覺、系統故障、來源選擇偏見，如前述內容農場問題）。
 
 ## 生產可靠性
@@ -72,7 +72,8 @@ Anthropic 官方工程文章，拆解 Claude 的 **Research 功能**如何從原
 - **agent 有狀態、錯誤會複利**：長時運行跨多次工具呼叫維持狀態；用 resume（從出錯處續跑，不從頭重啟）+ retry + 定期 checkpoint，並讓模型在工具失敗時自行調適。
 - **debug 需新方法**：agent 非決定性，靠 **full production tracing** 與監控決策模式（不看對話內容以保隱私）診斷根因。
 - **部署要謹慎協調**：用 **rainbow deployment** 漸進切流量，避免更新中斷運行中的 agent。
-- **同步執行造成瓶頸**：目前 lead 同步等待 subagent 完成，簡化協調但阻塞資訊流；非同步可增平行度但帶來狀態一致性與錯誤傳播難題。
+- **同步執行造成瓶頸**：目前 lead 同步等待 subagent 完成，簡化協調但阻塞資訊流；非同步可增平行度但帶來狀態一致性與錯誤傳播難題。原文明言此瓶頸下 **lead agent 無法在中途操控 subagent**（"the lead agent can't steer subagents"）。
+- **單步失敗會導致軌跡發散**：agentic 系統的錯誤是複合的（compound）——傳統軟體一個 bug 通常只影響單一功能，但 agent 系統裡一步失敗可能讓 agent **探索完全不同的軌跡、產出不可預期的結果**（"One step failing can cause agents to explore entirely different trajectories, leading to unpredictable outcomes"），這正是原型到生產這段路比預期長的核心原因。
 
 ## 附錄要點
 

@@ -44,7 +44,7 @@ tags:
 | 省心度 | 要自己選模型/路由 | 開箱即用 | 開箱即用 |
 | 模型天花板 | 開源 SOTA（略遜頂級閉源） | 頂級（Opus/Sonnet） | 頂級（GPT 旗艦） |
 
-**OpenCode 本體**是最多星（16 萬+）的開源終端 coding agent，軟體免費、支援 75+ 供應商，可自帶 API key 或本機跑 Ollama（$0 邊際成本）；OpenCode Go 是其官方低價託管方案，用金額上限吸收模型成本。與 [[Claude-Code-記憶系統六層比較]] 同屬 coding agent 生態。
+**OpenCode 本體**是查證當下（2026-07）星數最多的開源終端 coding agent 之一（16 萬+，GitHub star 數持續成長、確切數字回官方 repo 查），軟體免費、支援 75+ 供應商，可自帶 API key 或本機跑 Ollama（$0 邊際成本）；OpenCode Go 是其官方低價託管方案，用金額上限吸收模型成本。與 [[Claude-Code-記憶系統六層比較]] 同屬 coding agent 生態。
 
 ## 三、依用途的經濟實惠推薦
 

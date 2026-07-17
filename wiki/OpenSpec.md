@@ -129,7 +129,7 @@ OpenSpec 原生整合 **30+ 種 AI 助理**（官方 [supported-tools.md](https:
 | **Claude Code** | `.claude/skills/openspec-*/`（skill 檔）與 `.claude/commands/opsx/<id>.md` |
 | **Cursor** | `.cursor/commands/opsx-*`（部分用 `.cursor/rules`） |
 
-31 個工具中 28 個產生 tool-specific 命令檔，僅 3 個用 skill-based fallback。（工具數字在不同頁面有 20+/25+/30+/40 的浮動，但實際列舉穩定在 31 個，「30+」為準確下界。）
+skill 檔是每個工具都會產生的基底整合；`.claude/commands/opsx/<id>.md` 這類 tool-specific 命令檔是**額外**加上去的（如上表 Claude Code 兩者皆有，非互斥）。少數工具因缺 command adapter，官方標註「no command adapter, use skill-based invocations」而僅靠 skill 檔 fallback（首次查證時 3 個：ForgeCode、Hermes Agent、Mistral Vibe；2026-07-17 複查官方清單增至 4 個，新增 Kimi Code，工具總數同步增至 33）。工具總數與 skill-only 清單會隨官方新增整合持續變動，以 [supported-tools.md](https://github.com/Fission-AI/OpenSpec/blob/main/docs/supported-tools.md) 當下版本為準，不強記單一快照數字。
 
 ## 最佳實踐（medium／secondary 來源）
 
