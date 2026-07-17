@@ -68,6 +68,26 @@
           "description": "筆記符合 vault 規則"
         }
       ]
+    },
+    {
+      "id": 3,
+      "prompt": "同步 YouTube 頻道收尾時，其中一個平行 subagent 中途失敗，沒有建立完整筆記或 draft；其他影片都已完成。請判斷 checkpoint 應如何處理。",
+      "expected_output": "逐一核對本批 checkpoint ledger；將沒有完整筆記、draft 或明確 filtered/unavailable 終態的 videoId 判為 MISSING，保留原 checkpoint 並回報，不能因其他影片完成就前推。",
+      "files": [],
+      "assertions": [
+        {
+          "name": "漏項時保留 checkpoint",
+          "description": "任一 dispatched videoId 沒有檔案或明確終態時，不更新 last_sync_id"
+        },
+        {
+          "name": "逐支核對而非只看 draft",
+          "description": "收尾使用完整 CHECKPOINT_IDS ledger 驗證，不只檢查頻道內是否存在 draft"
+        },
+        {
+          "name": "漏項會被明確回報",
+          "description": "回覆包含遺漏 videoId 與 MISSING/blocked 原因，讓下次同步可重試"
+        }
+      ]
     }
   ]
 }
