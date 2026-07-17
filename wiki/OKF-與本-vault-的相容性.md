@@ -13,7 +13,7 @@ tags:
 
 # OKF 與本 vault 的相容性
 
-[Open Knowledge Format（OKF）0.1 草案](https://github.com/GoogleCloudPlatform/knowledge-catalog/blob/main/okf/SPEC.md) 定義可供人與 agent 讀寫、交換的 Markdown 知識 bundle。它與本 vault 的 [[LLM-Wiki-知識管理模式]] 在 Markdown、YAML frontmatter、Git、索引與交叉連結上方向一致；但它面向跨組織的知識目錄交換，不是持續綜合原始來源的私有 LLM Wiki。
+[Open Knowledge Format（OKF）草案](https://github.com/GoogleCloudPlatform/knowledge-catalog/blob/main/okf/SPEC.md)（2026-07 查證時為 0.1、仍處 draft，確切版本回查上游 spec）定義可供人與 agent 讀寫、交換的 Markdown 知識 bundle。它與本 vault 的 [[LLM-Wiki-知識管理模式]] 在 Markdown、YAML frontmatter、Git、索引與交叉連結上方向一致；但它面向跨組織的知識目錄交換，不是持續綜合原始來源的私有 LLM Wiki。
 
 ## 對照
 

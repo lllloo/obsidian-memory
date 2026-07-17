@@ -43,7 +43,7 @@ Harness 是包裹在 LLM 外圍、負責「模型推理以外一切」的軟體�
 
 - 定義：「在 LLM 推論過程中策展與維護最佳 token 集合的策略集」，範疇超越 prompt engineering。
 - 理論基礎：**context rot**——token 數增加時回憶準確度下降，成因與 transformer n² attention 及訓練分佈有關。（強度：context rot 現象另有 Chroma 2025-07 獨立研究佐證，「context rot」一詞即源自 Chroma 而非 Anthropic。）
-- long-horizon 三類技術：**compaction**（近上限時摘要重啟）、**structured note-taking／agentic memory**（筆記持久化到 context window 外再拉回——本 vault 的模式即屬此類）、**sub-agent 隔離**（乾淨 context 深入工作、只回傳約 1,000–2,000 token 摘要）。
+- long-horizon 三類技術：**compaction**（近上限時摘要重啟）、**structured note-taking／agentic memory**（筆記持久化到 context window 外再拉回——本 vault 的 [[LLM-Wiki-知識管理模式]] 即屬此類）、**sub-agent 隔離**（乾淨 context 深入工作、只回傳約 1,000–2,000 token 摘要）。
 - Claude Code 實作 hybrid 策略：CLAUDE.md 前期直接載入＋glob/grep 做 just-in-time 檢索。
 
 來源：[Effective context engineering for AI agents](https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents)
@@ -87,7 +87,7 @@ Harness 是包裹在 LLM 外圍、負責「模型推理以外一切」的軟體�
 
 1. **由簡入繁、可組合模式優於重框架**（Anthropic 經驗值；12-Factor Agents 等實務者觀點同向）。
 2. **context 是有邊際報酬遞減的有限資源**，compaction／note-taking／subagent 隔離是三大應對。
-3. **驗證迴路是品質關鍵**——generator-evaluator、瀏覽器端對端測試；沒有 verify 環節模型會「自認完成」。
+3. **驗證迴路是品質關鍵**——generator-evaluator、瀏覽器端對端測試；沒有 verify 環節模型會「自認完成」（但必要不充分——測試可被 agent 從內部滿足，證據見 [[AI-自主工作流的實證檢驗]]）。
 4. **harness 假設有生命週期**——為當下模型缺陷加的機制，模型升級後要重估、移除，否則變 dead weight。
 
 ## 證據限制（2026-07-10 查證拍板）

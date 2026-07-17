@@ -2,7 +2,7 @@
 title: 第二大腦實踐與本 vault 優化
 description: 比較 PARA、Zettelkasten、Evergreen notes、LYT 與 Digital Garden，將其轉成此 LLM Wiki 的最小可行優化
 created: 2026-07-11
-updated: 2026-07-14
+updated: 2026-07-17
 parent: "[[wiki/01.index]]"
 tags:
   - pkm
@@ -49,13 +49,13 @@ tags:
 
 [Mike Caulfield 的 Garden / Stream 比喻](https://hapgood.us/2015/10/17/the-garden-and-the-stream-a-technopastoral/)將 stream 視為按時間流過的對話，把 garden 視為可反覆重組的關聯空間；[Maggie Appleton 的整理](https://maggieappleton.com/garden-history)進一步強調脈絡導覽、持續修訂與對不確定性的揭示。
 
-本 vault 已選擇私有、版本化、可演進的 garden 路線。應沿用而非模仿公開發表：在綜合頁就地標示證據強度、未解問題與最後檢視日；`feeds/` 保持為時間性來源池，不把日報當知識頁。這也讓「新」不會取代「仍然正確且可用」。
+本 vault 已選擇私有、版本化、可演進的 garden 路線。應沿用而非模仿公開發表：在綜合頁就地標示證據強度、未解問題與最後檢視日；`feeds/` 保持為時間性來源池，不把日報當知識頁。這也讓「新」不會取代「仍然正確且可用」。脈絡導覽之外，另有一個有界的時間性入口與之並存——`wiki/01.index.md` 頂部的「最近更新」滾動區塊（2026-07-15 拍板，取捨見 [[LLM-Wiki-生態實作比較]] 的近期／熱脈絡承載光譜）。
 
 ## 最小優化方案
 
 ### 1. 將連結寫成關係，而非只堆連結
 
-新建或更新 wiki 頁時，連結附近以一句話說明其角色，例如「提供反例」「將此主張套到 agent 記憶」「定義上位概念」「採用此做法但保留限制」。這讓人與 LLM 都能在不重讀全部頁面的情況下理解連結，不必額外引入 link-type plugin 或 metadata schema。
+新建或更新 wiki 頁時，連結附近以一句話說明其角色，例如「提供反例」「將此主張套到 agent 記憶」「定義上位概念」「採用此做法但保留限制」。這讓人與 LLM 都能在不重讀全部頁面的情況下理解連結，不必額外引入 link-type plugin 或 metadata schema。此做法已落地為本 vault schema 層的寫入慣例（wikilink 相鄰文字說明關係），不再是待採用提案。
 
 ### 2. 以「問題簇」觸發小型 MOC
 
@@ -65,7 +65,7 @@ tags:
 - 同一組頁面被重複用於 Query、比較或產出。
 - 其中存在相互矛盾的主張，需讓讀者看到比較順序。
 
-此頁即是「第二大腦」問題簇的第一個 MOC：先讀 [[第二大腦方法論比較]] 了解 BASB 與 Zettelkasten，再讀本頁決定如何套用到 vault，最後回到 [[LLM-Wiki-知識管理模式]] 理解 agent 維護的邊界。
+此頁即是「第二大腦」問題簇的第一個 MOC：先讀 [[第二大腦方法論比較]] 了解 BASB 與 Zettelkasten，再讀本頁決定如何套用到 vault，最後回到 [[LLM-Wiki-知識管理模式]] 理解 agent 維護的邊界；問題簇其後已擴展——多 repo 延伸見 [[跨專案第二大腦整合模式]]，工具落地見 [[第二大腦整合的現成工具與做法]]。
 
 ### 3. 對每個新來源保留一個用途判斷
 
@@ -73,7 +73,7 @@ Ingest 時，wiki 摘要的開頭或結尾至少回答一項：它改變了哪�
 
 ### 4. 行動與研究維持單向交接
 
-需要完成的成果，使用者在私人 `cards/`／`topics/` 自行維護 goal、next decision 與相關 wiki 連結；當成果產生可廣泛重用的結論，再由使用者選擇餵回 raw/wiki。這採用 PARA 的「組織為行動服務」，又保留本 vault「只收跨專案通用知識」的邊界。
+需要完成的成果，使用者在私人 `cards/`／`topics/` 自行維護 goal、next decision 與相關 wiki 連結；當成果產生可廣泛重用的結論，再由使用者選擇餵回 raw/wiki。這採用 PARA 的「組織為行動服務」，又保留本 vault「只收跨專案通用知識」的邊界。Hermes Agent 亦把行動層（Kanban 任務佇列）獨立於兩種記憶之外，與此分工同構，見 [[第二大腦方法論比較]] 的 AI agent 呼應節。
 
 ## 證據限制
 
