@@ -1,11 +1,11 @@
-"""列出某頻道資料夾中「已有非 draft 完整筆記」的 videoId（每行一個）。
+"""列出某頻道資料夾中的 videoId（每行一個）。
 
 用法（cwd = repo root）：
     python3 .agents/skills/vault-youtube-sync/scripts/noted_ids.py "feeds/youtube/<頻道名>"
+    python3 .agents/skills/vault-youtube-sync/scripts/noted_ids.py --draft "feeds/youtube/<頻道名>"
 
-供 SKILL 步驟 2 的 Source URL 去重用：把輸出的 ID 集合與待處理清單比對，
-移除已出現在非 draft 筆記 source 欄位的影片。draft 占位**不算**去重命中
-（要留給 subagent 覆寫重抓），故跳過。
+預設輸出非 draft 完整筆記，供 Source URL 去重；`--draft` 改為輸出
+draft 占位，供 checkpoint 過濾後強制納回重試，以及收尾判斷是否可以推進 checkpoint。
 """
 import os
 import re
@@ -21,7 +21,9 @@ except (AttributeError, OSError):
 if not os.path.isfile("schema/vault-map.md"):
     sys.exit("ERROR: cwd 不在 vault root（找不到 schema/vault-map.md）")
 
-notes_dir = sys.argv[1] if len(sys.argv) > 1 else ""
+draft_only = len(sys.argv) > 1 and sys.argv[1] == "--draft"
+arg_pos = 2 if draft_only else 1
+notes_dir = sys.argv[arg_pos] if len(sys.argv) > arg_pos else ""
 if not notes_dir or not os.path.isdir(notes_dir):
     raise SystemExit(0)
 
@@ -35,8 +37,9 @@ for f in sorted(os.listdir(notes_dir)):
         # 單檔讀取失敗（權限/鎖定）不中斷整體去重，但要留訊號供排查
         print(f"WARN: 讀取失敗，略過 {f}: {exc}", file=sys.stderr)
         continue
-    if re.search(r"^draft:\s*true", text, re.M):
-        continue  # draft 占位讓 subagent 重抓覆寫，不去重
+    is_draft = bool(re.search(r"^draft:\s*true", text, re.M))
+    if is_draft != draft_only:
+        continue
     m = re.search(r"^source: https://www\.youtube\.com/watch\?v=([A-Za-z0-9_-]+)", text, re.M)
     if m:
         print(m.group(1))

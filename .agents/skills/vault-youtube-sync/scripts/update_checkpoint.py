@@ -3,7 +3,7 @@
 用法（cwd = repo root）：
     python3 .agents/skills/vault-youtube-sync/scripts/update_checkpoint.py "feeds/youtube/<頻道名>/01.index.md" <NEW_ID> <TODAY>
 
-僅在本次有新影片時呼叫；無新影片不需更新 checkpoint。
+僅在本次有新影片且頻道內已無 draft 時呼叫；無新影片或仍有 draft 時保留 checkpoint。
 """
 import os
 import re

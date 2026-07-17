@@ -71,13 +71,19 @@ python3 .agents/skills/vault-youtube-sync/scripts/fetch_videos.py <handle>
 
 **Checkpoint 過濾邏輯：**
 
-- 若 `01.index.md` 不存在或**無 `last_sync_id`**：全部影片都處理。資料夾不需另外 `mkdir`——步驟 3 用 `Write` 建 `01.index.md` 時會自動建立缺失的父資料夾
+- 若 `01.index.md` 不存在、無 `last_sync_id`，或值為空字串：全部影片都處理。資料夾不需另外 `mkdir`——步驟 3 用 `Write` 建 `01.index.md` 時會自動建立缺失的父資料夾
 - 若有 `last_sync_id`：在步驟 1 抓到的清單中找到該 ID 的位置，**只取它上方（更新）的影片**
   - 若 `last_sync_id` 不在清單中（距上次同步太久）：全部都算新的
-  - 若 `last_sync_id` 是清單第一筆：無新影片，輸出「已是最新，無需更新」並結束
-- 若過濾後**沒有新影片**：輸出「已是最新，無需更新」並結束
 
-**Source URL 去重（checkpoint 之後必做）：**
+Checkpoint 過濾後先取得頻道內的 draft videoId：
+
+```
+python3 .agents/skills/vault-youtube-sync/scripts/noted_ids.py --draft "feeds/youtube/<頻道名>"
+```
+
+將仍在步驟 1 抓取清單內的 draft 影片**強制加回待處理清單**，不受 checkpoint 位置影響；這也能救回舊版流程已被 checkpoint 跨過的 draft。只有「checkpoint 上方無新影片」且「無可重試 draft」時，才輸出「已是最新，無需更新」並結束。
+
+**Source URL 去重（加回 draft 之後必做）：**
 
 即使通過 checkpoint 篩選，也必須再排除「已有完整筆記的影片」——防止 checkpoint 失效時（如距上次 sync 超過 30 部）產生重複。**`draft: true` 的筆記不算去重命中**——那是先前 transcript 失敗的占位，本次要交給 subagent 覆寫重抓。取得已有非 draft 筆記的 videoId 清單（cwd = repo root）：
 
@@ -122,7 +128,7 @@ title: <頻道名>
 created: <今日 YYYY-MM-DD>
 updated: <今日 YYYY-MM-DD>
 source: <頻道 URL>
-last_sync_id: <步驟 1 清單中第一筆的 videoId>
+last_sync_id: ""
 tags:
   - youtube
   - channel
@@ -215,13 +221,20 @@ N. <標題> — <URL>
 | AIJasonZ   | 0 (已是最新) | -          | -                        | -    |
 | ...        | ...          | ...        | ...                      | ...  |
 
-**更新 checkpoint**：所有筆記建立完成後，將 `01.index.md` 的 `last_sync_id` 更新為**步驟 1 清單中第一筆**的 video ID（即目前頻道最新的影片），cwd = repo root：
+**更新 checkpoint**：所有筆記處理完成後，重新列出頻道內的 draft：
+
+```
+python3 .agents/skills/vault-youtube-sync/scripts/noted_ids.py --draft "feeds/youtube/<頻道名>"
+```
+
+- **仍有任何 draft**：不更新 `last_sync_id`，回報「checkpoint 已保留，下次將重試 N 部」。舊 checkpoint 使本批影片下次仍進入候選，完整筆記再由 Source URL 去重排除。
+- **沒有 draft**：將 `last_sync_id` 更新為步驟 1 清單中第一筆 video ID（即目前頻道最新影片），cwd = repo root：
 
 ```
 python3 .agents/skills/vault-youtube-sync/scripts/update_checkpoint.py "feeds/youtube/<頻道名>/01.index.md" <NEW_ID> <TODAY>
 ```
 
-> 若本次無新影片（早已是最新），不需更新 checkpoint。
+> 若本次無新影片且無 draft（早已是最新），不需更新 checkpoint。
 
 ### 同步收尾驗證
 
@@ -230,7 +243,7 @@ python3 .agents/skills/vault-youtube-sync/scripts/update_checkpoint.py "feeds/yo
 - 完整筆記含 `title`、`description`、`created`、`updated`、`source`、`tags`；draft 占位至少含 `title`、`created`、`updated`、`source`、`draft: true`、`tags`
 - 本輪各影片 `source` videoId 在頻道內沒有兩份完整筆記
 - `02.影片清單.base` 的 `file.inFolder()` 指向實際 `feeds/youtube/<頻道名>`
-- 有新影片時 `01.index.md` 的 `last_sync_id` 與 `updated` 已更新；無新影片時 checkpoint 不變
+- 有新影片且無 draft 時 `01.index.md` 的 `last_sync_id` 與 `updated` 已更新；仍有 draft 時 checkpoint 保留；無新影片時 checkpoint 不變
 
 發現不一致就先修正本輪產物再回覆，不執行跨頻道或全 vault 掃描。
 
@@ -241,8 +254,8 @@ python3 .agents/skills/vault-youtube-sync/scripts/update_checkpoint.py "feeds/yo
 - **檔名長度**：超過 40 字元的標題適當縮短，保留關鍵詞
 - **增量同步**：再次執行同一頻道時，Step 2 會用 checkpoint 過濾，只建立新影片的筆記；ytInitialData 一次最多回傳約 30 部，足以涵蓋一般更新週期
 - **往前追溯限制**：ytInitialData 最多回傳約 30 部。若距上次同步超過 30 部新影片，checkpoint 不會出現在清單中，全部都會視為新的。更早的影片需改走 YouTube continuation token API（非本 skill 範圍）
-- **失敗占位機制（draft 重試）**：subagent 任何一支影片抓不到 transcript（defuddle videoId mismatch / youtube-transcript-api 無字幕 / 429 rate limit）但 `video_meta.py` 確認影片可用時，寫一份 `draft: true` 占位筆記（範本見 `references/subagent-note-creator.md` 步驟 2b）。Step 2 的 Source URL 去重會跳過 draft 占位讓它留在待處理清單，subagent Step 0 偵測到 draft 後用 `Write` 覆寫該檔重抓——下次執行 skill 自動補完。**沒有這層占位，失敗影片會永遠落在 last_sync_id 上方被頻道 checkpoint 排除，再也不會補上。**
-- **影片已刪除（不可補）**：subagent `video_meta.py` 拿到 `STATUS:unavailable` → 直接跳過，不寫筆記、不寫占位。比 last_sync_id 還新但已刪的影片下次仍會出現在清單，但 source URL 去重不會擋（因為從未寫過）→ subagent 再驗一次 unavailable → 再次跳過，等於每次重跑都會再驗一次（成本可接受）
+- **失敗占位機制（draft 重試）**：subagent 抓不到 transcript（defuddle videoId mismatch / youtube-transcript-api 無字幕 / 429 rate limit），或 `video_meta.py` 因網路中斷、429、5xx 回 `STATUS:error` 時，寫一份 `draft: true` 占位筆記（範本見 `references/subagent-note-creator.md` 步驟 2b）。Step 2 會強制加回 draft，收尾只要還有 draft 就保留 checkpoint；下次完整筆記由 Source URL 去重排除，draft 則重抓覆寫。
+- **影片已刪除（不可補）**：只有 `video_meta.py` 拿到頁面明確證據的 `STATUS:unavailable` 才直接跳過，不寫筆記、不寫占位。這屬已處理的不可補項，不阻擋 checkpoint 推進。
 - **published 欄位不穩定**：defuddle 解析 YouTube 頁面時 `published` 欄位常為空，屬正常現象。無論 defuddle 是否成功，只要 `published` 為空都需用 `video_meta.py` 補全（取 `DATE:`）；若仍為空才留空
 - **跨平台 / 編碼**：所有抓取與處理都在 `scripts/*.py` 內完成，已統一處理 UTF-8 stdout 與 subprocess 解碼（`encoding="utf-8", errors="replace"`），不需在 skill 流程裡另寫 shell pipeline 或 ad-hoc subprocess
 - **重複筆記**：Step 2 的 Source URL 去重（過濾 draft 後）是主要防線，以 video ID 為準不依賴檔名；subagent Step 0 寫檔前再用 `Grep` 確認一次。兩道防線確保同一支影片不會產生兩份完整筆記
