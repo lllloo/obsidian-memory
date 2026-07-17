@@ -86,6 +86,7 @@ agent 通常就是**在 loop 中依環境回饋使用工具的 LLM**：從人的
 
 ## 交叉引用
 
+- 挑選視角：[[Agent-工作流-Pattern-藍本庫]]——該頁把本文五模式當**骨架**（並據原文「These building blocks aren't prescriptive」明確標為非完整分類法），補上本文沒有的 CSIRO Data61 18-pattern catalogue、OpenAI 的 Manager/Decentralized 二分與 ReAct／Reflexion／Self-Refine 的論文出處；設計新 skill 要挑 pattern 時讀該頁，要本文完整原貌讀本頁。
 - 綜述定位：[[Agent-Harness-Engineering-框架綜述]]——該頁第 1 節簡述本文的二分法與五模式並置於 harness 工程時間線最前端；本頁補上綜述未收的 **augmented LLM 基石、各模式適用時機、兩個應用域、ACI／工具 prompt engineering** 完整內容。
 - 模式的規模化實例：[[多智能體研究系統-Anthropic]]——該系統正是本文 **orchestrator-workers** 模式的生產級落地（lead 動態拆解、平行 subagent、綜合結果），可對照「模式原型」與「實作細節」兩層。
 - 實證對照：[[AI-自主工作流的實證檢驗]]——本文「只在複雜度能實證改善時才加」「用測試結果當回饋迭代」的主張，該頁以獨立證據檢驗其邊界（測試本身可被 agent 篡改，驗證迴路必要但不充分）。

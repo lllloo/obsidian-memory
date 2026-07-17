@@ -115,3 +115,4 @@ Harness 是包裹在 LLM 外圍、負責「模型推理以外一切」的軟體�
 - [[Context-優先與多-agent-的適用邊界]] — **直接補救本頁「來源集中 Anthropic」的證據限制**：引入 Cognition（別建多 agent）與 UC Berkeley MAST 失敗實證兩個非 Anthropic 來源，界定多 agent 的適用邊界。
 - [[pi-workflow-編排-harness-與本-vault-分野]] — 該頁把 pi-workflow 定位為編排層 prior art，其「編排職能已被 harness 覆蓋」的論點即座落於本頁的 workflows/agents 二分主軸。
 - [[OpenSpec]] — spec-driven 工具的具體實作，該頁以本頁作「業界怎麼說該建 agent」的框架層綜述互補，本頁回指其工具細節。
+- [[Agent-工作流-Pattern-藍本庫]] — **同樣直接補救本頁「來源集中 Anthropic」的證據限制**，但走的是另一條路：引入 CSIRO Data61 經同儕審查的 18-pattern catalogue 作為與 Anthropic 詞彙體系**獨立**的論文級 pattern 來源。該頁另揭一個本頁未標的來源陷阱——LangGraph 的 pattern 頁自承照 Anthropic 那篇重建，不構成獨立印證。
