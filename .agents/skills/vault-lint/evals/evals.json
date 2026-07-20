@@ -1,0 +1,69 @@
+{
+  "skill_name": "vault-lint",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "執行 vault lint 時，wiki/目標頁.md 已登錄在 wiki/01.index.md，也被 raw 與 schema 文件引用，但沒有任何其他 wiki 內容頁連入。請判斷是否應輸出 ORPHAN。",
+      "expected_output": "應輸出 ORPHAN:wiki/目標頁.md；index 只是導航，raw/schema 不屬於 wiki 知識圖譜，不能掩蓋孤立頁。",
+      "files": [],
+      "assertions": [
+        {
+          "name": "index 不算知識入連",
+          "description": "只有 wiki/01.index.md 連入時仍輸出 ORPHAN"
+        },
+        {
+          "name": "raw 與 schema 不掩蓋孤立",
+          "description": "raw/schema 連入不能讓 wiki 內容頁通過 ORPHAN 檢查"
+        },
+        {
+          "name": "內容頁互連可放行",
+          "description": "其他 wiki 內容頁的有效入連會清除 ORPHAN"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "執行 vault lint 時，請檢查 wiki 內容頁的 description、parent 與 frontmatter 欄位順序，同時維持 raw write-once 與 wiki/01.index.md 的豁免。",
+      "expected_output": "wiki 內容頁缺 description/parent、description 不在 30–80 字、parent 錯誤或欄位錯序時輸出 FM；合法 quoted scalar 通過，raw 與 wiki index 不套用這些 wiki-only 規則。",
+      "files": [],
+      "assertions": [
+        {
+          "name": "wiki metadata 約束完整",
+          "description": "檢出 description 缺失或長度越界、parent 錯誤與欄位錯序"
+        },
+        {
+          "name": "YAML scalar 字數正確",
+          "description": "description 去除成對外引號後以 Unicode 字元計算 30–80 字"
+        },
+        {
+          "name": "wiki-only 邊界",
+          "description": "raw 與 wiki/01.index.md 不套用 description、parent 或欄位順序檢查"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "vault-lint 近七天有 20 個變動 wiki 頁，semantic_page_cap 是 10；第一天審完 10 頁但沒有任何 finding。請說明下一天如何選頁，且不能靠寫回 BACKLOG 的 carryover 推進。",
+      "expected_output": "由唯讀 selector 依日期選下一個穩定批次；候選集合不變時，連續兩天各選 10 個不重複頁面並覆蓋全部 20 頁，同日重跑結果一致，BACKLOG 維持零變更。",
+      "files": [],
+      "assertions": [
+        {
+          "name": "無發現仍會跨日推進",
+          "description": "20 頁、cap 10 的連續兩日批次不重複且聯集涵蓋全部頁面"
+        },
+        {
+          "name": "同日選擇穩定",
+          "description": "相同日期與候選集合重跑會得到相同批次"
+        },
+        {
+          "name": "零持久選頁狀態",
+          "description": "selector 不修改 BACKLOG 或其他 vault 檔案"
+        },
+        {
+          "name": "新頁最終可進入審查",
+          "description": "候選加入新頁後，會在新的完整批次週期內入選"
+        }
+      ]
+    }
+  ]
+}

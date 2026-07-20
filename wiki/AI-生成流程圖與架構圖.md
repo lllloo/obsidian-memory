@@ -1,15 +1,15 @@
 ---
 title: AI 生成流程圖與架構圖
-description: 用 AI 逆向生程式架構圖、把流程文字轉圖、做筆記視覺化的三層選型與工作流；Mermaid 為收斂格式，含準確度警訊、prompt 技法與用 mermaid.live 連結呈現討論架構圖的做法
+description: 以 Mermaid 為核心，整理程式架構逆向、流程文字轉圖與筆記視覺化的工具選型、工作流及準確度風險
 created: 2026-07-16
 updated: 2026-07-17
+parent: "[[wiki/01.index]]"
 tags:
   - diagram-as-code
   - coding-agent
   - obsidian
   - automation
   - ai-agent
-parent: "[[wiki/01.index]]"
 ---
 
 讓 AI 生流程圖／架構圖來加速理解**程式專案、業務流程、知識筆記**三種用途，選型收斂到三個層次；關鍵洞察是它們幾乎全部吐同一種格式——**Mermaid（diagram-as-code，文字轉圖）**，而 Obsidian 與 GitHub 都原生渲染 Mermaid，AI 產出的文字碼可直接落地、無需匯出圖片。

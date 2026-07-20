@@ -16,7 +16,7 @@
 
 - 無命中 → 繼續步驟 1
 - 命中且該檔含 `draft: true`（用 `Read` 確認）→ 先前失敗的 draft 占位，**記住該檔路徑**，步驟 3 寫新筆記時直接 `Write` 覆寫該路徑（沿用既有檔名，不另建新檔）
-- 命中且無 `draft: true` → 已是完整筆記，**跳過此影片**，回報「⏭ 已有筆記，跳過」
+- 命中且無 `draft: true` → 已是完整筆記，**跳過此影片**，回報「⏭ 已有筆記，跳過」與 `VIDEO_RESULT:<videoId>:existing:<既有路徑>`
 
 ### 步驟 1：抓 transcript（defuddle + videoId 硬驗證 + fallback）
 
@@ -40,7 +40,7 @@ python3 .agents/skills/vault-youtube-sync/scripts/transcript.py "<url>" <videoId
 python3 .agents/skills/vault-youtube-sync/scripts/video_meta.py <videoId>
 ```
 
-讀 `DATE:` 行（`YYYY-MM-DD`，空則 `published` 留空）。
+讀 `DATE:` 行（`YYYY-MM-DD`，空則 `published` 留空）。此時 transcript 已取得，若 `video_meta.py` 回 `STATUS:error`，只代表上傳日查核失敗：保留空的 `published` 並繼續寫完整筆記，不因次要 metadata 失敗降級為 draft。
 
 ### 步驟 2：影片狀態確認（步驟 1 失敗時）
 
@@ -48,12 +48,13 @@ python3 .agents/skills/vault-youtube-sync/scripts/video_meta.py <videoId>
 python3 .agents/skills/vault-youtube-sync/scripts/video_meta.py <videoId>
 ```
 
-- `STATUS:unavailable` → **跳過，不建筆記、不寫占位**，回報「⚠ 影片已刪除，跳過」
+- `STATUS:unavailable` → **跳過，不建筆記、不寫占位**，回報「⚠ 影片已刪除，跳過」與 `VIDEO_RESULT:<videoId>:unavailable:-`
 - `STATUS:available` 但 transcript 仍無 → 走步驟 2b 寫 draft 占位（`DATE:` 作 published），不要靜默丟棄
+- `STATUS:error` → 無法判定影片是否可用；走步驟 2b 寫 draft 占位，將 stderr 的網路／HTTP 錯誤摘要寫入失敗原因
 
 ### 步驟 2b：失敗占位（draft 重試）
 
-寫一份 `draft: true` 占位筆記，下次執行 skill 時步驟 0 會偵測 draft 並覆寫重抓。為何占位而不直接跳過：SKILL.md 步驟 2 的去重以 video ID 為鍵；若不留痕跡，下次仍會被頻道 checkpoint 排除（位置已在 `last_sync_id` 上方），這支影片**永遠不會補上**。
+寫一份 `draft: true` 占位筆記，下次執行 skill 時步驟 0 會偵測 draft 並覆寫重抓。為何占位而不直接跳過：占位是「此影片尚未完成」的持久記號；主流程會強制將它納回候選，並在仍有 draft 時保留 checkpoint，直到重試成功。
 
 檔案路徑與命名同正常筆記（見下方「筆記規則」），frontmatter 範本：
 
@@ -76,11 +77,24 @@ tags:
 > 下次執行 vault-youtube-sync 會自動偵測此 draft 並覆寫重抓。
 ```
 
-寫完回報「📝 transcript 失敗，已建 draft 占位」並結束此影片流程。
+寫完回報「📝 transcript 失敗，已建 draft 占位」與 `VIDEO_RESULT:<videoId>:draft:<占位路徑>`，並結束此影片流程。
 
 ### 步驟 3：撰寫筆記
 
-依下方「內容品質標準」用步驟 1 的 `CONTENT` 撰寫筆記，`Write` 到 `<NOTES_DIR>/<繁體中文精簡標題>.md`（若步驟 0 記住了 draft 路徑則覆寫該路徑）。建立後確認檔案存在；全部完成後回報結果清單。
+依下方「內容品質標準」用步驟 1 的 `CONTENT` 撰寫筆記，`Write` 到 `<NOTES_DIR>/<繁體中文精簡標題>.md`（若步驟 0 記住了 draft 路徑則覆寫該路徑）。建立後確認檔案存在，再回報 `VIDEO_RESULT:<videoId>:complete:<筆記路徑>`；全部完成後回報結果清單。
+
+### 固定終態回報
+
+每部影片最後只能回報下列其中一行，供主 skill 建立 `UNAVAILABLE_IDS` 並交由磁碟 verifier 交叉核對：
+
+```text
+VIDEO_RESULT:<videoId>:complete:<筆記路徑>
+VIDEO_RESULT:<videoId>:draft:<占位路徑>
+VIDEO_RESULT:<videoId>:existing:<既有路徑>
+VIDEO_RESULT:<videoId>:unavailable:-
+```
+
+若流程在產生終態前異常中止，不要捏造結果行；主 skill 會把缺少實際筆記／明確 unavailable 的 videoId 判成 `MISSING`，並保留 checkpoint。
 
 ## 筆記規則（必須嚴格遵守）
 

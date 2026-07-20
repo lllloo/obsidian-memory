@@ -4,13 +4,17 @@
     python3 .agents/skills/vault-youtube-sync/scripts/video_meta.py <videoId>
 
 輸出（每行一條）：
-    STATUS:available | STATUS:unavailable
+    STATUS:available | STATUS:unavailable | STATUS:error
     DATE:<YYYY-MM-DD>   （抓不到則空字串）
+
+`unavailable` 只代表頁面明確證實影片不可用；網路中斷、429、5xx 等
+無法完成查核的狀況回 `error`，避免上層誤判為影片已刪除。
 
 純 urllib，無 curl 依賴，跨平台（Windows/mac/Linux 行為一致）。
 """
 import re
 import sys
+import urllib.error
 import urllib.request
 
 # Windows 預設 stdout cp950，遇 emoji / 非 cp950 字元會炸，強制 UTF-8
@@ -31,7 +35,7 @@ HEADERS = {
 
 def main():
     if len(sys.argv) < 2:
-        print("STATUS:unavailable")
+        print("STATUS:error")
         print("DATE:")
         return 1
     vid = sys.argv[1]
@@ -40,11 +44,20 @@ def main():
     try:
         with urllib.request.urlopen(req, timeout=15) as resp:
             html = resp.read().decode("utf-8", errors="replace")
+    except urllib.error.HTTPError as exc:
+        if exc.code in (404, 410):
+            print("STATUS:unavailable")
+            print("DATE:")
+            return 0
+        print("STATUS:error")
+        print("DATE:")
+        print(f"ERROR:HTTP {exc.code}: {exc.reason}", file=sys.stderr)
+        return 2
     except Exception as exc:  # noqa: BLE001
-        print("STATUS:unavailable")
+        print("STATUS:error")
         print("DATE:")
         print(f"ERROR:{exc}", file=sys.stderr)
-        return 0
+        return 2
 
     avail = "unavailable" if "videoUnavailableRenderer" in html else "available"
     m = re.search(r'itemprop="datePublished" content="([^"]+)"', html)

@@ -4,8 +4,8 @@
 在 vault root 執行；輸出 machine-readable lines（一行一發現），由主 agent 組裝報告：
 
   DEADLINK:<file>:<target>   wikilink 或 markdown 式內部連結指向不存在的檔案
-  ORPHAN:<file>              wiki 頁無任何入連（01.index 除外）
-  FM:<file>:<問題>           frontmatter 缺必要欄位 / tags 非 YAML list
+  ORPHAN:<file>              wiki 內容頁無其他 wiki 內容頁入連（index/raw/schema/自連不算）
+  FM:<file>:<問題>           frontmatter 缺欄、wiki metadata 約束或 tags 格式錯誤
   TAG:<tag>:<count>          tag 盤點（同義異寫漂移由主 agent 判讀）
   RAWGAP:<file>              raw 檔未被任何 wiki 頁引用（待消化原料）
   INDEXGAP:<dir>:<file>      index 漏登（raw 各資料夾 literal index；wiki 頁未登錄 wiki/01.index.md）
@@ -18,6 +18,7 @@
 """
 
 import argparse
+import json
 import re
 import subprocess
 import sys
@@ -34,6 +35,15 @@ EXCLUDED_TOP = {
 }
 
 REQUIRED_FIELDS = ("title", "created", "updated", "tags")
+WIKI_REQUIRED_FIELDS = ("title", "description", "created", "updated", "parent", "tags")
+FRONTMATTER_ORDER = (
+    "title", "description", "created", "updated", "source", "published",
+    "parent", "last_sync_id", "draft", "tags",
+)
+WIKI_PARENT = "[[wiki/01.index]]"
+WIKI_PARENT_YAML = f'"{WIKI_PARENT}"'
+DESCRIPTION_MIN = 30
+DESCRIPTION_MAX = 80
 
 WIKILINK_RE = re.compile(r"\[\[([^\[\]]+?)\]\]")
 MDLINK_RE = re.compile(r"\]\(([^)]+)\)")
@@ -55,11 +65,11 @@ def read_text(path: Path) -> str:
 
 
 def parse_frontmatter(text: str) -> dict:
-    """極簡 frontmatter 解析：只取 top-level key 與 tags 是否為 YAML list。"""
+    """極簡 frontmatter 解析：取 top-level key、原始順序與 tags list。"""
     lines = text.splitlines()
     if not lines or lines[0].strip() != "---":
         return {}
-    fm: dict = {}
+    fm: dict = {"_field_order": []}
     current_key = None
     for line in lines[1:]:
         if line.strip() == "---":
@@ -67,6 +77,7 @@ def parse_frontmatter(text: str) -> dict:
         m = re.match(r"^([A-Za-z_][\w-]*):\s*(.*)$", line)
         if m:
             current_key = m.group(1)
+            fm["_field_order"].append(current_key)
             fm[current_key] = m.group(2).strip()
             if current_key == "tags":
                 fm.setdefault("_tag_items", [])
@@ -75,6 +86,20 @@ def parse_frontmatter(text: str) -> dict:
             if item:
                 fm["_tag_items"].append(item.group(1).strip().strip('"'))
     return fm
+
+
+def unquote_scalar(value: str) -> str:
+    """移除簡單 YAML scalar 的一層成對引號，供值與字數驗證。"""
+    value = value.strip()
+    if len(value) >= 2 and value[0] == value[-1] == '"':
+        try:
+            decoded = json.loads(value)
+            return decoded if isinstance(decoded, str) else value
+        except json.JSONDecodeError:
+            return value[1:-1]
+    if len(value) >= 2 and value[0] == value[-1] == "'":
+        return value[1:-1].replace("''", "'")
+    return value
 
 
 def extract_links(text: str) -> list:
@@ -157,6 +182,10 @@ def main() -> int:
     def top_of(p: Path) -> str:
         return rel[p].split("/", 1)[0]
 
+    def is_wiki_content_page(p: Path) -> bool:
+        """wiki 知識圖譜中的內容頁；目錄頁只負責導航，不算知識互連。"""
+        return top_of(p) == "wiki" and p.name != "01.index.md"
+
     # ---- DEADLINK：wiki/raw/schema + root CLAUDE.md 內指向不存在檔案的連結 ----
     # wikilink 用 basename 解析（Obsidian 慣例）；markdown 式內部連結用相對 containing file 的路徑解析。
     def is_linkcheck_target(p: Path) -> bool:
@@ -174,29 +203,53 @@ def main() -> int:
             if not (p.parent / t).is_file():
                 findings["DEADLINK"].append(f"DEADLINK:{rel[p]}:{t}")
 
-    # ---- ORPHAN：wiki 頁（01.index 除外）無任何入連 ----
+    # ---- ORPHAN：wiki 內容頁無其他 wiki 內容頁入連 ----
+    # index 是每頁必登錄的導航入口；raw/schema 也不是知識圖譜中的內容頁。
+    # 若把它們算成有效入連，只有目錄或治理文件指向的頁會被誤判為已互連。
     for p in texts:
-        if top_of(p) != "wiki" or p.name == "01.index.md":
+        if not is_wiki_content_page(p):
             continue
         linkers = {
             q for q in inbound.get(p.stem, set()) - {p}
-            if top_of(q) in ("wiki", "raw", "schema")
+            if is_wiki_content_page(q)
         }
         if not linkers:
             findings["ORPHAN"].append(f"ORPHAN:{rel[p]}")
 
-    # ---- FM：缺必要欄位 / tags 非 list（draft 占位跳過）----
+    # ---- FM：基本缺欄 / tags 格式 + wiki 內容頁 metadata 約束 ----
+    # raw 維持 write-once，且 Web Clipper description 有明確豁免；wiki-only
+    # 約束不可套到 raw，避免每輪產生無法合法修補的固定噪音。
     for p in texts:
         if top_of(p) not in ("wiki", "raw"):
             continue
         fm = fms[p]
-        if fm.get("draft") == "true":
+        if top_of(p) == "raw" and fm.get("draft") == "true":
             continue
-        missing = [f for f in REQUIRED_FIELDS if f not in fm]
+        required = WIKI_REQUIRED_FIELDS if is_wiki_content_page(p) else REQUIRED_FIELDS
+        missing = [f for f in required if f not in fm]
         if missing:
             findings["FM"].append(f"FM:{rel[p]}:missing={','.join(missing)}")
         if "tags" in fm and fm.get("tags") and not fm.get("_tag_items"):
             findings["FM"].append(f"FM:{rel[p]}:tags-not-list")
+        if not is_wiki_content_page(p):
+            continue
+
+        if "description" in fm:
+            description_length = len(unquote_scalar(fm["description"]))
+            if not DESCRIPTION_MIN <= description_length <= DESCRIPTION_MAX:
+                findings["FM"].append(
+                    f"FM:{rel[p]}:description-length={description_length}"
+                )
+        if "parent" in fm and fm["parent"] != WIKI_PARENT_YAML:
+            findings["FM"].append(f"FM:{rel[p]}:parent-invalid")
+
+        rank = {field: index for index, field in enumerate(FRONTMATTER_ORDER)}
+        ordered_fields = [
+            field for field in fm.get("_field_order", []) if field in rank
+        ]
+        positions = [rank[field] for field in ordered_fields]
+        if positions != sorted(positions):
+            findings["FM"].append(f"FM:{rel[p]}:field-order")
 
     # ---- TAG 盤點（wiki + raw）----
     tag_counts: dict = {}

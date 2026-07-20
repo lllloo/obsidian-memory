@@ -1,7 +1,7 @@
 ---
 title: Vault 運作模式
 created: 2026-05-25
-updated: 2026-07-14
+updated: 2026-07-18
 tags:
   - vault
   - meta
@@ -40,7 +40,7 @@ tags:
 
 本 vault 只吸收**跨專案通用**的知識——工具評測、方法論、AI 生態動態。**專案特定**的架構決策、bug 記錄、實作細節留在各自 repo 的 `CLAUDE.md`／`docs/`，不 ingest 進本 vault，避免 wiki 從「工具生態知識庫」稀釋成大雜燴。
 
-其他 repo 要用本 vault 的 skill（如 `vault-youtube-sync`）走 [CWD 契約](../CLAUDE.md)——先 cd 進 vault root 再呼叫，這是目前唯一的合作介面，且是單向：別的專案能呼叫本 vault，本 vault 不會主動伸手進別的 repo。允許的連結方向是**其他專案的文件單向引用本 vault 的 wiki 頁**（例如某專案 CLAUDE.md 寫「LLM 選型參考 obsidian-memory 的 xxx 頁」），不建立自動同步。
+repo-local 維護型 skill（`vault-youtube-sync`、`vault-updates-daily`、`vault-lint`、`vault-watch`）走 [CWD 契約](../CLAUDE.md)：先進 vault root，再以 `schema/vault-map.md` 驗證位置。其他 repo 若只需查詢既有知識，則用全域 [`ask-vault`](../.agents/skills/ask-vault/SKILL.md)；launcher 會自行把唯讀 Query 放在 vault root 並檢查同一哨兵。兩種介面都是單向：別的專案能呼叫或引用本 vault，本 vault 不會主動伸手進別的 repo，也不建立自動同步。
 
 ## 架構：三層
 
@@ -72,7 +72,7 @@ wiki 是 LLM 幫你養的活知識庫（私有、只給你讀）；cards/topics 
 
 - **Ingest（擷取）** — 你把新來源丟進 raw、叫 LLM 處理。典型流程：LLM 讀來源 → 直接寫一頁摘要 → 更新 index → 更新橫跨 wiki 的相關實體頁/概念頁 → 標矛盾，**不必先討論才動筆**。**單一來源可牽動 10–15 頁。** 可一次一源、你在旁導引，也可較少監督地批次 ingest；發展出適合自己的節奏並寫進 schema。
 - **Query（查詢）** — 向 wiki 提問，LLM 先讀 index → 找相關頁 → 讀頁 → **附引用**綜合答案。答案形式依問題而定（markdown 頁、比較表、投影片、圖表、canvas）。關鍵洞見：**好答案可回存成新 wiki 頁**——你要的比較、分析、發現的關聯很有價值，不該消失在對話裡；這樣探索跟來源一樣複利累積。
-- **Lint（健檢）** — 定期請 LLM 體檢 wiki：矛盾、被新來源取代的過時主張、無入連的孤立頁、被提到卻缺專屬頁的概念、缺交叉引用、可用 web 搜尋補的資料空缺。LLM 也擅長提議「該再查的問題」與「該找的來源」，讓 wiki 隨成長保持健康。
+- **Lint（健檢）** — 定期檢查 raw／wiki／schema：機械層掃結構問題，語意層輪替審查近期變動頁的矛盾、過時與交叉引用缺口。可直接處理的發現由 agent 自主修補；只有真正需要使用者決策的項目才進 `schema/BACKLOG.md` 的「待你決定」，另以「Agent 已判」保留去重錨點。
 
 三動作的模型是本 vault 架構。概念上：Ingest 與 Query 由 agent 手動執行；自動蒐集（`vault-youtube-sync`）與健檢掃描（`vault-lint`）有專屬 skill。**各動作走哪個流程／skill、寫入哪個資料夾、lint 的自動修範圍與改制沿革，都是可執行細節，單一來源在 [`CLAUDE.md`](../CLAUDE.md)（三動作、Skills 表），此處不重列。**
 
@@ -128,7 +128,7 @@ AI 承擔重複、瑣碎、容易被延後的維護工作，自主維護 wiki（
 這些不是缺功能，而是設計選擇（原文皆為「optional / 建議」，本 vault 按需取捨）：
 
 - **不管 cards/topics**：使用者私人抽屜兼唯一公開層，策展與公開完全交給人；agent 的 Ingest/Query/Lint 一律跳過。
-- **不做自動成長掃描**：概念缺口、該連沒連這類成長面觀察，只在討論中浮現、只提議，不背景掃全 vault。可機械驗證的結構問題（孤立頁、死連結、tag 漂移、缺欄位）才交給 Lint——且這類**結構性 lint 已綁進 ingest 收尾**（只檢當輪動到的頁、不掃全庫），擋住 Karpathy 社群生產經驗公認的頭號失敗模式「漂移」（drift：頁面在 ingest 時未同步交叉引用而無聲過時）；不做的只是**背景全庫成長掃描**，那才是 token 成本不成比例的部分。
+- **不做無界的背景全庫語意掃描**：Ingest 收尾只檢當輪動到的頁；`vault-lint` 的機械層仍全掃規定範圍內可機械驗證的結構問題，語意層則依日期輪替審查近期變動頁的矛盾、過時與交叉引用缺口，發現後由 agent 自主修補。語意掃描以近期窗口與頁數上限控制成本，不隨 vault 規模無界成長。
 - **暫不寫 `log.md`**：見上「索引與日誌」，用 git log 代替。
 - **暫不上搜尋引擎（qmd 等）**：見上「選配」，現階段 Grep 夠用。
 - **暫不做圖片/assets 下載、Marp 簡報**：文字為主，需要時再開。

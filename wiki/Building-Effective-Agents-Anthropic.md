@@ -1,6 +1,6 @@
 ---
 title: Building Effective Agents（Anthropic）
-description: Anthropic 建 agent 的基礎指南：workflows 與 agents 之分、augmented LLM 基石、五種 workflow 編排模式（含各自適用時機），與 ACI／工具 prompt engineering 實務、由簡入繁三原則
+description: 整理 workflows 與 agents 的架構分界、五種編排模式、augmented LLM 基石，以及由簡入繁的實作原則
 created: 2026-07-14
 updated: 2026-07-17
 source: "https://www.anthropic.com/engineering/building-effective-agents"

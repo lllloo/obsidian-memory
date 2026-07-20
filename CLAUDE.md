@@ -16,7 +16,7 @@
 | `wiki/` | agent 完全掌管的活知識庫：摘要、實體、概念、比較、綜合 | **全權**：自由建頁、改頁、刪頁、交叉引用、維護 index |
 | schema | 本檔（root）+ `schema/SYSTEM-DESIGN.md` + `schema/vault-map.md` + `schema/MEMORY.md` + `schema/BACKLOG.md`（規範 agent 行為 + 跨 session 操作記憶） | 依規則維護 |
 
-`schema/BACKLOG.md` 是 `vault-lint` 的健檢待處理清單:agent **每輪讀回來約束自身行為**的操作狀態(去重、跳過已婉拒、判斷退場),與 `MEMORY.md` 同層,不是給人瀏覽的 feed 產物。lint 發現由 agent 自主修補;**只有真正需要使用者的決策**(需使用者才有的資訊、動 raw write-once、動憲法檔／skill)才進清單;使用者退回的修法記入「已婉拒」,agent 之後不再重提。寫入該檔時頁面引用一律用反引號、不得用 wikilink(`schema/` 在死連結掃描範圍內)。
+`schema/BACKLOG.md` 是 `vault-lint` 的健檢待處理清單:agent **每輪讀回來約束自身行為**的操作狀態(去重、跳過已婉拒、判斷退場),與 `MEMORY.md` 同層,不是給人瀏覽的 feed 產物。lint 發現由 agent 自主修補;**只有真正需要使用者的決策**(需使用者才有的資訊、動 raw write-once、動憲法檔／skill)才進「待你決定」,agent 判定維持現狀／待觸發者則進「Agent 已判」作去重錨點;使用者退回的修法記入「已婉拒」,agent 之後不再重提。寫入該檔時頁面引用一律用反引號、不得用 wikilink(`schema/` 在死連結掃描範圍內)。
 
 **`cards/` 與 `topics/` 不屬於本系統。** 它們是使用者的私人資料夾，同時是 Quartz **唯一對外公開發佈**的層。agent 一律**不寫、不維護、不索引** cards/topics——系統三動作（Ingest、Query、Lint）全部跳過它們，不得作為 `raw/`／`wiki/` 的來源、不寫入、不納入 lint。使用者自行從 wiki 手動撿選、複製想公開的內容進去；那是使用者的動作，不是系統的一環。
 
@@ -77,7 +77,7 @@ wiki 的維護就是這三個動作，只在 `raw/` + `wiki/` 上進行；不碰
 
 ### Lint（健檢）
 
-定期掃 wiki（+ raw 索引）：矛盾、被新來源取代的過時主張、孤立頁、被提到卻沒專屬頁的概念、缺交叉引用、可用查證補的資料空缺。只掃 raw/wiki/schema，不碰 feeds/cards/topics。掃描由 `vault-lint` skill 承載（findings 去重後維護在 `schema/BACKLOG.md`，解決即移除，不產快照報告；可手動跑亦可掛排程，行為一致且不碰 git）。**健檢即整理：機械項與語意項一律由 agent 自主修補**（與 wiki 全權一致；需要查證就自己查，2026-07-17 拍板取代原「語意項只報告」制），**只有真正需要使用者的決策才進 BACKLOG**——需使用者才有的資訊、動 raw write-once、動憲法檔／skill、或會推翻使用者已表態方向的項；使用者退回的修法記入「已婉拒」不再重提。死連結列機械層之首有實證依據：LLM wiki 的頭號結構錯誤，見 [`LLM-Wiki-生態實作比較`](wiki/LLM-Wiki-生態實作比較.md)。
+定期健檢只掃 raw/wiki/schema，不碰 feeds/cards/topics。機械層檢查死連結、孤立頁、frontmatter、tag 漂移、raw 消化與索引缺口；語意層依日期輪替審查近期變動 wiki 頁的矛盾、過時與交叉引用缺口。掃描由 `vault-lint` skill 承載，可手動跑亦可掛排程，行為一致且 skill 本身不碰 git。**健檢即整理：機械項與語意項一律由 agent 自主修補**（與 wiki 全權一致；需要查證就自己查，2026-07-17 拍板取代原「語意項只報告」制）。`schema/BACKLOG.md` 的「待你決定」**只收真正需要使用者決策的項目**——包括需使用者才有的資訊、動 raw write-once／憲法檔／skill，或會推翻使用者已表態方向的項；該節去重維護、解決即移除。「Agent 已判」保留自主判斷的去重錨點，只有所依據的頁／基礎實際變動時才重新評估；使用者退回的修法記入「已婉拒」不再重提。不產快照報告。死連結列機械層之首有實證依據：LLM wiki 的頭號結構錯誤，見 [`LLM-Wiki-生態實作比較`](wiki/LLM-Wiki-生態實作比較.md)。
 
 ## wiki 頁面與索引
 
@@ -145,15 +145,15 @@ deep-research 或其他對抗式查證的結果回存 wiki 時：每條主張就
 |---|---|
 | `vault-youtube-sync` | YouTube 影片摘要同步至 `feeds/youtube/` |
 | `vault-updates-daily` | 日常更新彙整至 `feeds/updates/` |
-| `vault-lint` | wiki+raw 健檢，機械項與語意項皆由 agent 自主修補，真需使用者決策的才進 `schema/BACKLOG.md`；手動／排程共用同一流程，本身不執行 git 動作 |
-| `vault-watch` | 追蹤一批 GitHub issue/PR 狀態，`gh` 抓現況與快照比對，精選訊號（state 轉換、官方回應、label 變動）有變才回報並更新 `feeds/watch/` 看板；本身不執行 git 動作 |
-| `ask-vault` | 從**其他專案**向本 vault 發「請求/回應」查詢：起 headless Claude 在 vault root 走 Query（唯讀、附引用），答完即退、不需常駐 |
+| `vault-lint` | wiki+raw 健檢，機械項與語意項皆由 agent 自主修補；真需使用者決策的才進「待你決定」，「Agent 已判」與「已婉拒」保留去重約束；手動／排程共用同一流程，本身不執行 git 動作 |
+| `vault-watch` | 追蹤一批 GitHub issue/PR 狀態，`gh` 抓現況與快照比對並每輪更新看板；精選訊號（state 轉換、官方回應、label 變動）有變才寫 digest；本身不執行 git 動作 |
+| `ask-vault` | 從**其他專案**向本 vault 發「請求/回應」查詢：依呼叫環境啟動 headless claude／codex／opencode，在 vault root 走 Query（唯讀、附引用），答完即退、不需常駐 |
 
-> **`ask-vault` 與上三者不同**：它是**全域 skill**（源碼 checked-in 於 `.agents/skills/ask-vault/`，symlink 到 `~/.claude/skills/` 供所有專案自動載入；無 PATH 指令，SKILL.md 以文字說明引導 agent 取 skill 的 Base directory 組出絕對路徑、以 `python3` 執行 bundled 的 `scripts/ask_vault.py`（純 stdlib 跨平台，非綁 bash；不寫死路徑亦不用 Claude 專屬變數）），由**別的專案**呼叫、cwd 不在 vault root，故**不受下方 CWD 契約直接約束**——契約改由腳本以 vault root 為 subprocess cwd 執行、並檢查哨兵檔 `schema/vault-map.md` 滿足。上三者則是只在 vault 內執行的維護型 skill。此外它是 **cross-CLI**：腳本以 caller-match（`CLAUDECODE`／`CODEX_SANDBOX`／`OPENCODE*` 環境標記，`ASK_VAULT_BACKEND` 可覆寫）偵測呼叫端,分派到 claude／codex／opencode 各自的 headless 唯讀查詢（三者皆已端到端驗證;codex／opencode 的進度走 stderr、答案走 stdout,以 stderr 導流取乾淨輸出,codex 另用 `-o` 只取最終訊息)。**注意**：codex 與 opencode 共用同一 ChatGPT oauth,背靠背呼叫會互相輪替作廢 refresh token——實際使用因 caller-match 一次只在一個工具內、不衝突;要並用需給 opencode 獨立憑證。
+> **`ask-vault` 與上四者不同**：它是**全域 skill**（源碼 checked-in 於 `.agents/skills/ask-vault/`，symlink 到 `~/.agents/skills/ask-vault`，Claude 的相容入口再由 `~/.claude/skills/ask-vault` 指向它；無 PATH 指令，SKILL.md 以文字說明引導 agent 取 skill 的 Base directory 組出絕對路徑、以 `python3` 執行 bundled 的 `scripts/ask_vault.py`（純 stdlib 跨平台，非綁 bash；不寫死路徑亦不用 Claude 專屬變數）），由**別的專案**呼叫、cwd 不在 vault root，故**不受前述 CWD 契約直接約束**——契約改由腳本以 vault root 為 subprocess cwd 執行、並檢查哨兵檔 `schema/vault-map.md` 滿足。上四者則是只在 vault 內執行的維護型 skill。此外它是 **cross-CLI**：腳本以 caller-match（`CLAUDECODE`／`CODEX_SANDBOX`／`OPENCODE*` 環境標記，`ASK_VAULT_BACKEND` 可覆寫）偵測呼叫端,分派到 claude／codex／opencode 各自的 headless 唯讀查詢（三者皆已端到端驗證;codex／opencode 的進度走 stderr、答案走 stdout,以 stderr 導流取乾淨輸出,codex 另用 `-o` 只取最終訊息)。**注意**：codex 與 opencode 共用同一 ChatGPT oauth,背靠背呼叫會互相輪替作廢 refresh token——實際使用因 caller-match 一次只在一個工具內、不衝突;要並用需給 opencode 獨立憑證。
 
 優先使用 skill，不新增平行流程。新增或修改 skill 時，盡量遵循 [Agent Skills](https://agentskills.io) 開放標準，讓內容可跨工具移植。
 
-> **已移除的核心 skill**：`ob-write`、`ob-read`、`vault-wiki-build`、舊版 `vault-lint`（含 `ob-write`／`ob-read` 兩個全域 symlink）已於重整時移除。三動作（Ingest／Query／Lint）的模型仍是本 vault 的架構；其中 Lint 的掃描面已按需重建為報告制的 skill（2026-07-10 以 `vault-lint-daily` 之名重建，2026-07-13 改名回 `vault-lint`——它不專為排程而生，手動隨時可跑，「daily」是誤導）。與同名的舊版無血緣，是重寫的另一套。其餘（wiki 綜合、查詢、修補）仍由 agent 手動執行。
+> **已移除的核心 skill**：`ob-write`、`ob-read`、`vault-wiki-build`、舊版 `vault-lint`（含 `ob-write`／`ob-read` 兩個全域 symlink）已於重整時移除。三動作（Ingest／Query／Lint）的模型仍是本 vault 的架構；Lint 於 2026-07-10 以 `vault-lint-daily` 之名重建、2026-07-13 改名回 `vault-lint`，目前由同一 skill 承載手動與排程健檢，並自主完成機械與語意修補。它與同名舊版無血緣；Ingest／Query 仍由 agent 依本檔流程執行。
 
 ### 新增 / 修改 skill 的本 repo 約束
 

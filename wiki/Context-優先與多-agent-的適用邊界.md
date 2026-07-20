@@ -1,6 +1,6 @@
 ---
 title: Context 優先與多 agent 的適用邊界
-description: 一個決策判準——能力來自 context 注入、agent 數量只是編排選擇；多 agent 有實證邊界。以 Anthropic 與 Cognition 表面對立的立場，經 MAST 獨立失敗實證統一為「適用域之分」
+description: 以 Anthropic、Cognition 與 MAST 證據界定多 agent 的效益與代價，建立 context 優先的實務決策判準
 created: 2026-07-14
 updated: 2026-07-17
 parent: "[[wiki/01.index]]"
