@@ -2,7 +2,7 @@
 title: Claude Code 記憶系統六層比較
 description: 從原生 CLAUDE.md 到跨工具統一大腦，六個層級的 AI 記憶方案沿「儲存位置」與「召回機制」兩軸拆解，含各層適用情境與升級門檻
 created: 2026-07-08
-updated: 2026-07-17
+updated: 2026-07-20
 parent: "[[wiki/01.index]]"
 tags:
   - claude-code
@@ -62,4 +62,5 @@ Level 1–3 資料夾結構相近、**可疊加同跑**；Level 5、6 屬不同�
 - 記憶方案的共同風險實證：[[AI-自主工作流的實證檢驗]]——記憶檔過長會被 agent 忽略、compaction 靜默丟棄約束，是本頁各層方案共通的失效模式。
 - 按「目的」切的互補視角：[[Agent-記憶兩大路線-知識庫與-memory-bank]]——本頁按「儲存／召回」技術光譜切六層，該頁按「知識資產複利 vs 專案工作記憶」切兩路線，並補收本頁未正面收的 coding-agent memory bank（Cline 等）。
 - 記憶分層的觀念前身：[[Building-Effective-Agents-Anthropic]]——該文 augmented LLM 的 memory 增強是本頁六層方案的最小前身；本頁把「最小、可組合的 context 元件」原則展開成完整的儲存／召回光譜。
+- 跨 repo 消費本頁結論的路徑：[[跨專案第二大腦整合模式]]——該頁的 context manifest 與 ADR 回鏈範例都以本頁為被引用的共用研究頁，是本頁選型結論外送到其他專案的具體交接格式。
 - 多 agent 場景的記憶對應：[[多智能體研究系統-Anthropic]]——該系統的 external memory 與 subagent handoff（把成果寫回共享記憶再交棒）正對應本頁的記憶分層，是六層方案在多智能體協作下的落地形態。

@@ -22,7 +22,7 @@ tags:
 | [nvk/llm-wiki](https://github.com/nvk/llm-wiki) | 跨工具 skill | raw 不可變＋wiki 編譯＋index，完整對應 | 雙連結（wikilink＋markdown 連結並寫）、structural guardian（操作後自動修瑣碎結構問題）、四層查詢深度、token 成本 benchmark |
 | [[Hermes-Agent]] 內建 `llm-wiki` skill | 官方 bundled skill | 逐字複刻三層 | raw 記 sha256 偵測來源漂移、每頁至少 2 條 outbound link、封閉 tag taxonomy、矛盾入 frontmatter 交使用者複核、10+ 頁大改動先問 |
 | [Astro-Han/karpathy-llm-wiki](https://github.com/Astro-Han/karpathy-llm-wiki) | Agent Skills 標準單一 skill | raw 不可變＋wiki＋index，三動作定義一致 | 跨四工具安裝（Claude Code／Cursor／Codex CLI／OpenCode，自述未獨立驗證）、Lint 含自動修復、維護 log.md |
-| 本 vault（obsidian-memory） | Obsidian vault＋repo-local skills | 三層＋Ingest/Query/Lint | 唯一硬守門 git push、lint 自主修補（真需使用者的決策才進 backlog）、cards/topics 人工策展公開層 |
+| 本 vault（obsidian-memory） | Obsidian vault＋repo-local skills | 三層＋Ingest/Query/Lint | 全自主治理（2026-07-20 起 push 亦自主、事後 diff review 把關）、lint 自主修補（真需使用者的決策才進 backlog）、cards/topics 人工策展公開層 |
 
 相鄰路線（非 wiki 但同「markdown＋git as memory」家族）：[Letta](https://docs.letta.com/letta-agent/memory)（MemGPT 後繼）把 git-backed markdown 檔案系統（MemFS）設為新 agent 預設，每次記憶編輯自動 git commit；[ai-memory](https://github.com/akitaonrails/ai-memory)（自述 Karpathy-style LLM wiki）、[DiffMem](https://github.com/Growth-Kinetics/DiffMem)（git 差分記憶、grep 檢索、無 vector DB）同路線。此家族已是成形的主流選項，不是邊緣做法；反方觀點見向量記憶廠商 Zep 的[「Markdown is not agent memory」](https://blog.getzep.com/markdown-is-not-agent-memory/)——主張 markdown 記憶在規模、時間演進、多 agent 並發下會崩，優劣仍有爭議。
 
@@ -69,7 +69,7 @@ tags:
 
 ## 對本 vault 的含意（2026-07-10 拍板）
 
-- **保留**：三層、三動作、git push 硬守門、git log 代替 log.md、grep（wiki 破百頁再評估 qmd 類）。
+- **保留**：三層、三動作、git log 代替 log.md、grep（wiki 破百頁再評估 qmd 類）。原列於此的「git push 硬守門」已於 2026-07-20 移除（push 改為 agent 自主，review 面移到事後 diff）。
 - **採用**：單次 ingest 超過 15 頁確認閘、lint 機械項窄版自動修（後於 2026-07-17 擴為全面自主修補，見上「lint 修補權」）。
 - **採用後移除**：raw sha256 漂移偵測（2026-07-10 採用）——**2026-07-14 移除**。原因：規則只寫「算正文 sha256」但**正文正規化未定義**，易假漂移（專業界 content hash 前必先剝空白／廣告／動態屬性正規化，手動協定做不到）；6 個 fetched 檔僅 2 個實際採用；重貼同 URL 屬低頻。來源過時改由 **lint 語意層＋git 歷史**兜底——此即 Karpathy／nvk／Astro-Han 多數派做法（四大實作僅 Hermes 做來源 hash）。既有 fetched 檔殘留的 sha256 值為 vestigial、不再讀取，raw write-once 不回頭刪。
 - **不採**：nvk 雙連結（讀者是 Obsidian＋agent，wikilink 解析無礙，代價大於收益）、Hermes contested frontmatter 欄位（現規模過度工程，首次真矛盾出現再議）、封閉 tag taxonomy（開放式沿用既有暫夠用）。
