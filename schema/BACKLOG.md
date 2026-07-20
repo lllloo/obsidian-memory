@@ -1,7 +1,7 @@
 ---
 title: Vault Lint Backlog
 created: 2026-07-13
-updated: 2026-07-18
+updated: 2026-07-20
 tags:
   - meta
   - lint
@@ -26,6 +26,8 @@ vault 健檢的**待處理清單**,由 `vault-lint` skill 每輪讀寫(手動或
 - `semantic_utc_offset: +08:00` — `semantic_days` 日曆窗口與每日輪替日期使用的 UTC offset
 
 ## 待你決定(真正需要使用者,其餘見 `Agent 已判`)
+
+- SKILL-STALE | `.agents/skills/vault-lint/SKILL.md` 第 16 行括號「該 prompt 即使用者對 push 的明確同意」| 2026-07-20 push 守門移除後此句依據已不存在(skill 不碰 git 的設計本身不變,仍成立);修法是刪或改寫該括號,但動 skill 需你點頭。要修說一聲即動
 
 ## Agent 已判(維持現狀／待觸發,不再每輪問)
 

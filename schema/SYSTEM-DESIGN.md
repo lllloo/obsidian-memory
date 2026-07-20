@@ -10,7 +10,7 @@ tags:
 # 運作模式 — Karpathy LLM Wiki
 
 > 這份文件給人看，用來建立整體心智模型，逐節對齊 Karpathy 的 [LLM Wiki](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f)。
-> 可執行規則不放這裡：agent 維護規則、Ingest/Query/Lint、寫入慣例、唯一守門看 [`CLAUDE.md`](../CLAUDE.md)；導航與 tag 查詢看 [`vault-map.md`](vault-map.md)。
+> 可執行規則不放這裡：agent 維護規則、Ingest/Query/Lint、寫入慣例看 [`CLAUDE.md`](../CLAUDE.md)；導航與 tag 查詢看 [`vault-map.md`](vault-map.md)。
 
 一句話：**wiki 是腦的延伸，LLM 幫你維護；cards/topics 是你自己的抽屜。**
 
@@ -112,12 +112,12 @@ wiki 長大後可能想要能更有效操作它的小工具，最明顯的是 **
 
 思想上與 Vannevar Bush 的 **Memex（1945）** 一脈：私有、主動策劃、文件間的關聯與文件本身一樣有價值的個人知識庫。Bush 沒解決的是「誰來維護」——這由 LLM 補上。
 
-## 人 / AI 分工與唯一守門
+## 人 / AI 分工
 
-- **你**：蒐集來源、提出問題、判斷價值、從 wiki 撿選公開進 cards/topics、拍板 `git push`。
-- **AI**：讀、摘要、整理、交叉引用、歸檔、維護 wiki 一致性、結構健檢。
+- **你**：蒐集來源、提出問題、判斷價值、從 wiki 撿選公開進 cards/topics、事後 review GitHub diff。
+- **AI**：讀、摘要、整理、交叉引用、歸檔、維護 wiki 一致性、結構健檢、commit 與 push。
 
-AI 承擔重複、瑣碎、容易被延後的維護工作，自主維護 wiki（含刪頁）不需逐步拍板——這正是「維護成本趨近於零」的重點。唯一硬守門是 **`git push` 前要你同意**（見 [`CLAUDE.md`](../CLAUDE.md)）；另有一個流程級確認點——單次 ingest 觸及超過 15 頁先列清單問過（2026-07-10 借鏡 Hermes，防單來源大面積改動失控；門檻訂在典型 10–15 頁之上，只攔異常大改），那是確認節奏、不是守門。
+AI 承擔重複、瑣碎、容易被延後的維護工作，自主維護 wiki（含刪頁、push）不需逐步拍板——這正是「維護成本趨近於零」的重點。原「`git push` 前要你同意」守門已於 2026-07-20 移除（見 [`CLAUDE.md`](../CLAUDE.md)），改由事後 diff review 把關；另有一個流程級確認點——單次 ingest 觸及超過 15 頁先列清單問過（2026-07-10 借鏡 Hermes，防單來源大面積改動失控；門檻訂在典型 10–15 頁之上，只攔異常大改），那是確認節奏、不是守門。
 
 ## 版本抗性
 
@@ -137,6 +137,6 @@ AI 承擔重複、瑣碎、容易被延後的維護工作，自主維護 wiki（
 
 | 要找 | 看 |
 |---|---|
-| Agent 維護規則、Ingest/Query/Lint、寫入慣例、唯一守門 | [`CLAUDE.md`](../CLAUDE.md) |
+| Agent 維護規則、Ingest/Query/Lint、寫入慣例 | [`CLAUDE.md`](../CLAUDE.md) |
 | 全域導航與 tag 查詢地圖 | [`vault-map.md`](vault-map.md) |
 | 通用 LLM Wiki 概念（原文） | [Karpathy LLM Wiki](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f) |

@@ -2,7 +2,7 @@
 title: LLM Wiki 生態實作比較
 description: nvk、Hermes、Astro-Han 等 Karpathy LLM Wiki 實作與 Letta MemFS 等相鄰記憶系統的收斂設計、分歧點與實證證據對照
 created: 2026-07-10
-updated: 2026-07-17
+updated: 2026-07-20
 parent: "[[wiki/01.index]]"
 tags:
   - wiki
@@ -37,7 +37,7 @@ tags:
 
 - **log 載體**：nvk、Hermes 與 Astro-Han 用 append-only `log.md`（Hermes 超 500 條按年輪替，與 index 並列導航骨幹）；Letta MemFS 與本 vault 用 git 歷史。兩路線並存，取捨在「log.md 對不吃 git 的工具仍可讀」vs「git log 零維護成本」。（這只是「近期性怎麼承載」的一角，完整光譜見下節。）
 - **lint 修補權**：LLM-Wiki 論文的 Error Book 與 nvk 的 structural guardian 支持「瑣碎結構項自動修」；本 vault 原採純報告制，2026-07-10 改窄版自動修（機械項放行、語意項仍報告制），2026-07-17 再改**全面自主修補**（語意項亦由 agent 直接修，與 wiki 全權一致；只有真需使用者的決策才進 backlog）——在此分歧點上從最保守端移到最自主端。
-- **自主權邊界**：Hermes 的 llm-wiki 治理面較保守——封閉 tag taxonomy、矛盾交使用者複核（僅日期可判定的取代可自主裁決）、10+ 頁大改動先問（其 skill 生成軸反而預設免核准，見 [[Hermes-Agent]]，「保守」限於 wiki 治理面）；本 vault 走「唯一守門 git push、其餘全自主」。無實證分高下，屬治理風格選擇。
+- **自主權邊界**：Hermes 的 llm-wiki 治理面較保守——封閉 tag taxonomy、矛盾交使用者複核（僅日期可判定的取代可自主裁決）、10+ 頁大改動先問（其 skill 生成軸反而預設免核准，見 [[Hermes-Agent]]，「保守」限於 wiki 治理面）；本 vault 走全自主（原「唯一守門 git push」已於 2026-07-20 移除，push 亦自主、事後 diff review 把關）。無實證分高下，屬治理風格選擇。
 
 ## 近期/熱脈絡層的承載光譜（2026-07-14 掃描）
 

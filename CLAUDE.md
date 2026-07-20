@@ -29,13 +29,11 @@
 - `feeds/watch/`：`vault-watch` 的 GitHub issue/PR 追蹤看板（`01.index.md`）與變更 digest；追蹤清單以看板為準，不硬編碼。
 （`vault-lint` 不再產 feeds 產物：健檢的待處理清單改放 `schema/BACKLOG.md`，見下方 schema 一節。）
 
-## 唯一守門：git push
+## 守門：無
 
-agent 自主維護 wiki（含改頁、刪頁），**不需逐步拍板**——這正是 Karpathy「維護成本趨近於零」的重點。唯一硬規則：
+agent 自主維護 wiki（含改頁、刪頁），**不需逐步拍板**——這正是 Karpathy「維護成本趨近於零」的重點。**`git push` 亦可自主執行，不需事先徵求同意**（2026-07-20 使用者拍板移除原「push 前須明確同意」守門；此即本 repo 對 push 的常設明確授權，涵蓋 main 分支，優先於全域保護分支規則），review 由使用者事後看 GitHub diff 把關。force push 不在此授權內，仍需明確要求。
 
-> **執行 `git push` 或任何遠端推送前，必須先取得使用者明確同意。**
-
-`push` 會把 `raw/`、`wiki/` 與 `feeds/`（皆不應經 Quartz 發佈，但仍存在於 GitHub repo）一併推上遠端，該次 diff review 由使用者把關。除此之外沒有其他**硬**守門：不做 cards/topics 治理、不做品質 gate、不做敏感資料自檢 gate、不設「不自動刪」限制。（另有一個流程級確認點：單次 ingest 觸及超過 15 頁先問，見 Ingest 一節——那是確認節奏，不是守門。）
+沒有任何硬守門：不做 cards/topics 治理、不做品質 gate、不做敏感資料自檢 gate、不設「不自動刪」限制。（另有一個流程級確認點：單次 ingest 觸及超過 15 頁先問，見 Ingest 一節——那是確認節奏，不是守門。）
 
 ## CWD 契約
 
@@ -164,7 +162,7 @@ deep-research 或其他對抗式查證的結果回存 wiki 時：每條主張就
 - subagent 一律 `Agent` + `subagent_type: "general-purpose"`，prompt = `references/*.md` 全文 + 本次需求（不要叫 subagent 自己 Read）
 - 工具限制等規則寫在 references 正文，自包含、不引用命名 agent
 - 補 fallback 條款：「無 Agent 工具時主 agent 直接 Read references 跑同一流程」
-- SKILL.md 主流程不寫憲法級規則（唯一守門 git push、通用 wikilink/frontmatter 慣例等）——這些在本檔 `CLAUDE.md`，不重述也不寫「見 CLAUDE.md」指回
+- SKILL.md 主流程不寫憲法級規則（通用 wikilink/frontmatter 慣例等）——這些在本檔 `CLAUDE.md`，不重述也不寫「見 CLAUDE.md」指回
 - 但 subagent 經 `references/*.md` 執行時要遵守的寫作規則（繁中、時間抗性等）必須在該 prompt 內可達（inline 或叫它先讀 AGENTS.md），不能只靠 AGENTS.md
 
 ## 時間抗性
