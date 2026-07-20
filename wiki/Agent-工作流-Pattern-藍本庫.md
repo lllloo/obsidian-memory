@@ -2,7 +2,7 @@
 title: Agent 工作流 Pattern 藍本庫
 description: 設計 agent skill 時的 pattern 挑選清單：每項附定義、適用、失效條件、出處與強度，並收錄選用決策樹與被查證否決的組合宣稱
 created: 2026-07-17
-updated: 2026-07-17
+updated: 2026-07-20
 parent: "[[wiki/01.index]]"
 tags:
   - ai-agent
@@ -14,7 +14,7 @@ tags:
 
 設計新 agent skill／自動化工作流時的**挑選清單**：把散在多個出處的編排 pattern 收成統一格式（名稱／定義／適用／失效／出處／強度），供設計時挑選組合。與 [[Building-Effective-Agents-Anthropic]] 的分工是：那頁是**單一來源的完整轉述**，本頁是**跨來源的挑選視角**，補上 Anthropic 五項之外的 pattern（CSIRO 論文級 catalogue、OpenAI 的多 agent 編排二分、ReAct／Reflexion／Self-Refine 的原始出處）與各自的失效邊界。
 
-**本頁只涵蓋領域一（agent 工作流編排）。** 知識管理流程方法論與軟體開發概念型流程屬同一藍本庫構想的另兩塊，**本輪未蒐集、待補**——讀者勿把本頁當完整藍本庫。（2026-07-17 deep-research 回存；該輪 119 條抽出主張中僅 25 條進查證，領域二三的主張全數被預算砍掉。）
+**本頁只涵蓋領域一（agent 工作流編排）。** 知識管理流程方法論與軟體開發概念型流程屬同一藍本庫構想的另兩塊，**第一輪未蒐集**；第二輪已覆蓋三個角落、成果回存至他頁，其餘仍待補（見文末〈未解與待補〉）——讀者勿把本頁當完整藍本庫。（2026-07-17 deep-research 回存；該輪 119 條抽出主張中僅 25 條進查證，領域二三的主張全數被預算砍掉。）
 
 ## 先讀：三層強度標註
 
@@ -22,7 +22,7 @@ tags:
 
 | 強度 | 適用對象 | 意義 |
 |---|---|---|
-| **強** | 同儕審查論文：ReAct（ICLR 2023）、Reflexion（NeurIPS 2023）、Self-Refine（NeurIPS 2023）、CSIRO catalogue（JSS Vol 220, 2025）、MAST（NeurIPS 2025） | 有對照或系統性方法支撐 |
+| **強** | 同儕審查論文：ReAct（ICLR 2023）、Reflexion（NeurIPS 2023）、Self-Refine（NeurIPS 2023）、CSIRO catalogue（JSS Vol 220, 2025）、MAST（NeurIPS 2025 Datasets & Benchmarks track，見 [OpenReview](https://openreview.net/forum?id=fAjbYBmonr)） | 有對照或系統性方法支撐 |
 | **強（僅限描述性）／中（規範性）** | vendor 工程指南：Anthropic《Building Effective Agents》、OpenAI《A Practical Guide to Building Agents》 | pattern **定義為何**屬 first-party、強度最高；**該不該這樣做**（單 agent 優先、簡單優先）是 lab 工程經驗值、非對照實驗 |
 | **弱** | 軼事觀察與社群口語 pattern | 田野觀察，不可當實測門檻 |
 
@@ -31,7 +31,7 @@ tags:
 ## 第一層：選用 gate（在挑 pattern 之前先過）
 
 - **複雜度為最後手段**（Anthropic，3-0）：預設用單次優化過的 LLM call（配 retrieval 與 in-context examples），只在簡單方案**可證明不足**時才加多步 agentic 系統。原文三處重述，其中「adding complexity _only_ when it demonstrably improves outcomes」。注意這條是**實證性而非教條性**——它預設了你有評估基礎設施；沒有評測就沒有「demonstrably」，這條 gate 會退化成口號。（強度：規範性建議＝中）
-- **先極大化單 agent、必要才多 agent**（OpenAI，3-0，Anthropic 獨立同向佐證）：分家由**可量測的複雜度**而非概念切分的美感決定。（強度：規範性建議＝中，但兩家獨立收斂提高可信度）
+- **先極大化單 agent、必要才多 agent**（OpenAI，3-0，Anthropic 獨立同向佐證）：分家由**可量測的複雜度**而非概念切分的美感決定。（強度：規範性建議＝中，但兩家獨立收斂提高可信度）這條 gate 的深度版見 [[Context-優先與多-agent-的適用邊界]]——該頁以 Cognition 的單執行緒原則與 MAST 失敗實證，給出「可平行／讀重於寫／協調確定」三條比「可量測複雜度」更可操作的分家判準。
 
 ## 第二層：workflow / agent 分野
 
@@ -92,7 +92,7 @@ tags:
 
 這層在設計時最實用——它告訴你 pattern 什麼時候會壞。
 
-- **單 agent 的典型失效**：陷入無盡執行迴圈（ReAct 重複產生相同 thought 與 action，無法產生新 thought 以脫離）。這正是 `loop-until-dry` 一類設計的失效邊界。
+- **單 agent 的典型失效**：陷入無盡執行迴圈（ReAct 重複產生相同 thought 與 action，無法產生新 thought 以脫離）。這正是 `loop-until-dry` 一類設計的失效邊界。但要注意證據強度：[[AI-自主工作流的實證檢驗]] 把「agent 無限迴圈燒 token」列為開放問題——目前只有軼事性工程部落格，缺系統性測量，故此失效可當設計提醒、不可當已量化風險。
 - **多 agent 的典型失效**（3-0）：受無關對話（extraneous dialogue）干擾推理與工具選用；且 agent 會**誤配 peer input——過度採信不健全回饋、或反過來忽略他 agent 輸出，雙向皆會失效**。（出處但書：此條所引的 arXiv 2404.11584 是**轉述 AgentVerse**、非原始發現；原始出處應追 AgentVerse 或 MAST FM-2.5／2.6。）
 - **何時該拆多 agent，兩條可檢核判準**（OpenAI，3-0）：(1) **Complex logic**——prompt 含大量 if-then-else 條件分支、prompt template 難以擴展時，按邏輯區段拆分；(2) **Tool overload**——關鍵**不是工具數量而是相似／重疊程度**，且**應先嘗試改善工具命名與描述，無效才拆 agent**。（附帶的「15／10 個工具」門檻是**軼事觀察、強度弱**，原文措辭為「Some implementations... while others struggle...」，是田野觀察而非實測 cutoff，勿寫成硬門檻。）
 - **Human-in-the-loop 的兩個具名觸發條件**（OpenAI，3-0）：**超出失敗門檻**（對 retry／action 設上限，超過即升級給人）與**高風險動作**（敏感、不可逆、高賭注——原文舉例：取消訂單、授權大額退款、付款）。配套 **tool safeguards**：依唯讀 vs 寫入、可逆性、所需帳號權限、財務影響四個示例性因素給每個工具 low/medium/high 風險評級，用以觸發執行前暫停或升級。
@@ -119,7 +119,7 @@ tags:
 
 - **`loop-until-dry` 至今無正式出處**。20 條存活主張中無一為其提供定義來源，唯一相關的只有其失效條件（單 agent 無盡迴圈、MAST FM-1.5「Unaware of termination conditions」）。目前定位：**社群實務、無論文出處、強度弱**，保留但標明。
 - **領域二（知識管理流程方法論）與領域三（軟體開發概念型流程）已跑第二輪，但仍只覆蓋三個角落**：成果分別回存至 [[第二大腦方法論比較]] 的「流程方法論的證據強度盤點」（GTD 五步、spacing effect、retrieval practice 爭議）與 [[AI-自主工作流的實證檢驗]] 的 spec-driven 節（Kiro 三階段閘門）。PARA、Zettelkasten、CODE、Evergreen notes、MOC、Shape Up、TDD、ADR、event storming、pre-mortem 等仍零存活主張。
-- **這不是主題的問題，是工具的結構限制**：兩輪 deep-research 分別抽出 119／135 條主張，但**皆只有 25 條進入查證**——這是 harness 的固定上限，與主題無關。故「窮舉一個 pattern 藍本庫」與 deep-research 在結構上互斥：它適合把**少數幾條主張查到極深**，不適合把**大量 pattern 掃得很廣**。要補齊廣度應改用一個 pattern 派一個 subagent 的輕量掃描（見 `mini-research` skill），把多票對抗查證這個乘數換成覆蓋率。
+- **這不是主題的問題，是工具的結構限制**：兩輪 deep-research 分別抽出 119／135 條主張，但**皆只有 25 條進入查證**——截至 2026-07 兩輪觀察均為此數，研判是該 harness 當時的固定上限（隨版本可變，非恆值），與主題無關。故「窮舉一個 pattern 藍本庫」與 deep-research 在結構上互斥：它適合把**少數幾條主張查到極深**，不適合把**大量 pattern 掃得很廣**。要補齊廣度應改用一個 pattern 派一個 subagent 的輕量掃描（見 `mini-research` skill），把多票對抗查證這個乘數換成覆蓋率。
 
 ## 交叉引用
 

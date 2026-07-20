@@ -2,7 +2,7 @@
 title: LLM 方案定價與 coding agent 比較
 description: 2026 年中主流 LLM 訂閱月費與 coding agent 三方案定價對照，依用途給經濟實惠推薦，含台幣概算
 created: 2026-07-08
-updated: 2026-07-17
+updated: 2026-07-20
 parent: "[[wiki/01.index]]"
 tags:
   - llm-pricing
@@ -40,11 +40,13 @@ tags:
 | 月費 | 首月 $5，之後 **$10** | **$20**（年繳 $17） | **$20** |
 | 綁的 agent | OpenCode（開源，MIT） | Claude Code | Codex（web/CLI/IDE/iOS） |
 | 能用的模型 | **僅中國開源模型**：GLM、Kimi、Qwen、MiniMax、DeepSeek 等十餘個（版本輪替快，見 [官方模型清單](https://opencode.ai/go)） | Claude 自家 Sonnet / Opus / Haiku | GPT 系列 |
-| 用量限制 | 按金額計：約 $12/5hr、$30/週、$60/月 | 滾動 5 小時視窗（Pro 每視窗上百則） | 約 160 則/3hr、數千則 Thinking/週 |
+| 用量限制 | 按金額計：約 $12/5hr、$30/週、$60/月 | 滾動 5 小時視窗 + 週額度雙層 | 短視窗（數小時）+ 週額度雙層 |
 | 省心度 | 要自己選模型/路由 | 開箱即用 | 開箱即用 |
 | 模型天花板 | 開源 SOTA（略遜頂級閉源） | 頂級（Opus/Sonnet） | 頂級（GPT 旗艦） |
 
-**OpenCode 本體**是最多星（16 萬+）的開源終端 coding agent，軟體免費、支援 75+ 供應商，可自帶 API key 或本機跑 Ollama（$0 邊際成本）；OpenCode Go 是其官方低價託管方案，用金額上限吸收模型成本。與 [[Claude-Code-記憶系統六層比較]] 同屬 coding agent 生態。
+> 「用量限制」欄只描述**結構**（主流方案多為短視窗＋週額度雙層），不列具體則數——各家額度調整頻繁，實際數字回官網查。「模型天花板」一列則是廠商定位與 benchmark 排序的濃縮，讀時要打折：[[AI-自主工作流的實證檢驗]] 指出 benchmark 系統性高估實際可靠度、且越強的模型越容易在評測中作弊，故此欄可當選型起點、不可當品質保證。
+
+**OpenCode 本體**是星數最多的開源終端 coding agent 之一，軟體免費、支援極廣的供應商清單（星數與供應商數變動快，回 [GitHub](https://github.com/anomalyco/opencode) 與官網查），可自帶 API key 或本機跑 Ollama（$0 邊際成本）；OpenCode Go 是其官方低價託管方案，用金額上限吸收模型成本。與 [[Claude-Code-記憶系統六層比較]] 同屬 coding agent 生態。
 
 ## 三、依用途的經濟實惠推薦
 
@@ -52,7 +54,7 @@ tags:
 - **寫程式（預算優先、能接受開源模型）** → **OpenCode Go $10**，CP 值最高；複雜任務品質不如頂級閉源模型。
 - **寫程式（已在 OpenAI 生態）** → **ChatGPT Plus $20**，Codex + 聊天一魚兩吃。
 - **併用玩法** → OpenCode Go（跑量）+ Claude Pro（硬任務攻堅），約 $30/月涵蓋「便宜跑量 + 頂級攻堅」。
-- **一般聊天/寫作** → 任一 $20 訂閱即足，省錢用 ChatGPT Go $8 或 Gemini AI Plus $7.99。
+- **一般聊天/寫作** → 任一 $20 訂閱即足，省錢用 ChatGPT Go $8 或 Google AI Plus $7.99。
 - **大量自動化（API 按量、成本敏感）** → 走 API 用經濟型模型：GPT-5-nano、Gemini Flash-Lite、grok-4-fast、DeepSeek，每百萬 token 輸入可低至 $0.05–0.25，比旗艦便宜 20–100 倍。
 
 ## 注意事項

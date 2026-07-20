@@ -2,7 +2,7 @@
 title: AI 自主工作流的實證檢驗
 description: spec-driven、長時自主 loop、驗證迴路、狀態持久化四類做法的證據盤點——vendor 敘事與獨立實證的落差，以及必須停止引用的空氣數字
 created: 2026-07-10
-updated: 2026-07-17
+updated: 2026-07-20
 parent: "[[wiki/01.index]]"
 tags:
   - ai-agent
@@ -155,4 +155,5 @@ agent 能以 50% 可靠度完成的任務長度，過去六年約**每 7 個月�
 - [[Building-Effective-Agents-Anthropic]] — 本頁 evaluator-optimizer 迴路與 LLM-as-judge self-preference 的討論，檢驗的正是該頁提出的 evaluator-optimizer 模式在證據上的邊界（同家族 evaluator 恐系統性偏袒，需跨模型或搭可執行測試）。
 - [[pi-workflow-編排-harness-與本-vault-分野]] — 該頁引本頁的實證（vendor 敘事與獨立證據落差、驗證迴路可被 agent 從內部滿足）作為「不引入命名 workflow 機制」反過度工程紀律的依據。
 - [[AI-生成流程圖與架構圖]] — 該頁「AI／靜態生的架構圖只反映設計、非執行期真實行為，需人眼驗證」與本頁「生成物需 agent 改不到的外部判準把關」同源；AI 生圖正是「vendor 敘事 vs 需獨立驗證」在視覺化工具上的又一實例。
+- [[Agent-工作流-Pattern-藍本庫]] — 該頁的 pattern 選用 gate（「只在簡單方案可證明不足時才加複雜度」）預設了評估基礎設施，本頁「驗證迴路必要但不充分、測試本身可被 agent 篡改」正是那條 gate 的現實折扣；本頁 spec-driven 一節（Kiro 三階段閘門）亦是該藍本庫構想中軟體開發側的存活成果。
 - [[LLM-方案定價與-coding-agent-比較]] — 本頁「多 agent 約 15 倍 token」的成本承認，對應該頁 coding agent 訂閱與 API 按量定價的絕對數字；一個是「值不值得堆」，一個是「實際花多少」。

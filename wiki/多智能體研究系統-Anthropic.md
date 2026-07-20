@@ -2,7 +2,7 @@
 title: 多智能體研究系統（Anthropic）
 description: 拆解 Research 的 orchestrator-worker 架構、平行搜尋、CitationAgent、評測方法與生產可靠性
 created: 2026-07-14
-updated: 2026-07-17
+updated: 2026-07-20
 source: "https://www.anthropic.com/engineering/multi-agent-research-system"
 published: 2025-06-13
 parent: "[[wiki/01.index]]"
@@ -119,4 +119,5 @@ Anthropic 官方工程文章，拆解 Claude 的 **Research 功能**如何從原
 - 實證對照：[[AI-自主工作流的實證檢驗]]——本文的 resume/checkpoint、end-state 評測正屬其「驗證迴路／狀態持久化」的盤點範疇，可比對 vendor 敘事與獨立實證的落差。
 - 檢索範式對照：[[LLM-Wiki-知識管理模式]]——本文「動態多步搜尋 vs 靜態 RAG」與該頁「知識編譯一次持續維護 vs 每次查詢重檢索」是同一組張力的不同切面。
 - 記憶機制對照：[[Claude-Code-記憶系統六層比較]]——本文的 external memory／乾淨 context 新 subagent handoff，可對應其記憶分層。
+- 挑選視角：[[Agent-工作流-Pattern-藍本庫]]——該頁把 orchestrator-worker 與 parallelization 的分界定在「子任務能否事先定義」，並拿本系統當「不能事先定義」側的判準實例；設計時要快速決定走哪一邊讀該頁，要本系統的實作細節讀本頁。
 - 編排 pattern 對照：[[pi-workflow-編排-harness-與本-vault-分野]]——該頁指出本頁 orchestrator-worker 的關鍵在「子任務非預先定義、由主控動態委派」，較貼近 pi-workflow 的 `dynamic`（自適應編排）pattern；其路徑固定的 `foreach`／`reduce`（扇出項目預先定義再綜合）則屬 parallelization，不等同本頁架構。

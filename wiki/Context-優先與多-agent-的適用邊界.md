@@ -2,7 +2,7 @@
 title: Context 優先與多 agent 的適用邊界
 description: 以 Anthropic、Cognition 與 MAST 證據界定多 agent 的效益與代價，建立 context 優先的實務決策判準
 created: 2026-07-14
-updated: 2026-07-17
+updated: 2026-07-20
 parent: "[[wiki/01.index]]"
 tags:
   - ai-agent
@@ -41,7 +41,7 @@ tags:
 vault 外的獨立證據，界定「多 agent 何時反而更糟」：
 
 - **Cognition 的單執行緒原則**（實務者經驗，Devin 團隊）：反對多 agent 的核心是「**決策分散、context 無法在 agent 間充分共享**」，導致相互衝突的結果。提出兩條 context engineering 原則——①「**Share context, and share full agent traces, not just individual messages**」；②「**Actions carry implicit decisions, and conflicting decisions carry bad results**」。最簡遵循法就是「**single-threaded linear agent**」。（強度：**實務者經驗值、非受控實證**；且立場**有演進**——作者一年後修正為「multi-agent 在**寫入保持單執行緒、額外 agent 貢獻智能而非行動**時才有效」，引用時勿當靜態教條；演進脈絡詳見 [[AI-自主工作流的實證檢驗]] 的多 agent 節。）
-- **MAST 失敗 taxonomy**（UC Berkeley Sky Lab，[arXiv 2503.13657](https://arxiv.org/abs/2503.13657)）：分析 7 個 SOTA 開源多 agent 框架的 **1,642 條執行 traces**，失敗率 **41%–86.7%**；歸納 14 種失敗模式、3 類，其中**系統設計問題佔 44.2%**、其餘為 agent 間錯位與任務驗證。taxonomy 由 150 traces 建構、標註者一致性 kappa=0.88。（強度：**獨立學術 preprint（含 OpenReview）**、樣本限開源 MAS 框架與 2025-03 當時模型；是本主題目前最紮實的第三方失敗實證。）
+- **MAST 失敗 taxonomy**（UC Berkeley Sky Lab，[arXiv 2503.13657](https://arxiv.org/abs/2503.13657)）：分析 7 個 SOTA 開源多 agent 框架的 **1,642 條執行 traces**，失敗率 **41%–86.7%**；歸納 14 種失敗模式、3 類，其中**系統設計問題佔 44.2%**、其餘為 agent 間錯位與任務驗證。taxonomy 由 150 traces 建構、標註者一致性 kappa=0.88。（強度：**獨立同儕審查論文**——已被 NeurIPS 2025 Datasets & Benchmarks track 接收（見 [OpenReview](https://openreview.net/forum?id=fAjbYBmonr)）；樣本限開源 MAS 框架與 2025-03 當時模型；是本主題目前最紮實的第三方失敗實證。與 [[Agent-工作流-Pattern-藍本庫]] 的強度標註一致。）
 - **協調成本非線性**：業界分析普遍指出協調失敗點隨 agent 數暴增（如 4 agent→6、10 agent→45 個潛在失敗點），結構不良的多 agent 可放大錯誤逾 [17 倍](https://towardsdatascience.com/why-your-multi-agent-system-is-failing-escaping-the-17x-error-trap-of-the-bag-of-agents/)。（強度：**二手業界分析/部落格**，數字為示意量級非嚴謹測量，僅作方向佐證。）
 
 ## 綜合洞察：Anthropic vs Cognition 不是矛盾，是適用域之分
@@ -69,7 +69,7 @@ vault 外的獨立證據，界定「多 agent 何時反而更糟」：
 |---|---|---|
 | 能力來自 context | Anthropic 第一方＋Cognition 實務，跨陣營共識 | 高（共識） |
 | subagent＝隔離/壓縮/平行 | Anthropic 第一方描述 | 中高（架構描述） |
-| 多 agent 失敗率 41–86.7% | UC Berkeley MAST，獨立 preprint | 中高（限開源框架/當時模型） |
+| 多 agent 失敗率 41–86.7% | UC Berkeley MAST，獨立同儕審查（NeurIPS 2025 D&B） | 高（限開源框架/當時模型） |
 | 單執行緒優先、寫入衝突 | Cognition 實務經驗、立場已演進 | 中（經驗值、非靜態） |
 | 90.2% 多 agent 優勢 | Anthropic 內部評測 | 低（第一方、未複現） |
 | 「知識 vs 編排」二分框架 | 本頁綜合 | 綜合判斷（零件有佐證） |
