@@ -43,7 +43,7 @@ Level 1–3 資料夾結構相近、**可疊加同跑**；Level 5、6 屬不同�
 ## 幾個關鍵取捨
 
 - **markdown 優先 vs. vector/MCP**：memsearch 把一切存成可讀 markdown 並自動注入；ClaudeMem 走 MCP，需 Claude 主動決定呼叫搜尋工具，功能多（dashboard、團隊、費用追蹤）但較重。
-- **本地擁有 vs. 代管租用**：MemPalace 全本地；OpenBrain 是自有 DB 實例（跑在 Supabase 代管平台上，但 schema 與資料歸你、可遷移自管）；Recall、Mem0 則是 vendor 的記憶即服務，資料活在對方伺服器（可匯出 markdown，但等於租）。
+- **本地擁有 vs. 代管租用**：MemPalace 全本地；OpenBrain 是自有 DB 實例（跑在 Supabase 代管平台上，但 schema 與資料歸你、可遷移自管）；Recall、Mem0 則是 vendor 的記憶即服務，資料活在對方伺服器（可匯出 markdown，但等於租）。**Mem0 需分層看**（2026-07-20 查證修正）：軟體本身是原版 Apache 2.0、可完全自架（raw LICENSE 實查，無 Commons Clause／BUSL 附加），但**官方整合路徑（plugin／MCP／CLI）全部只連雲端**，要自架得走社群 MCP 或自接 SDK。故「等於租」對採用體驗成立、對軟體授權不成立——細節與失效模式見 [[Mem0]]。
 - **摘要 vs. 逐字**：Level 3 存摘要（省空間、可能漏細節）；Level 4 逐字不摘要，理論上什麼都不丟，但取回內容非 markdown、不可直讀。
 
 ## 在本 vault 的定位
