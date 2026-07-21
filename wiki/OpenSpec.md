@@ -93,7 +93,7 @@ concepts.md 逐字：*"Specs are the source of truth — they describe how your 
 
 **核心設計是「actions, not phases」**：OPSX 官方對 legacy 流程的批評是它「locked down」——指令硬編在 TypeScript 裡改不動、一個大指令一次生成全部、輸出不好也無法調 prompt。OPSX 把模板外部化成 YAML + Markdown，並用 artifact DAG 取代線性 phase gate。官方對這個設計動機說得直白：*"work isn't linear. OPSX stops pretending it is."*
 
-Artifact 依賴圖（`design` 可跳過；依賴是 **enabler 不是 gate**，任何 artifact 隨時可回頭改）：
+Artifact 依賴圖（依賴是 **enabler 不是 gate**，任何 artifact 隨時可回頭改）：
 
 ```mermaid
 graph TD
@@ -104,7 +104,18 @@ graph TD
     tasks --> implement[apply / 實作]
 ```
 
-狀態機不看 phase，只看**檔案系統上檔案存在與否**：`BLOCKED`（缺依賴）→ `READY`（依賴皆 done）→ `DONE`（檔案已存在）。agent 執行時是先 `openspec status --change <name> --json` 查狀態、再 `openspec instructions <artifact> --json` 取該 artifact 的模板與依賴路徑，而非收一份靜態指令——這是它與 legacy 在資訊流上的根本差異。
+狀態機不看 phase，只看**檔案系統上檔案存在與否**：`BLOCKED`（缺依賴）→ `READY`（依賴皆 done）→ `DONE`（檔案已存在）。
+
+⚠️ **就地標記矛盾：「design 可跳過」與出貨的 schema 不一致**（2026-07-21 本機實測 1.6.0，強度 high）。官方 [concepts.md](https://github.com/Fission-AI/OpenSpec/blob/main/docs/concepts.md) 逐字寫 *"You can skip design if you don't need it."*，glossary 亦標 design 為 *"Optional for simple changes."*；但**實際出貨的 `schemas/spec-driven/schema.yaml` 裡 `tasks` 的 `requires` 是 `[specs, design]`**，而 `artifact-graph/graph.ts` 的 blocked 判定是「所有 `requires` 都 completed 才算 ready」，**沒有任何 optional 機制**。實測：建一個只有 `proposal.md` 與 `specs/` 而無 `design.md` 的 change，`openspec status` 回報
+
+```
+[x] proposal
+[ ] design
+[x] specs
+[-] tasks (blocked by: design)
+```
+
+也就是**跳過 design 會讓 tasks 永遠停在 blocked**。實務上多半不會撞到，因為 `/opsx:propose` 預設一次生成含 design 的全部 artifact；但若照文件的話手動跳過 design，狀態機就會卡住。要真的跳過得自訂 schema 把 `tasks` 的 `requires` 改掉。（`/opsx:verify` 倒是有容忍 `design.md` 不存在的分支，這使前後端行為不一致更明確。）agent 執行時是先 `openspec status --change <name> --json` 查狀態、再 `openspec instructions <artifact> --json` 取該 artifact 的模板與依賴路徑，而非收一份靜態指令——這是它與 legacy 在資訊流上的根本差異。
 
 ### 兩種 profile（1.x 起，high）
 
@@ -213,7 +224,7 @@ schema 放 `openspec/schemas/`（專案內、進版控）或 `~/.local/share/ope
 
 ## 與 AI Coding Agent 整合（high）
 
-OpenSpec 原生整合 **30+ 種 AI 助理**（官方 [supported-tools.md](https://github.com/Fission-AI/OpenSpec/blob/main/docs/supported-tools.md) 實際列舉 31 個 tool ID），透過各工具的自訂 slash command——明確包含 Claude Code、Cursor、Codex、GitHub Copilot、Cline、Continue、Windsurf、Gemini。
+OpenSpec 原生整合 **30+ 種 AI 助理**（2026-07-21 清點官方 [supported-tools.md](https://github.com/Fission-AI/OpenSpec/blob/main/docs/supported-tools.md) 表格為 **34 個 tool ID**），透過各工具的自訂 slash command——明確包含 Claude Code、Cursor、Codex、GitHub Copilot、Cline、Continue、Windsurf、Gemini。Claude Code 的落點是 `.claude/skills/openspec-*/SKILL.md` 與 `.claude/commands/opsx/<id>.md`（**skill 目錄名用 `openspec-` 前綴、指令用 `opsx` 前綴，兩者不同，別混記**）。
 
 執行 `openspec init` 時依所選 profile/workflow 與 delivery mode 為所選工具寫入整合檔：
 
@@ -222,7 +233,7 @@ OpenSpec 原生整合 **30+ 種 AI 助理**（官方 [supported-tools.md](https:
 | **Claude Code** | `.claude/skills/openspec-*/`（skill 檔）與 `.claude/commands/opsx/<id>.md` |
 | **Cursor** | `.cursor/commands/opsx-*`（部分用 `.cursor/rules`） |
 
-31 個工具中 28 個產生 tool-specific 命令檔，僅 3 個用 skill-based fallback。（工具數字在不同頁面有 20+/25+/30+/40 的浮動，但實際列舉穩定在 31 個，「30+」為準確下界；1.4–1.6 又陸續補進 Kimi CLI、Mistral Vibe、TRAE、Oh My Pi，總數仍在長。）
+（工具數字在官方各頁面浮動：README 同時出現「25+」與「30+」，歷次查證看過 20+/31/40 等說法。**以 supported-tools.md 表格逐列清點才是可靠做法**——2026-07-16 為 31 個，2026-07-21 已成 34 個，1.4–1.6 陸續補進 Kimi CLI、Mistral Vibe、TRAE、Oh My Pi。總數仍在長，引用時標日期。）
 
 **1.6.0 起 CLI 呼叫免逐次授權**：所有產生的 `SKILL.md` 與 Claude Code 的 `/opsx:*` 指令檔，frontmatter 都帶 `allowed-tools: Bash(openspec:*)`。遵循 [Agent Skills](https://agentskills.io) 標準的 agent 會據此自動放行 `openspec` 指令，不再每次跳授權；不認得這個欄位的工具則忽略。**範圍僅限 `openspec` CLI**——該欄位是預先核准而非限制，skill 用到的其他工具仍走你原本的權限設定。
 
@@ -248,7 +259,9 @@ OpenSpec 原生整合 **30+ 種 AI 助理**（官方 [supported-tools.md](https:
 
 ## 未解問題
 
-- delta specs 的 `ADDED/MODIFIED/REMOVED/RENAMED` 實際撰寫格式與 `validate` 的具體檢查規則——仍未查證。1.6.0 的 changelog 顯示 `validate` 的 requirement 解析在 1.6.0 有一輪大修（fence／metadata／多行 keyword 的處理），故舊版行為描述不可直接沿用。
+- delta specs 的 `ADDED/MODIFIED/REMOVED/RENAMED` 完整撰寫格式與 `validate` 的**全部**檢查規則——仍未逐條查證。1.6.0 的 changelog 顯示 requirement 解析有一輪大修（fence／metadata／多行 keyword 的處理），故舊版行為描述不可直接沿用。已實測確認的一條見下：
+
+  **`## Purpose` 是主 spec 的硬性要求**（2026-07-21 實測 1.6.0，強度 high）：`markdown-parser.ts` 缺 Purpose 直接 `throw`，整份 spec 被放棄、其下 requirement 全不計數。實測缺 Purpose 的 spec 在 `openspec list --specs` 顯示 `requirements 0`，補上後即正常。因此 **`requirements 0` 要讀成「解析失敗」而非「真的沒寫需求」**。1.6.0 的 `validate` 已會直接點名（「Ensure spec includes ## Purpose and ## Requirements sections」並附範例），比舊版容易診斷。
 - stores 的實際資料模型與遷移路徑（見上節）。
 - ~~`/opsx:sync` 與 `/opsx:archive` 的分工~~ — 2026-07-21 已解：`sync` 把 delta 套回主 specs、在預設流程中為可選；`archive` 封存時會在需要時提示先 sync。
 - ~~`config.yaml` 欄位與 schema~~ — 2026-07-21 已解，見「專案設定」一節。
