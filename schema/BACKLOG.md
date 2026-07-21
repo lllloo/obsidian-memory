@@ -47,6 +47,7 @@ _(目前無項目)_
 
 - LINT-RULE | 數值／日期跨頁一致性檢查 | 2026-07-21 提出後**當日自行撤回**,不新增 lint 規則。外部依據(WikiCollide:真實 wiki 矛盾 54.7% 為數值類、邏輯僅 17.5%)看似強,但**就地實測後判定優先度不可遷移**:日期漂移查無實例(散亂日期經比對皆為不同事件);數字確有跨頁重述(`90.2` 見 4 頁、`1,642` 見 3 頁、「25 條」見 6 頁)故機制成立,但零實際不一致。Wikipedia 的漂移機制是「同一事實被大量獨立條目各自重述」,本 vault 有交叉引用紀律、不走該模式。**重開條件**:實際出現 2 次以上跨頁數值不一致。詳見 `wiki/Agent-維護知識庫的已知失效模式.md` 第 3 條。**看到那份 54.7% 數據時勿再直接據以重提**
 
+- RESEARCH-GAP | agent 知識庫專案的內建品質評分 | 2026-07-21 兩輪 deep-research 均零產出,第二輪明確記錄**證據鏈中從未讀過任何目標 repo**(nvk／Hermes `llm-wiki` skill／llm-wiki-kit／wiki-garden／Wuphf／ai-memory／DiffMem／nashsu-llm_wiki／Cline Memory Bank／Letta MemFS／Mem0／ReMe／Basic Memory)——兩輪都敗在預算耗於前面的塊。屬「未查到」非「已排除」。**重跑時不要派搜尋 agent,直接 clone／讀 README 與原始碼**,這是唯一沒試過的方法。缺口已就地記在 `wiki/LLM-as-judge-知識庫頁面評分.md`。另注:該輪 verifier 曾誤報「54.7%／AUROC 75.1% 來源不明」,實為查錯論文(其出處 arXiv 2509.23233 不在其查核範圍),`wiki/Agent-維護知識庫的已知失效模式.md` 的引用不受影響,**勿據該誤報改動該頁**
 - STALE | `wiki/LLM-方案定價與-coding-agent-比較.md` | 孤立已修(補 2 條反鏈);定價數字仍為 2026-05~07 快照,頁面已標「回官網查」,agent 判**不值得例行 re-fetch**(11+ 廠商即時價、月月再過期)——要新快照再指示
 - RAWGAP | `raw/clippings/` | 現存 clippings 全數判定已消化、無待 ingest(機械層仍逐篇 flag 因未加 wikilink;此為判斷錨點);首見 2026-07-13,最後結清 2026-07-16
 - 維持現狀:無 in-vault 全文搜尋(21 頁 Grep 夠用)、evals 覆蓋不均(邊際價值低)

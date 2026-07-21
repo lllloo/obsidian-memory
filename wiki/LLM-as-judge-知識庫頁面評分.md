@@ -1,6 +1,6 @@
 ---
 title: LLM-as-judge 知識庫頁面評分
-description: 用 LLM 為 markdown 知識庫頁面打分的現成方案地景與方法學約束：promptfoo／DeepEval 兩條可用路徑、rubric 決定信度、self-preference bias 匿名化擋不住
+description: 用 LLM 為 markdown 知識庫頁面打分的方案地景與方法學約束：promptfoo／DeepEval 兩條路徑、rubric 決定信度、self-preference bias 匿名化擋不住、互聯層指標在小 vault 上的可攜斷崖
 created: 2026-07-21
 updated: 2026-07-21
 parent: "[[wiki/01.index]]"
@@ -13,7 +13,7 @@ tags:
 
 # LLM-as-judge 知識庫頁面評分
 
-問題：能不能用 LLM 給 wiki 頁「打分數」，用來排序該修哪頁、或當品質 gate？本頁是 2026-07-21 一輪 deep-research（5 搜尋角度、每條主張 3 票對抗查證）的回存，聚焦**純 LLM-as-judge 路線**（機械指標如 markdownlint、連結數統計不在範圍內，僅作對照）。
+問題：能不能用 LLM 給 wiki 頁「打分數」，用來排序該修哪頁、或當品質 gate？本頁是 2026-07-21 兩輪 deep-research（各 5 搜尋角度、每條主張 3 票對抗查證）的回存：第一輪查工具面與方法論面，第二輪換詞彙補查「互聯知識庫層級」。聚焦**純 LLM-as-judge 路線**（機械指標如 markdownlint、連結數統計不在範圍內，僅作對照）。
 
 **核心結論：沒有任何現成方案是為「互聯 markdown 知識庫」設計的。** 能用的兩個都是 LLM eval harness，要把頁面 shoehorn 成 test case 才跑得動；真正可搬的不是工具，是三條設計約束（rubric 必須寫、judge 換模型家族、不要一次丟多頁排名）。
 
@@ -123,15 +123,86 @@ position、verbosity、compassion-fade、bandwagon、distraction、fallacy-overs
 
 移植限制：部分偏誤（compassion-fade、bandwagon、diversity、sentiment）在 wiki 頁評分場景沒有明顯對應物；RR 定義在「判決一致」上，移植到絕對分數需改成「分數落在 ±k 內」之類，論文未做。
 
-## 三、證據空白：互聯知識庫層級的評分
+## 三、互聯知識庫層級的評估（2026-07-21 第二輪補查）
 
-「針對互聯知識庫（交叉引用品質、頁面間一致性、網絡結構健康度）而非單篇文件的 LLM 評分做法」，以及「其他 agent 記憶／LLM wiki 專案是否在做頁面品質評分」，本輪**沒有任何主張存活**。
+第一輪這塊零產出，換七組詞彙（knowledge graph quality assessment、cross-document consistency、Wikipedia ORES、ontology quality evaluation 等）重跑後**確實找到成熟文獻**——但它長在兩個離本 vault 有距離的傳統裡，且共同的問題是**可攜性斷崖**：所有指標都為大語料設計，n≈22 時退化或數學上未定義。
 
-**這是證據空白，不是已證實不存在**——16 條存活主張全落在工具與方法論兩塊，第三塊零產出，且本輪多個 verifier 的 WebSearch 預算明確用罄（有兩條 claim 記載 200/200）。
+> **本節整體強度警訊**：第二輪 12 條主張的 verifier **全部回報 WebSearch 預算耗盡（200/200），沒有任何一條做過對抗式反面搜尋**，只做了主要來源逐字核對。對「某論文說了什麼」影響小，對「這是最好的做法／這領域沒有更新做法」則完全未覆蓋——故本節刻意不含後者這類主張。
 
-既有工具的形狀倒是印證了這個空白：promptfoo 的 `select-best` 比較同一 test row 內的多個輸出、DeepEval 的資料模型是 input→output 配對，**兩者都沒有「一組互相連結的文件」這個一等公民概念**。這與 [[LLM-Wiki-生態實作比較]] 掃到的生態現況一致：各實作都在解「怎麼寫、怎麼檢索」，沒人在解「怎麼衡量寫得好不好」。
+### 傳統一：Linked Data 品質評估——有正式的互聯層詞彙
 
-重跑此塊應換詞彙：knowledge graph quality assessment、documentation coherence evaluation。
+*（強度：同儕審查，Semantic Web Journal 7(1):63–93, 2016；但取得的是 author version，引用請用 SWJ 頁碼）*
+
+Zaveri 等人的系統性回顧整理出 **18 個品質維度、69 個指標**，分析 30 個方法與 12 個工具，其中 **Interlinking 是一等公民維度**，定義為「同一概念的實體彼此連結的程度，無論在單一或多個資料源之間」。其 I1 指標明列網絡結構量測：interlinking degree（hub 數）、clustering coefficient（密度）、centrality、open sameAs chains。
+
+四個可對映到 wikilink 檢查的指標（metric ID 皆經原文逐字核對）：
+
+| 指標 | 原文定義 | markdown 對應 |
+|---|---|---|
+| A5 | 所有出站連結可解引用 | 出站 wikilink 目標存在 |
+| I3 | 偵測所有本地入連／反向連結 | 反向連結存在 |
+| A3 | 死連結（HTTP-GET 回 404） | 死連結 |
+| CM4 | 已互連實例／總實例 | 非孤立頁比例（補數即孤立率） |
+
+**但這對本 vault 的邊際貢獻幾乎為零**：`vault-lint` 機械層現有的死連結、孤立頁、雙向 wikilink 三項檢查，已分別等同 A3、CM4、A5+I3。文獻給的是**命名與正當性，不是新檢查項**。
+
+必須帶的折扣：A5 與 I3 分屬 Availability 與 Interlinking 兩個**不同**維度，把它們併成「連結健康」是本頁的歸併框架而非論文自身框架；全部指標為 RDF/triple 層級，對 markdown wikilink 只是類比；A5+I3 的**合取**才近似「雙向性」，單獨任一個都不是。另有一處投票不一致值得記：同輪兩條敘述同一內容的主張被 0-3 否決，合理解讀是否決票針對「可直接搬到小 wiki」的可攜性宣稱而非事實本身——**引用該框架時引用其維度／指標定義，不要引用「可直接搬」的結論**。
+
+### 傳統二：Wikipedia 文章品質評估——證明了「不能搬」
+
+*（強度：官方 production model card，兩次獨立 fetch 數字一致；權重和 0.998）*
+
+Wikimedia 生產環境的 language-agnostic 文章品質模型只用 6 個結構特徵：
+
+| 特徵 | 權重 |
+|---|---|
+| page length | 0.395 |
+| references | 0.181 |
+| sections | 0.123 |
+| **wikilinks** | **0.115** |
+| media | 0.114 |
+| categories | 0.070 |
+
+連結相關特徵僅約 11.5% 權重，且那個 wikilinks 特徵**只是密度**（`sqrt(# wikilinks) / normalized-page-length`），不含雙向性、語意或指向正確性。精確性提醒：若把 references(0.181) 與 categories(0.070) 也算成連結類結構，合計約 36%，**不宜簡化成「連結不重要」**。
+
+**最關鍵的是它為什麼搬不動**：這是無截距線性回歸映射到 0–1，各特徵以「**該 wiki 前 5% 文章**」為分母正規化。官方明載這使分數是相對於所在 wiki 族群分布的相對值——「在英文維基得 0.5 分的文章，若在簡明英文維基會得高得多的分數」。**22 頁的前 5% 只有 1 頁，校準步驟在此規模下數學上未定義。** model card 另自承不適用於 Wikipedia 以外專案，且「不評估行文品質，一篇塞滿假詞的長文章會被評為高品質」。
+
+特徵空間本身倒是分類完整（*強度：ACM Computing Surveys 同儕審查系統性回顧，Moás & Lopes, FEUP, 2023*）：149 篇研究收集到 **321 個相異特徵**，分為 Content、Style、Readability、History、Network、Popularity 六族，Network 定義為「利用文章間連結量測影響力」。可攜限制同樣嚴重：History（版本史、多編者）與 Popularity（瀏覽量）在單人 vault 結構上不存在，Network 族是為百萬級語料設計的 centrality／PageRank 類量測，n=22 時統計基礎崩壞。**唯一可能有意義的是 Content／Style／Readability 三族**（單篇層級、不需大語料校準），但具體哪些特徵在繁中 22 頁上算得出來且有意義，未查（補充資料 Full Feature List.pdf 未取得）。
+
+*（強度：MediaWiki 官方文件，廠商自承限制，2-1 通過）* ORES 的 articlequality 模型官方逐字說「不評估行文品質或語氣問題」，特徵為「有幾節？有沒有 infobox？幾個 references？references 有沒有用 cite 模板？」，唯一的缺陷偵測是 `citation needed`／`who?` 等**人工模板的計數**。兩個保留：ORES 已掛 deprecation banner（服務層遷往 Lift Wing），應寫成「ORES/Lift Wing articlequality」；且同輪多條宣稱該清單「完全不含 wikilink 結構特徵」的主張被 **0-3 否決**（language-agnostic 模型明確含 wikilinks 特徵）——**不可擴張成「Wikipedia 品質模型完全不看連結」**。
+
+### 跨文件矛盾偵測：現成 benchmark 全是「單篇內部」
+
+*（強度：ContraDoc 為 NAACL 2024 主會；WikiContradiction 為 IEEE BigData 2021。3-0）*
+
+這是本輪最乾淨的否定答案：**現有 benchmark 沒有一個做跨文件矛盾**。
+
+- **ContraDoc**（arXiv 2311.09182）自述為「第一個研究長文件**自我**矛盾的人工標註資料集」，全文以單一 document 為單位。
+- **WikiContradiction**（arXiv 2111.08543，含 Wikimedia 作者）任務嚴格限單篇文章內，**把跨文章列為 future work**。
+
+也就是說，本 vault 的跨頁一致性問題**沒有現成 benchmark 直接覆蓋**。
+
+**唯一可搬的具體技巧**來自 WikiContradiction 的 future work：透過 `Contradicts others` 模板收集互相矛盾的文章**對**，「把每一對文章合併成一篇長文」，**藉此把跨文件問題轉成單文件問題**。這是最直接可搬的做法——但**論文本身沒驗證過**，且成本是 O(n²) 頁對（22 頁約 231 對）。
+
+其架構模式也值得記（*2-1*）：先用 SNLI/MNLI 預訓練 pairwise 矛盾（繞開自我矛盾標註稀缺），再對所有句對打分、取 **top-K 最高矛盾機率句對**聚合成文件層級判定。產出的**不只是分數，還包含定位到具體句對的證據**——這個「分數＋定位」的形狀比單純打分對 lint 更有用。折扣：PCNN 需監督訓練、句對評分 O(n²)，論文未證明在小語料或繁中上可行；「可搬架構」是本頁的編輯性框架而非論文主張。
+
+**LLM 做矛盾偵測不是即插即用的能力**（*2-1，且有明顯時效問題*）：ContraDoc 作者自評，即使表現最好、整體可超越人類標註者的 GPT-4 **仍「unreliable」**，在需要細微語境的矛盾上失敗。2025 年的後續工作（ContraGen 需多 agent 框架、HealthContradict 需 fine-tune、MMKC-Bench 發現模型偏好內部參數知識勝過外部證據）**一律靠專用 pipeline 或 fine-tune 而非直接 prompt**。
+
+時效保留必須帶：這是 **2023 年對 2023 世代模型**的評測，至今約 2.5 年，**不可改述為「當前前沿模型不可靠」**。方向上則保守——ContraDoc 是**較簡單**的設定（整份文件在同一 context 內），跨頁分別檢索只會更難。這也直接折扣了「把頁面串接成單一 context 就能沿用」這條外推：ContraDoc 量到的失敗模式正是 nuance/context，串接長 context 後只會加重。
+
+這與 [[Agent-維護知識庫的已知失效模式]] 第 3 條記錄的 CLAIRE AUROC 75.1% 相互印證：**自動矛盾偵測本質不可靠**，是跨兩篇獨立論文的收斂結論，非單一來源。
+
+> **一則查核警訊的澄清**：第二輪 verifier 回報「54.7%／AUROC 75.1% 在查核的論文中不存在，來源不明」。**此為查錯論文**——它查的是 WikiContradiction 與 ContraDoc，而本 vault 該數字的出處是 [arXiv:2509.23233](https://arxiv.org/html/2509.23233)（CLAIRE），不在其查核範圍。既有頁面的引用**不受影響**，此處記錄以防日後被這條誤報推翻。
+
+### 仍未答：agent 知識庫專案的內建評分
+
+**第三題連續兩輪零產出，且第二輪明確記錄：證據鏈中沒有任何一次對目標 repo 的讀取。**
+
+點名未讀的專案：nvk、Hermes 的 `llm-wiki` skill、llm-wiki-kit、wiki-garden、Wuphf、ai-memory、DiffMem、nashsu/llm_wiki、Cline Memory Bank、Letta MemFS、Mem0、ReMe、Basic Memory。
+
+兩輪都敗在同一處：**預算耗在前面的塊，搜尋 agent 沒有真的去讀 repo**。這仍是「未查到」而非「已排除」。下次重跑**不要派搜尋**，直接 clone／讀 README 與原始碼——這是唯一沒試過的方法。
+
+既有工具的形狀仍印證這個空白：promptfoo 的 `select-best` 比較同一 test row 內的多個輸出、DeepEval 是 input→output 配對，**兩者都沒有「一組互相連結的文件」這個一等公民概念**；與 [[LLM-Wiki-生態實作比較]] 掃到的生態現況一致——各實作都在解「怎麼寫、怎麼檢索」，沒人在解「怎麼衡量寫得好不好」。
 
 ## 勿引用（本輪查證否決）
 
@@ -153,7 +224,17 @@ position、verbosity、compassion-fade、bandwagon、distraction、fallacy-overs
 
 若要做，直接在 `vault-lint` 的語意層加一段帶 rubric 的評分 prompt，比接外部 harness 務實。這與 [[Agent-維護知識庫的已知失效模式]] 記錄的「無法驗證 agent 真的用了 wiki」是同一類問題：本 vault 的品質回饋迴路目前全靠人眼看 PR diff，沒有任何自動化的品質訊號。
 
-**尚未解答的核心問題**：絕對分數（1–10）在 20 幾頁的小樣本上是否穩定到足以排序？本輪只證明「無 rubric 會與人類脫鉤」與「多候選排序極不穩」，**沒有任何來源直接比較「絕對評分 vs pairwise」在文件級評分上的排序穩定度**。可行的驗證是自己對同一頁重複評分數次量 test-retest 變異，而非再查文獻。
+第二輪補上第四條，且是**否定性的省事結論**：
+
+4. **互聯層級的既有指標對本 vault 幾乎沒有邊際貢獻**——Zaveri 框架的 A5/I3/A3/CM4 已等同 `vault-lint` 現有的雙向 wikilink、死連結、孤立頁三項檢查；Wikipedia 的品質模型因百分位正規化在 n=22 時未定義。**文獻能給的是命名與正當性，不是新檢查項**。這反而是好消息：機械層不必再擴。
+
+真正還缺的是**跨頁一致性**（同一事實在多頁被重述時是否矛盾），而這塊現有 benchmark 全是單篇內部矛盾、沒有直接覆蓋。唯一具體可搬的是 WikiContradiction 未經驗證的 merge-pair 技巧（把矛盾頁對合併成長文，轉成單文件問題），成本 O(n²)、22 頁約 231 對。
+
+**尚未解答的核心問題**：
+
+- 絕對分數（1–10）在 20 幾頁的小樣本上是否穩定到足以排序？兩輪都只證明「無 rubric 會與人類脫鉤」與「多候選排序極不穩」，**沒有任何來源直接比較「絕對評分 vs pairwise」在文件級評分上的排序穩定度**。可行的驗證是自己對同一頁重複評分數次量 test-retest 變異，而非再查文獻。
+- merge-pair 技巧在 22 頁上的實際可行度——需實測而非文獻能回答。
+- 第三題（agent 知識庫專案的內建評分）連續兩輪未觸及，需一輪純 repo 直讀。
 
 ## 相關頁
 
