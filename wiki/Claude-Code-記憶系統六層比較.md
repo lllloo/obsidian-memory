@@ -2,7 +2,7 @@
 title: Claude Code 記憶系統六層比較
 description: 從原生 CLAUDE.md 到跨工具統一大腦，六個層級的 AI 記憶方案沿「儲存位置」與「召回機制」兩軸拆解，含各層適用情境與升級門檻
 created: 2026-07-08
-updated: 2026-07-20
+updated: 2026-07-21
 parent: "[[wiki/01.index]]"
 tags:
   - claude-code
@@ -59,6 +59,7 @@ Level 1–3 資料夾結構相近、**可疊加同跑**；Level 5、6 屬不同�
 - 人類 PKM 方法論對照：[[第二大腦方法論比較]]（BASB／PARA／Zettelkasten，與本頁討論的 agent 記憶方案分屬不同層次，但共享「擷取—組織—檢索」結構性問題）
 - coding agent 訂閱生態對照：[[LLM-方案定價與-coding-agent-比較]]（Claude Code 等三方案定價與模型天花板比較，與本頁的記憶系統選型同屬「怎麼選 coding agent」的決策脈絡）
 - harness 工程脈絡：[[Agent-Harness-Engineering-框架綜述]]——本頁六層記憶方案在 Anthropic context engineering 論述中對應 structured note-taking／agentic memory 技術，理論依據見該頁。
+- Level 5 路線的失效面：[[Agent-維護知識庫的已知失效模式]]——本頁列各層方案怎麼運作，該頁記 Level 5（自組織知識庫）長期由 agent 維護會怎麼壞，並標明 model collapse 類比不成立；向量／自動抽取路線（Level 3、Mem0）的失效模式則見 [[Mem0]]。
 - 記憶方案的共同風險實證：[[AI-自主工作流的實證檢驗]]——記憶檔過長會被 agent 忽略、compaction 靜默丟棄約束，是本頁各層方案共通的失效模式。
 - 按「目的」切的互補視角：[[Agent-記憶兩大路線-知識庫與-memory-bank]]——本頁按「儲存／召回」技術光譜切六層，該頁按「知識資產複利 vs 專案工作記憶」切兩路線，並補收本頁未正面收的 coding-agent memory bank（Cline 等）。
 - 記憶分層的觀念前身：[[Building-Effective-Agents-Anthropic]]——該文 augmented LLM 的 memory 增強是本頁六層方案的最小前身；本頁把「最小、可組合的 context 元件」原則展開成完整的儲存／召回光譜。
