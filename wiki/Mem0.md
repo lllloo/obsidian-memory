@@ -2,7 +2,7 @@
 title: Mem0
 description: AI agent 記憶層工具的整合路徑（plugin／MCP／CLI）、hook 實測消耗與失效模式證據，含本 vault 採 MCP-only 的拍板理由
 created: 2026-07-20
-updated: 2026-07-20
+updated: 2026-07-21
 source: https://github.com/mem0ai/mem0
 parent: "[[wiki/01.index]]"
 tags:
@@ -30,7 +30,9 @@ tags:
 | 觸發 | 自動捕捉 | 全手動 | agent 須主動叫 |
 | 後端 | 雲端 only | 雲端 only | 雲端 only |
 
-〔官方文件逐字〕MCP-only 的官方警語是「MCP-only installs require manual memory operations」。**Plugin 與 MCP 不可並用**——plugin manifest 會自動註冊 MCP server，兩邊都加會 tool collision。
+〔官方文件逐字〕MCP-only 的官方警語是「MCP-only installs require manual memory operations」。**Plugin 與 MCP 不可並用**——plugin manifest 會自動註冊 MCP server，兩邊都加會 tool collision（Codex 端的排除法：把 `~/.codex/config.toml` 的 `[mcp_servers.mem0]` 區塊刪掉，留 plugin 自動註冊的那份）。
+
+9 個工具在兩端完全相同：`add_memory`、`search_memories`、`get_memories`、`get_memory`、`update_memory`、`delete_memory`、`delete_all_memories`、`delete_entities`、`list_entities`——**MCP-only 一個都不缺**，少的只有 hooks 與 SDK skill。
 
 CLI（`@mem0/cli`）**不是替代品**：原始碼 `cli/node/src/plugin-sync.ts` 註解寫明設計假設是兩者同裝（CLI 管認證、MCP 管 agent 呼叫）。其 `src/backend/` 工廠函式無條件回傳 `PlatformBackend`，`MEM0_BASE_URL` 可改主機但改不了協定，**無法指向自架後端**〔repo 原始碼〕。
 
@@ -49,7 +51,11 @@ CLI（`@mem0/cli`）**不是替代品**：原始碼 `cli/node/src/plugin-sync.ts
 
 **「task completion」＝ `Stop`，即每輪回應**，不是粗粒度的任務完成。綁死額度的是 retrieval（免費層 1,000/月）而非 add（10,000/月），因為 agent 讀檔頻率遠高於使用者發話。可關的旋鈕只有 `MEM0_AUTO_SAVE=false`、`MEM0_PREFETCH=false`；**Read 與 Bash 兩條無開關**，只能改 `hooks.json`。
 
-另注意：`/mem0:onboard` 會「Detects and imports project files (`CLAUDE.md`, `AGENTS.md`, `.cursorrules`)」，且**在新專案首次 session 自動觸發**，不是只有手動才跑。Codex 的 hooks 則不會自動生效，需另跑 `install_codex_hooks.py` 並開 `[features] codex_hooks = true`〔repo README 逐字〕。
+另注意：`/mem0:onboard` 會「Detects and imports project files (`CLAUDE.md`, `AGENTS.md`, `.cursorrules`)」，且**在新專案首次 session 自動觸發**，不是只有手動才跑。
+
+⚠️ **就地矛盾（Codex hooks 啟用方式）**：本頁 2026-07-20 依 repo README 記為「Codex hooks 不會自動生效，需另跑 `install_codex_hooks.py` 並開 `[features] codex_hooks = true`」；2026-07-21 回存的官方 Codex 整合頁則描述 `codex plugin marketplace add` → `codex plugin add mem0@mem0-plugins` 的 marketplace 流程，hooks 隨 plugin 一併裝、無額外腳本步驟，且列出 6 個 hook（較 Claude Code 少 `Setup`）。兩者未查證何者為現況（可能是 README 落後、也可能是文件簡化）。**本 vault 走 MCP-only，兩說皆不影響採用**；日後真要裝 plugin 再以 repo 原始碼為準。
+
+另一筆官方文件新增的行為值得記：hooks 會做**歸屬切分**——「What you type is stored as yours. What Claude produces — session summaries and compaction summaries — is stored as the assistant's, so its suggestions never become your stated preferences」，且 `PreToolUse` 其中一個 handler 直接**擋 `MEMORY.md` 寫入**〔官方文件逐字〕。後者對本 vault 是明確的排斥訊號：`schema/MEMORY.md` 正是這裡跨 session 記憶的載體，plugin 會與之爭權威。
 
 ## Benchmark 宣稱：不可引用
 
@@ -98,6 +104,27 @@ CLI（`@mem0/cli`）**不是替代品**：原始碼 `cli/node/src/plugin-sync.ts
 已接受的代價：`infer:true` 的抽取可能扭曲原文（見上 `endymi0n` 條）。因屬隨手記、vault 才是權威，此代價可接受。
 
 `--scope user` 為跨專案必要（`claude mcp add` 預設 `local`）；header 用單引號讓 `${MEM0_API_KEY}` 存為變數參照而非明文烤進設定檔。
+
+## MCP-only 的實際安裝路徑（官方文件，2026-07-21 回存）
+
+來源為官方兩份整合頁，已落地 raw：[[Mem0-Claude-Code-Integration]]、[[Mem0-Codex-Integration]]〔廠商官方文件，非獨立驗證；上節已示範其自相矛盾之處〕。
+
+前提兩端相同：`MEM0_API_KEY`（`m0-` 開頭）寫進 shell profile 而非只在當下 session export——否則 Claude Code 端每次啟動跳「Mem0 Inactive」橫幅、Codex 端連不上。裝完都要**重開 session** 工具才出現，驗證方式是問「List my mem0 entities」。
+
+**端點只有一個**：`https://mcp.mem0.ai/mcp/`（HTTP transport，非 stdio）。
+
+| | Claude Code | Codex |
+|---|---|---|
+| 一行安裝 | `npx mcp-add --name mem0-mcp --type http --url "https://mcp.mem0.ai/mcp/" --clients "claude code"` | `codex mcp add mem0 --url https://mcp.mem0.ai/mcp/ --bearer-token-env-var MEM0_API_KEY` |
+| 手動設定檔 | `.mcp.json` → `mcpServers.mem0`，`type: "http"` | `~/.codex/config.toml` → `[mcp_servers.mem0]` |
+| 認證寫法 | header `Authorization: Token ${MEM0_API_KEY}` | `bearer_token_env_var = "MEM0_API_KEY"` |
+
+兩點**文件沒講、但影響本 vault 用法**的落差：
+
+1. **認證 scheme 不同**——Claude Code 端是 `Token ` 前綴的自訂 header，Codex 端是原生 bearer token 欄位。同一把 key、兩種寫法，抄錯端會是 401 而非設定錯誤訊息。
+2. **官方給的 Claude Code 手動路徑是專案級 `.mcp.json`**，只在該 repo 生效；本 vault 要的是**跨專案隨手記**，必須走 `claude mcp add --scope user`（見上節），照文件抄 `.mcp.json` 會得到一個只在單一專案能用的收件匣。Codex 端 `~/.codex/config.toml` 本來就是使用者級，無此問題。
+
+Codex 的 `codex mcp add --url` 存在，也**再次否證**官方另一頁那句「Codex 只支援 stdio」（見上節「資訊生態污染」）——本次官方整合頁自己就用了 HTTP url。
 
 ⚠️ **一個類別錯置的釐清**：[[OpenSpec]] 不是 mem0 的整合對象。它不是 agent host（不跑 MCP／不裝 plugin），而是**裝進** host 的 workflow 框架（`docs/supported-tools.md` 逐字：「Codex is skills-only: OpenSpec installs `.codex/skills/openspec-*/SKILL.md`」）。兩者若同在一個 host，是**爭同一個位置**——OpenSpec 用 checked-in 可 review 的 spec 檔決定 agent 該遵守什麼，mem0 用雲端不可 review 的記憶做同件事，權威來源會分裂。查無任何 mem0×OpenSpec／spec-kit 的 prior art。
 
