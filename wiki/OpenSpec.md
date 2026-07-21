@@ -18,7 +18,13 @@ tags:
 
 在 [[AI-自主工作流的實證檢驗]] 的 spec-driven 光譜裡，OpenSpec 定位為 **Spec Kit 的輕量替代**——比 Spec Kit 的七步（`constitution → specify → clarify → plan → tasks → analyze → implement`）精簡，也比 BMAD 的多角色鏈輕。**注意該頁的核心結論**：整個 SDD 領域「流程描述清楚，但『這樣做讓 agent 做得更好』幾乎沒有夠格的獨立效果證據」——OpenSpec 的**流程可信、效果未經實證**，採用前請把它當「協作結構」而非「已證明的提效方案」。
 
-本頁內容來自 deep-research（2026-07-16，5 路平行搜尋＋每條主張 3 票對抗式查證）。除另註明外，各條皆 **3-0 通過驗證、強度 high**，且來自一手來源（官方 GitHub docs 的 main 分支、openspec.dev、npm registry）。
+本頁基礎內容來自 deep-research（2026-07-16，5 路平行搜尋＋每條主張 3 票對抗式查證）。除另註明外，各條皆 **3-0 通過驗證、強度 high**，且來自一手來源（官方 GitHub docs 的 main 分支、openspec.dev、npm registry）。
+
+**2026-07-21 更新**：依官方 [opsx.md](https://github.com/Fission-AI/OpenSpec/blob/main/docs/opsx.md)（已落地 `raw/fetched/OpenSpec-OPSX-Workflow.md`）、[CHANGELOG](https://github.com/Fission-AI/OpenSpec/blob/main/CHANGELOG.md) 與 npm registry 重寫工作流、設定與 schema 三節。**強度說明**：這輪是一手官方文件的直讀比對，**未再跑對抗式多票查證**；官方文件對自家行為的描述可信度高（強度 high），但「這樣做讓 agent 做得更好」的效果宣稱仍**無獨立證據**，前述警告不變。
+
+## 版本現況（2026-07-21，high）
+
+npm `@fission-ai/openspec` 最新為 **1.6.0**（2026-07-10 發佈）。**本頁早期內容寫於 0.x 時代，1.x 後最重要的變化是 OPSX 從實驗選項變成標準工作流**，舊的 `/openspec:*` 指令降級為 legacy 對照組。版本號會續動，具體以官方 changelog 為準。
 
 ## 安裝與初始化（high）
 
@@ -81,25 +87,58 @@ openspec/
 
 concepts.md 逐字：*"Specs are the source of truth — they describe how your system currently behaves."* / *"Changes are proposed modifications — they live in separate folders until you're ready to merge them."*
 
-## 工作流：終端機 2 步 + 聊天室 N 步（high）
+## 工作流：OPSX（high）
 
 官方原話：*"Steps 1 and 2 happen in your terminal. The rest happen in your AI assistant's chat."* 前兩步（安裝、初始化）在**終端機**，其餘全在 **AI 助理聊天室**中透過 `/opsx:` 斜線指令進行。
 
-core profile 五步序列：
+**核心設計是「actions, not phases」**：OPSX 官方對 legacy 流程的批評是它「locked down」——指令硬編在 TypeScript 裡改不動、一個大指令一次生成全部、輸出不好也無法調 prompt。OPSX 把模板外部化成 YAML + Markdown，並用 artifact DAG 取代線性 phase gate。官方對這個設計動機說得直白：*"work isn't linear. OPSX stops pretending it is."*
 
-```
-/opsx:explore ──► /opsx:propose ──► /opsx:apply ──► /opsx:sync ──► /opsx:archive
+Artifact 依賴圖（`design` 可跳過；依賴是 **enabler 不是 gate**，任何 artifact 隨時可回頭改）：
+
+```mermaid
+graph TD
+    proposal --> specs
+    proposal --> design
+    specs --> tasks
+    design --> tasks
+    tasks --> implement[apply / 實作]
 ```
 
-| 步驟 | 做什麼 |
+狀態機不看 phase，只看**檔案系統上檔案存在與否**：`BLOCKED`（缺依賴）→ `READY`（依賴皆 done）→ `DONE`（檔案已存在）。agent 執行時是先 `openspec status --change <name> --json` 查狀態、再 `openspec instructions <artifact> --json` 取該 artifact 的模板與依賴路徑，而非收一份靜態指令——這是它與 legacy 在資訊流上的根本差異。
+
+### 兩種 profile（1.x 起，high）
+
+預設是 **core profile**；expanded 需以 `openspec config profile` 設定並跑 `openspec update` 才會產出。
+
+| Profile | 指令 |
 |---|---|
-| **explore** | （可選但建議）規劃前的思考夥伴——**不產 artifact、不寫碼**，只釐清方向 |
-| **propose** | 建立變更目錄，產出 `proposal.md`、`specs/`（delta）、`design.md`、`tasks.md` |
-| **apply** | 實作 tasks.md 裡的任務 |
-| **sync** | 把 delta specs 套用回主 specs |
-| **archive** | 最終合併並移入 `archive/` |
+| **core**（預設） | `explore`、`propose`、`apply`、`update`、`sync`、`archive` |
+| **expanded**（需設定） | 另加 `new`、`continue`、`ff`、`verify`、`bulk-archive`、`onboard` |
 
-Artifact 產生順序為 `proposal → specs → design → tasks → implement`，各階段建構在前者脈絡上，但是「dependency enablers」而**非 rigid gates**：`design` 可跳過；`specs` 與 `design` 都只依賴 `proposal`；`tasks` 依賴 `specs`，並在 `design` 存在時一併依賴它（`design` 被跳過時則僅依賴 `specs`）。
+| 指令 | 做什麼 |
+|---|---|
+| **explore** | 規劃前的思考夥伴——**不產 artifact、不寫碼**，只釐清方向、比較選項 |
+| **propose** | 預設快捷路徑：建立變更並**一次生成**實作前所需的規劃 artifact |
+| **apply** | 實作 tasks，過程中可順手更新 artifact |
+| **update** | **1.6.0 新增**：就地修訂既有變更的規劃 artifact 並保持彼此一致（改 design 可回溯波及 proposal）。邊界很明確——**只碰規劃 artifact，絕不改程式碼，也不補建缺漏的 artifact**（那是 `continue` 的事），且每筆編輯都先與你確認 |
+| **sync** | 把 delta specs 套回主 specs；在預設流程中為**可選** |
+| **archive** | 完成後封存，**必要時會提示你先 sync** |
+| **new / continue / ff** | expanded：只搭骨架／一次生一個 artifact／一口氣生完全部規劃 artifact |
+| **verify / bulk-archive / onboard** | expanded：對照 artifact 驗證實作／批次封存／端到端導覽 |
+
+官方的取捨提示：**想清楚了用 `ff`，還在摸索用 `continue`**；`apply` 過程中發現不對，就直接改該 artifact 再繼續。
+
+### 該改既有變更還是另開新的（medium）
+
+官方就此給了一組判準，原則是 **"Update preserves context. New change provides clarity."**：
+
+| 判準 | 改既有 | 另開新的 |
+|---|---|---|
+| **意圖（intent）** | 同一個問題，只是執行細化 | 問題本身變了 |
+| **範圍重疊** | >50% 重疊 | <50% 重疊 |
+| **可完成性** | 不含這些改動就不算做完 | 原變更可先標完成，新工作能獨立存在 |
+
+典型「該改」：發現邊界情況、範圍收斂成 MVP、實作後才知道 codebase 結構與預想不同。典型「該另開」：`Add dark mode` 膨脹成 `完整主題系統`、`Fix login bug` 變成 `重寫 auth`。標為 medium 是因為這是官方的**經驗法則**、非可驗證的機制行為。
 
 ## CLI 指令（high）
 
@@ -111,12 +150,66 @@ Artifact 產生順序為 `proposal → specs → design → tasks → implement`
 | `openspec archive [change-name]` | 封存完成的 change，把 delta spec 合併回主 specs |
 | `openspec update` | 升級 CLI 後刷新產生的整合檔 |
 | `openspec list` | 列出項目 |
+| `openspec status --change <name> [--json]` | 查該變更各 artifact 的 blocked/ready/done 狀態（skill 內部即靠它） |
+| `openspec instructions <artifact> --change <name> --json` | 取該 artifact 的模板、依賴路徑與「完成後解鎖什麼」 |
+| `openspec config profile` | 切換 core／expanded 指令集（改完要跑 `openspec update`） |
+| `openspec schemas` / `openspec schema which [--all]` | 列出可用 schema／查 schema 從哪解析而來 |
+| `openspec schema init\|fork\|validate <name>` | 新建／從既有 schema 分叉／驗證自訂 schema |
 
 `init` 的 `--tools` 選項接受 `all` / `none` / 逗號分隔清單（如 `claude,codex,cursor,gemini`），支援 `claude`、`cursor`、`github-copilot` 等 30+ 工具。
 
 **舊語法已 deprecated**：noun-based 的 `openspec change ...` 已改為 verb-based 的 `openspec new change ...`。
 
 來源：[cli.md](https://github.com/Fission-AI/OpenSpec/blob/main/docs/cli.md)。
+
+## 專案設定 `openspec/config.yaml`（high）
+
+在 `openspec init` 時可選擇建立（官方建議建）。作用是**設預設值，並把專案脈絡注入所有 artifact 的指令裡**——等於把「這個 repo 的技術棧與規約」一次講給 agent 聽，不必每次在對話裡重述。
+
+```yaml
+schema: spec-driven
+
+context: |
+  Tech stack: TypeScript, React, Node.js
+  API conventions: RESTful, JSON responses
+  Testing: Vitest for unit tests, Playwright for e2e
+
+rules:
+  proposal:
+    - Include rollback plan
+  specs:
+    - Use Given/When/Then format for scenarios
+```
+
+| 欄位 | 型別 | 作用 |
+|---|---|---|
+| `schema` | string | 新變更的預設 schema |
+| `context` | string | 注入**所有** artifact 指令的專案脈絡，包在 `<context>` 標籤裡 |
+| `rules` | object | 依 artifact ID 分別注入的規則，包在 `<rules>` 標籤裡，排在 context 之後、模板之前 |
+
+**schema 解析優先序**（高到低）：CLI `--schema` 旗標 → 變更目錄內的 `.openspec.yaml` → 專案 `config.yaml` → 預設 `spec-driven`。
+
+實務門檻：檔名必須是 `config.yaml`（**`.yml` 不吃**）；`context` 有 **50KB 上限**，超過要改成摘要或外連；`rules` 裡寫錯 artifact ID 只會發警告不會擋，可用 `openspec schemas --json` 對照正確 ID；改完立即生效、不需重啟。
+
+## 自訂 schema（high）
+
+這是 OPSX 相對 legacy 最實質的開放點：**artifact 種類與依賴自己定**，不必等官方發版。
+
+```yaml
+name: research-first
+artifacts:
+  - id: research
+    generates: research.md
+    requires: []
+  - id: proposal
+    generates: proposal.md
+    requires: [research]   # 強制先研究才准提案
+  - id: tasks
+    generates: tasks.md
+    requires: [proposal]
+```
+
+schema 放 `openspec/schemas/`（專案內、進版控）或 `~/.local/share/openspec/schemas/`（使用者全域），一個 schema 一個資料夾，內含 `schema.yaml` 與 `templates/*.md`。目前官方只附 **spec-driven** 一個內建 schema。
 
 ## 與 AI Coding Agent 整合（high）
 
@@ -129,7 +222,9 @@ OpenSpec 原生整合 **30+ 種 AI 助理**（官方 [supported-tools.md](https:
 | **Claude Code** | `.claude/skills/openspec-*/`（skill 檔）與 `.claude/commands/opsx/<id>.md` |
 | **Cursor** | `.cursor/commands/opsx-*`（部分用 `.cursor/rules`） |
 
-31 個工具中 28 個產生 tool-specific 命令檔，僅 3 個用 skill-based fallback。（工具數字在不同頁面有 20+/25+/30+/40 的浮動，但實際列舉穩定在 31 個，「30+」為準確下界。）
+31 個工具中 28 個產生 tool-specific 命令檔，僅 3 個用 skill-based fallback。（工具數字在不同頁面有 20+/25+/30+/40 的浮動，但實際列舉穩定在 31 個，「30+」為準確下界；1.4–1.6 又陸續補進 Kimi CLI、Mistral Vibe、TRAE、Oh My Pi，總數仍在長。）
+
+**1.6.0 起 CLI 呼叫免逐次授權**：所有產生的 `SKILL.md` 與 Claude Code 的 `/opsx:*` 指令檔，frontmatter 都帶 `allowed-tools: Bash(openspec:*)`。遵循 [Agent Skills](https://agentskills.io) 標準的 agent 會據此自動放行 `openspec` 指令，不再每次跳授權；不認得這個欄位的工具則忽略。**範圍僅限 `openspec` CLI**——該欄位是預先核准而非限制，skill 用到的其他工具仍走你原本的權限設定。
 
 ## 最佳實踐（medium／secondary 來源）
 
@@ -140,18 +235,24 @@ OpenSpec 原生整合 **30+ 種 AI 助理**（官方 [supported-tools.md](https:
 - **Spec 寫法**：用 **Given/When/Then** 具體場景取代模糊形容詞——這樣才能成為 AI 的實作契約。
 - **Scope 管理**：**多個小 change 勝過單一大 change**。
 
+## Stores（very early beta，medium）
+
+1.5.0（2026-06-28）引入的 **stores**，官方定位是「組織 specs 與 changes 的更簡單模型」，**取代先前的 workspace 與 initiative 模型**。官方自標 *"very early beta — expect rough edges and breaking changes in upcoming releases"*，1.6.0 仍在修它的建立時序 bug。**結論：知道它存在即可，不建議現在押上去**；細節待穩定後回查。標 medium 是因為除 changelog 的一句定位外，尚無成篇文件可佐證其實際模型。
+
 ## 時效性警告
 
-- **命令命名有版本漂移**：文件同時出現舊前綴 `/openspec:proposal` 與新前綴 `/opsx:propose`；引用具體斜線指令前回查你安裝版本的官方 docs。
+- **命令命名的版本漂移已收斂但仍需留意**：`/opsx:*` 是現行標準，`/openspec:*` 為 legacy；舊教學與舊部落格多半仍寫舊前綴。引用具體斜線指令前回查你安裝版本。
+- **指令是否存在取決於 profile**：`new`／`continue`／`ff`／`verify`／`bulk-archive`／`onboard` 在預設 core profile 下**不會生成**，照抄 expanded 範例會找不到指令。
 - **archive 位置**在 v0.17.2 曾有 doc/command 不一致（issue #412），但正典結構確為 `changes/archive/`。
 - 版本號（Node 20.19+、套件版本）會隨迭代變動，行為關鍵處以官方 changelog 為準。
 
-## 未解問題（本輪未查證充分）
+## 未解問題
 
-- `/opsx:sync` 與 `/opsx:archive` 的確切分工邊界——來源僅粗略描述。
-- `openspec/config.yaml` 的可設定欄位與 schema——只確認存在且為 optional。
-- delta specs 的 `ADDED/MODIFIED/REMOVED/RENAMED` 實際撰寫格式與 `validate` 的具體檢查規則。
-- README 提及的 **'Stores (beta)'** 是什麼——屬新功能，未查證。
+- delta specs 的 `ADDED/MODIFIED/REMOVED/RENAMED` 實際撰寫格式與 `validate` 的具體檢查規則——仍未查證。1.6.0 的 changelog 顯示 `validate` 的 requirement 解析在 1.6.0 有一輪大修（fence／metadata／多行 keyword 的處理），故舊版行為描述不可直接沿用。
+- stores 的實際資料模型與遷移路徑（見上節）。
+- ~~`/opsx:sync` 與 `/opsx:archive` 的分工~~ — 2026-07-21 已解：`sync` 把 delta 套回主 specs、在預設流程中為可選；`archive` 封存時會在需要時提示先 sync。
+- ~~`config.yaml` 欄位與 schema~~ — 2026-07-21 已解，見「專案設定」一節。
+- ~~Stores 是什麼~~ — 2026-07-21 已部分解答，見上節。
 
 ## 相關頁面
 

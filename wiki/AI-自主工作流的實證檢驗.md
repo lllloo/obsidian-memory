@@ -2,7 +2,7 @@
 title: AI 自主工作流的實證檢驗
 description: spec-driven、長時自主 loop、驗證迴路、狀態持久化四類做法的證據盤點——vendor 敘事與獨立實證的落差，以及必須停止引用的空氣數字
 created: 2026-07-10
-updated: 2026-07-20
+updated: 2026-07-21
 parent: "[[wiki/01.index]]"
 tags:
   - ai-agent
@@ -51,7 +51,7 @@ agent 能以 50% 可靠度完成的任務長度，過去六年約**每 7 個月�
 
 ### Spec-driven development
 
-流程結構（**high**，多來源一致）：Spec Kit 走 `constitution → specify → clarify → plan → tasks → analyze → implement`；Kiro 三檔（需求／設計／任務）最輕量；[[OpenSpec]] 定位為 Spec Kit 的輕量替代（explore（可選）→ propose → apply → sync → archive，見專屬頁）；Tessl 唯一朝 spec-as-source 走；BMAD 最重、最強調角色編排，走 Analyst→PM→PO→Architect→Scrum Master→Developer→QA 的多 agent 鏈（story files 在角色間交接），各角色是帶「互動指示」的 YAML 模板，靠 advanced elicitation（六頂帽子、五個 W、事後諸葛 hindsight-2020 等結構化提問法）逼 LLM 產出離開語料平均值，並把 PRD／架構大文件 shard 成小檔供下游 dev agent 按需載入、控 context 膨脹。
+流程結構（**high**，多來源一致）：Spec Kit 走 `constitution → specify → clarify → plan → tasks → analyze → implement`；Kiro 三檔（需求／設計／任務）最輕量；[[OpenSpec]] 定位為 Spec Kit 的輕量替代（預設 core profile：explore（可選）→ propose → apply → sync（可選）→ archive；1.x 起改採「actions not phases」的 artifact DAG，依賴是 enabler 而非 phase gate，可隨時回頭改任一 artifact，見專屬頁）；Tessl 唯一朝 spec-as-source 走；BMAD 最重、最強調角色編排，走 Analyst→PM→PO→Architect→Scrum Master→Developer→QA 的多 agent 鏈（story files 在角色間交接），各角色是帶「互動指示」的 YAML 模板，靠 advanced elicitation（六頂帽子、五個 W、事後諸葛 hindsight-2020 等結構化提問法）逼 LLM 產出離開語料平均值，並把 PRD／架構大文件 shard 成小檔供下游 dev agent 按需載入、控 context 膨脹。
 
 **Kiro 的流程細節**（2026-07-17 deep-research 補；**弱～中，廠商自述流程模型、無獨立採用佐證**，查證者對標「中」或「弱」有分歧，此處從嚴取弱）：三階段 **Requirements（或 Bug Analysis）→ Design → Tasks**，每階段**以一份具名 markdown 落地為推進界標**（`requirements.md`／`bugfix.md`、`design.md`、`tasks.md`），**階段間預設人為核准閘門**（3-0）。官方另明列適用／不適用條件（Specs vs Vibe）與 Requirements-First／Design-First 兩種順序變體（3-0）。這是本輪唯一拿到「何時該用、何時不該用、如何選路」三欄俱全的 spec-driven 實例，可當設計自家流程時的**參照藍本**——但它是 Kiro 一家的實例，**不是 spec-driven 的通用定義**；且 Kiro 是活產品文件，流程隨時可能變動。
 
