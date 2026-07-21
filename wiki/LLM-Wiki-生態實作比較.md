@@ -100,3 +100,4 @@ tags:
 - 工具清單化延伸：[[Memory-Atlas]]——本頁「相鄰路線」一段所列的 markdown+git 家族，該頁有帶授權與自建難度的中立完整清單；九個收錄中 MemSearch、ai-memory、DiffMem 三個已在本頁展開
 - PKM 實踐面：[[第二大腦實踐與本-vault-優化]]——從個人知識管理（PKM）實踐角度、以 agentic memory 視角連向本頁的維護風險與收斂設計討論。
 - 來自向量記憶陣營的同構佐證：[[Mem0]]——mem0 自家 repo 的 [discussion #4051](https://github.com/mem0ai/mem0/discussions/4051) 有人推薦 `MEMORY.md`＋git 作輕量替代，與本頁「markdown＋git as memory」家族近乎同構；值得記的是它自劃的界線（在「大量語意檢索」會斷、在「agent 接上進度」剛好），可與上方 Zep 的反方立場對讀。該頁另記錄向量／自動抽取路線的實測失效模式（抽取污染、幻覺自我複製），是本家族「markdown 不自動抽取」取捨的反面對照。
+- 生態的評分空白：[[LLM-as-judge-知識庫頁面評分]]——本頁掃各實作**怎麼寫、怎麼檢索**，該頁查的是「有沒有人在衡量寫得好不好」，結論是本輪查證零產出（證據空白非不存在）；既有 eval harness 的資料模型皆無「一組互相連結的文件」概念，與本頁掃到的生態現況一致。
