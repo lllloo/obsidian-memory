@@ -1,7 +1,7 @@
 ---
 title: 確認 OpenSpec 狀態
 created: 2026-05-21
-updated: 2026-06-02
+updated: 2026-07-21
 tags:
   - claude-code
   - agent-framework
@@ -40,3 +40,5 @@ OpenSpec 提供幾個指令確認當前 specs / changes 狀態，分工不同—
 ```
 
 CLI 沒有自動補 Purpose 的指令（Purpose 是需求陳述，CLI 不會幫你猜）。修完跑 `openspec validate --all --strict`，應全綠。
+
+> 2026-07-21 對 1.6.0 實測複核：本頁指令分工與 `requirements 0` 判讀全數仍成立（parser 缺 `## Purpose` 直接放棄整份 spec）。唯一變化是 `validate` 的訊息變好了——現在會直接說「Ensure spec includes ## Purpose and ## Requirements sections」並附範例，不必再從 `requirements 0` 反推。
