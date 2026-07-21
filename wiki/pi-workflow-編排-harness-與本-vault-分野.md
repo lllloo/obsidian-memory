@@ -2,7 +2,7 @@
 title: pi-workflow 編排 harness 與本 vault 的分野
 description: 把命名工作流 CLI 定位為編排層，對照知識組織層的職責，評估既有工具覆蓋、可借鑑處與不引入理由
 created: 2026-07-15
-updated: 2026-07-17
+updated: 2026-07-21
 source: "https://github.com/AgwaB/pi-workflow"
 published: ""
 parent: "[[wiki/01.index]]"
@@ -56,3 +56,4 @@ tags:
 - [[LLM-Wiki-知識管理模式]]——本 vault 知識層的設計原型，pi-workflow 不觸及的那一層。
 - [[Agent-Harness-Engineering-框架綜述]]——harness 工程的 workflows/agents 二分綜述，本頁「編排職能已被 harness 覆蓋」的定位即座落於此主軸。
 - [[Context-優先與多-agent-的適用邊界]]——多 agent 何時才划算的判準頁（含 Cognition／MAST 反面實證），支撐本頁「先鋪一層命名 workflow 違反反過度工程紀律」的論點。
+- [[Agent-工作流-Pattern-藍本庫]]——該頁第二層把 workflow／agent 的分野定在「branches 與 stop conditions 在執行前是否靜態可知」，與本頁用來定位 pi-workflow 的「路徑預先定義」是同一判準的兩種表述；本頁把該判準套到單一工具上，該頁則給出跨來源的 pattern 挑選清單與各自失效邊界。

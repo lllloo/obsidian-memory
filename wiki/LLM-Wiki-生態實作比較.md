@@ -2,7 +2,7 @@
 title: LLM Wiki 生態實作比較
 description: nvk、Hermes、Astro-Han 等 Karpathy LLM Wiki 實作與 Letta MemFS 等相鄰記憶系統的收斂設計、分歧點與實證證據對照
 created: 2026-07-10
-updated: 2026-07-20
+updated: 2026-07-21
 parent: "[[wiki/01.index]]"
 tags:
   - wiki
@@ -85,3 +85,4 @@ tags:
 - 編排層分野：[[pi-workflow-編排-harness-與本-vault-分野]]——本頁比的是知識層實作，該頁補的是 pi-workflow 這類工作流編排 harness 屬「編排層」、與本 vault 知識層的分野。
 - 跨 repo 應用：[[跨專案第二大腦整合模式]]——把本頁「近期/熱脈絡層承載光譜」的結論（不建獨立熱檔、改用 index 有界近期區塊）延伸到跨 repo 知識交接模式，並與本頁共同承載 hot.md 不採用的取捨理由。
 - PKM 實踐面：[[第二大腦實踐與本-vault-優化]]——從個人知識管理（PKM）實踐角度、以 agentic memory 視角連向本頁的維護風險與收斂設計討論。
+- 來自向量記憶陣營的同構佐證：[[Mem0]]——mem0 自家 repo 的 [discussion #4051](https://github.com/mem0ai/mem0/discussions/4051) 有人推薦 `MEMORY.md`＋git 作輕量替代，與本頁「markdown＋git as memory」家族近乎同構；值得記的是它自劃的界線（在「大量語意檢索」會斷、在「agent 接上進度」剛好），可與上方 Zep 的反方立場對讀。該頁另記錄向量／自動抽取路線的實測失效模式（抽取污染、幻覺自我複製），是本家族「markdown 不自動抽取」取捨的反面對照。

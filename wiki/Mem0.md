@@ -49,7 +49,7 @@ CLI（`@mem0/cli`）**不是替代品**：原始碼 `cli/node/src/plugin-sync.ts
 | `SessionStart` | 啟動／resume／compact 後 | 1 count＋背景 import＋誘發 agent 2 次 search |
 | `PreCompact` | 壓縮前 | 1 add |
 
-**「task completion」＝ `Stop`，即每輪回應**，不是粗粒度的任務完成。綁死額度的是 retrieval（免費層 1,000/月）而非 add（10,000/月），因為 agent 讀檔頻率遠高於使用者發話。可關的旋鈕只有 `MEM0_AUTO_SAVE=false`、`MEM0_PREFETCH=false`；**Read 與 Bash 兩條無開關**，只能改 `hooks.json`。
+**「task completion」＝ `Stop`，即每輪回應**，不是粗粒度的任務完成。綁死額度的是 **retrieval 而非 add**，因為 agent 讀檔頻率遠高於使用者發話——查證當時免費層為 retrieval 1,000／月、add 10,000/月（2026-07-20 快照，廠商額度隨方案調整，實際數字回官方定價頁查；此處要記的是**兩者數量級差一個級距**這個結構，不是具體數字）。可關的旋鈕只有 `MEM0_AUTO_SAVE=false`、`MEM0_PREFETCH=false`；**Read 與 Bash 兩條無開關**，只能改 `hooks.json`。
 
 另注意：`/mem0:onboard` 會「Detects and imports project files (`CLAUDE.md`, `AGENTS.md`, `.cursorrules`)」，且**在新專案首次 session 自動觸發**，不是只有手動才跑。
 

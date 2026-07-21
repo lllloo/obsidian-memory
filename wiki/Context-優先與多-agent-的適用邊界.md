@@ -2,7 +2,7 @@
 title: Context 優先與多 agent 的適用邊界
 description: 以 Anthropic、Cognition 與 MAST 證據界定多 agent 的效益與代價，建立 context 優先的實務決策判準
 created: 2026-07-14
-updated: 2026-07-20
+updated: 2026-07-21
 parent: "[[wiki/01.index]]"
 tags:
   - ai-agent
@@ -81,4 +81,5 @@ vault 外的獨立證據，界定「多 agent 何時反而更糟」：
 - 方法對照：[[多智能體研究系統-Anthropic]]——該頁是「多 agent 划算」的成功案例，本頁界定它成立的**適用域邊界**（讀重、可平行）。
 - 證據平衡：[[Agent-Harness-Engineering-框架綜述]]——該頁自陳「來源集中 Anthropic」，本頁引入 Cognition／MAST 兩個非 Anthropic 來源，是對那條證據限制的直接補救。
 - 實證脈絡：[[AI-自主工作流的實證檢驗]]——同屬「vendor 敘事 vs 獨立實證」的檢驗路線；本頁的 MAST 失敗率可與該頁的長任務可靠度崩落並讀。
+- 判準的單一工具落地：[[pi-workflow-編排-harness-與本-vault-分野]]——該頁援引本頁（含 Cognition／MAST 反面實證）支撐「不引入一整套命名 workflow 機制」的反過度工程判斷，是本頁「編排需求未必要落成專用機制」在具體工具評估上的一次應用。
 - 成本落地：[[LLM-方案定價與-coding-agent-比較]]——本頁「多 agent 約 15 倍 token」是相對成本，該頁給 coding agent 訂閱月費與 API 按量單價的絕對數字，合看「要不要堆 agent」與「這樣花多少錢」兩個決策軸。

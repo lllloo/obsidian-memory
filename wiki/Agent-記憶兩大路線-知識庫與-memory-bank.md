@@ -2,7 +2,7 @@
 title: Agent 記憶的兩大路線：知識庫與 memory bank
 description: 比較編譯式知識庫與 coding-agent memory bank 的目的、組織、讀取契約、維護方式及適用邊界
 created: 2026-07-14
-updated: 2026-07-17
+updated: 2026-07-20
 parent: "[[wiki/01.index]]"
 tags:
   - ai-agent
