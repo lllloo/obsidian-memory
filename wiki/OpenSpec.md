@@ -20,7 +20,7 @@ tags:
 
 本頁基礎內容來自 deep-research（2026-07-16，5 路平行搜尋＋每條主張 3 票對抗式查證）。除另註明外，各條皆 **3-0 通過驗證、強度 high**，且來自一手來源（官方 GitHub docs 的 main 分支、openspec.dev、npm registry）。
 
-**2026-07-21 更新**：依官方 [opsx.md](https://github.com/Fission-AI/OpenSpec/blob/main/docs/opsx.md)（已落地 `raw/fetched/OpenSpec-OPSX-Workflow.md`）、[CHANGELOG](https://github.com/Fission-AI/OpenSpec/blob/main/CHANGELOG.md) 與 npm registry 重寫工作流、設定與 schema 三節。**強度說明**：這輪是一手官方文件的直讀比對，**未再跑對抗式多票查證**；官方文件對自家行為的描述可信度高（強度 high），但「這樣做讓 agent 做得更好」的效果宣稱仍**無獨立證據**，前述警告不變。
+**2026-07-21 更新**：依官方 [opsx.md](https://github.com/Fission-AI/OpenSpec/blob/main/docs/opsx.md)（已落地 [[OpenSpec-OPSX-Workflow]]）、[CHANGELOG](https://github.com/Fission-AI/OpenSpec/blob/main/CHANGELOG.md) 與 npm registry 重寫工作流、設定與 schema 三節。**強度說明**：這輪是一手官方文件的直讀比對，**未再跑對抗式多票查證**；官方文件對自家行為的描述可信度高（強度 high），但「這樣做讓 agent 做得更好」的效果宣稱仍**無獨立證據**，前述警告不變。
 
 ## 版本現況（2026-07-21，high）
 
