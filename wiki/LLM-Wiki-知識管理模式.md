@@ -2,7 +2,7 @@
 title: LLM Wiki 知識管理模式
 description: Karpathy 提出的個人知識庫模式：LLM 漸進維護一套互聯 markdown wiki，把知識編譯一次後持續維護，與每次查詢重新檢索的 RAG 形成對比
 created: 2026-07-08
-updated: 2026-07-17
+updated: 2026-07-23
 parent: "[[wiki/01.index]]"
 tags:
   - wiki
@@ -46,7 +46,7 @@ schema 是關鍵設定：它讓 LLM 成為**有紀律的 wiki 維護者**，而�
 - **index.md**（內容導向）：wiki 內容目錄，每頁一連結＋一行摘要，按類別分組，每次 ingest 更新；查詢先讀它找頁再鑽細節。在中等規模（約 100 來源、數百頁）意外好用，免掉 embedding RAG 基建。
 - **log.md**（時序導向）：append-only 記錄 ingest／query／lint。若每筆用一致前綴（如 `## [YYYY-MM-DD] ingest | 標題`），可用 `grep`／`tail` 等 unix 工具解析。
 
-> 本 vault 保留了 `index.md`，但依自身治理選擇省略 `log.md`；差異屬實作決定，非模式本體。
+> 本 vault 保留了 `01.index.md`（非 Karpathy 原始慣例的 `index.md` 檔名），但依自身治理選擇省略 `log.md`；差異屬實作決定，非模式本體。
 
 ## 為何有效
 

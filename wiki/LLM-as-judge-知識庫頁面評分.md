@@ -1,8 +1,8 @@
 ---
 title: LLM-as-judge 知識庫頁面評分
-description: 用 LLM-as-judge 給 wiki 頁打分的方案地景與方法學約束：現成工具、rubric 決定信度、self-preference bias 匿名化擋不住，以及本 vault 實測分辨力不足
+description: LLM-as-judge 給 wiki 頁打分：rubric 決定信度、self-preference bias 匿名化擋不住，本 vault 實測分辨力不足
 created: 2026-07-21
-updated: 2026-07-22
+updated: 2026-07-23
 parent: "[[wiki/01.index]]"
 tags:
   - evaluation
