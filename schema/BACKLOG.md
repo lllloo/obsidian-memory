@@ -1,7 +1,7 @@
 ---
 title: Vault Lint Backlog
 created: 2026-07-13
-updated: 2026-07-21
+updated: 2026-07-22
 tags:
   - meta
   - lint
@@ -50,6 +50,7 @@ _(目前無項目)_
 - RESEARCH-GAP | agent 知識庫專案的內建品質評分 | 2026-07-21 兩輪 deep-research 均零產出,第二輪明確記錄**證據鏈中從未讀過任何目標 repo**(nvk／Hermes `llm-wiki` skill／llm-wiki-kit／wiki-garden／Wuphf／ai-memory／DiffMem／nashsu-llm_wiki／Cline Memory Bank／Letta MemFS／Mem0／ReMe／Basic Memory)——兩輪都敗在預算耗於前面的塊。屬「未查到」非「已排除」。**重跑時不要派搜尋 agent,直接 clone／讀 README 與原始碼**,這是唯一沒試過的方法。缺口已就地記在 `wiki/LLM-as-judge-知識庫頁面評分.md`。另注:該輪 verifier 曾誤報「54.7%／AUROC 75.1% 來源不明」,實為查錯論文(其出處 arXiv 2509.23233 不在其查核範圍),`wiki/Agent-維護知識庫的已知失效模式.md` 的引用不受影響,**勿據該誤報改動該頁**
 - STALE | `wiki/LLM-方案定價與-coding-agent-比較.md` | 孤立已修(補 2 條反鏈);定價數字仍為 2026-05~07 快照,頁面已標「回官網查」,agent 判**不值得例行 re-fetch**(11+ 廠商即時價、月月再過期)——要新快照再指示
 - RAWGAP | `raw/clippings/` | 現存 clippings 全數判定已消化、無待 ingest(機械層仍逐篇 flag 因未加 wikilink;此為判斷錨點);首見 2026-07-13,最後結清 2026-07-16
+- RAWGAP | `raw/fetched/OpenSpec-OPSX-Workflow.md` | opsx.md 已於 2026-07-21 消化進 `wiki/OpenSpec.md`(工作流／設定／schema 三節重寫,該頁第 23 行明載);機械層因該 wiki 頁 `source` 指主 repo 非 opsx.md 而續 flag,此為已消化錨點;首見 2026-07-22
 - 維持現狀:無 in-vault 全文搜尋(21 頁 Grep 夠用)、evals 覆蓋不均(邊際價值低)
 
 ## 已修退場紀錄(精簡,細節見 git log)
