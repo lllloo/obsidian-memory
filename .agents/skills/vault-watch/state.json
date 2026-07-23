@@ -43,5 +43,18 @@
     "last_official_id": null,
     "last_official_at": null,
     "checked_ts": "2026-07-16T01:30:37Z"
+  },
+  "openai/codex#34002": {
+    "type": "issue",
+    "state": "open",
+    "labels": [
+      "CLI",
+      "config",
+      "enhancement"
+    ],
+    "title": "Feature request: support .codex/rules/ directory with path-scoped conditional loading (like Claude Code's  .claude/rules/)",
+    "last_official_id": null,
+    "last_official_at": null,
+    "checked_ts": "2026-07-23T03:00:46Z"
   }
 }
