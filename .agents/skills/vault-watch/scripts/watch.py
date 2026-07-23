@@ -157,8 +157,10 @@ def main():
         if err:
             print(f"ERROR|{ref}|{err}", flush=True)
             continue
-        snap["checked_ts"] = checked_ts
-        snap["checked_date"] = checked_date
+        # checked_ts 是抓新官方留言的 since 游標；無實質變化的一輪不推進它，也不寫任何純裝飾的
+        # 日期欄，讓 state.json 在 quiet round 產出 byte-identical、不留要 commit 的 churn。
+        # 有 CHANGE（含首見 new）才推進到現在，順帶收窄下輪的留言抓取窗。
+        snap["checked_ts"] = checked_ts if deltas else (prev or {}).get("checked_ts", checked_ts)
         state[ref] = snap
         title = collapse(snap["title"], 80)
         print(f"ITEM|{ref}|{snap['type']}|{snap['state']}|{title}", flush=True)

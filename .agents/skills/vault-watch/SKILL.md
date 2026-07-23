@@ -33,7 +33,7 @@ python3 .agents/skills/vault-watch/scripts/watch.py
 
 　　自訂看板路徑時加 `--index <path>`。
 
-6. 依 runbook 解讀 stdout：對每個 `ITEM` 就地更新看板列的「狀態」與「最後查核」；`changed>0` 時寫／追加當日 digest，`changed=0` 不寫檔。
+6. 依 runbook 解讀 stdout：**只更新這輪有 `CHANGE` 的看板列**（「狀態」「最後查核」），`NOCHANGE` 項不動；`changed>0` 時寫／追加當日 digest，`changed=0` 不寫檔、看板與 state.json 皆零 diff。
 7. `ERROR` 項照 runbook 保留舊狀態，於收尾回報列出原因。
 
 ## 固定回覆
