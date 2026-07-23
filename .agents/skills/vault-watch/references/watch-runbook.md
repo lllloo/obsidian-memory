@@ -27,8 +27,7 @@
 
 對每個帶 `CHANGE` 的 `ITEM`：在 `feeds/watch/01.index.md` 表格找到對應列（第一欄含該 `owner/repo#num`），用 Edit 更新：
 
-- 「狀態」欄 = 現 state；有 `official` 變化時加註官方回應狀態（如 `open · 官方已回應`）。
-- 「最後查核」欄 = SUMMARY 的 date（因此該欄實質記錄「最後一次有變化的日期」，非每輪心跳——run recency 看執行紀錄，不進 repo）。
+- 「狀態」欄 = 現 state；有 `official` 變化時加註官方回應狀態（如 `open · 官方已回應`）。看板只有 Issue／追蹤重點／狀態三欄，不記查核日期——使用者只關心「現在好了沒」，即狀態欄本身。
 - 有任何看板列被改時，一併把 frontmatter `updated` 設為 SUMMARY date；整輪零變化則連 frontmatter 都不動。
 
 `NOCHANGE` 項與 `ERROR` 項都不動看板列；`ERROR` 於收尾回報中列出失敗原因。

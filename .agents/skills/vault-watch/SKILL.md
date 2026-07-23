@@ -9,7 +9,7 @@ description: 追蹤一批 GitHub issue/PR 的狀態，定期用 gh 抓現況、�
 
 ## 產出
 
-- 看板（追蹤清單來源）：`feeds/watch/01.index.md`——一列一 issue，含目前狀態與最後查核日，skill 就地更新。
+- 看板（追蹤清單來源）：`feeds/watch/01.index.md`——一列一 issue，含目前狀態（Issue／追蹤重點／狀態三欄），skill 就地更新。
 - 變更 digest：`feeds/watch/<YYYY-MM-DD>-watch.md`——**有變化才寫**。
 - 快照：skill 目錄 `state.json`（機器資料檔，比對用，非 vault 筆記）。
 - 三者皆 browse-only feed，不屬三層系統，不進 raw/wiki、不參與 Ingest/Query/Lint。
@@ -33,7 +33,7 @@ python3 .agents/skills/vault-watch/scripts/watch.py
 
 　　自訂看板路徑時加 `--index <path>`。
 
-6. 依 runbook 解讀 stdout：**只更新這輪有 `CHANGE` 的看板列**（「狀態」「最後查核」），`NOCHANGE` 項不動；`changed>0` 時寫／追加當日 digest，`changed=0` 不寫檔、看板與 state.json 皆零 diff。
+6. 依 runbook 解讀 stdout：**只更新這輪有 `CHANGE` 的看板列**（狀態欄），`NOCHANGE` 項不動；`changed>0` 時寫／追加當日 digest，`changed=0` 不寫檔、看板與 state.json 皆零 diff。
 7. `ERROR` 項照 runbook 保留舊狀態，於收尾回報列出原因。
 
 ## 固定回覆
