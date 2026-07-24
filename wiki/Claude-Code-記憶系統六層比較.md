@@ -36,7 +36,7 @@ tags:
 | **3** 語意搜尋 | **memsearch**（Zilliz，移植自 OpenClaw）／ ClaudeMem | markdown + 語意向量 | UserPromptSubmit hook 自動注入 top-N 語意匹配 | 用超過一個月、檔案變多、關鍵字搜尋失效 |
 | **4** 逐字召回 | **MemPalace** | 本地 SQL（實體關係）+ Chroma vector（逐字分塊） | session end / pre-compaction hook 背景索引；記憶宮殿式定址 | 想找當初決策的「確切文字」 |
 | **5** 自組織知識庫 | **Karpathy LLM Wiki** ／ Recall（代管）／ LightRAG（企業級） | 純 markdown，raw + wiki 兩層 | 讀 index 找頁再鑽（無需 vector DB） | 定期消化文章/影片/podcast，要跨來源互聯的「第二大腦」 |
-| **6** 跨工具單一大腦 | **OpenBrain**（Nate Jones）／ Mem0 | OpenBrain：自有 Postgres（Supabase），`thoughts` 表 + embedding；Mem0：純雲端 SaaS，官方整合路徑無法指向自架後端（見下「取捨」節與 [[Mem0]]） | MCP server 當前門，各 AI 工具共用同一 DB | 跨多個 AI 工具（手機 ChatGPT、桌面 Claude Code…）要共用記憶 |
+| **6** 跨工具單一大腦 | **OpenBrain**（Nate Jones）／ Mem0 | OpenBrain：自有 Postgres（Supabase），`thoughts` 表 + embedding；Mem0：軟體可自架，但官方整合路徑（plugin／MCP／CLI）全連雲端、無法指向自架後端（見下「取捨」節與 [[Mem0]]） | MCP server 當前門，各 AI 工具共用同一 DB | 跨多個 AI 工具（手機 ChatGPT、桌面 Claude Code…）要共用記憶 |
 
 Level 1–3 資料夾結構相近、**可疊加同跑**；Level 5、6 屬不同領域（不只記憶對話，而是互聯知識 / 跨工具共腦）。
 
