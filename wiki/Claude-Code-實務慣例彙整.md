@@ -4,7 +4,7 @@ description: MUKI 整理 82 條 Claude Code 使用心法：計畫紀律、contex
 created: 2026-07-27
 updated: 2026-07-27
 source: https://mukiwu.github.io/claude-code-tips/claude-code-best-practice-cards.html
-published: 2026-04-20
+published: ""
 parent: "[[wiki/01.index]]"
 tags:
   - claude-code
