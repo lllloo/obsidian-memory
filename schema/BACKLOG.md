@@ -1,7 +1,7 @@
 ---
 title: Vault Lint Backlog
 created: 2026-07-13
-updated: 2026-07-22
+updated: 2026-07-27
 tags:
   - meta
   - lint
@@ -49,7 +49,10 @@ _(目前無項目)_
 
 - RESEARCH-GAP | agent 知識庫專案的內建品質評分 | 2026-07-21 兩輪 deep-research 均零產出,第二輪明確記錄**證據鏈中從未讀過任何目標 repo**(nvk／Hermes `llm-wiki` skill／llm-wiki-kit／wiki-garden／Wuphf／ai-memory／DiffMem／nashsu-llm_wiki／Cline Memory Bank／Letta MemFS／Mem0／ReMe／Basic Memory)——兩輪都敗在預算耗於前面的塊。屬「未查到」非「已排除」。**重跑時不要派搜尋 agent,直接 clone／讀 README 與原始碼**,這是唯一沒試過的方法。缺口已就地記在 `wiki/LLM-as-judge-知識庫頁面評分.md`。另注:該輪 verifier 曾誤報「54.7%／AUROC 75.1% 來源不明」,實為查錯論文(其出處 arXiv 2509.23233 不在其查核範圍),`wiki/Agent-維護知識庫的已知失效模式.md` 的引用不受影響,**勿據該誤報改動該頁**
 - STALE | `wiki/LLM-方案定價與-coding-agent-比較.md` | 孤立已修(補 2 條反鏈);定價數字仍為 2026-05~07 快照,頁面已標「回官網查」,agent 判**不值得例行 re-fetch**(11+ 廠商即時價、月月再過期)——要新快照再指示
-- RAWGAP | `raw/clippings/` | 現存 clippings 全數判定已消化、無待 ingest(機械層仍逐篇 flag 因未加 wikilink;此為判斷錨點);首見 2026-07-13,最後結清 2026-07-16
+- RAWGAP | `raw/clippings/` | 現存 clippings 全數判定已消化或不值得另開頁、無待 ingest(機械層仍逐篇 flag 因未加 wikilink;此為判斷錨點);首見 2026-07-13,最後結清 2026-07-27
+- RAWGAP | `raw/clippings/AI-做的設計，你能看出哪裡有問題嗎？.md` | 內容已於 `wiki/設計品質的可量化檢測.md` 消化(DeepGaze 眼動熱區／Flesch-Kincaid+WCAG／AI Agent 模擬使用者／Playwright CSS 四項檢測,逐一對應本片四段時間戳);首見 2026-07-27
+- RAWGAP | `raw/clippings/Copilot-的程式碼品質堪憂？GitHub-官方-spec-kit-登場，用規格驅動開發取代-Vibe-Coding.md`、`raw/clippings/The-Official-BMad-Method-Masterclass-(The-Complete-IDE-Workflow).md` | spec-kit／BMAD 主題已由 `wiki/AI-自主工作流的實證檢驗.md`、`wiki/OpenSpec.md` 以更優質的一手來源(GitHub discussions／issue)覆蓋;此二部 YouTube 二手導覽無新增查證價值,判不值得另開頁;首見 2026-07-27
+- RAWGAP | `raw/clippings/Harness-Engineering-到底是什麼？概念、實戰與爭議，一次全部講清楚.md` | 主題已由 `wiki/Agent-Harness-Engineering-框架綜述.md`(2026-07-10 deep-research、25 主張對抗式查證)完整覆蓋,該片為同主題二手中文導覽,權威性與詳盡度皆不及既有頁,判不值得另開頁;首見 2026-07-27
 - RAWGAP | `raw/fetched/OpenSpec-OPSX-Workflow.md` | opsx.md 已於 2026-07-21 消化進 `wiki/OpenSpec.md`(工作流／設定／schema 三節重寫,該頁第 23 行明載);機械層因該 wiki 頁 `source` 指主 repo 非 opsx.md 而續 flag,此為已消化錨點;首見 2026-07-22
 - 維持現狀:無 in-vault 全文搜尋(21 頁 Grep 夠用)、evals 覆蓋不均(邊際價值低)
 
@@ -64,6 +67,7 @@ _(目前無項目)_
 - _(2026-07-17 `vault-updates-daily` 雲端 routine 條目退場:使用者已自行排定並在跑。該條敘述經查有兩處誤述,勿據以重開——snapshot `.agents/skills/vault-updates-daily/starred-repos.txt` 早於 2026-07-04 存在且 tracked(非「須先本機跑一次」);且 `references/daily-runbook.md` 明載本 vault **刻意停用 starred 同步**(純雲端 atom fallback 遭 proxy 擋、結構性不通),故 snapshot 存在的理由不是「為雲端排程」。)_
 - _(2026-07-20 SKILL-STALE 退場:使用者核可動 skill,`.agents/skills/vault-lint/SKILL.md` 第 16 行「該 prompt 即使用者對 push 的明確同意」括號已刪——push 守門於 2026-07-20 移除後該依據不存在;「本 skill 不碰 git、由呼叫端決定 commit／PR」的設計本身不變。)_
 - _(2026-07-18 語意層續審由 tracked carryover 改為日期驅動的無狀態輪替;避免無發現時游標不前進、相同頁面反覆占滿 cap,同時維持安靜輪零檔案變更。)_
+- _(2026-07-27 例行健檢:RAWGAP 消化 `raw/clippings/Claude-Code-Best-Practice-—-Threads-Carousel-Cards.md` 為新頁 `wiki/Claude-Code-實務慣例彙整.md`,雙向回連 `wiki/Agent-Harness-Engineering-框架綜述.md`、`wiki/Claude-Code-記憶系統六層比較.md`;其餘 4 個 clipping 判定主題已被既有頁以更優來源覆蓋、不值得另開頁,記入 `Agent 已判`。語意層審 `wiki/LLM-as-judge-知識庫頁面評分.md`(當輪自查 21/22/23 頁數快照交錯,補澄清非筆誤)與 `wiki/Agent-記憶兩大路線-知識庫與-memory-bank.md`(修正 Letta 儲存機制自相矛盾描述:同頁一處誤稱「DB/SQLite-backed」、另一處正確稱「git-backed markdown MemFS」,已統一)。無新增待決項。)_
 
 ## 已婉拒
 

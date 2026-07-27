@@ -2,7 +2,7 @@
 title: Agent Harness Engineering 框架綜述
 description: 整合 Anthropic 工程論述與原始碼 taxonomy，梳理 agent 外圍基礎設施的範疇、方法、實作比較與演進方向
 created: 2026-07-10
-updated: 2026-07-17
+updated: 2026-07-27
 parent: "[[wiki/01.index]]"
 tags:
   - ai-agent
@@ -116,3 +116,4 @@ Harness 是包裹在 LLM 外圍、負責「模型推理以外一切」的軟體�
 - [[pi-workflow-編排-harness-與本-vault-分野]] — 該頁把 pi-workflow 定位為編排層 prior art，其「編排職能已被 harness 覆蓋」的論點即座落於本頁的 workflows/agents 二分主軸。
 - [[OpenSpec]] — spec-driven 工具的具體實作，該頁以本頁作「業界怎麼說該建 agent」的框架層綜述互補，本頁回指其工具細節。
 - [[Agent-工作流-Pattern-藍本庫]] — **同樣直接補救本頁「來源集中 Anthropic」的證據限制**，但走的是另一條路：引入 CSIRO Data61 經同儕審查的 18-pattern catalogue 作為與 Anthropic 詞彙體系**獨立**的論文級 pattern 來源。該頁另揭一個本頁未標的來源陷阱——LangGraph 的 pattern 頁自承照 Anthropic 那篇重建，不構成獨立印證。
+- [[Claude-Code-實務慣例彙整]] — 該頁把本頁 context engineering、subagent 隔離等官方論述，換成 Claude Code 使用者社群的操作層實務（何時開新 session、CLAUDE.md／Skill／Command／Hook 怎麼分層）；二手彙整、權威性低於本頁，衝突時以本頁為準。

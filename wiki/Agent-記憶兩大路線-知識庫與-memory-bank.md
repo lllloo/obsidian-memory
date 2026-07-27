@@ -2,7 +2,7 @@
 title: Agent 記憶的兩大路線：知識庫與 memory bank
 description: 比較編譯式知識庫與 coding-agent memory bank 的目的、組織、讀取契約、維護方式及適用邊界
 created: 2026-07-14
-updated: 2026-07-22
+updated: 2026-07-27
 parent: "[[wiki/01.index]]"
 tags:
   - ai-agent
@@ -34,7 +34,7 @@ tags:
 - **讀取契約相反**：每次任務開始**無條件讀全部**（Cline 明言 not optional），而非 A 的 query-first 省讀。賣點就是「不靠記憶、靠重讀全部檔恢復」。
 - **維護**：agent 在重大變更後自更新檔；使用者可下 `update memory bank` 強制全檔覆核。
 
-**進階變體（維護自動化）**：[ai-memory](https://github.com/akitaonrails/ai-memory)、[Letta](https://docs.letta.com/letta-agent/memory) 把維護從「agent 自覺」變成 **runtime hook／自我編輯**——DB/SQLite-backed、SessionStart/SessionEnd hook 自動注入，Letta 甚至有 sleep-time「反思」子代理把教訓寫回並自動 git commit。
+**進階變體（維護自動化）**：[ai-memory](https://github.com/akitaonrails/ai-memory)、[Letta](https://docs.letta.com/letta-agent/memory) 把維護從「agent 自覺」變成 **runtime hook／自我編輯**——SessionStart/SessionEnd hook 自動注入；儲存機制不同：ai-memory 為 DB/SQLite-backed，Letta 則是 git-backed markdown（MemFS，見下「交集傘」節），甚至有 sleep-time「反思」子代理把教訓寫回並自動 git commit。
 
 **定位**：服務**單一專案**的 agent 連續性，是「工作記憶」，不做跨來源知識累積。
 

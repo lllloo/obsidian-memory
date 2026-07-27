@@ -2,7 +2,7 @@
 title: LLM-as-judge 知識庫頁面評分
 description: LLM-as-judge 給 wiki 頁評分的方案與方法學約束：rubric 決定信度、bias 匿名化擋不住、本 vault 實測分辨力不足
 created: 2026-07-21
-updated: 2026-07-22
+updated: 2026-07-27
 parent: "[[wiki/01.index]]"
 tags:
   - evaluation
@@ -14,6 +14,8 @@ tags:
 # LLM-as-judge 知識庫頁面評分
 
 問題：能不能用 LLM 給 wiki 頁「打分數」，用來排序該修哪頁、或當品質 gate？本頁是 2026-07-21 兩輪 deep-research（各 5 搜尋角度、每條主張 3 票對抗查證）的回存：第一輪查工具面與方法論面，第二輪換詞彙補查「互聯知識庫層級」。聚焦**純 LLM-as-judge 路線**（機械指標如 markdownlint、連結數統計不在範圍內，僅作對照）。
+
+> 頁數快照說明：本頁下文交錯出現「21 頁」（第一輪）、「22 頁」（第二輪與 2026-07-22 實測）——同一天內 vault 因並行 ingest 持續新增頁面，非筆誤；各數字為寫下當下的即時計數，非固定值。
 
 **核心結論：沒有任何現成方案是為「互聯 markdown 知識庫」設計的。** 能用的兩個都是 LLM eval harness，要把頁面 shoehorn 成 test case 才跑得動；真正可搬的不是工具，是三條設計約束（rubric 必須寫、judge 換模型家族、不要一次丟多頁排名）。
 
