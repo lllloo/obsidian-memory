@@ -2,7 +2,7 @@
 title: OpenSpec
 description: 說明 Fission-AI 輕量規格工具的安裝、目錄、delta spec 與五步工作流，並標示流程可信但效果未實證
 created: 2026-07-16
-updated: 2026-07-21
+updated: 2026-07-30
 source: https://github.com/Fission-AI/OpenSpec
 published: ""
 parent: "[[wiki/01.index]]"
@@ -269,6 +269,7 @@ OpenSpec 原生整合 **30+ 種 AI 助理**（2026-07-21 清點官方 [supported
 
 ## 相關頁面
 
+- [[長跑-Agent-的目標定義與計畫工具]] — OpenSpec 在 SDD 工具生態中的相對位置（2026-07-30 直查 GitHub API：63,099 stars，是同類中推送最勤的之一），以及本頁 `specs/`＋delta 分層在跨生態機制清單裡對應的那一層；該頁另收「目標檔不可被 agent 竄改」的機制化前例（SHA-256 attestation），是本頁 checked-in 規格路線缺的一環。
 - [[AI-自主工作流的實證檢驗]] — OpenSpec 所屬的 spec-driven 方法論的效果證據盤點：流程可信但缺獨立效果驗證，且列出該領域「必須停止引用的空氣數字」（含被否決的「Spec Kit 比 OpenSpec 多耗 2 倍 token」）。
 - [[Agent-Harness-Engineering-框架綜述]] — 「業界怎麼說該建 agent」的框架層綜述，與本頁的具體工具實作互補。
 - [[Mem0]] — 該頁釐清一個常見的**類別錯置**：OpenSpec 不是 mem0 的整合對象。本頁的 OpenSpec 不是 agent host（不跑 MCP、不裝 plugin），而是**裝進** host 的 workflow 框架；兩者若同在一個 host 是**爭同一個位置**——本頁的 `specs/` 用 checked-in 可 review 的規格決定 agent 該遵守什麼，mem0 用雲端不可 review 的記憶做同件事，權威來源會分裂。
