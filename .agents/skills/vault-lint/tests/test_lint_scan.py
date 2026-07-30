@@ -213,6 +213,18 @@ class LintScanTests(unittest.TestCase):
 
         self.assertIn("FM:wiki/草稿頁.md:missing=description,parent", result.stdout)
 
+    def test_clippings_are_exempt_from_rawgap(self) -> None:
+        self.write_note("wiki/01.index.md", "索引")
+        self.write_note("raw/clippings/剪藏來源.md", "剪藏來源")
+        self.write_note("raw/fetched/擷取來源.md", "擷取來源")
+
+        result = self.run_scan()
+
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertNotIn("RAWGAP:raw/clippings/剪藏來源.md", result.stdout)
+        self.assertIn("RAWGAP:raw/fetched/擷取來源.md", result.stdout)
+        self.assertIn("SUMMARY:rawgap=1", result.stdout)
+
     def test_index_and_raw_skip_wiki_only_frontmatter_rules(self) -> None:
         self.write_custom_note(
             "wiki/01.index.md",

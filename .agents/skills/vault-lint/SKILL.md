@@ -50,7 +50,7 @@ python3 .agents/skills/vault-lint/scripts/semantic_select.py --days <semantic_da
    - `ORPHAN`:只有其他 wiki 內容頁的入連才代表知識圖譜互連;`wiki/01.index.md`、raw、schema 與自連都不算。讀頁找 1–2 個相關既有頁補雙向引用;真的無處可連才記 `Agent 已判` 錨點。
    - `FM`:缺欄可補值者直接補(如缺 `updated` 取 git 最後變動日)。wiki 內容頁另須有 30–80 字 `description`、`parent: "[[wiki/01.index]]"`，且已出現的白名單欄位依 schema 固定順序排列；這些 wiki-only 檢查不套用 raw，避免違反 write-once 與 Web Clipper description 豁免。
    - `TAG`:同義異寫漂移由主 agent 判讀後直接正規化(沿用既有 tag,改少數就多數)。
-   - `RAWGAP`:`raw/clippings/` 彙總檢視、`raw/fetched/` 逐條檢視;值得消化的走 Ingest 流程;判定不值得的記 `Agent 已判` 錨點。
+   - `RAWGAP`:只涵蓋 `raw/fetched/`,逐條檢視(`raw/clippings/` 落地不自動 ingest,已排除在掃描外);值得消化的走 Ingest 流程;判定不值得的記 `Agent 已判` 錨點。
    - 修補動到的頁同步 `updated` 為今日。
 6. **對 BACKLOG 做 reconcile**(去重 + 退場):
    - **去重**:新掃出的每一項,跟 BACKLOG 既有項比對(同頁 + 同目標/同議題)→ 已在清單就不重複加。比對用讀進 context 的兩份短文本判斷,不算 hash。

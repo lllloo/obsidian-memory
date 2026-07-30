@@ -54,7 +54,7 @@ wiki 的維護就是這三個動作，只在 `raw/` + `wiki/` 上進行；不碰
 進料管道（raw 為 write-once，落地後不改）：
 
 - **使用者貼 URL**：先 Grep `raw/` 的 `source:` 查同 URL 是否已落地。**已存在**：不重複建檔，直接更新對應 wiki 頁（重讀來源、與現有 wiki 內容對照，實質變了就在頁面就地更新——來源過時靠此處人眼＋lint 語意層兜底，不做雜湊比對）。**未存在**才抓內容（優先 defuddle）轉 markdown，按 frontmatter 慣例（含 `source`、`published`）存 `raw/fetched/`，再往下 ingest。抓到的內容明顯殘缺（登入牆、付費牆、重 JS 頁）時**不落地 raw**——write-once 塞進殘件即凍結——改請使用者用 Web Clipper 剪藏。
-- **Web Clipper 剪藏**、**使用者手動放檔**：存入 `raw/clippings/`。
+- **Web Clipper 剪藏**、**使用者手動放檔**：存入 `raw/clippings/`，**落地即止、不自動往下 ingest**——這是使用者隨手剪存的原料，要不要進 wiki 由使用者明指。故 lint 的 raw 消化缺口掃描（`RAWGAP`）不涵蓋 `clippings/`，只掃 `fetched/`；clippings 未被 wiki 引用是正常狀態，不是缺口。
 - **YouTube 自動同步**：`vault-youtube-sync` 只寫入 `feeds/youtube/`，不進 raw 或 wiki。
 
 流程：

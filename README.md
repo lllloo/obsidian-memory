@@ -27,7 +27,7 @@ flowchart TD
     classDef hub fill:#e6f4ea,stroke:#34a853,stroke-width:2px,color:#111
 ```
 
-三層架構與 agent 的寫入邊界——唯一硬守門是 `git push`；異常大面積 ingest 與 skill 變更另有流程級確認點：
+三層架構與 agent 的寫入邊界——**無硬守門**；異常大面積 ingest 與 skill 變更另有流程級確認點：
 
 ```mermaid
 %%{init: {"theme": "neutral", "flowchart": {"curve": "basis", "nodeSpacing": 45, "rankSpacing": 60}}}%%
@@ -46,7 +46,7 @@ flowchart TD
     end
     WIKIN -->|使用者手動撿選複製| CARDS & TOPICS
     CARDS & TOPICS ==>|唯一對外| QZ([Quartz 發佈 · bugloop.com])
-    GP{{git push<br/>唯一硬守門·需明確同意}}
+    GP[git push<br/>agent 自主·事後 diff review]
     WIKIN & RAWN & FEEDS --> GP
 
     classDef full fill:#e6f4ea,stroke:#34a853,color:#111
@@ -62,7 +62,7 @@ flowchart TD
 - 🟩 **wiki/（全權）** — 活知識庫，agent 自由建改刪，是唯一被 agent 完全掌管的層。
 - ⬜ **cards・topics・feeds** — 三動作全部跳過：cards／topics 是使用者私人策展＋唯一對外發佈層（agent 只在回答時可唯讀查 topics），feeds 由各 skill 自維護。
 
-唯一硬守門是 **`git push`**——它會把 raw／wiki／feeds 一併推上遠端，該次 diff 由使用者把關。wiki 日常維護由 agent 自主；另有兩個流程級確認點：單次 ingest 預計觸及超過 15 頁，以及新增或修改 skill。
+**沒有硬守門**——`git push` 亦由 agent 自主執行（2026-07-20 拍板移除原「push 前須明確同意」守門）。它會把 raw／wiki／feeds 一併推上遠端，該次 diff 由使用者事後在 GitHub 把關；force push 不在此授權內，仍需明確要求。wiki 日常維護同樣由 agent 自主；另有兩個流程級確認點：單次 ingest 預計觸及超過 15 頁，以及新增或修改 skill。
 
 ## 安裝與使用
 
@@ -107,7 +107,7 @@ git clone https://github.com/lllloo/obsidian-memory.git
 
 ## 規則與工作流
 
-先看 [`schema/SYSTEM-DESIGN.md`](./schema/SYSTEM-DESIGN.md)——系統全貌：Karpathy LLM Wiki 心智模型、人/AI 分工、刻意不做的事。可執行規則（agent 維護規則、Ingest/Query/Lint、寫入慣例、唯一守門）見 [`CLAUDE.md`](./CLAUDE.md)，導航見 [`schema/vault-map.md`](./schema/vault-map.md)。
+先看 [`schema/SYSTEM-DESIGN.md`](./schema/SYSTEM-DESIGN.md)——系統全貌：Karpathy LLM Wiki 心智模型、人/AI 分工、刻意不做的事。可執行規則（agent 維護規則、Ingest/Query/Lint、寫入慣例、流程級確認點）見 [`CLAUDE.md`](./CLAUDE.md)，導航見 [`schema/vault-map.md`](./schema/vault-map.md)。
 
 **非 Claude Code 的 AI 工具**（Cursor、Codex 等）從 `AGENTS.md` 進入——它是 `CLAUDE.md` 的 symlink，內容完全相同（checkout 需 git 支援 symlink；Windows 請開 `core.symlinks`，否則會退化成只含檔名字串的純文字檔）。跨 session 操作記憶在 `schema/MEMORY.md`，checked-in 進 repo，任何工具打開 vault 都讀得到。
 

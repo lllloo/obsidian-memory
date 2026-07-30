@@ -260,8 +260,11 @@ def main() -> int:
     tag_lines = [f"TAG:{t}:{c}" for t, c in sorted(tag_counts.items(), key=lambda x: (-x[1], x[0]))]
 
     # ---- RAWGAP：raw 檔未被任何 wiki 頁引用 ----
+    # clippings 落地不自動 ingest（使用者明指才處理），未被 wiki 引用是正常狀態、不是缺口
     for p in texts:
         if top_of(p) != "raw" or p.name == "01.index.md" or fms[p].get("draft") == "true":
+            continue
+        if rel[p].startswith("raw/clippings/"):
             continue
         linkers = inbound.get(p.stem, set())
         if not any(top_of(q) == "wiki" for q in linkers):
