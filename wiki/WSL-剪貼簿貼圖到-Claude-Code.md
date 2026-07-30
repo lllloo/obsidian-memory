@@ -83,3 +83,5 @@ WSLg 的 Weston 不實作 `wlr-data-control`。這條先前只有二手說法（
 ## 上游追蹤
 
 [anthropics/claude-code#61609](https://github.com/anthropics/claude-code/issues/61609)（open）是唯一仍開著的 WSL 貼圖 issue，但它的描述停在「Ctrl+V 沒反應」，沒觸及解碼層這個根因。官方若補上 BMP 解碼（或讓取圖鏈在 BMP 命中後轉 PNG），本頁的 daemon 即可退場。追蹤狀態見 `feeds/watch/01.index.md`。
+
+**不主動回報上游**（2026-07-30 使用者決定）：本頁的根因鏈比 #61609 精確，但不整理成 issue 或留言送出，只被動追蹤該 issue 的狀態。本機已有 `clip2png` 可用，無須等官方修。
