@@ -2,7 +2,7 @@
 title: AI 生成流程圖與架構圖
 description: 以 Mermaid 為核心，整理程式架構逆向、流程文字轉圖與筆記視覺化的工具選型、工作流及準確度風險
 created: 2026-07-16
-updated: 2026-07-17
+updated: 2026-08-01
 parent: "[[wiki/01.index]]"
 tags:
   - diagram-as-code
@@ -112,6 +112,8 @@ GitHub 自 **2022-02** 起原生渲染 Mermaid（涵蓋 README/issue/PR/comment/
 - **❌ 勿引用（本輪對抗查證否決 1-2）**：「Mermaid 不存在付費層」——核心函式庫確為 MIT 開源，但生態**有**付費 Mermaid Chart，兩者須分清。
 
 把生圖接進 vault/coding agent 的實作層，與 [[第二大腦整合的現成工具與做法]]（obsidian-claude-code-mcp、Quartz Syncer 等）同屬「餵知識給 agent、把產物落回 vault」的管道家族；本頁補足其中「生圖」這條。
+
+本頁處理「怎麼把圖給人看」（固化成 mermaid.live 連結）；反方向「怎麼把圖給 agent 看」見 [[WSL-剪貼簿貼圖到-Claude-Code]]——WSL2 上把截圖貼給 agent 這一步會在解碼層無聲斷掉。
 
 ## 五、準確度與 prompt 減錯（生成物一律驗證）
 
