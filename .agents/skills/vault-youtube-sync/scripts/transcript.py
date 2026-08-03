@@ -7,14 +7,17 @@
     python3 .agents/skills/vault-youtube-sync/scripts/transcript.py <url> <videoId>
 
 輸出（stdout，固定順序）：
-    RESULT:MATCH | MISMATCH:<detail> | UNKNOWN | TRANSCRIPT | FAIL:<reason>
+    RESULT:MATCH | THIN | MISMATCH:<detail> | UNKNOWN | TRANSCRIPT | FAIL:<reason>
     PUBLISHED:<YYYY-MM-DD 或空>
     ---CONTENT---
-    <contentMarkdown（MATCH）或時間戳 transcript（TRANSCRIPT）；FAIL/MISMATCH/UNKNOWN 時為空>
+    <contentMarkdown（MATCH/THIN）或時間戳 transcript（TRANSCRIPT）；FAIL/MISMATCH/UNKNOWN 時為空>
 
 判讀（對齊原 SKILL 流程）：
-    MATCH      → defuddle 內容可信，用 CONTENT 當筆記來源（步驟 3-6）
+    MATCH      → defuddle 內容可信且確為 transcript，用 CONTENT 當筆記來源（步驟 3-6）
     TRANSCRIPT → defuddle 不可信但 transcript-api 成功，用 CONTENT（時間戳）當來源
+    THIN       → videoId 驗證過，但 defuddle 只抓到說明欄（無時間戳）且 transcript-api
+                 亦無字幕。CONTENT 為該說明欄，依「情況 B」寫摘要並標註無字幕；
+                 這是已確認的終態、不是抓取失敗，不寫 draft 占位
     FAIL:*     → 三層皆失敗，走 curl/video_meta 確認狀態 + draft 占位（步驟 2/2b）
 """
 from __future__ import annotations
@@ -32,6 +35,9 @@ except (AttributeError, OSError):
     pass
 
 ID_RE = r'(?:watch\?v=|youtu\.be/|/embed/)([A-Za-z0-9_-]{11})'
+# defuddle 正常抓到 YouTube transcript 時每段都帶 `**0:00**` 時間戳；沒有就代表
+# 抓回的是說明欄之類的替代內容（字幕停用時常見），videoId 對得上也不能當 transcript 用
+TS_RE = re.compile(r'\*\*\d+:\d+\*\*')
 
 
 def validate(data: dict, target: str) -> str:
@@ -124,16 +130,25 @@ def main() -> int:
     url, video_id = sys.argv[1], sys.argv[2]
 
     data = run_defuddle(url)
+    thin_content = thin_published = ""
     if data is not None:
         verdict = validate(data, video_id)
         if verdict == "MATCH":
+            content = data.get("contentMarkdown") or ""
             published = (data.get("published") or "")[:10]
-            return emit("MATCH", published, data.get("contentMarkdown") or "")
+            if TS_RE.search(content):
+                return emit("MATCH", published, content)
+            # ID 對得上但無時間戳 → 內容非 transcript，先試 API；失敗才回退成 THIN
+            print("DIAG:defuddle:no-timestamps（內容非 transcript，續走 transcript-api）",
+                  file=sys.stderr)
+            thin_content, thin_published = content, published
         # MISMATCH / UNKNOWN → 落 transcript-api（不信任污染的 contentMarkdown）
 
     text = transcript_api(video_id)
     if text:
         return emit("TRANSCRIPT", "", text)
+    if thin_content:
+        return emit("THIN", thin_published, thin_content)
     return emit("FAIL:no-transcript")
 
 

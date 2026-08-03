@@ -253,7 +253,7 @@ python3 .agents/skills/vault-youtube-sync/scripts/update_checkpoint.py "feeds/yo
 
 ## 注意事項
 
-- **defuddle 內容不足**：contentMarkdown 無時間戳格式（`**0:00**`）時走 subagent-note-creator.md 的情況 B，只寫重點摘要，不推測補充
+- **defuddle 內容不足**：contentMarkdown 無時間戳格式（`**0:00**`）代表抓到的是說明欄而非 transcript，`transcript.py` 會續走 youtube-transcript-api；兩者皆無字幕才回 `RESULT:THIN`，subagent 依 subagent-note-creator.md 的情況 B 只寫重點摘要並標明無字幕，不推測補充。THIN 是已確認終態（字幕停用重試不會變），**不寫 draft 占位**，checkpoint 照常推進
 - **tags**：一律加 `youtube`，可依頻道主題加額外標籤（如 `claude-code`）
 - **檔名長度**：超過 40 字元的標題適當縮短，保留關鍵詞
 - **增量同步**：再次執行同一頻道時，Step 2 會用 checkpoint 過濾，只建立新影片的筆記；ytInitialData 一次最多回傳約 30 部，足以涵蓋一般更新週期

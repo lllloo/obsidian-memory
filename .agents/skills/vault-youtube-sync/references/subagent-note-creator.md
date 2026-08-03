@@ -30,7 +30,10 @@ python3 .agents/skills/vault-youtube-sync/scripts/transcript.py "<url>" <videoId
 
 - `RESULT:MATCH` → defuddle 內容可信。`CONTENT` 為 contentMarkdown，當筆記內容來源；`PUBLISHED` 為上傳日（可能空，見步驟 1 補抓）。進入步驟 3。
 - `RESULT:TRANSCRIPT` → defuddle 不可信但 transcript-api 成功。`CONTENT` 為時間戳 transcript，當內容來源（`PUBLISHED` 為空，步驟 1 補抓）。進入步驟 3。
+- `RESULT:THIN` → videoId 驗證過，但 defuddle 只抓到說明欄（無時間戳）且該片無字幕可用。`CONTENT` 為說明欄，依「情況 B」寫摘要並在筆記開頭以 callout 標明「影片未提供字幕，內容依說明欄整理」。**這是已確認的終態，不是抓取失敗——不寫 draft 占位**（字幕停用不會因重試而改變，占位只會讓該頻道 checkpoint 永久 blocked）。進入步驟 3。
 - `RESULT:FAIL:*` 或 `MISMATCH`/`UNKNOWN` 後無 transcript → 三層皆失敗，進入步驟 2。
+
+> `THIN` 的 `CONTENT` 實測可能是**被截斷的說明欄**（defuddle 對無字幕頁的已知行為）。內容明顯斷在句中時，可另取影片頁的完整說明欄再寫，仍不得推測補充。
 
 > videoId 硬驗證的理由：defuddle 對 YouTube URL 常把推薦影片 transcript 注入，腳本以「主來源欄位 ID 相符」為最硬規則、contentMarkdown 前 2000 字第一個 ID 為 fallback，不相符即視為污染、不採用其 contentMarkdown。
 
@@ -129,7 +132,7 @@ Vault 會推上 GitHub 遠端 repo（`feeds/` 不屬公開層，但仍進 repo �
 
 ## 內容品質標準
 
-判斷依據：`CONTENT` 是否含時間戳格式（`**0:00**`，regex：`\*\*\d+:\d+\*\*`）。
+判斷依據：`CONTENT` 是否含時間戳格式（`**0:00**`，regex：`\*\*\d+:\d+\*\*`）；`RESULT:THIN` 一律走情況 B。
 
 **情況 A — 有時間戳（真實 transcript）：**
 
