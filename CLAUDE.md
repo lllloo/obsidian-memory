@@ -25,7 +25,6 @@
 **`feeds/` 也不屬於三層系統。** 它集中存放只供使用者瀏覽的自動產物；除各自的產出 skill 外，agent 一律不讀、不寫、不掃描、不索引。`feeds/` 不參與 Ingest／Query／Lint，不得作為 `raw/` 或 `wiki/` 的來源；Quartz 只應發佈 cards/topics，`feeds/**` 不得公開。
 
 - `feeds/youtube/`：`vault-youtube-sync` 的自動同步筆記。完整影片筆記寫入後凍結；draft 占位可由 skill 覆寫重試，頻道 index、Base 與 checkpoint 可由 skill 維護。
-- `feeds/updates/`：`vault-updates-daily` 的消費性日報與來源設定。
 - `feeds/watch/`：`vault-watch` 的 GitHub issue/PR 追蹤看板（`01.index.md`）與變更 digest；追蹤清單以看板為準，不硬編碼。
 （`vault-lint` 不再產 feeds 產物：健檢的待處理清單改放 `schema/BACKLOG.md`，見下方 schema 一節。）
 
@@ -107,7 +106,7 @@ wiki 的維護就是這三個動作，只在 `raw/` + `wiki/` 上進行；不碰
 
 | 欄位 | 用途 / 何時用 | 值格式 |
 |---|---|---|
-| `title` | 主題名，可含空格與中文；不加日期前綴（SKILL 範本可例外，如 `vault-updates-daily` 日報 `"<YYYY-MM-DD> Daily Updates"`） | 字串（檔名為其無空格、`-` 連接版） |
+| `title` | 主題名，可含空格與中文；不加日期前綴（SKILL 範本可例外，如 `vault-watch` digest `"<YYYY-MM-DD> Watch"`） | 字串（檔名為其無空格、`-` 連接版） |
 | `description` | 一句話自我介紹，給 Obsidian Bases、AI 查詢用。**適用**：wiki 頁、feeds/youtube 影片摘要、raw 網頁剪藏；其餘筆記可省 | 字串，30–80 字；不重複 title，避免「這篇／本文」自我指涉 |
 | `created` | 進 vault 日期 | `YYYY-MM-DD` |
 | `updated` | 最後修改日期 | `YYYY-MM-DD` |
@@ -129,7 +128,7 @@ wiki 的維護就是這三個動作，只在 `raw/` + `wiki/` 上進行；不碰
 - `.base` wikilink 必須加副檔名：`[[02.影片清單.base]]`；embed 同理 `![[02.影片清單.base]]`。
 - `.base` 內容不會在圖譜產生連結；要讓筆記出現在圖譜中，需在筆記 frontmatter 加 `parent: "[[01.index]]"`。
 - `#` 開頭的內容會被 Obsidian 解讀為 tag；hex 色碼必須用反引號包住，例如 `` `#57F287` ``。
-- 來源連結放置：單一主來源放 frontmatter `source`；正文需就地引用多個外部連結時用 inline 超連結（`[文字](URL)`）；自動化日報沿用既有的標題側連結格式。
+- 來源連結放置：單一主來源放 frontmatter `source`；正文需就地引用多個外部連結時用 inline 超連結（`[文字](URL)`）。
 
 ### 6. 查證產出的強度標註
 
@@ -142,12 +141,11 @@ deep-research 或其他對抗式查證的結果回存 wiki 時：每條主張就
 | Skill | 用途 |
 |---|---|
 | `vault-youtube-sync` | YouTube 影片摘要同步至 `feeds/youtube/` |
-| `vault-updates-daily` | 日常更新彙整至 `feeds/updates/` |
 | `vault-lint` | wiki+raw 健檢，機械項與語意項皆由 agent 自主修補；真需使用者決策的才進「待你決定」，「Agent 已判」與「已婉拒」保留去重約束；手動／排程共用同一流程，本身不執行 git 動作 |
 | `vault-watch` | 追蹤一批 GitHub issue/PR 狀態，`gh` 抓現況與快照比對並每輪更新看板；精選訊號（state 轉換、官方回應、label 變動）有變才寫 digest；本身不執行 git 動作 |
 | `ask-vault` | 從**其他專案**向本 vault 發「請求/回應」查詢：依呼叫環境啟動 headless claude／codex／opencode，在 vault root 走 Query（唯讀、附引用），答完即退、不需常駐 |
 
-> **`ask-vault` 與上四者不同**：它是**全域 skill**（源碼 checked-in 於 `.agents/skills/ask-vault/`，symlink 到 `~/.agents/skills/ask-vault`，Claude 的相容入口再由 `~/.claude/skills/ask-vault` 指向它；無 PATH 指令，SKILL.md 以文字說明引導 agent 取 skill 的 Base directory 組出絕對路徑、以 `python3` 執行 bundled 的 `scripts/ask_vault.py`（純 stdlib 跨平台，非綁 bash；不寫死路徑亦不用 Claude 專屬變數）），由**別的專案**呼叫、cwd 不在 vault root，故**不受前述 CWD 契約直接約束**——契約改由腳本以 vault root 為 subprocess cwd 執行、並檢查哨兵檔 `schema/vault-map.md` 滿足。上四者則是只在 vault 內執行的維護型 skill。此外它是 **cross-CLI**：腳本以 caller-match（`CLAUDECODE`／`CODEX_SANDBOX`／`OPENCODE*` 環境標記，`ASK_VAULT_BACKEND` 可覆寫）偵測呼叫端,分派到 claude／codex／opencode 各自的 headless 唯讀查詢（三者皆已端到端驗證;codex／opencode 的進度走 stderr、答案走 stdout,以 stderr 導流取乾淨輸出,codex 另用 `-o` 只取最終訊息)。**注意**：codex 與 opencode 共用同一 ChatGPT oauth,背靠背呼叫會互相輪替作廢 refresh token——實際使用因 caller-match 一次只在一個工具內、不衝突;要並用需給 opencode 獨立憑證。
+> **`ask-vault` 與上三者不同**：它是**全域 skill**（源碼 checked-in 於 `.agents/skills/ask-vault/`，symlink 到 `~/.agents/skills/ask-vault`，Claude 的相容入口再由 `~/.claude/skills/ask-vault` 指向它；無 PATH 指令，SKILL.md 以文字說明引導 agent 取 skill 的 Base directory 組出絕對路徑、以 `python3` 執行 bundled 的 `scripts/ask_vault.py`（純 stdlib 跨平台，非綁 bash；不寫死路徑亦不用 Claude 專屬變數）），由**別的專案**呼叫、cwd 不在 vault root，故**不受前述 CWD 契約直接約束**——契約改由腳本以 vault root 為 subprocess cwd 執行、並檢查哨兵檔 `schema/vault-map.md` 滿足。上四者則是只在 vault 內執行的維護型 skill。此外它是 **cross-CLI**：腳本以 caller-match（`CLAUDECODE`／`CODEX_SANDBOX`／`OPENCODE*` 環境標記，`ASK_VAULT_BACKEND` 可覆寫）偵測呼叫端,分派到 claude／codex／opencode 各自的 headless 唯讀查詢（三者皆已端到端驗證;codex／opencode 的進度走 stderr、答案走 stdout,以 stderr 導流取乾淨輸出,codex 另用 `-o` 只取最終訊息)。**注意**：codex 與 opencode 共用同一 ChatGPT oauth,背靠背呼叫會互相輪替作廢 refresh token——實際使用因 caller-match 一次只在一個工具內、不衝突;要並用需給 opencode 獨立憑證。
 
 優先使用 skill，不新增平行流程。新增或修改 skill 時，盡量遵循 [Agent Skills](https://agentskills.io) 開放標準，讓內容可跨工具移植。
 

@@ -1,7 +1,7 @@
 ---
 title: Agent Memory
 created: 2026-07-09
-updated: 2026-07-17
+updated: 2026-08-03
 tags:
   - meta
 ---
@@ -33,4 +33,4 @@ tags:
 - **勿再提議**為 lint/BACKLOG 加「上次執行／心跳」欄（已拍板移除）：與「安靜的一輪零變更、不開雜訊 PR」天生不相容；routine 存活靠 claude.ai 執行紀錄判斷，不靠 in-repo 紀錄。
 - `vault-lint` 語意層已改**全面自動修**（2026-07-17 使用者拍板：agent 自主修、真需使用者的決策才進 BACKLOG）。**勿再提議**加獨立 refuter 對抗驗證——選項已擺出，使用者選了不加，review 靠排程端 PR diff。
 - `vault-lint` **skill 本身不碰 git**；排程走雲端 routine（`trig_018QPWmi5K8hiV7ghMvKnTU9`，每天台北 05:00，claude-sonnet-5），其 prompt 自帶 commit+push+開 PR 且不依賴 Skill 工具（改讀 `SKILL.md`）。
-- `vault-updates-daily` 雲端 routine **已由使用者自行排定**（2026-07-17 告知，agent 未經手、無 trigger id）；**勿再提議排程**。其 starred 同步在本 vault 刻意停用（純雲端 atom 遭 proxy 擋），`starred-repos.txt` 快照留著但不靠它跑。
+- `vault-updates-daily` 已於 2026-08-03 使用者拍板**完整退場**（skill、`feeds/updates/`、文件引用皆移除）：訊號密度過低。**勿再提議重建或做輕量版**。雲端 routine 由使用者自行停用（agent 無 trigger id）。

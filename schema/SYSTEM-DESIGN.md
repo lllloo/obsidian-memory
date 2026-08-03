@@ -1,7 +1,7 @@
 ---
 title: Vault 運作模式
 created: 2026-05-25
-updated: 2026-07-30
+updated: 2026-08-03
 tags:
   - vault
   - meta
@@ -40,7 +40,7 @@ tags:
 
 本 vault 只吸收**跨專案通用**的知識——工具評測、方法論、AI 生態動態。**專案特定**的架構決策、bug 記錄、實作細節留在各自 repo 的 `CLAUDE.md`／`docs/`，不 ingest 進本 vault，避免 wiki 從「工具生態知識庫」稀釋成大雜燴。
 
-repo-local 維護型 skill（`vault-youtube-sync`、`vault-updates-daily`、`vault-lint`、`vault-watch`）走 [CWD 契約](../CLAUDE.md)：先進 vault root，再以 `schema/vault-map.md` 驗證位置。其他 repo 若只需查詢既有知識，則用全域 [`ask-vault`](../.agents/skills/ask-vault/SKILL.md)；launcher 會自行把唯讀 Query 放在 vault root 並檢查同一哨兵。兩種介面都是單向：別的專案能呼叫或引用本 vault，本 vault 不會主動伸手進別的 repo，也不建立自動同步。
+repo-local 維護型 skill（`vault-youtube-sync`、`vault-lint`、`vault-watch`）走 [CWD 契約](../CLAUDE.md)：先進 vault root，再以 `schema/vault-map.md` 驗證位置。其他 repo 若只需查詢既有知識，則用全域 [`ask-vault`](../.agents/skills/ask-vault/SKILL.md)；launcher 會自行把唯讀 Query 放在 vault root 並檢查同一哨兵。兩種介面都是單向：別的專案能呼叫或引用本 vault，本 vault 不會主動伸手進別的 repo，也不建立自動同步。
 
 ## 架構：三層
 
@@ -55,8 +55,8 @@ repo-local 維護型 skill（`vault-youtube-sync`、`vault-updates-daily`、`vau
 `feeds/` 集中只供使用者瀏覽的 skill 自動產物，不進 raw、wiki、Query 或 Lint：
 
 - `feeds/youtube/` 是使用者瀏覽的自動同步筆記；不進 raw 或 wiki。完整影片筆記凍結，draft／index／Base／checkpoint 由同步 skill 維護。
-- `feeds/updates/` 是使用者瀏覽的消費性日報；不 ingest、不 query、不 lint，寫完即凍結（同日重跑依 skill 的 append 規則）。lint 不產 feeds 產物——健檢的待處理清單是 `schema/BACKLOG.md`（agent 每輪讀回來約束自身行為的操作狀態，與 `MEMORY.md` 同層）。
 - `feeds/watch/` 是 `vault-watch` 的 GitHub issue/PR 追蹤看板（`01.index.md`）與變更 digest；不進 raw 或 wiki，追蹤清單以看板為準。
+- lint 不產 feeds 產物——健檢的待處理清單是 `schema/BACKLOG.md`（agent 每輪讀回來約束自身行為的操作狀態，與 `MEMORY.md` 同層）。
 - Quartz 只應發佈 cards/topics，`feeds/**` 不公開；發佈設定在本 repo 外。
 
 ### 本 vault 的額外層：cards/topics（不在原文三層裡，系統不管）

@@ -1,7 +1,7 @@
 ---
 title: Vault Lint Backlog
 created: 2026-07-13
-updated: 2026-07-30
+updated: 2026-08-03
 tags:
   - meta
   - lint
@@ -60,7 +60,7 @@ _(目前無項目)_
 - _(2026-07-17 逐件問診:MEMORY「貼 URL ingest 全流程」升級訊號候選經使用者核可退場(已於 `schema/MEMORY.md` 劃線註記);跨工具可攜縫補丁已落地——`AGENTS.md` 為 `CLAUDE.md` 的 symlink,故該句寫在 `CLAUDE.md` 的 `@import` 行旁。)_
 - _(2026-07-17 治理改制:使用者拍板 vault-lint 語意項改**全面自動修**(不加對抗驗證),「語意項只報告」制退場;原「維持現狀:vault-lint 第二段刻意延遲」條目隨之結案。STALE `wiki/第二大腦方法論比較.md` 缺 Hermes Kanban 補充,依新制當場修補退場。)_
 - _(2026-07-17 第二輪語意層(上輪欠審 9 頁＋第二大腦方法論比較):subagent 平行審出約 22 項獨立發現(1 高、8 中、13 低——指向錯誤、歸屬錯誤、方向倒置、措辭過寬、版本釘死、回連缺口等),全數當輪自主修補落地,動 12 個 wiki 頁;無新增待決項。)_
-- _(2026-07-17 `vault-updates-daily` 雲端 routine 條目退場:使用者已自行排定並在跑。該條敘述經查有兩處誤述,勿據以重開——snapshot `.agents/skills/vault-updates-daily/starred-repos.txt` 早於 2026-07-04 存在且 tracked(非「須先本機跑一次」);且 `references/daily-runbook.md` 明載本 vault **刻意停用 starred 同步**(純雲端 atom fallback 遭 proxy 擋、結構性不通),故 snapshot 存在的理由不是「為雲端排程」。)_
+- _(2026-08-03 `vault-updates-daily` 整體退場:使用者拍板移除 skill、`feeds/updates/` 與全部文件引用。依據為近 7 篇日報實測——最大宗來源 GitHub Copilot 多為企業治理條目、OpenCode 多為版本 bump、主力工具 Claude Code 近 7 天 0 筆,且 08-03 兩筆全是 08-02 重報。此前的 starred 停用與雲端排程條目一併作廢,勿據以重開。)_
 - _(2026-07-20 SKILL-STALE 退場:使用者核可動 skill,`.agents/skills/vault-lint/SKILL.md` 第 16 行「該 prompt 即使用者對 push 的明確同意」括號已刪——push 守門於 2026-07-20 移除後該依據不存在;「本 skill 不碰 git、由呼叫端決定 commit／PR」的設計本身不變。)_
 - _(2026-07-18 語意層續審由 tracked carryover 改為日期驅動的無狀態輪替;避免無發現時游標不前進、相同頁面反覆占滿 cap,同時維持安靜輪零檔案變更。)_
 

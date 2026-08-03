@@ -99,7 +99,6 @@ git clone https://github.com/lllloo/obsidian-memory.git
 
 - `feeds/` — 自動產物層，**不屬三層系統，只供使用者瀏覽，不進 raw 或 wiki**
   - `youtube/` — 自動同步影片筆記
-  - `updates/` — 每日工具更新日報，純消費
   - `watch/` — GitHub issue／PR 追蹤看板與變更 digest
 - `cards/`、`topics/` — **使用者私人策展區，agent 不管理**；同時是 Quartz 唯一對外公開的層。使用者自行從 wiki 撿選內容放入（Quartz 發佈設定與流程不在本 repo）
 - `index.md` — 真人讀者入口（Quartz 網站首頁，列主題與 tag 連結）
@@ -118,14 +117,13 @@ git clone https://github.com/lllloo/obsidian-memory.git
 | 指令 | 用途 |
 |---|---|
 | `/vault-youtube-sync` | 同步 YouTube 影片摘要至 `feeds/youtube/` |
-| `/vault-updates-daily` | 彙整日常工具更新日報至 `feeds/updates/` |
 | `/vault-lint` | 健檢 raw／wiki／schema，機械項與語意項皆由 agent 自主修補；BACKLOG 的「待你決定」只收真正需要使用者決策的項目，「Agent 已判」與「已婉拒」保留去重約束；手動／排程共用同一流程，本身不碰 git |
 | `/vault-watch` | 追蹤 GitHub issue／PR，每輪更新看板；有狀態轉換、maintainer 回應或 label 變動時才寫 digest |
 | `/ask-vault` | 從其他專案對本 vault 執行唯讀、附引用的 Query |
 
-**使用契約**：四個維護型 skill（`vault-youtube-sync`、`vault-updates-daily`、`vault-lint`、`vault-watch`）的 cwd 必須是本 repo 根目錄，並以 `schema/vault-map.md` 為哨兵；所有 repo-local 路徑皆相對於 cwd。`ask-vault` 是例外：它從其他專案呼叫，launcher 會自行設定 vault root 並檢查同一哨兵。
+**使用契約**：三個維護型 skill（`vault-youtube-sync`、`vault-lint`、`vault-watch`）的 cwd 必須是本 repo 根目錄，並以 `schema/vault-map.md` 為哨兵；所有 repo-local 路徑皆相對於 cwd。`ask-vault` 是例外：它從其他專案呼叫，launcher 會自行設定 vault root 並檢查同一哨兵。
 
-> 原核心 skill `ob-write`、`ob-read`（global）、`vault-wiki-build`、舊版 `vault-lint` 已移除；Ingest（wiki 綜合）與 vault 內 Query 由 agent 依規則執行，Lint 已按需重建為「健檢即整理」的 `/vault-lint`（與同名舊版無血緣，是重寫的另一套）。
+> 原核心 skill `ob-write`、`ob-read`（global）、`vault-wiki-build`、舊版 `vault-lint`，以及 `vault-updates-daily`（每日工具更新日報，2026-08-03 因訊號密度過低退場）已移除；Ingest（wiki 綜合）與 vault 內 Query 由 agent 依規則執行，Lint 已按需重建為「健檢即整理」的 `/vault-lint`（與同名舊版無血緣，是重寫的另一套）。
 
 ## 兩個入口檔的差別
 
