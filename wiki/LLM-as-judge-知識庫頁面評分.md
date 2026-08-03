@@ -2,7 +2,7 @@
 title: LLM-as-judge 知識庫頁面評分
 description: LLM-as-judge 給 wiki 頁評分的方案與方法學約束：rubric 決定信度、bias 匿名化擋不住、本 vault 實測分辨力不足
 created: 2026-07-21
-updated: 2026-07-22
+updated: 2026-08-03
 parent: "[[wiki/01.index]]"
 tags:
   - evaluation
@@ -200,7 +200,9 @@ Wikimedia 生產環境的 language-agnostic 文章品質模型只用 6 個結構
 
 點名未讀的專案：nvk、Hermes 的 `llm-wiki` skill、llm-wiki-kit、wiki-garden、Wuphf、ai-memory、DiffMem、nashsu/llm_wiki、Cline Memory Bank、Letta MemFS、Mem0、ReMe、Basic Memory。
 
-兩輪都敗在同一處：**預算耗在前面的塊，搜尋 agent 沒有真的去讀 repo**。這仍是「未查到」而非「已排除」。下次重跑**不要派搜尋**，直接 clone／讀 README 與原始碼——這是唯一沒試過的方法。
+兩輪都敗在同一處：**預算耗在前面的塊，搜尋 agent 沒有真的去讀 repo**。這仍是「未查到」而非「已排除」。若要重跑，唯一沒試過的方法是**不派搜尋、直接 clone／讀 README 與原始碼**。
+
+**2026-08-03 拍板不重跑**：下方 07-22 的階段 0 實測已推翻重跑的前提——本 vault 頁面方差太小，就算查到別的專案有內建評分，也不改變這裡的任何決定。此題**維持「未查到」狀態存查，不再排程重跑**。
 
 既有工具的形狀仍印證這個空白：promptfoo 的 `select-best` 比較同一 test row 內的多個輸出、DeepEval 是 input→output 配對，**兩者都沒有「一組互相連結的文件」這個一等公民概念**；與 [[LLM-Wiki-生態實作比較]] 掃到的生態現況一致——各實作都在解「怎麼寫、怎麼檢索」，沒人在解「怎麼衡量寫得好不好」。
 
@@ -249,7 +251,7 @@ Wikimedia 生產環境的 language-agnostic 文章品質模型只用 6 個結構
 
 - ~~絕對分數在 20 幾頁小樣本上是否穩定到足以排序？~~ 2026-07-22 實測**部分回答**：問題不在分數穩不穩，而在 vault 方差太小、天花板效應下根本排不出有意義的高低。test-retest（階段 1）未跑，因階段 0 已中止。
 - merge-pair 技巧在 22 頁上的實際可行度——需實測而非文獻能回答。
-- 第三題（agent 知識庫專案的內建評分）連續兩輪未觸及，需一輪純 repo 直讀。
+- ~~第三題（agent 知識庫專案的內建評分）連續兩輪未觸及，需一輪純 repo 直讀。~~ 2026-08-03 拍板**不重跑**：方差太小這個前提已由 07-22 實測確立，答案不影響決定；維持「未查到」存查。
 
 ## 相關頁
 
