@@ -2,7 +2,7 @@
 title: Mem0
 description: AI agent 記憶層工具的整合路徑（plugin／MCP／CLI）、hook 實測消耗與失效模式證據，含本 vault 採 MCP-only 的拍板理由
 created: 2026-07-20
-updated: 2026-07-21
+updated: 2026-08-03
 source: https://github.com/mem0ai/mem0
 parent: "[[wiki/01.index]]"
 tags:
@@ -104,6 +104,8 @@ CLI（`@mem0/cli`）**不是替代品**：原始碼 `cli/node/src/plugin-sync.ts
 已接受的代價：`infer:true` 的抽取可能扭曲原文（見上 `endymi0n` 條）。因屬隨手記、vault 才是權威，此代價可接受。
 
 `--scope user` 為跨專案必要（`claude mcp add` 預設 `local`）；header 用單引號讓 `${MEM0_API_KEY}` 存為變數參照而非明文烤進設定檔。
+
+此拍板走的是純使用端路徑，因此不受 [[MCP-無狀態化-2026-07-28]] 的協議改版影響——版本協商逐請求進行，client 升級時無感；要主動處理只在自建 server 或改用新擴充時才發生。
 
 ## MCP-only 的實際安裝路徑（官方文件，2026-07-21 回存）
 
