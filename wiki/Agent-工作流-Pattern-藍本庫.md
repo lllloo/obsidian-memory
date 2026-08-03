@@ -2,7 +2,7 @@
 title: Agent 工作流 Pattern 藍本庫
 description: 設計 agent skill 時的 pattern 挑選清單：每項附定義、適用、失效條件、出處與強度，並收錄選用決策樹與被查證否決的組合宣稱
 created: 2026-07-17
-updated: 2026-08-03
+updated: 2026-07-30
 parent: "[[wiki/01.index]]"
 tags:
   - ai-agent
@@ -119,7 +119,7 @@ tags:
 
 - **`loop-until-dry` 至今無正式出處**。20 條存活主張中無一為其提供定義來源，唯一相關的只有其失效條件（單 agent 無盡迴圈、MAST FM-1.5「Unaware of termination conditions」）。目前定位：**社群實務、無論文出處、強度弱**，保留但標明。
 - **領域二（知識管理流程方法論）與領域三（軟體開發概念型流程）已跑第二輪，但仍只覆蓋三個角落**：成果分別回存至 [[第二大腦方法論比較]] 的「流程方法論的證據強度盤點」（GTD 五步、spacing effect、retrieval practice 爭議）與 [[AI-自主工作流的實證檢驗]] 的 spec-driven 節（Kiro 三階段閘門）。PARA、Zettelkasten、CODE、Evergreen notes、MOC、Shape Up、TDD、ADR、event storming、pre-mortem 等仍零存活主張。**2026-07-30 領域三再進一塊**：[[長跑-Agent-的目標定義與計畫工具]] 收下「長跑 agent 的目標定義與收斂控制」——目標分層、驗收判準記法、機器可檢的停止條件、防範圍膨脹的舉證責任反轉，逐條標強度且明列 9 條勿引用。注意它與本頁是**不同領域**：本頁是 agent 之間怎麼編排，該頁是給 agent 的目標怎麼寫。
-- **這不是主題的問題，是工具的結構限制**：兩輪 deep-research 分別抽出 119／125 條主張，但**皆只有 25 條進入查證**——截至 2026-07 兩輪觀察均為此數，研判是該 harness 當時的固定上限（隨版本可變，非恆值），與主題無關。故「窮舉一個 pattern 藍本庫」與 deep-research 在結構上互斥：它適合把**少數幾條主張查到極深**，不適合把**大量 pattern 掃得很廣**。要補齊廣度應改用一個 pattern 派一個 subagent 的輕量掃描（見 `mini-research` skill），把多票對抗查證這個乘數換成覆蓋率。
+- **這不是主題的問題，是工具的結構限制**：兩輪 deep-research 分別抽出 119／135 條主張，但**皆只有 25 條進入查證**——截至 2026-07 兩輪觀察均為此數，研判是該 harness 當時的固定上限（隨版本可變，非恆值），與主題無關。故「窮舉一個 pattern 藍本庫」與 deep-research 在結構上互斥：它適合把**少數幾條主張查到極深**，不適合把**大量 pattern 掃得很廣**。要補齊廣度應改用一個 pattern 派一個 subagent 的輕量掃描（見 `mini-research` skill），把多票對抗查證這個乘數換成覆蓋率。
 
 ## 交叉引用
 
