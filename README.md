@@ -79,7 +79,7 @@ git clone https://github.com/lllloo/obsidian-memory.git
 - `claude`、`codex` 或 `opencode` CLI 其中之一（`ask-vault`）— 需完成對應登入
 - [Obsidian CLI](https://help.obsidian.md/cli)（選用）— 本地開檔輔助，不影響任何流程
 
-在 Obsidian 直接「Open folder as vault」開啟本 repo 即可閱讀編輯。支援 [Agent Skills](https://agentskills.io) 的 AI 工具可載入 `.agents/skills/`；Claude Code 也可用 `/<skill>` 喚起。維護型 skill 在 repo 根目錄執行，跨專案唯讀查詢則使用 `ask-vault`。
+在 Obsidian 直接「Open folder as vault」開啟本 repo 即可閱讀編輯。支援 [Agent Skills](https://agentskills.io) 的 AI 工具可載入 `.agents/skills/`；Claude Code 也可用 `/<skill>` 喚起。維護型 skill 在 repo 根目錄執行，跨專案唯讀查詢則使用 `ask-vault`。**WSL 使用者請從 WSL 端執行維護型 skill**——從 Windows PowerShell 走 UNC 路徑（`\\wsl$\...`）呼叫 Windows Python 會因 `AGENTS.md` symlink 讀取失敗，同一份掃描在 WSL 端正常完成，此類失敗易被誤判為 skill 壞掉。
 
 > 原本的全域 `ob-write`／`ob-read` 已移除；其中「從其他專案查詢 vault」的情境已由 [`ask-vault`](./.agents/skills/ask-vault/SKILL.md) 重建。它會依呼叫環境選用 `claude`／`codex`／`opencode` 執行唯讀 headless Query，並自行把查詢程序放在 vault root、檢查 CWD 哨兵；不提供跨專案寫入。
 

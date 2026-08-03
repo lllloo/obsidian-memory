@@ -56,5 +56,18 @@
     "last_official_id": null,
     "last_official_at": null,
     "checked_ts": "2026-07-23T03:00:46Z"
+  },
+  "anthropics/claude-code#61609": {
+    "type": "issue",
+    "state": "open",
+    "labels": [
+      "area:tui",
+      "bug",
+      "platform:wsl"
+    ],
+    "title": "[BUG] Image paste (Ctrl+V) does not work in native WSL2 terminal on Windows 11",
+    "last_official_id": null,
+    "last_official_at": null,
+    "checked_ts": "2026-08-03T04:09:25Z"
   }
 }
