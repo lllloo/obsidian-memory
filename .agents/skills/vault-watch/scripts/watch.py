@@ -20,6 +20,8 @@ sys.stderr.reconfigure(encoding="utf-8", errors="replace")
 
 OFFICIAL = {"OWNER", "MEMBER", "COLLABORATOR"}
 REF_RE = re.compile(r"\b([A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+)#(\d+)\b")
+# 看板列尾標記：該項改採全部留言（含社群），不只 OFFICIAL。預設不標＝只認官方。
+ALL_COMMENTS_TAG = "[全留言]"
 
 
 def gh_api(path, paginate=False):
@@ -47,19 +49,25 @@ def collapse(text, limit=140):
 
 
 def parse_refs(index_path):
-    """從看板檔抽出所有 owner/repo#num，去重、保序。"""
+    """從看板檔抽出所有 owner/repo#num，去重、保序；同列有 [全留言] 者 scope="all"。"""
     text = Path(index_path).read_text(encoding="utf-8")
     seen, refs = set(), []
-    for owner_repo, num in REF_RE.findall(text):
-        ref = f"{owner_repo}#{num}"
-        if ref not in seen:
-            seen.add(ref)
-            refs.append((owner_repo, num, ref))
+    for line in text.splitlines():
+        scope = "all" if ALL_COMMENTS_TAG in line else "official"
+        for owner_repo, num in REF_RE.findall(line):
+            ref = f"{owner_repo}#{num}"
+            if ref not in seen:
+                seen.add(ref)
+                refs.append((owner_repo, num, ref, scope))
     return refs
 
 
-def fetch_one(owner_repo, num, prev):
-    """抓單一 issue/PR 現況 + 自 prev.checked_ts 起的新官方留言。回 (snapshot, deltas, error)。"""
+def fetch_one(owner_repo, num, prev, scope="official"):
+    """抓單一 issue/PR 現況 + 自 prev.checked_ts 起的新留言。回 (snapshot, deltas, error)。
+
+    scope="official" 只認 OWNER/MEMBER/COLLABORATOR（預設，擋熱門 issue 洗版）；
+    scope="all" 連社群留言一併採計，給留言量小、關鍵訊號常來自非 maintainer 的冷門項。
+    """
     data, err = gh_api(f"repos/{owner_repo}/issues/{num}")
     if err:
         return None, [], err
@@ -83,13 +91,18 @@ def fetch_one(owner_repo, num, prev):
         "last_official_at": prev.get("last_official_at") if prev else None,
     }
 
-    # 官方/maintainer 新回應：僅對已知項（prev 有 checked_ts）抓 since 之後的留言，避免首輪灌全串。
+    # 新回應：僅對已知項（prev 有 checked_ts）抓 since 之後的留言，避免首輪灌全串。
+    # 標記由 official→all 時不回填舊留言（快照之前的留言不再回報），維持「跟上次比」的增量語意。
     new_official = None
     if prev and prev.get("checked_ts"):
         cpath = f"repos/{owner_repo}/issues/{num}/comments?since={prev['checked_ts']}&per_page=100"
         comments, cerr = gh_api(cpath, paginate=True)
         if not cerr and isinstance(comments, list):
-            offs = [c for c in comments if c.get("author_association") in OFFICIAL]
+            offs = [
+                c
+                for c in comments
+                if scope == "all" or c.get("author_association") in OFFICIAL
+            ]
             if offs:
                 latest = max(offs, key=lambda c: c["id"])
                 if latest["id"] != prev.get("last_official_id"):
@@ -115,7 +128,8 @@ def fetch_one(owner_repo, num, prev):
             deltas.append(
                 (
                     "official",
-                    f"{new_official['user']['login']}|{new_official['created_at'][:10]}|{collapse(new_official.get('body'))}",
+                    f"{new_official['user']['login']}|{new_official.get('author_association', 'NONE')}"
+                    f"|{new_official['created_at'][:10]}|{collapse(new_official.get('body'))}",
                 )
             )
     return snap, deltas, None
@@ -151,13 +165,13 @@ def main():
     checked_date = now.strftime("%Y-%m-%d")
 
     changed = 0
-    for owner_repo, num, ref in refs:
+    for owner_repo, num, ref, scope in refs:
         prev = state.get(ref)
-        snap, deltas, err = fetch_one(owner_repo, num, prev)
+        snap, deltas, err = fetch_one(owner_repo, num, prev, scope)
         if err:
             print(f"ERROR|{ref}|{err}", flush=True)
             continue
-        # checked_ts 是抓新官方留言的 since 游標；無實質變化的一輪不推進它，也不寫任何純裝飾的
+        # checked_ts 是抓新留言的 since 游標；無實質變化的一輪不推進它，也不寫任何純裝飾的
         # 日期欄，讓 state.json 在 quiet round 產出 byte-identical、不留要 commit 的 churn。
         # 有 CHANGE（含首見 new）才推進到現在，順帶收窄下輪的留言抓取窗。
         snap["checked_ts"] = checked_ts if deltas else (prev or {}).get("checked_ts", checked_ts)

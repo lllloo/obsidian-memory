@@ -1,6 +1,6 @@
 ---
 name: vault-watch
-description: 追蹤一批 GitHub issue/PR 的狀態，定期用 gh 抓現況、與快照比對、精選訊號（state 轉換含 PR merged、官方/maintainer 新回應、label 變動）有變才回報。追蹤清單只讀 `feeds/watch/01.index.md` 看板，不硬編碼；一般路人留言與 reaction 數不列為變化。使用時機：使用者要求「查一下我追蹤的 issue」「watchlist 有變化嗎」「那幾個 feature request 動了沒」「官方回應了沒」「追蹤 owner/repo#num」，或直接呼叫 /vault-watch。目前僅支援 GitHub issue/PR。
+description: 追蹤一批 GitHub issue/PR 的狀態，定期用 gh 抓現況、與快照比對、精選訊號（state 轉換含 PR merged、官方/maintainer 新回應、label 變動）有變才回報。追蹤清單只讀 `feeds/watch/01.index.md` 看板，不硬編碼；路人留言與 reaction 數預設不列為變化，看板列標 `[全留言]` 的項才連社群留言一併採計。使用時機：使用者要求「查一下我追蹤的 issue」「watchlist 有變化嗎」「那幾個 feature request 動了沒」「官方回應了沒」「追蹤 owner/repo#num」，或直接呼叫 /vault-watch。目前僅支援 GitHub issue/PR。
 ---
 
 # Vault Watch
