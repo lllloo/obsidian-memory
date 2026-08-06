@@ -69,5 +69,36 @@
     "last_official_id": null,
     "last_official_at": null,
     "checked_ts": "2026-08-03T04:09:25Z"
+  },
+  "vercel-labs/skills#743": {
+    "type": "pr",
+    "state": "open",
+    "labels": [],
+    "title": "feat: add global restore/relink from .skill-lock.json",
+    "last_official_id": null,
+    "last_official_at": null,
+    "checked_ts": "2026-08-06T07:47:59Z"
+  },
+  "vercel-labs/skills#683": {
+    "type": "issue",
+    "state": "open",
+    "labels": [
+      "enhancement"
+    ],
+    "title": "[Feature]: global restore/relink from `~/.agents/.skill-lock.json` for canonical skills + agent links",
+    "last_official_id": null,
+    "last_official_at": null,
+    "checked_ts": "2026-08-06T07:47:59Z"
+  },
+  "vercel-labs/skills#549": {
+    "type": "issue",
+    "state": "open",
+    "labels": [
+      "enhancement"
+    ],
+    "title": "[Feature]:  `npx skills install` — restore all skills from skills-lock.json (npm ci equivalent)",
+    "last_official_id": null,
+    "last_official_at": null,
+    "checked_ts": "2026-08-06T07:47:59Z"
   }
 }
