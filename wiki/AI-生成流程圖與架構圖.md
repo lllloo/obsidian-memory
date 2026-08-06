@@ -2,7 +2,7 @@
 title: AI 生成流程圖與架構圖
 description: 以 Mermaid 為核心，整理程式架構逆向、流程文字轉圖與筆記視覺化的工具選型、工作流及準確度風險
 created: 2026-07-16
-updated: 2026-07-31
+updated: 2026-08-06
 parent: "[[wiki/01.index]]"
 tags:
   - diagram-as-code
@@ -97,9 +97,15 @@ GitHub 自 **2022-02** 起原生渲染 Mermaid（涵蓋 README/issue/PR/comment/
 2. **理解業務流程**：把 SOP/決策邏輯文字丟 AI，要它產 Mermaid `flowchart`/`sequenceDiagram`/`stateDiagram` → 貼進 Obsidian 原生渲染。
 3. **知識筆記視覺化**：vault 內用 `obsidian-mermaid-flow` 的 AI assist 從文字 prompt 生概念關係圖，或手動微調。
 
-**呈現與討論：生 mermaid.live 連結（本 vault 固化做法）**
+**呈現與討論：mermaid.live 連結（此做法已於 2026-08-06 撤銷）**
+
+⚠️ **使用者於 2026-08-06 表態往後不再使用 Mermaid**——含 mermaid 語法、` ```mermaid ` fenced block 與 mermaid.live 連結，已寫入全域規則。下段描述的固化做法連同 5 步 SOP 的 Present→Iterate 兩步一併退場；現行做法改為寫成可獨立開啟的本地 HTML，或在文字足夠表達時直接用箭頭／縮排清單呈現。原文保留於下，供理解該做法當初為何成立。
+
+
 
 上述管道**生出圖之後、還沒定稿落地時**，要先看渲染結果來討論——典型情境是**使用者要一張架構圖，agent 先生一版範例供討論迭代**——就用官方線上編輯器 [mermaid.live](https://mermaid.live) 呈現：它把整張圖的 state 以 pako（deflate＋base64）編進 URL fragment，連結**自包含、無需伺服器儲存、也無需本機 render 或匯出圖片**，貼 `mermaid.live/view#pako:…` 對方點開即見渲染（`view` 純檢視、`edit` 可續改）。這正落在 5 步 SOP 的 **Present（呈現）→ Iterate（迭代）**：生圖 → 貼連結看範例 → 據此討論修改 → 定稿後才用 `mermaid` fenced code block 落地進 Obsidian／GitHub 原生渲染（本頁開頭全景圖即走完此流程的成品）。此「做法」本身屬本 vault 實踐約定、非查證主張；mermaid.live **工具本身**的可用性與限制見下方 2026-07-17 deep-research 查證。
+
+下方的 mermaid.live 工具查證**仍保留**：它記錄的是工具事實（pako fragment 不上伺服器、可自架、官方站辨識），與本 vault 用不用它無關，日後評估同類線上編輯器仍可回查。
 
 **mermaid.live 可用性與限制（2026-07-17 deep-research 回存：5 搜尋角度、7 主張對抗查證——6 確認（含 1 條中信心）、1 條否決）**
 
