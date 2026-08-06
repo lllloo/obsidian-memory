@@ -1,6 +1,6 @@
 ---
 title: 用測試約束 AI 產碼
-description: AI 寫的測試為何驗證不到東西、mutation 與 property-based testing 的定位差異，以及防止 agent 繞過護欄的分層
+description: AI 寫的測試為何驗證不到東西、判準的權威來源為何才是分類軸，以及 mutation、property-based 等手段的定位差異與防繞過分層
 created: 2026-08-06
 updated: 2026-08-06
 parent: "[[wiki/01.index]]"
@@ -70,6 +70,12 @@ TDAD（arXiv 2603.17973）測到：圖結構化 TDD 讓 regression 從 6.08% 降
 
 coverage 問「這行有沒有被執行」，mutation 問「**把這行弄壞，測試會不會紅**」。這是目前唯一能機械戳破「覆蓋率表演」的手段。
 
+**這也是業界權威層目前唯一押注的一項。** Thoughtworks Technology Radar Vol.34（2026-04）把 mutation testing 放在 **Trial** 環並直接點名 AI 場景：
+
+> 「With AI-generated test cases now commonplace, mutation testing acts as a reinforcement layer for catching **'perpetually green' tests** — those that pass regardless of logic changes due to missing assertions or decoupled mocks.」
+
+同期並列 `Complacency with AI-generated code` blip，整期主題是「回歸工程基本功對抗 cognitive debt」。**值得注意的是這一期並未把 property-based、metamorphic、differential 列為 AI 場景的答案**——下面幾項在業界權威層的地位遠不如 mutation。（**medium-high**：資深顧問群體的共識定位，非效果量測；環位與措辭會逐期變動，引用前回查當期 Radar。）
+
 變異運算子的優先序（存活率由高到低，先跑這幾類最划算）：
 
 | 優先 | 類別 | 例 |
@@ -88,6 +94,14 @@ coverage 問「這行有沒有被執行」，mutation 問「**把這行弄壞，
 
 成本控制：mutation 對每個 mutant 重跑整套測試，天生慢。只掃高價值目錄（純函式、金額計算、權限判斷、parser），用執行緒平行，**掛 nightly 而非每次 push**。
 
+**生產規模的一手證據，順帶給出更好的成本解法。** Meta 的 ACH 系統（[arXiv 2501.12862](https://arxiv.org/pdf/2501.12862)，FSE 2025 Industry Track；另有[工程部落格](https://engineering.fb.com/2025/09/30/security/llms-are-the-key-to-mutation-testing-and-better-compliance/)）把 mutation 與 LLM 產測試接成一條線：先產變異，再要 LLM 寫出能殺死該變異的測試。
+
+- 規模：7 個平台、10,795 個 Android Kotlin class，產出 9,095 個 mutant 與 571 個 privacy-hardening 測試
+- 採用：Messenger／WhatsApp 的 test-a-thon 中工程師**接受 73% 的測試**，其中 36% 被判為 privacy relevant
+- 附帶解掉 equivalent mutant 問題：LLM 偵測 agent precision 0.79／recall 0.47，加簡單前處理後升到 0.95／0.96
+
+**關鍵設計不是規模而是選擇性**：ACH 刻意**不做傳統全量變異**，只產「目前偵測不到、且與特定關注議題（此處為隱私）相關」的 fault。這正是上面成本困境的另一條出路——與其降頻掛 nightly，不如把變異縮到某一類真正在乎的失效上。（**high**：一手、同儕審查、生產規模、含採用率。局限：單一公司、單一語言生態，且「關注議題」需人先指定。）
+
 ⚠️ **方法論缺口**：有 replicability study（arXiv 2607.22880）指出，當**待測程式本身可能就有 bug**（實務常態）時，coverage 作為效果代理不可靠、而 mutation 分析在方法論上**不適用**——因為它假設原始碼是正確的、變異才是錯的。這不否定 mutation 的實用價值（它仍能抓出弱測試），但否定「把 MSI 當作品質的權威指標」。這與 [[LLM-as-judge-知識庫頁面評分]] 記錄的教訓同構：**相關性高不等於判準可靠**。
 
 ### L3：property-based testing——回答「有沒有真的 bug」
@@ -103,6 +117,10 @@ PBT 不寫「輸入 A 應得 B」，而寫「**對所有合法輸入，這個不
 
 （**high**：一手、論文化、有可獨立驗證的 merged PR、且主動公開無效案例。局限：僅 Python 生態、僅測 library 型程式碼。）
 
+**必須並列的限制面**：學術界對「LLM 能不能寫好 PBT」給出的數字保守得多。[Can Large Language Models Write Good Property-Based Tests?](https://arxiv.org/abs/2307.04346)（Vikram、Lemieux、Sunshine、Padhye，CMU／UBC）對 40 個 Python API 評估，結果是 **GPT-4 只對 21% 的可提取性質能自動合成正確的 PBT**。
+
+兩份數據不矛盾，差在**任務定義**：Anthropic 那份要的是「找到值得回報的真 bug」並且**中間插了 rubric 排序**（排序前 56%、排序後 86%，排序本身效果顯著）；這份要的是「對每一個應成立的性質都寫出正確的 PBT」——後者是嚴格得多的完備性要求。合起來的操作結論是：**PBT 該當成撈 bug 的網，不是規格的完整覆蓋**；期待 agent 把性質寫全，會失望。（**medium-high**：同儕審查場合、方法明確；但評估的是 GPT-4／Claude-3-Opus 世代模型，2023 投稿、2024 修訂，模型能力已推進，數字宜視為**下界**而非現況。）
+
 **這個結果真正的含意**：LLM 擅長的是**推論不變量**（從命名與文件反推「這裡應該恆成立什麼」），不是寫斷言。PBT 因此是 AI 產碼場景下少數「讓模型做它擅長的事」的用法。而它的死角也被同一份研究標得很清楚——**語意微妙、有隱含假設的程式碼推不出正確性質**，只有維護者知道什麼才是對的。
 
 適用判準：**往返性質明確、edge case 多的純函式**——parser、序列化（`f(g(x)) == x`）、日期處理、數字與金額格式化、狀態機。反面：業務規則複雜、對錯取決於外部約定的程式碼。
@@ -114,6 +132,24 @@ PBT 不寫「輸入 A 應得 B」，而寫「**對所有合法輸入，這個不
 | L1 spec | 該驗證什麼 | **人**（這步不能外包，見第三節） |
 | L2 mutation | 現有測試可不可信 | 工具，定期體檢 |
 | L3 PBT | 有沒有真的 bug | agent 推性質＋框架找反例 |
+
+### 更通用的骨架：判準的權威從哪來
+
+上面的三層是實務分工，但它背後有一個更硬的分類軸。[LLM-Based Test Oracles: Source-of-Authority Taxonomy](https://arxiv.org/abs/2607.05031)（Mughal & Bilal，2026-07）主張 test oracle 該按「**判決的權威來源**」分類，而非按測試技術：從 2,436 筆記錄篩到 54 篇（LLM 預篩＋雙人複審，Cohen's κ=0.79），發現
+
+> **spec-derived authority 是最常見的單一來源，佔約一半（28/54）；其餘 26 篇完全沒有規格就做出判決。**
+
+這給了本頁第一節那句「AI 驗證的是碼做了什麼而非碼該做什麼」一個學術命名：**「沒有 spec 就下判決」本身就是文獻中的一個大類**，而不是實作疏失。挑測試手段時真正該問的不是「這是單元測試還是整合測試」，而是**這個判準的權威在實作之內還是之外**——權威在實作之內的，agent 一定能自己滿足。（**medium**：系統性文獻回顧、方法透明；但它盤點的是研究文獻的分佈，不是實務有效性的量測。）
+
+依這個軸，本頁三層之外還有幾類 oracle，外部證據厚度差很多：
+
+| 手段 | 權威來源 | 外部證據 |
+|---|---|---|
+| **Metamorphic testing**（不斷言絕對值，只斷言「輸入這樣變、輸出應那樣變」） | 關係式，不需知道正確答案 | ✅ 學術厚：[93 篇 primary study 的系統性 survey](https://arxiv.org/abs/2605.13898)（Zheng 等，含 MT 之父 T.Y. Chen，2026-05），且雙向——MT 驗 LLM／LLM 反過來幫忙推導 metamorphic relation。**但 Radar Vol.34 未收** |
+| **Differential testing**（新舊實作對跑） | 舊實作，agent 無法憑空編出期望值 | ⚠️ 證據零散：[agentic refactoring 實證研究](https://arxiv.org/html/2511.04824)提到 behavior check 與 differential build，另有商業產品宣稱能證明 diff 保持行為不變；**無系統性研究支撐**，機制上成立但屬推論 |
+| **Contract / schema、golden master、fuzzing** | 契約檔／人核可的基線／crash 本身 | ⚠️ **只有從業者與廠商層文章**，找不到研究層或 Radar 級背書；可用，但別當成有實證後盾 |
+
+實務含意：**metamorphic 是這批裡最被低估的一項**——它天生繞開「AI 不知道正確答案就編一個」這個根因，適用面（搜尋、排序、計算、轉換）也與 PBT 互補。differential 則在 **AI 重構**這個場景幾乎是唯一對口的手段，值得用，但要知道現在引用不到硬證據。
 
 ## 五、防繞過：測試再好，agent 繞過就等於沒有
 
@@ -149,7 +185,13 @@ PBT 不寫「輸入 A 應得 B」，而寫「**對所有合法輸入，這個不
 | 測試先於程式碼存在，能阻止 agent 寫測試去確認錯誤實作 | **medium-high**：TDAD 的量化實驗與 Thoughtworks 資深群體共識方法迥異卻獨立同向；後者為閉門共識、非量測 |
 | 防作弊與可驗證性互斥（藏測試檔的取捨） | **medium**：ImpossibleBench 單一來源 |
 | AI 產測試的四種失效模式 | **medium**：多篇從業者整理收斂，無量化研究 |
-| mutation 能戳破覆蓋率表演 | **medium**：機制清楚、案例可複現 |
+| mutation 能戳破覆蓋率表演 | **medium-high**：機制清楚、案例可複現，另有 Radar Vol.34 的業界定位與 Meta 生產規模佐證 |
+| mutation＋LLM 產測試可在生產規模落地並被工程師採用（73%） | **high**：Meta ACH，一手＋FSE 2025 同儕審查；局限於單一公司與 Kotlin 生態 |
+| LLM 對可提取性質只有 21% 能寫出正確 PBT | **medium-high**：同儕審查、方法明確，但為 GPT-4／Claude-3-Opus 世代，宜視為下界 |
+| 能約束 agent 的判準，其權威必須在實作之外 | **medium**：source-of-authority taxonomy 給出文獻分佈（spec-derived 28/54），非有效性量測；與本頁其餘證據同向 |
+| metamorphic testing 適合驗 AI 產碼 | **medium**：93 篇 survey 的學術厚度，但無 AI-coding 場景的直接效果量測，且未進 Radar |
+| differential testing 可驗 AI 重構的行為保持 | **low-medium**：機制成立、有零散提及，無系統性研究 |
+| contract／golden／fuzzing 用於約束 AI 產碼 | **low**：僅從業者與廠商層文章，無研究或 Radar 級背書 |
 | mutation score 門檻建議（關鍵路徑 70／一般 50／實驗 30） | **low**：二手部落格慣例，非實證 |
 | MSI 作為品質權威指標 | **不成立**：待測碼本身可能有 bug 時，mutation 分析方法論上不適用（arXiv 2607.22880） |
 
@@ -157,6 +199,10 @@ PBT 不寫「輸入 A 應得 B」，而寫「**對所有合法輸入，這個不
 
 - 「AI 產的測試只有 20% mutation score、80% 的 bug 溜過去」——此數字在多處二手文章流傳，追查後只標示為「Research Teams, 2026」，**找不到一手出處**。與 MSR '26 一份分析 2,232 個 commit 的研究（[arXiv 2603.13724](https://arxiv.org/abs/2603.13724)，發現 AI 產測試 assertion 密度較高、覆蓋率貢獻與人寫相當）也不相容。**不得作為論據使用。**
 - 各家 AI 測試／review 工具的自評抓 bug 率（見 [[AI-產碼加速下的-review-瓶頸]] 同項）。
+- 「AI 產碼的 mutant survival rate 比人寫的高 15–25%」——搜尋引擎摘要把這句掛在某廠商的 mutation testing guide 上，2026-08-06 回讀該頁全文**並無此句**，疑為跨文拼裝。**不得引用。**
+- 「沒有品質護欄的團隊採用 AI coding assistant 後 6 個月內 bug 多 35–40%」——出自 SEO 內容層文章，追不到一手。**不得引用。**
+
+這三條（連同上面的 20% mutation score）是同一種病徵：**在二手文章之間互相轉載、源頭是空的數字**。此類數字在本主題密度特別高，凡看到「某研究顯示 X%」而未附論文連結者，預設當它不存在。
 
 ## 關聯
 
