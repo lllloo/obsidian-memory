@@ -43,6 +43,16 @@ TDAD（arXiv 2603.17973）測到：圖結構化 TDD 讓 regression 從 6.08% 降
 
 > 價值在於**告訴 agent 該驗證哪些測試**，不在於要求它遵循某個流程。
 
+**獨立印證**：2026-02 Thoughtworks 在 Deer Valley 主辦的閉門工作坊（Agile Manifesto 25 週年，Martin Fowler 主辦、約 50 位資深實踐者，Chatham House Rule，[一手報告 PDF](https://www.thoughtworks.com/content/dam/thoughtworks/documents/report/tw_future%20_of_software_development_retreat_%20key_takeaways.pdf)）把 TDD 列為最可分享的洞見之一，機制描述比上述更銳利：
+
+> 「TDD prevents a failure mode where agents write tests that verify broken behavior. When the tests exist before the code, agents cannot cheat by writing a test that simply confirms whatever incorrect implementation they produced.」
+>
+> 「This reframes TDD as a form of prompt engineering.」
+
+現場一位實踐者的原話：「I've gotten better results from TDD and agent coding than I've ever gotten anywhere else, because it stops a particular mental error where the agent writes a test that verifies the broken behavior.」該報告並把「TDD 作為最強形式的 prompt engineering」列為四個「可以推向產業界更廣討論」的想法之一。
+
+**這與 TDAD 的反直覺發現不矛盾，是同一件事的兩面**：Thoughtworks 講的是**測試先於程式碼存在**這個結構事實（agent 沒有機會寫測試去確認自己的錯誤實作），TDAD 講的是**要求 agent 遵循流程的指示無效**。合起來的操作結論正是本節標題——有效的是把驗證標的先固定下來，不是在 prompt 裡下流程命令。兩者利益方向與方法完全不同（單一 preprint 的量化實驗 vs 業界資深群體的閉門共識），獨立同向。
+
 配合 ImpossibleBench 的另一個發現，這裡有一組**沒有免費午餐**的取捨：把測試檔藏起來能讓作弊率降到近零，**但同時顯著降低合法任務的表現**——防作弊與可驗證性互斥。
 
 所以「先寫測試、鎖住測試檔、叫 agent 去讓它綠」這個直覺方案要打折：
@@ -136,6 +146,7 @@ PBT 不寫「輸入 A 應得 B」，而寫「**對所有合法輸入，這個不
 | agent 自寫自測會作弊，越強的模型越明顯 | **high**：ImpossibleBench × Cursor 稽核，兩方獨立收斂 |
 | agent 從文件與命名推不變量、配 PBT 能找到真實 bug | **high**：Anthropic 一手＋論文＋可查證的 merged PR |
 | 「請用 TDD」的程序性指示可能比不介入更糟 | **medium**：單一 preprint（TDAD），但機制與 reward hacking 證據相容 |
+| 測試先於程式碼存在，能阻止 agent 寫測試去確認錯誤實作 | **medium-high**：TDAD 的量化實驗與 Thoughtworks 資深群體共識方法迥異卻獨立同向；後者為閉門共識、非量測 |
 | 防作弊與可驗證性互斥（藏測試檔的取捨） | **medium**：ImpossibleBench 單一來源 |
 | AI 產測試的四種失效模式 | **medium**：多篇從業者整理收斂，無量化研究 |
 | mutation 能戳破覆蓋率表演 | **medium**：機制清楚、案例可複現 |
