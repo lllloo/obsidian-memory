@@ -2,7 +2,7 @@
 title: WSL 剪貼簿貼圖到 Claude Code
 description: WSL2 按 Alt+V 貼圖「閃一下沒反應」的根因在解碼層而非按鍵，附把 BMP 換成 PNG 的 daemon 解法與實測數據
 created: 2026-07-30
-updated: 2026-07-30
+updated: 2026-08-06
 parent: "[[wiki/01.index]]"
 tags:
   - claude-code
@@ -82,6 +82,8 @@ WSLg 的 Weston 不實作 `wlr-data-control`。這條先前只有二手說法（
 
 ## 上游追蹤
 
-[anthropics/claude-code#61609](https://github.com/anthropics/claude-code/issues/61609)（open）是唯一仍開著的 WSL 貼圖 issue，但它的描述停在「Ctrl+V 沒反應」，沒觸及解碼層這個根因。官方若補上 BMP 解碼（或讓取圖鏈在 BMP 命中後轉 PNG），本頁的 daemon 即可退場。追蹤狀態見 `feeds/watch/01.index.md`。
+[anthropics/claude-code#61609](https://github.com/anthropics/claude-code/issues/61609)（open）是目前仍開著的 WSL 貼圖 issue。**它的本文**停在「Ctrl+V 沒反應」的症狀層，沒觸及解碼層；但**留言區已有第三方在別的版本上獨立複現本頁這條根因鏈**（2026-07-03，Claude Code 2.1.199 + Debian WSL）：`wl-paste --list-types` 只回 `image/bmp`、BMP 壓縮欄位讀出 `03 00 00 00`（即 BI_BITFIELDS）、手動 `wl-paste --type image/bmp | convert bmp:- png` 可正常轉出。量測項與本頁一手實測（2.1.220）逐項對得上，兩個版本都未修，可視為跨版本的獨立複現。**強度**：該留言為單一使用者自述、`author_association` 為 `NONE`（非 maintainer），非官方確認；但因其量測可重跑、且與本頁實測獨立取得，強度高於一般「me too」回報。
+
+該留言並指向更早的 [#50552](https://github.com/anthropics/claude-code/issues/50552)（2026-04-18 開），標題直接寫明 `BI_BITFIELDS BMP decode`——**根因早在四個月前就被準確報告過**。該 issue 現為 closed／`not_planned`，但**關閉者是 `github-actions[bot]`、理由是「inactive for too long」，不是官方的技術判斷**，之後並依自動規則鎖定。兩張 issue 全程**零 maintainer 回應**，所以現況是「無人處理」而非「官方已決定不修」，別把 `not_planned` 讀成後者。官方若補上 BMP 解碼（或讓取圖鏈在 BMP 命中後轉 PNG），本頁的 daemon 即可退場。追蹤狀態見 `feeds/watch/01.index.md`。
 
 **不主動回報上游**（2026-07-30 使用者決定）：本頁的根因鏈比 #61609 精確，但不整理成 issue 或留言送出，只被動追蹤該 issue 的狀態。本機已有 `clip2png` 可用，無須等官方修。
