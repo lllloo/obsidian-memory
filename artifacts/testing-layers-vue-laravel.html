@@ -18,6 +18,15 @@
   }
   .wrap { max-width: 68rem; margin: 0 auto; }
 
+  .nav {
+    font-size: .8125rem; color: #5d5d63; margin: 0 0 2.5rem;
+    display: flex; flex-wrap: wrap; gap: .6rem; align-items: baseline;
+  }
+  .nav b { color: #1c1c1e; font-weight: 600; }
+  .nav a { color: #a8794a; text-decoration: none; border-bottom: 1px solid transparent; }
+  .nav a:hover { border-bottom-color: currentColor; }
+  .nav .sep { opacity: .3; }
+
   h1 { font-size: 1.6rem; font-weight: 620; letter-spacing: -0.01em; margin: 0 0 .4rem; }
   .lede { color: #5d5d63; margin: 0 0 3.5rem; max-width: 46rem; }
   h2 {
@@ -80,7 +89,9 @@
 
   @media (prefers-color-scheme: dark) {
     body { color: #e9e7e3; background: #17161a; }
-    .lede, .claim, figcaption, .foot { color: #a3a09b; }
+    .lede, .claim, figcaption, .foot, .nav { color: #a3a09b; }
+    .nav b { color: #e9e7e3; }
+    .nav a { color: #d3a06a; }
     figcaption b, .foot b { color: #e9e7e3; }
     h2 .num { color: #d3a06a; }
     .box, .box-accent, .band, .band-accent { fill: #201f24; }
@@ -99,6 +110,12 @@
 </head>
 <body>
 <div class="wrap">
+
+<nav class="nav">
+  <a href="vault-architecture.html">vault 架構</a>
+  <span class="sep">｜</span>
+  <b>前後端分離的測試地圖</b>
+</nav>
 
 <h1>前後端分離的測試地圖</h1>
 <p class="lede">前端 Vue、後端 Laravel，兩端各自獨立部署、透過 HTTP API 溝通。「還有什麼測試」之所以列不完，是因為測試不是一條清單而是<strong>四個互相垂直的維度</strong>；把它們排成一列，就會覺得永遠有漏。六張圖：先給四維度的總框架，再展開最常用的那一維（射程），最後是判準來源的光譜與導入順序。</p>

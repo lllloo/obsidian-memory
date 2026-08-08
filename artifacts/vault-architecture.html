@@ -18,6 +18,15 @@
   }
   .wrap { max-width: 68rem; margin: 0 auto; }
 
+  .nav {
+    font-size: .8125rem; color: #5d5d63; margin: 0 0 2.5rem;
+    display: flex; flex-wrap: wrap; gap: .6rem; align-items: baseline;
+  }
+  .nav b { color: #1c1c1e; font-weight: 600; }
+  .nav a { color: #a8794a; text-decoration: none; border-bottom: 1px solid transparent; }
+  .nav a:hover { border-bottom-color: currentColor; }
+  .nav .sep { opacity: .3; }
+
   h1 { font-size: 1.6rem; font-weight: 620; letter-spacing: -0.01em; margin: 0 0 .4rem; }
   .lede { color: #5d5d63; margin: 0 0 3.5rem; max-width: 46rem; }
   h2 {
@@ -61,6 +70,9 @@
 
   @media (prefers-color-scheme: dark) {
     body { color: #e9e7e3; background: #17161a; }
+    .nav { color: #a3a09b; }
+    .nav b { color: #e9e7e3; }
+    .nav a { color: #d3a06a; }
     .lede, .claim, figcaption { color: #a3a09b; }
     figcaption b { color: #e9e7e3; }
     h2 .num { color: #d3a06a; }
@@ -80,6 +92,12 @@
 </head>
 <body>
 <div class="wrap">
+
+<nav class="nav">
+  <b>vault 架構</b>
+  <span class="sep">｜</span>
+  <a href="testing-layers-vue-laravel.html">前後端分離的測試地圖</a>
+</nav>
 
 <h1>obsidian-memory 的架構</h1>
 <p class="lede">這個 vault 不是「一堆 markdown」，而是一套<strong>用資料夾編碼 agent 權限</strong>的系統：同一個 agent 在不同資料夾裡能做的事完全不同。三張圖分別畫權限邊界、三個動作、以及對外的唯一入口。</p>
