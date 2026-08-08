@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>前後端分離的測試分層</title>
+<title>前後端分離的測試地圖</title>
 <style>
   *, *::before, *::after { box-sizing: border-box; }
   html { -webkit-text-size-adjust: 100%; }
@@ -50,12 +50,14 @@
     color: #5d5d63; font-size: .875rem; max-width: 46rem;
   }
   .foot b { color: #1c1c1e; font-weight: 600; }
+  .foot + .foot { margin-top: 1.5rem; padding-top: 0; border-top: 0; }
 
   /* SVG 共用樣式（頁面層 CSS，SVG 片段本身保持無 style/script） */
   svg text { fill: currentColor; font-family: inherit; }
   .box { fill: #fff; stroke: currentColor; stroke-width: 1.4; }
   .box-shell { fill: none; stroke: currentColor; stroke-width: 1.4; stroke-dasharray: 5 4; }
   .box-accent { fill: #fff; stroke: #a8794a; stroke-width: 2.2; }
+  .box-opt { fill: none; stroke: #b3b0aa; stroke-width: 1.4; stroke-dasharray: 5 4; }
   .band { fill: #fff; stroke: currentColor; stroke-width: 1.4; }
   .band-accent { fill: #fff; stroke: #a8794a; stroke-width: 2.2; }
   .band-dim { fill: none; stroke: #b3b0aa; stroke-width: 1.4; }
@@ -66,11 +68,15 @@
   .off { fill: #8d8a84; }
   .edge { stroke: currentColor; stroke-width: 1.5; fill: none; }
   .edge-accent { stroke: #a8794a; stroke-width: 2; fill: none; }
+  .edge-opt { stroke: #b3b0aa; stroke-width: 1.4; fill: none; }
   .lab { font-size: 11.5px; }
   .lab-accent { font-size: 11.5px; fill: #a8794a; font-weight: 600; }
   .rule { stroke: currentColor; stroke-width: 1; opacity: .18; }
   .divider { stroke: currentColor; stroke-width: 1.2; opacity: .3; stroke-dasharray: 4 5; fill: none; }
   .accent-text { fill: #a8794a; }
+  .axis { stroke: currentColor; stroke-width: 1.3; opacity: .45; fill: none; }
+  .dot { fill: currentColor; }
+  .dot-accent { fill: #a8794a; }
 
   @media (prefers-color-scheme: dark) {
     body { color: #e9e7e3; background: #17161a; }
@@ -79,10 +85,10 @@
     h2 .num { color: #d3a06a; }
     .box, .box-accent, .band, .band-accent { fill: #201f24; }
     .box-accent, .band-accent { stroke: #d3a06a; }
-    .band-dim { stroke: #57545c; }
+    .band-dim, .box-opt, .edge-opt { stroke: #57545c; }
     .off { fill: #86828c; }
     .edge-accent { stroke: #d3a06a; }
-    .lab-accent, .n, .accent-text { fill: #d3a06a; }
+    .lab-accent, .n, .accent-text, .dot-accent { fill: #d3a06a; }
     .foot { border-top-color: rgba(255,255,255,.12); }
   }
   @media (max-width: 40rem) {
@@ -94,12 +100,87 @@
 <body>
 <div class="wrap">
 
-<h1>前後端分離的測試分層</h1>
-<p class="lede">前端 Vue、後端 Laravel，兩端各自獨立部署、透過 HTTP API 溝通。這個架構對測試的影響不是「工作量變兩倍」，而是<strong>多出一個誰都不擁有的問題</strong>：兩端各自全綠，接起來仍然可能是壞的。三張圖分別畫四層的射程、第一層那個關鍵動作，以及一個測試該歸哪一層的判準。</p>
+<h1>前後端分離的測試地圖</h1>
+<p class="lede">前端 Vue、後端 Laravel，兩端各自獨立部署、透過 HTTP API 溝通。「還有什麼測試」之所以列不完，是因為測試不是一條清單而是<strong>四個互相垂直的維度</strong>；把它們排成一列，就會覺得永遠有漏。六張圖：先給四維度的總框架，再展開最常用的那一維（射程），最後是判準來源的光譜與導入順序。</p>
 
 <section>
-  <h2><span class="num">01</span>四層測試的射程</h2>
-  <p class="claim">前兩層在單邊之內，後兩層跨越 HTTP 邊界。中間那條虛線是分離架構所有麻煩的來源。</p>
+  <h2><span class="num">01</span>四個維度</h2>
+  <p class="claim">任何一種測試都可以在這四條軸上定位。列不完的感覺來自把不同軸的東西排成同一列。</p>
+  <figure>
+    <div class="scroll">
+    <svg viewBox="0 0 1000 500" role="img" aria-label="四維度座標圖：維度零是否執行程式碼，區分靜態分析與其餘測試；維度一射程，由小到大為單元、框架內、契約、端到端；維度二判準來源，由實作之內到實作之外依序為快照與視覺回歸、差分測試、蛻變測試、性質測試、規格斷言與外部標準；維度三驗誰，一般測試驗程式碼，變異測試驗測試本身">
+      <defs>
+        <marker id="ax" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+          <path d="M0,0 L10,5 L0,10 z" fill="currentColor" opacity=".45"/>
+        </marker>
+      </defs>
+
+      <!-- 維度 0 -->
+      <text class="n" x="40" y="94">00</text>
+      <text class="t" x="76" y="94">執行嗎</text>
+      <text class="s dim" x="76" y="114">跑不跑程式碼</text>
+      <line class="axis" x1="250" y1="100" x2="920" y2="100" marker-end="url(#ax)"/>
+      <text class="s dim" x="250" y="82">不執行</text>
+      <text class="s dim" x="915" y="82" text-anchor="end">執行</text>
+      <circle class="dot" cx="310" cy="100" r="4.5"/>
+      <text class="s" x="310" y="124" text-anchor="middle">型別檢查 · Lint</text>
+      <circle class="dot" cx="860" cy="100" r="4.5"/>
+      <text class="s" x="860" y="124" text-anchor="middle">以下所有測試</text>
+
+      <!-- 維度 1 -->
+      <text class="n" x="40" y="204">01</text>
+      <text class="t" x="76" y="204">射程</text>
+      <text class="s dim" x="76" y="224">一次跑多大</text>
+      <line class="axis" x1="250" y1="210" x2="920" y2="210" marker-end="url(#ax)"/>
+      <text class="s dim" x="250" y="192">小 · 快</text>
+      <text class="s dim" x="915" y="192" text-anchor="end">大 · 慢</text>
+      <circle class="dot" cx="310" cy="210" r="4.5"/>
+      <text class="s" x="310" y="234" text-anchor="middle">單元</text>
+      <circle class="dot" cx="500" cy="210" r="4.5"/>
+      <text class="s" x="500" y="234" text-anchor="middle">框架內 · 整合</text>
+      <circle class="dot-accent" cx="690" cy="210" r="5"/>
+      <text class="s accent-text" x="690" y="234" text-anchor="middle">契約</text>
+      <circle class="dot" cx="880" cy="210" r="4.5"/>
+      <text class="s" x="880" y="234" text-anchor="middle">端到端</text>
+
+      <!-- 維度 2 -->
+      <text class="n" x="40" y="314">02</text>
+      <text class="t" x="76" y="314">判準來源</text>
+      <text class="s dim" x="76" y="334">憑什麼說它對</text>
+      <line class="axis" x1="250" y1="320" x2="920" y2="320" marker-end="url(#ax)"/>
+      <text class="s dim" x="250" y="302">實作之內</text>
+      <text class="s dim" x="915" y="302" text-anchor="end">實作之外</text>
+      <circle class="dot" cx="305" cy="320" r="4.5"/>
+      <text class="s" x="305" y="344" text-anchor="middle">快照 · VR</text>
+      <circle class="dot" cx="440" cy="320" r="4.5"/>
+      <text class="s" x="440" y="344" text-anchor="middle">differential</text>
+      <circle class="dot" cx="580" cy="320" r="4.5"/>
+      <text class="s" x="580" y="344" text-anchor="middle">metamorphic</text>
+      <circle class="dot" cx="715" cy="320" r="4.5"/>
+      <text class="s" x="715" y="344" text-anchor="middle">性質 · PBT</text>
+      <circle class="dot-accent" cx="875" cy="320" r="5"/>
+      <text class="s accent-text" x="875" y="344" text-anchor="middle">規格 · 外部標準</text>
+
+      <!-- 維度 3 -->
+      <text class="n" x="40" y="424">03</text>
+      <text class="t" x="76" y="424">驗誰</text>
+      <text class="s dim" x="76" y="444">驗碼還是驗測試</text>
+      <line class="axis" x1="250" y1="430" x2="920" y2="430" marker-end="url(#ax)"/>
+      <text class="s dim" x="250" y="412">驗程式碼</text>
+      <text class="s dim" x="915" y="412" text-anchor="end">驗測試本身</text>
+      <circle class="dot" cx="340" cy="430" r="4.5"/>
+      <text class="s" x="340" y="454" text-anchor="middle">上面所有測試</text>
+      <circle class="dot" cx="860" cy="430" r="4.5"/>
+      <text class="s" x="860" y="454" text-anchor="middle">mutation testing</text>
+    </svg>
+    </div>
+    <figcaption><b>VR 塞不進四層，是因為它換了維度。</b>單元與 E2E 的差別在維度 01（射程），VR 與它們的差別在維度 02（判準來自上一版的自己）。<b>mutation 更是整個維度 03</b>——它不驗程式碼，它故意把程式碼改壞，看測試會不會叫。維度 00 的靜態分析常被排除在「測試」之外，但它抓的錯是真的，而且最便宜。</figcaption>
+  </figure>
+</section>
+
+<section>
+  <h2><span class="num">02</span>射程：四層測試各自涵蓋誰</h2>
+  <p class="claim">維度 01 的展開。前兩層在單邊之內，後兩層跨越 HTTP 邊界。中間那條虛線是分離架構所有麻煩的來源。</p>
   <figure>
     <div class="scroll">
     <svg viewBox="0 0 1060 505" role="img" aria-label="四層測試射程圖：第一層單元測試與第二層框架內測試各自涵蓋前端或後端單邊；第三層契約測試與第四層端到端測試橫跨前後端之間的 HTTP 邊界">
@@ -109,7 +190,6 @@
         </marker>
       </defs>
 
-      <!-- 架構區 -->
       <rect class="box" x="160" y="44" width="280" height="170" rx="4"/>
       <text class="t" x="300" y="76" text-anchor="middle">Vue (SPA)</text>
       <text class="s" x="190" y="112">components</text>
@@ -128,12 +208,9 @@
       <text class="s dim" x="300" y="236" text-anchor="middle">前端 repo</text>
       <text class="s dim" x="740" y="236" text-anchor="middle">後端 repo</text>
 
-      <!-- HTTP 邊界貫穿線 -->
       <line class="divider" x1="520" y1="150" x2="520" y2="492"/>
-
       <line class="rule" x1="20" y1="256" x2="1040" y2="256"/>
 
-      <!-- 第 1 層 -->
       <text class="n" x="135" y="284" text-anchor="end">01</text>
       <text class="s dim" x="135" y="302" text-anchor="end">單元</text>
       <rect class="band" x="160" y="272" width="280" height="38" rx="3"/>
@@ -142,7 +219,6 @@
       <text class="s" x="740" y="296" text-anchor="middle">Service、Value Object</text>
       <text class="lab dim" x="900" y="296">不啟動框架 · 毫秒級</text>
 
-      <!-- 第 2 層 -->
       <text class="n" x="135" y="342" text-anchor="end">02</text>
       <text class="s dim" x="135" y="360" text-anchor="end">框架內</text>
       <rect class="band" x="160" y="330" width="280" height="38" rx="3"/>
@@ -151,14 +227,12 @@
       <text class="s" x="740" y="354" text-anchor="middle">Feature：打 route、碰 DB</text>
       <text class="lab dim" x="900" y="354">啟動框架 · 仍在單邊</text>
 
-      <!-- 第 3 層 -->
       <text class="n" x="135" y="400" text-anchor="end">03</text>
       <text class="s dim" x="135" y="418" text-anchor="end">契約</text>
       <rect class="band-accent" x="160" y="388" width="720" height="38" rx="3"/>
       <text class="s" x="520" y="412" text-anchor="middle">前端假設的 API 形狀　⟷　後端實際回的形狀</text>
       <text class="lab-accent" x="900" y="412">分離架構特有</text>
 
-      <!-- 第 4 層 -->
       <text class="n" x="135" y="458" text-anchor="end">04</text>
       <text class="s dim" x="135" y="476" text-anchor="end">端到端</text>
       <rect class="band-dim" x="160" y="446" width="720" height="38" rx="3"/>
@@ -171,7 +245,7 @@
 </section>
 
 <section>
-  <h2><span class="num">02</span>第一層的關鍵動作：讓判斷脫離框架</h2>
+  <h2><span class="num">03</span>第一層的關鍵動作：讓判斷脫離框架</h2>
   <p class="claim">同一條「滿 1000 打九折」，寫在框架內部與抽出來之後，測試要穿過的東西完全不同。虛線框是「必須先啟動才能進去」的殼。</p>
   <figure>
     <div class="scroll">
@@ -189,7 +263,6 @@
       <text class="t accent-text" x="770" y="30" text-anchor="middle">抽離後 · 判斷脫離框架</text>
       <line class="divider" x1="505" y1="48" x2="505" y2="450"/>
 
-      <!-- 上排：Vue，抽離前 -->
       <rect class="box-shell" x="40" y="60" width="330" height="100" rx="4"/>
       <text class="s dim" x="205" y="82" text-anchor="middle">Vue 元件 · script setup</text>
       <rect class="box-accent" x="165" y="96" width="180" height="48" rx="3"/>
@@ -197,7 +270,6 @@
       <line class="edge" x1="255" y1="205" x2="255" y2="150" marker-end="url(#a2)"/>
       <text class="lab" x="255" y="222" text-anchor="middle">測試：必須先 mount() 整個元件</text>
 
-      <!-- 上排：Vue，抽離後 -->
       <rect class="box" x="565" y="60" width="150" height="100" rx="4"/>
       <text class="t" x="640" y="100" text-anchor="middle">Vue 元件</text>
       <text class="s dim" x="640" y="124" text-anchor="middle">只呼叫</text>
@@ -209,7 +281,6 @@
       <line class="edge-accent" x1="890" y1="205" x2="890" y2="166" marker-end="url(#a2c)"/>
       <text class="lab-accent" x="890" y="222" text-anchor="middle">測試：直接呼叫，毫秒級</text>
 
-      <!-- 下排：Laravel，抽離前 -->
       <rect class="box-shell" x="40" y="280" width="330" height="100" rx="4"/>
       <text class="s dim" x="205" y="302" text-anchor="middle">Laravel Controller · store()</text>
       <rect class="box-accent" x="165" y="316" width="180" height="48" rx="3"/>
@@ -217,7 +288,6 @@
       <line class="edge" x1="255" y1="425" x2="255" y2="370" marker-end="url(#a2)"/>
       <text class="lab" x="255" y="442" text-anchor="middle">測試：必須發 HTTP request + 起 DB</text>
 
-      <!-- 下排：Laravel，抽離後 -->
       <rect class="box" x="565" y="280" width="150" height="100" rx="4"/>
       <text class="t" x="640" y="320" text-anchor="middle">Controller</text>
       <text class="s dim" x="640" y="344" text-anchor="middle">只呼叫</text>
@@ -235,7 +305,7 @@
 </section>
 
 <section>
-  <h2><span class="num">03</span>一個測試該歸哪一層</h2>
+  <h2><span class="num">04</span>一個測試該歸哪一層</h2>
   <p class="claim">不必憑感覺分類。三個問題依序問下去，每個測試都有唯一歸屬。</p>
   <figure>
     <div class="scroll">
@@ -266,7 +336,6 @@
       <rect class="box" x="670" y="62" width="190" height="72" rx="4"/>
       <text class="s" x="765" y="103" text-anchor="middle">需要真瀏覽器嗎</text>
 
-      <!-- 向下分支 -->
       <line class="edge" x1="265" y1="134" x2="265" y2="222" marker-end="url(#a3)"/>
       <text class="lab dim" x="276" y="182">是</text>
       <line class="edge" x1="515" y1="134" x2="515" y2="222" marker-end="url(#a3)"/>
@@ -293,11 +362,142 @@
       <text class="s dim" x="925" y="273" text-anchor="middle">只留關鍵路徑</text>
     </svg>
     </div>
-    <figcaption><b>第一個問題就能擋掉大部分的混亂。</b>「拿掉框架還能不能跑」在 Laravel 端有一個現成的檢查方式：如果 <code>php artisan test --testsuite=Unit</code> 跑起來很慢，代表有測試偷偷連了資料庫，它其實不屬於第一層。前端對應的訊號是測試檔裡出現了 <code>mount()</code>。</figcaption>
+    <figcaption><b>第一個問題就能擋掉大部分的混亂。</b>「拿掉框架還能不能跑」在 Laravel 端有現成的檢查方式：如果 <code>php artisan test --testsuite=Unit</code> 跑起來很慢，代表有測試偷偷連了資料庫。前端對應的訊號是測試檔裡出現了 <code>mount()</code>。</figcaption>
   </figure>
 </section>
 
-<p class="foot"><b>這裡沒畫什麼。</b>三張圖畫的是測試分層的機制，不是任何一個實際專案的架構——框裡的 <code>PricingService</code>、<code>utils/pricing.js</code> 都是示意。也沒有畫 CI／CD、部署流程，以及 mutation testing、property-based testing 這類「驗測試本身可不可信」的手段；後者不是第五層，而是垂直穿過所有層的另一個維度。</p>
+<section>
+  <h2><span class="num">05</span>判準從哪裡來</h2>
+  <p class="claim">維度 02 的展開，也是挑手段時最該問的問題。越往左，判準的權威來自程式碼自己；越往右，來自程式碼以外的東西。</p>
+  <figure>
+    <div class="scroll">
+    <svg viewBox="0 0 1020 340" role="img" aria-label="判準來源光譜圖：由實作之內到實作之外依序為快照與視覺回歸、差分測試、蛻變測試、性質測試、契約 schema、規格斷言與 WCAG 外部標準，各自標註證據強度，越往右代表判準權威越獨立於實作本身">
+      <defs>
+        <marker id="a5" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+          <path d="M0,0 L10,5 L0,10 z" fill="currentColor" opacity=".45"/>
+        </marker>
+      </defs>
+
+      <text class="s dim" x="120" y="34">權威來自程式碼自己</text>
+      <text class="s dim" x="900" y="34" text-anchor="end">權威來自程式碼以外</text>
+
+      <rect class="box" x="120" y="52" width="130" height="52" rx="4"/>
+      <text class="s" x="185" y="76" text-anchor="middle">快照 · VR</text>
+      <text class="s dim" x="185" y="94" text-anchor="middle">上一版的自己</text>
+      <line class="edge" x1="185" y1="104" x2="185" y2="152"/>
+
+      <rect class="box" x="390" y="52" width="130" height="52" rx="4"/>
+      <text class="s" x="455" y="76" text-anchor="middle">metamorphic</text>
+      <text class="s dim" x="455" y="94" text-anchor="middle">輸入輸出的關係</text>
+      <line class="edge" x1="455" y1="104" x2="455" y2="152"/>
+
+      <rect class="box-accent" x="660" y="52" width="130" height="52" rx="4"/>
+      <text class="s" x="725" y="76" text-anchor="middle">性質 · PBT</text>
+      <text class="s dim" x="725" y="94" text-anchor="middle">不變量</text>
+      <line class="edge-accent" x1="725" y1="104" x2="725" y2="152"/>
+
+      <line class="axis" x1="90" y1="160" x2="960" y2="160" marker-end="url(#a5)"/>
+      <text class="s dim" x="90" y="180">實作之內</text>
+      <text class="s dim" x="955" y="180" text-anchor="end">實作之外</text>
+
+      <line class="edge" x1="320" y1="168" x2="320" y2="196"/>
+      <rect class="box" x="255" y="196" width="130" height="52" rx="4"/>
+      <text class="s" x="320" y="220" text-anchor="middle">differential</text>
+      <text class="s dim" x="320" y="238" text-anchor="middle">另一份實作</text>
+
+      <line class="edge" x1="590" y1="168" x2="590" y2="196"/>
+      <rect class="box" x="525" y="196" width="130" height="52" rx="4"/>
+      <text class="s" x="590" y="220" text-anchor="middle">契約 schema</text>
+      <text class="s dim" x="590" y="238" text-anchor="middle">雙方議定</text>
+
+      <line class="edge-accent" x1="865" y1="168" x2="865" y2="196"/>
+      <rect class="box-accent" x="800" y="196" width="140" height="52" rx="4"/>
+      <text class="s" x="870" y="220" text-anchor="middle">規格 · WCAG</text>
+      <text class="s dim" x="870" y="238" text-anchor="middle">人或標準定的</text>
+
+      <text class="s dim" x="185" y="284" text-anchor="middle">low</text>
+      <text class="s dim" x="320" y="284" text-anchor="middle">low-medium</text>
+      <text class="s dim" x="455" y="284" text-anchor="middle">medium</text>
+      <text class="s dim" x="590" y="284" text-anchor="middle">low（研究層）</text>
+      <text class="s accent-text" x="725" y="284" text-anchor="middle">high</text>
+      <text class="s dim" x="870" y="284" text-anchor="middle">標準本身即權威</text>
+      <text class="s dim" x="90" y="284">證據強度</text>
+
+      <text class="lab-accent" x="510" y="320" text-anchor="middle">越往右，agent 越難從內部滿足它——這正是能約束 AI 產碼的方向</text>
+    </svg>
+    </div>
+    <figcaption><b>VR 不知道畫面「應該」長什麼樣，只知道跟上次不一樣。</b>第一次產的 baseline 如果本身就是錯的，它會忠實地保護那個錯誤。這就是判準權威落在最左邊的代價。強度標註引自本 vault <code>用測試約束-AI-產碼</code> 的證據總表；契約那個 low 指的是「拿它約束 AI 產碼」的研究證據薄弱，<b>不是說分離架構不該做</b>——架構自己製造了那個缺口，跟論文多不多無關。</figcaption>
+  </figure>
+</section>
+
+<section>
+  <h2><span class="num">06</span>導入順序與停止條件</h2>
+  <p class="claim">每一步的前提是上一步已經穩。停止條件比開始更重要——沒有它，這條路會一直加下去。</p>
+  <figure>
+    <div class="scroll">
+    <svg viewBox="0 0 1020 400" role="img" aria-label="導入步驟圖：建立期依序為靜態分析、單元測試、框架內測試、契約測試、少量端到端測試；穩定後可選的進階手段為變異測試體檢、性質測試、視覺回歸；並標出兩條停止條件">
+      <defs>
+        <marker id="a6" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+          <path d="M0,0 L10,5 L0,10 z" fill="currentColor"/>
+        </marker>
+      </defs>
+
+      <text class="s dim" x="30" y="42">建立期 · 依序完成，前一步沒穩不要往下</text>
+
+      <rect class="box" x="30" y="56" width="160" height="56" rx="4"/>
+      <text class="t" x="110" y="80" text-anchor="middle">0 靜態</text>
+      <text class="s dim" x="110" y="99" text-anchor="middle">型別 · Lint</text>
+      <line class="edge" x1="190" y1="84" x2="218" y2="84" marker-end="url(#a6)"/>
+
+      <rect class="box" x="225" y="56" width="160" height="56" rx="4"/>
+      <text class="t" x="305" y="80" text-anchor="middle">1 單元</text>
+      <text class="s dim" x="305" y="99" text-anchor="middle">毫秒級</text>
+      <line class="edge" x1="385" y1="84" x2="413" y2="84" marker-end="url(#a6)"/>
+
+      <rect class="box" x="420" y="56" width="160" height="56" rx="4"/>
+      <text class="t" x="500" y="80" text-anchor="middle">2 框架內</text>
+      <text class="s dim" x="500" y="99" text-anchor="middle">驗接線</text>
+      <line class="edge" x1="580" y1="84" x2="608" y2="84" marker-end="url(#a6)"/>
+
+      <rect class="box-accent" x="615" y="56" width="160" height="56" rx="4"/>
+      <text class="t" x="695" y="80" text-anchor="middle">3 契約</text>
+      <text class="s dim" x="695" y="99" text-anchor="middle">分離架構必修</text>
+      <line class="edge" x1="775" y1="84" x2="803" y2="84" marker-end="url(#a6)"/>
+
+      <rect class="box" x="810" y="56" width="160" height="56" rx="4"/>
+      <text class="t" x="890" y="80" text-anchor="middle">4 E2E</text>
+      <text class="s dim" x="890" y="99" text-anchor="middle">只留關鍵路徑</text>
+
+      <line class="rule" x1="30" y1="150" x2="990" y2="150"/>
+      <text class="s dim" x="30" y="182">穩定之後才划算 · 可選</text>
+
+      <rect class="box" x="120" y="196" width="190" height="56" rx="4"/>
+      <text class="t" x="215" y="220" text-anchor="middle">5 mutation 體檢</text>
+      <text class="s dim" x="215" y="239" text-anchor="middle">測試擋不擋得住東西</text>
+      <line class="edge" x1="310" y1="224" x2="338" y2="224" marker-end="url(#a6)"/>
+
+      <rect class="box-accent" x="345" y="196" width="190" height="56" rx="4"/>
+      <text class="t" x="440" y="220" text-anchor="middle">6 PBT</text>
+      <text class="s dim" x="440" y="239" text-anchor="middle">對純函式找真 bug</text>
+
+      <rect class="box-opt" x="640" y="196" width="190" height="56" rx="4"/>
+      <text class="t off" x="735" y="220" text-anchor="middle">7 VR</text>
+      <text class="s off" x="735" y="239" text-anchor="middle">限高價值元件</text>
+      <text class="s off" x="860" y="228">設計系統定型後</text>
+
+      <line class="rule" x1="30" y1="290" x2="990" y2="290"/>
+      <text class="lab-accent" x="30" y="322">停止條件一　PBT 跑完一個真 bug 都沒找到 → 這層碼夠穩，資源投別處，不要繼續加碼</text>
+      <text class="lab-accent" x="30" y="352">停止條件二　mutation 只當體檢不當門禁 → 當 gate 會誘發「為了分數寫測試」，正是要防的東西的鏡像</text>
+      <text class="s dim" x="30" y="382">覆蓋率不在此圖中，因為它不是成效判準——唯一該用的判準是「有沒有抓到真 bug」</text>
+    </svg>
+    </div>
+    <figcaption><b>5 為什麼排在 4 之後：</b>mutation 是拿現有測試去體檢，測試還沒建起來就沒東西可檢。<b>0 為什麼排在最前面：</b>型別檢查與 Lint 不執行程式碼、幾乎零維護成本，是投資報酬率最高的一步——但它抓不到業務邏輯的錯，所以擋不掉後面任何一層。</figcaption>
+  </figure>
+</section>
+
+<p class="foot"><b>這裡沒畫什麼。</b>六張圖畫的是測試手段的定位與順序，不是任何一個實際專案的架構——框裡的 <code>PricingService</code>、<code>utils/pricing.js</code> 都是示意。也沒有畫 CI／CD 與部署流程，以及 fuzzing、accessibility、performance 這幾類：它們在維度 02 上各有位置（分別是「不該崩」、WCAG 外部標準、效能預算），但與前後端分離這個主題的關聯度不如上面幾項。</p>
+
+<p class="foot"><b>強度標註的來源。</b>圖 05 的證據強度引自本 vault 的 <code>用測試約束-AI-產碼</code> 頁證據總表，該頁每條主張各自標了出處與限制。此處的簡短標籤是壓縮版，要引用請回該頁看完整脈絡與「勿引用」清單。</p>
 
 </div>
 </body>
