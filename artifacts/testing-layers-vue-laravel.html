@@ -1,0 +1,304 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>前後端分離的測試分層</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    padding: 3rem 1.5rem 5rem;
+    font-family: -apple-system, "Segoe UI", "Noto Sans TC", "PingFang TC",
+                 "Microsoft JhengHei", system-ui, sans-serif;
+    line-height: 1.75;
+    color: #1c1c1e;
+    background: #fbfaf8;
+  }
+  .wrap { max-width: 68rem; margin: 0 auto; }
+
+  h1 { font-size: 1.6rem; font-weight: 620; letter-spacing: -0.01em; margin: 0 0 .4rem; }
+  .lede { color: #5d5d63; margin: 0 0 3.5rem; max-width: 46rem; }
+  h2 {
+    font-size: 1.05rem; font-weight: 620; margin: 0 0 .3rem;
+    letter-spacing: .01em;
+  }
+  h2 .num {
+    display: inline-block; min-width: 1.6rem;
+    color: #a8794a; font-variant-numeric: tabular-nums;
+  }
+  section { margin-bottom: 4.5rem; }
+  .claim { color: #5d5d63; margin: 0 0 1.6rem 1.6rem; max-width: 46rem; }
+
+  figure { margin: 0; }
+  .scroll { overflow-x: auto; padding-bottom: .5rem; }
+  svg { display: block; width: 100%; min-width: 40rem; height: auto; }
+  figcaption {
+    margin-top: 1rem; font-size: .875rem; color: #5d5d63;
+    max-width: 46rem;
+  }
+  figcaption b { color: #1c1c1e; font-weight: 600; }
+  code {
+    font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace;
+    font-size: .92em;
+  }
+
+  .foot {
+    margin-top: 4rem; padding-top: 1.5rem;
+    border-top: 1px solid rgba(0,0,0,.1);
+    color: #5d5d63; font-size: .875rem; max-width: 46rem;
+  }
+  .foot b { color: #1c1c1e; font-weight: 600; }
+
+  /* SVG 共用樣式（頁面層 CSS，SVG 片段本身保持無 style/script） */
+  svg text { fill: currentColor; font-family: inherit; }
+  .box { fill: #fff; stroke: currentColor; stroke-width: 1.4; }
+  .box-shell { fill: none; stroke: currentColor; stroke-width: 1.4; stroke-dasharray: 5 4; }
+  .box-accent { fill: #fff; stroke: #a8794a; stroke-width: 2.2; }
+  .band { fill: #fff; stroke: currentColor; stroke-width: 1.4; }
+  .band-accent { fill: #fff; stroke: #a8794a; stroke-width: 2.2; }
+  .band-dim { fill: none; stroke: #b3b0aa; stroke-width: 1.4; }
+  .t { font-size: 14px; font-weight: 600; }
+  .s { font-size: 11.5px; }
+  .n { font-size: 13px; font-weight: 700; fill: #a8794a; }
+  .dim { opacity: .62; }
+  .off { fill: #8d8a84; }
+  .edge { stroke: currentColor; stroke-width: 1.5; fill: none; }
+  .edge-accent { stroke: #a8794a; stroke-width: 2; fill: none; }
+  .lab { font-size: 11.5px; }
+  .lab-accent { font-size: 11.5px; fill: #a8794a; font-weight: 600; }
+  .rule { stroke: currentColor; stroke-width: 1; opacity: .18; }
+  .divider { stroke: currentColor; stroke-width: 1.2; opacity: .3; stroke-dasharray: 4 5; fill: none; }
+  .accent-text { fill: #a8794a; }
+
+  @media (prefers-color-scheme: dark) {
+    body { color: #e9e7e3; background: #17161a; }
+    .lede, .claim, figcaption, .foot { color: #a3a09b; }
+    figcaption b, .foot b { color: #e9e7e3; }
+    h2 .num { color: #d3a06a; }
+    .box, .box-accent, .band, .band-accent { fill: #201f24; }
+    .box-accent, .band-accent { stroke: #d3a06a; }
+    .band-dim { stroke: #57545c; }
+    .off { fill: #86828c; }
+    .edge-accent { stroke: #d3a06a; }
+    .lab-accent, .n, .accent-text { fill: #d3a06a; }
+    .foot { border-top-color: rgba(255,255,255,.12); }
+  }
+  @media (max-width: 40rem) {
+    body { padding: 2rem 1rem 3rem; }
+    .claim { margin-left: 0; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<h1>前後端分離的測試分層</h1>
+<p class="lede">前端 Vue、後端 Laravel，兩端各自獨立部署、透過 HTTP API 溝通。這個架構對測試的影響不是「工作量變兩倍」，而是<strong>多出一個誰都不擁有的問題</strong>：兩端各自全綠，接起來仍然可能是壞的。三張圖分別畫四層的射程、第一層那個關鍵動作，以及一個測試該歸哪一層的判準。</p>
+
+<section>
+  <h2><span class="num">01</span>四層測試的射程</h2>
+  <p class="claim">前兩層在單邊之內，後兩層跨越 HTTP 邊界。中間那條虛線是分離架構所有麻煩的來源。</p>
+  <figure>
+    <div class="scroll">
+    <svg viewBox="0 0 1060 505" role="img" aria-label="四層測試射程圖：第一層單元測試與第二層框架內測試各自涵蓋前端或後端單邊；第三層契約測試與第四層端到端測試橫跨前後端之間的 HTTP 邊界">
+      <defs>
+        <marker id="a1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+          <path d="M0,0 L10,5 L0,10 z" fill="currentColor"/>
+        </marker>
+      </defs>
+
+      <!-- 架構區 -->
+      <rect class="box" x="160" y="44" width="280" height="170" rx="4"/>
+      <text class="t" x="300" y="76" text-anchor="middle">Vue (SPA)</text>
+      <text class="s" x="190" y="112">components</text>
+      <text class="s" x="210" y="142">composables</text>
+      <text class="s" x="230" y="172">utils</text>
+
+      <rect class="box" x="600" y="44" width="280" height="170" rx="4"/>
+      <text class="t" x="740" y="76" text-anchor="middle">Laravel (API)</text>
+      <text class="s" x="630" y="112">Controller</text>
+      <text class="s" x="650" y="142">Service</text>
+      <text class="s" x="670" y="172">Model / DB</text>
+
+      <text class="lab" x="520" y="112" text-anchor="middle">HTTP / JSON</text>
+      <line class="edge" x1="450" y1="132" x2="590" y2="132" marker-start="url(#a1)" marker-end="url(#a1)"/>
+
+      <text class="s dim" x="300" y="236" text-anchor="middle">前端 repo</text>
+      <text class="s dim" x="740" y="236" text-anchor="middle">後端 repo</text>
+
+      <!-- HTTP 邊界貫穿線 -->
+      <line class="divider" x1="520" y1="150" x2="520" y2="492"/>
+
+      <line class="rule" x1="20" y1="256" x2="1040" y2="256"/>
+
+      <!-- 第 1 層 -->
+      <text class="n" x="135" y="284" text-anchor="end">01</text>
+      <text class="s dim" x="135" y="302" text-anchor="end">單元</text>
+      <rect class="band" x="160" y="272" width="280" height="38" rx="3"/>
+      <text class="s" x="300" y="296" text-anchor="middle">utils、純 composable</text>
+      <rect class="band" x="600" y="272" width="280" height="38" rx="3"/>
+      <text class="s" x="740" y="296" text-anchor="middle">Service、Value Object</text>
+      <text class="lab dim" x="900" y="296">不啟動框架 · 毫秒級</text>
+
+      <!-- 第 2 層 -->
+      <text class="n" x="135" y="342" text-anchor="end">02</text>
+      <text class="s dim" x="135" y="360" text-anchor="end">框架內</text>
+      <rect class="band" x="160" y="330" width="280" height="38" rx="3"/>
+      <text class="s" x="300" y="354" text-anchor="middle">掛載元件、驗互動</text>
+      <rect class="band" x="600" y="330" width="280" height="38" rx="3"/>
+      <text class="s" x="740" y="354" text-anchor="middle">Feature：打 route、碰 DB</text>
+      <text class="lab dim" x="900" y="354">啟動框架 · 仍在單邊</text>
+
+      <!-- 第 3 層 -->
+      <text class="n" x="135" y="400" text-anchor="end">03</text>
+      <text class="s dim" x="135" y="418" text-anchor="end">契約</text>
+      <rect class="band-accent" x="160" y="388" width="720" height="38" rx="3"/>
+      <text class="s" x="520" y="412" text-anchor="middle">前端假設的 API 形狀　⟷　後端實際回的形狀</text>
+      <text class="lab-accent" x="900" y="412">分離架構特有</text>
+
+      <!-- 第 4 層 -->
+      <text class="n" x="135" y="458" text-anchor="end">04</text>
+      <text class="s dim" x="135" y="476" text-anchor="end">端到端</text>
+      <rect class="band-dim" x="160" y="446" width="720" height="38" rx="3"/>
+      <text class="s off" x="520" y="470" text-anchor="middle">真瀏覽器 → 前端 → HTTP → 後端 → DB，走完一條流程</text>
+      <text class="lab dim" x="900" y="470">最慢最脆 · 只留關鍵路徑</text>
+    </svg>
+    </div>
+    <figcaption><b>第 1、2 層全綠不代表系統是對的。</b>兩端可以各自完美，而前端等的欄位叫 <code>total</code>、後端回的叫 <code>total_amount</code>——這種錯不在任何一邊的測試射程內，只有第 3 層抓得到。單體專案沒有這條邊界，所以也沒有這一層的成本。</figcaption>
+  </figure>
+</section>
+
+<section>
+  <h2><span class="num">02</span>第一層的關鍵動作：讓判斷脫離框架</h2>
+  <p class="claim">同一條「滿 1000 打九折」，寫在框架內部與抽出來之後，測試要穿過的東西完全不同。虛線框是「必須先啟動才能進去」的殼。</p>
+  <figure>
+    <div class="scroll">
+    <svg viewBox="0 0 1020 470" role="img" aria-label="抽離前後對比圖：抽離前折扣規則被包在 Vue 元件的 script setup 與 Laravel Controller 的 store 方法內，測試箭頭必須穿過框架外殼；抽離後折扣規則位於獨立的 utils 模組與 Service 類別，測試箭頭直接命中，不穿過任何殼">
+      <defs>
+        <marker id="a2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+          <path d="M0,0 L10,5 L0,10 z" fill="currentColor"/>
+        </marker>
+        <marker id="a2c" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+          <path d="M0,0 L10,5 L0,10 z" fill="#a8794a"/>
+        </marker>
+      </defs>
+
+      <text class="t dim" x="205" y="30" text-anchor="middle">抽離前 · 判斷長在框架內部</text>
+      <text class="t accent-text" x="770" y="30" text-anchor="middle">抽離後 · 判斷脫離框架</text>
+      <line class="divider" x1="505" y1="48" x2="505" y2="450"/>
+
+      <!-- 上排：Vue，抽離前 -->
+      <rect class="box-shell" x="40" y="60" width="330" height="100" rx="4"/>
+      <text class="s dim" x="205" y="82" text-anchor="middle">Vue 元件 · script setup</text>
+      <rect class="box-accent" x="165" y="96" width="180" height="48" rx="3"/>
+      <text class="t" x="255" y="126" text-anchor="middle">折扣規則</text>
+      <line class="edge" x1="255" y1="205" x2="255" y2="150" marker-end="url(#a2)"/>
+      <text class="lab" x="255" y="222" text-anchor="middle">測試：必須先 mount() 整個元件</text>
+
+      <!-- 上排：Vue，抽離後 -->
+      <rect class="box" x="565" y="60" width="150" height="100" rx="4"/>
+      <text class="t" x="640" y="100" text-anchor="middle">Vue 元件</text>
+      <text class="s dim" x="640" y="124" text-anchor="middle">只呼叫</text>
+      <line class="edge" x1="720" y1="110" x2="793" y2="110" marker-end="url(#a2)"/>
+      <text class="lab dim" x="756" y="98" text-anchor="middle">呼叫</text>
+      <rect class="box-accent" x="800" y="60" width="180" height="100" rx="4"/>
+      <text class="s dim" x="890" y="98" text-anchor="middle">utils/pricing.js</text>
+      <text class="t" x="890" y="126" text-anchor="middle">折扣規則</text>
+      <line class="edge-accent" x1="890" y1="205" x2="890" y2="166" marker-end="url(#a2c)"/>
+      <text class="lab-accent" x="890" y="222" text-anchor="middle">測試：直接呼叫，毫秒級</text>
+
+      <!-- 下排：Laravel，抽離前 -->
+      <rect class="box-shell" x="40" y="280" width="330" height="100" rx="4"/>
+      <text class="s dim" x="205" y="302" text-anchor="middle">Laravel Controller · store()</text>
+      <rect class="box-accent" x="165" y="316" width="180" height="48" rx="3"/>
+      <text class="t" x="255" y="346" text-anchor="middle">折扣規則</text>
+      <line class="edge" x1="255" y1="425" x2="255" y2="370" marker-end="url(#a2)"/>
+      <text class="lab" x="255" y="442" text-anchor="middle">測試：必須發 HTTP request + 起 DB</text>
+
+      <!-- 下排：Laravel，抽離後 -->
+      <rect class="box" x="565" y="280" width="150" height="100" rx="4"/>
+      <text class="t" x="640" y="320" text-anchor="middle">Controller</text>
+      <text class="s dim" x="640" y="344" text-anchor="middle">只呼叫</text>
+      <line class="edge" x1="720" y1="330" x2="793" y2="330" marker-end="url(#a2)"/>
+      <text class="lab dim" x="756" y="318" text-anchor="middle">呼叫</text>
+      <rect class="box-accent" x="800" y="280" width="180" height="100" rx="4"/>
+      <text class="s dim" x="890" y="318" text-anchor="middle">PricingService</text>
+      <text class="t" x="890" y="346" text-anchor="middle">折扣規則</text>
+      <line class="edge-accent" x1="890" y1="425" x2="890" y2="386" marker-end="url(#a2c)"/>
+      <text class="lab-accent" x="890" y="442" text-anchor="middle">測試：直接 new，不碰 DB</text>
+    </svg>
+    </div>
+    <figcaption><b>兩個框架卡的是同一個坑。</b>框架讓人很容易把判斷寫在「必須啟動框架才能執行」的位置——左側那兩個虛線殼就是啟動成本。抽離之後，框架那側只剩「呼叫它、把結果交出去」，沒有判斷、因此不需要在第一層測它。</figcaption>
+  </figure>
+</section>
+
+<section>
+  <h2><span class="num">03</span>一個測試該歸哪一層</h2>
+  <p class="claim">不必憑感覺分類。三個問題依序問下去，每個測試都有唯一歸屬。</p>
+  <figure>
+    <div class="scroll">
+    <svg viewBox="0 0 1020 330" role="img" aria-label="測試分層決策圖：先問拿掉框架還能不能跑，能跑歸第一層單元測試；不能就問是否只碰單邊，是則歸第二層框架內測試；否則問是否需要真瀏覽器，不需要歸第三層契約測試，需要則歸第四層端到端測試">
+      <defs>
+        <marker id="a3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+          <path d="M0,0 L10,5 L0,10 z" fill="currentColor"/>
+        </marker>
+        <marker id="a3c" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+          <path d="M0,0 L10,5 L0,10 z" fill="#a8794a"/>
+        </marker>
+      </defs>
+
+      <rect class="box" x="14" y="70" width="106" height="56" rx="4"/>
+      <text class="s" x="67" y="103" text-anchor="middle">一個測試</text>
+      <line class="edge" x1="120" y1="98" x2="163" y2="98" marker-end="url(#a3)"/>
+
+      <rect class="box" x="170" y="62" width="190" height="72" rx="4"/>
+      <text class="s" x="265" y="103" text-anchor="middle">拿掉框架還能跑嗎</text>
+      <line class="edge" x1="360" y1="98" x2="413" y2="98" marker-end="url(#a3)"/>
+      <text class="lab dim" x="386" y="88" text-anchor="middle">否</text>
+
+      <rect class="box" x="420" y="62" width="190" height="72" rx="4"/>
+      <text class="s" x="515" y="103" text-anchor="middle">只在單邊之內嗎</text>
+      <line class="edge" x1="610" y1="98" x2="663" y2="98" marker-end="url(#a3)"/>
+      <text class="lab dim" x="636" y="88" text-anchor="middle">否</text>
+
+      <rect class="box" x="670" y="62" width="190" height="72" rx="4"/>
+      <text class="s" x="765" y="103" text-anchor="middle">需要真瀏覽器嗎</text>
+
+      <!-- 向下分支 -->
+      <line class="edge" x1="265" y1="134" x2="265" y2="222" marker-end="url(#a3)"/>
+      <text class="lab dim" x="276" y="182">是</text>
+      <line class="edge" x1="515" y1="134" x2="515" y2="222" marker-end="url(#a3)"/>
+      <text class="lab dim" x="526" y="182">是</text>
+      <polyline class="edge-accent" points="720,134 720,182 745,182 745,222" marker-end="url(#a3c)"/>
+      <text class="lab-accent" x="700" y="168" text-anchor="end">否</text>
+      <polyline class="edge" points="810,134 810,182 925,182 925,222" marker-end="url(#a3)"/>
+      <text class="lab dim" x="838" y="172">是</text>
+
+      <rect class="box" x="170" y="225" width="190" height="64" rx="4"/>
+      <text class="t" x="265" y="252" text-anchor="middle">第 1 層 · 單元</text>
+      <text class="s dim" x="265" y="273" text-anchor="middle">毫秒級 · 數量最多</text>
+
+      <rect class="box" x="420" y="225" width="190" height="64" rx="4"/>
+      <text class="t" x="515" y="252" text-anchor="middle">第 2 層 · 框架內</text>
+      <text class="s dim" x="515" y="273" text-anchor="middle">秒級 · 驗接線</text>
+
+      <rect class="box-accent" x="670" y="225" width="150" height="64" rx="4"/>
+      <text class="t" x="745" y="252" text-anchor="middle">第 3 層 · 契約</text>
+      <text class="s dim" x="745" y="273" text-anchor="middle">驗形狀</text>
+
+      <rect class="box" x="850" y="225" width="150" height="64" rx="4"/>
+      <text class="t" x="925" y="252" text-anchor="middle">第 4 層 · E2E</text>
+      <text class="s dim" x="925" y="273" text-anchor="middle">只留關鍵路徑</text>
+    </svg>
+    </div>
+    <figcaption><b>第一個問題就能擋掉大部分的混亂。</b>「拿掉框架還能不能跑」在 Laravel 端有一個現成的檢查方式：如果 <code>php artisan test --testsuite=Unit</code> 跑起來很慢，代表有測試偷偷連了資料庫，它其實不屬於第一層。前端對應的訊號是測試檔裡出現了 <code>mount()</code>。</figcaption>
+  </figure>
+</section>
+
+<p class="foot"><b>這裡沒畫什麼。</b>三張圖畫的是測試分層的機制，不是任何一個實際專案的架構——框裡的 <code>PricingService</code>、<code>utils/pricing.js</code> 都是示意。也沒有畫 CI／CD、部署流程，以及 mutation testing、property-based testing 這類「驗測試本身可不可信」的手段；後者不是第五層，而是垂直穿過所有層的另一個維度。</p>
+
+</div>
+</body>
+</html>
