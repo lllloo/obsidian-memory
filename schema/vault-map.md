@@ -1,7 +1,7 @@
 ---
 title: Vault Map
 created: 2026-04-15
-updated: 2026-08-03
+updated: 2026-08-08
 tags:
   - index
 ---
@@ -35,6 +35,7 @@ tags:
 ├── feeds/         — 【自動產物層，不屬三層系統】只供使用者瀏覽，不進 raw／wiki／ingest／query／lint
 │   ├── youtube/   — YouTube 自動同步筆記；各頻道含 01.index.md + 02.影片清單.base，只供使用者瀏覽
 │   └── watch/     — GitHub issue/PR 追蹤看板與變更 digest（vault-watch 產出，01.index.md 為追蹤清單）
+├── artifacts/     — 【呈現層，不屬三層系統】有長期回看價值的非 markdown 產出（單檔 HTML 圖／報告），納版控；agent 可自主建立更新，不進 ingest／query／lint，不對外發佈
 ├── cards/         — 【使用者私人區，agent 不管理】使用者自存文件；Quartz 公開層之一
 └── topics/        — 【使用者私人區，agent 不管理】使用者自存主題資料夾；Quartz 公開層之一
 ```

@@ -28,6 +28,8 @@
 - `feeds/watch/`：`vault-watch` 的 GitHub issue/PR 追蹤看板（`01.index.md`）與變更 digest；追蹤清單以看板為準，不硬編碼。
 （`vault-lint` 不再產 feeds 產物：健檢的待處理清單改放 `schema/BACKLOG.md`，見下方 schema 一節。）
 
+**`artifacts/` 也不屬三層系統。** 它存放有長期回看價值、但不是 markdown 知識的產出（如架構圖、報告的單檔 HTML），納版控供日後回看。agent **可自主建立與更新**，一次性草稿則留在 scratchpad、不進這裡。它不參與 Ingest／Query／Lint，不得作為 `raw/`／`wiki/` 的來源；Quartz 只發佈 cards/topics，`artifacts/**` 不對外發佈。知識本身仍寫進 `wiki/`——`artifacts/` 是呈現層，不是知識層，頁面該講的內容不因為畫了圖就省略。
+
 ## 守門：無
 
 agent 自主維護 wiki（含改頁、刪頁），**不需逐步拍板**——這正是 Karpathy「維護成本趨近於零」的重點。**`git push` 亦可自主執行，不需事先徵求同意**（2026-07-20 使用者拍板移除原「push 前須明確同意」守門；此即本 repo 對 push 的常設明確授權，涵蓋 main 分支，優先於全域保護分支規則），review 由使用者事後看 GitHub diff 把關。force push 不在此授權內，仍需明確要求。
