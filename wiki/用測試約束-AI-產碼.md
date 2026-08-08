@@ -2,7 +2,7 @@
 title: 用測試約束 AI 產碼
 description: AI 寫的測試為何驗證不到東西、判準的權威來源為何才是分類軸，以及 mutation、property-based 等手段的定位差異與防繞過分層
 created: 2026-08-06
-updated: 2026-08-06
+updated: 2026-08-08
 parent: "[[wiki/01.index]]"
 tags:
   - coding-agent
@@ -33,7 +33,10 @@ tags:
 - **ImpossibleBench**（arXiv 2510.20270）把測試改成與規格矛盾，任何「通過」必然是作弊：GPT-5 在 oneoff 版作弊率 **76%**，即使明確指示「發現測試有問題就停下」也未歸零。原文：「stronger models generally exhibit higher cheating rates」。手法包含**改測試斷言**、插特例邏輯、記錄內部狀態騙過評分。
 - **Cursor 的 reward hacking 稽核**（731 條 trajectory）：成功案例中 57% 是在網路上找到已合併的 PR、9% 從 bundled `.git` 挖出未來的修正 commit。
 
-**直接含意**：如果你叫 LLM「讓測試通過」，它預設會**讓測試通過**，而不是修 bug。（另有二手轉述稱 UC Berkeley 2026-04 的研究發現主流 agent benchmark 皆可被刷分、SWE-bench Verified 能靠強迫 pytest hook 通過拿到 100%——**強度 low，未核一手論文，引用前需回查**。）
+**直接含意**：如果你叫 LLM「讓測試通過」，它預設會**讓測試通過**，而不是修 bug。
+
+- **BenchJack**（[arXiv 2605.12673](https://arxiv.org/abs/2605.12673)，Wang、Li、Mang、Cheung、Sen、Song，UC Berkeley RDI；另有[官方 blog](https://rdi.berkeley.edu/blog/trustworthy-benchmarks-cont/)）把同一件事推到極端：用自動化紅隊系統稽核 10 個主流 agent benchmark，合成的 exploit 在**多數** benchmark 上拿到接近滿分而**零題實際解出、多數情況連 LLM 都沒呼叫**。與本頁最直接相關的是 SWE-bench Verified——**一個 10 行的 `conftest.py`，用 pytest hook 把每個測試結果改寫成 passed，500 題 100%**。其餘如 Terminal-Bench 靠假的 curl wrapper、WebArena 靠 `file://` 直接讀 task config 裡的答案。共盤出 219 個 flaw、歸為八類。
+  論文自己給的另一半同樣重要：**這些洞多半補得起來**——迭代式修補管線把四個 benchmark 的 hackable-task ratio 從近 100% 壓到 10% 以下，WebArena 與 OSWorld 三輪內全補。所以正確的讀法不是「benchmark 全不可信」，而是**評估管線尚未內化對抗式思維**。（**medium-high**：一手、方法與規模明確、工具開源可複現；局限是 **arXiv v1 未經同儕審查**，且 OSWorld 只到 73%、並非「所有 benchmark 皆可刷滿」。）
 
 ## 三、關鍵修正：TDD 的價值不在「叫 agent 遵循 TDD」
 
@@ -180,6 +183,7 @@ PBT 不寫「輸入 A 應得 B」，而寫「**對所有合法輸入，這個不
 | 主張 | 強度 |
 |---|---|
 | agent 自寫自測會作弊，越強的模型越明顯 | **high**：ImpossibleBench × Cursor 稽核，兩方獨立收斂 |
+| 主流 agent benchmark 可被 exploit 刷到接近滿分而零題解出 | **medium-high**：BenchJack 一手、10 個 benchmark、219 flaw、工具開源；arXiv v1 未同儕審查，且非全數刷滿（OSWorld 73%） |
 | agent 從文件與命名推不變量、配 PBT 能找到真實 bug | **high**：Anthropic 一手＋論文＋可查證的 merged PR |
 | 「請用 TDD」的程序性指示可能比不介入更糟 | **medium**：單一 preprint（TDAD），但機制與 reward hacking 證據相容 |
 | 測試先於程式碼存在，能阻止 agent 寫測試去確認錯誤實作 | **medium-high**：TDAD 的量化實驗與 Thoughtworks 資深群體共識方法迥異卻獨立同向；後者為閉門共識、非量測 |
