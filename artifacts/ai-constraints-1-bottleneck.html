@@ -1,0 +1,435 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>瓶頸可能不在你以為的地方</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    padding: 3rem 1.5rem 5rem;
+    font-family: -apple-system, "Segoe UI", "Noto Sans TC", "PingFang TC",
+                 "Microsoft JhengHei", system-ui, sans-serif;
+    line-height: 1.8;
+    color: #1c1c1e;
+    background: #fbfaf8;
+  }
+  .wrap { max-width: 68rem; margin: 0 auto; }
+  .col { max-width: 46rem; }
+
+  .nav {
+    font-size: .8125rem; color: #5d5d63; margin: 0 0 2.5rem;
+    display: flex; flex-wrap: wrap; gap: .6rem; align-items: baseline;
+  }
+  .nav b { color: #1c1c1e; font-weight: 600; }
+  .nav a { color: #a8794a; text-decoration: none; border-bottom: 1px solid transparent; }
+  .nav a:hover { border-bottom-color: currentColor; }
+  .nav .sep { opacity: .3; }
+
+  .toc {
+    display: flex; flex-wrap: wrap; gap: .5rem 1.75rem;
+    margin: 0 0 4rem; padding-top: 1.5rem;
+    border-top: 1px solid rgba(0,0,0,.1);
+    font-size: .875rem;
+  }
+  .toc a {
+    color: inherit; text-decoration: none;
+    display: inline-flex; gap: .55rem; align-items: baseline;
+    border-bottom: 1px solid transparent;
+  }
+  .toc a:hover { border-bottom-color: currentColor; }
+  .toc .tnum { color: #a8794a; font-weight: 700; font-variant-numeric: tabular-nums; }
+
+  h1 { font-size: 1.7rem; font-weight: 620; letter-spacing: -0.01em; margin: 0 0 .4rem; }
+  .lede { color: #5d5d63; margin: 0 0 3.5rem; max-width: 46rem; font-size: 1.02rem; }
+  h2 {
+    font-size: 1.12rem; font-weight: 620; margin: 0 0 1.2rem;
+    letter-spacing: .01em;
+  }
+  h2 .num {
+    display: inline-block; min-width: 1.9rem;
+    color: #a8794a; font-variant-numeric: tabular-nums;
+  }
+  h3 {
+    font-size: .95rem; font-weight: 620; margin: 2.5rem 0 .8rem;
+    letter-spacing: .01em;
+  }
+  section { margin-bottom: 5rem; scroll-margin-top: 1.5rem; }
+  p { margin: 0 0 1.1rem; }
+  strong { font-weight: 620; }
+
+  a.ref { color: #a8794a; text-decoration: none; border-bottom: 1px solid rgba(168,121,74,.35); }
+  a.ref:hover { border-bottom-color: currentColor; }
+
+  code {
+    font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace;
+    font-size: .9em;
+  }
+  blockquote {
+    margin: 1.5rem 0; padding: 0 0 0 1.25rem;
+    border-left: 2px solid #a8794a;
+    color: #4a4a50; font-style: normal;
+  }
+  blockquote p:last-child { margin-bottom: 0; }
+  blockquote .who { display: block; font-size: .85rem; color: #8d8a84; margin-top: .5rem; }
+
+  .callout {
+    margin: 2rem 0; padding: 1.25rem 1.5rem;
+    background: #fff; border: 1px solid rgba(0,0,0,.12);
+    border-left: 3px solid #a8794a;
+    max-width: 46rem;
+  }
+  .callout p:last-child { margin-bottom: 0; }
+  .callout .k {
+    display: block; font-size: .75rem; letter-spacing: .08em;
+    text-transform: uppercase; color: #a8794a; font-weight: 700;
+    margin-bottom: .5rem;
+  }
+
+  .weak {
+    display: inline-block; font-size: .8rem; color: #8d8a84;
+    border: 1px solid rgba(0,0,0,.15); border-radius: 2px;
+    padding: 0 .4rem; margin-left: .25rem; white-space: nowrap;
+    vertical-align: .05em;
+  }
+
+  .tbl { overflow-x: auto; margin: 1.75rem 0; }
+  table { border-collapse: collapse; font-size: .9rem; min-width: 34rem; width: 100%; }
+  th, td { text-align: left; vertical-align: top; padding: .6rem .9rem .6rem 0; }
+  th {
+    font-weight: 620; border-bottom: 1.5px solid rgba(0,0,0,.25);
+    white-space: nowrap;
+  }
+  td { border-bottom: 1px solid rgba(0,0,0,.08); }
+  td:first-child, th:first-child { padding-left: 0; }
+  .yes { color: #4a7c59; font-weight: 700; }
+  .no { color: #a8544a; font-weight: 700; }
+  .warn { color: #a8794a; font-weight: 700; }
+
+  figure { margin: 2.5rem 0; }
+  .scroll { overflow-x: auto; padding-bottom: .5rem; }
+  svg { display: block; width: 100%; min-width: 40rem; height: auto; }
+  figcaption {
+    margin-top: 1rem; font-size: .875rem; color: #5d5d63;
+    max-width: 46rem; line-height: 1.7;
+  }
+  figcaption b { color: #1c1c1e; font-weight: 600; }
+
+  ul, ol { margin: 0 0 1.1rem; padding-left: 1.3rem; max-width: 46rem; }
+  li { margin-bottom: .45rem; }
+  li::marker { color: #a8794a; }
+
+  .avoid { border-top: 1px solid rgba(0,0,0,.1); padding-top: 2rem; }
+  .avoid li { margin-bottom: 1rem; }
+
+  .foot {
+    margin-top: 4rem; padding-top: 1.5rem;
+    border-top: 1px solid rgba(0,0,0,.1);
+    color: #5d5d63; font-size: .875rem; max-width: 46rem;
+  }
+  .foot b { color: #1c1c1e; font-weight: 600; }
+  .foot + .foot { margin-top: 1.5rem; padding-top: 0; border-top: 0; }
+
+  /* SVG 共用樣式（頁面層 CSS，SVG 片段本身保持無 style/script） */
+  svg text { fill: currentColor; font-family: inherit; }
+  .box { fill: #fff; stroke: currentColor; stroke-width: 1.4; }
+  .box-accent { fill: #fff; stroke: #a8794a; stroke-width: 2.2; }
+  .box-opt { fill: none; stroke: #b3b0aa; stroke-width: 1.4; stroke-dasharray: 5 4; }
+  .box-bad { fill: #fff; stroke: #a8544a; stroke-width: 2; }
+  .t { font-size: 14px; font-weight: 600; }
+  .s { font-size: 11.5px; }
+  .xs { font-size: 10.5px; }
+  .n { font-size: 13px; font-weight: 700; fill: #a8794a; }
+  .dim { opacity: .62; }
+  .off { fill: #8d8a84; }
+  .edge { stroke: currentColor; stroke-width: 1.5; fill: none; }
+  .edge-accent { stroke: #a8794a; stroke-width: 2; fill: none; }
+  .edge-bad { stroke: #a8544a; stroke-width: 2; fill: none; }
+  .edge-opt { stroke: #b3b0aa; stroke-width: 1.4; fill: none; stroke-dasharray: 5 4; }
+  .lab { font-size: 11.5px; }
+  .lab-accent { font-size: 11.5px; fill: #a8794a; font-weight: 600; }
+  .lab-bad { font-size: 11.5px; fill: #a8544a; font-weight: 600; }
+  .rule { stroke: currentColor; stroke-width: 1; opacity: .18; }
+  .divider { stroke: currentColor; stroke-width: 1.2; opacity: .3; stroke-dasharray: 4 5; fill: none; }
+  .accent-text { fill: #a8794a; }
+  .bad-text { fill: #a8544a; }
+  .axis { stroke: currentColor; stroke-width: 1.3; opacity: .45; fill: none; }
+  .dot { fill: currentColor; }
+  .dot-accent { fill: #a8794a; }
+  .queue { fill: currentColor; opacity: .28; }
+  .queue-accent { fill: #a8794a; opacity: .55; }
+
+  @media (prefers-color-scheme: dark) {
+    body { color: #e9e7e3; background: #17161a; }
+    .lede, .claim, figcaption, .foot, .nav { color: #a3a09b; }
+    .nav b { color: #e9e7e3; }
+    .nav a { color: #d3a06a; }
+    .toc { border-top-color: rgba(255,255,255,.12); }
+    .toc .tnum { color: #d3a06a; }
+    figcaption b, .foot b { color: #e9e7e3; }
+    h2 .num { color: #d3a06a; }
+    a.ref { color: #d3a06a; border-bottom-color: rgba(211,160,106,.35); }
+    blockquote { border-left-color: #d3a06a; color: #bfbcb7; }
+    blockquote .who { color: #86828c; }
+    .callout { background: #201f24; border-color: rgba(255,255,255,.12); border-left-color: #d3a06a; }
+    .callout .k { color: #d3a06a; }
+    .weak { color: #86828c; border-color: rgba(255,255,255,.18); }
+    th { border-bottom-color: rgba(255,255,255,.3); }
+    td { border-bottom-color: rgba(255,255,255,.1); }
+    .yes { color: #7ba888; }
+    .no { color: #d08b80; }
+    .warn { color: #d3a06a; }
+    .avoid { border-top-color: rgba(255,255,255,.12); }
+    .box, .box-accent, .box-bad { fill: #201f24; }
+    .box-accent { stroke: #d3a06a; }
+    .box-bad { stroke: #d08b80; }
+    .box-opt, .edge-opt { stroke: #57545c; }
+    .off { fill: #86828c; }
+    .edge-accent { stroke: #d3a06a; }
+    .edge-bad { stroke: #d08b80; }
+    .lab-accent, .n, .accent-text, .dot-accent { fill: #d3a06a; }
+    .lab-bad, .bad-text { fill: #d08b80; }
+    .queue-accent { fill: #d3a06a; }
+    li::marker { color: #d3a06a; }
+    .foot { border-top-color: rgba(255,255,255,.12); }
+  }
+  @media (max-width: 40rem) {
+    body { padding: 2rem 1rem 3rem; }
+  }
+
+  .nav .grp { color: #8d8a84; font-weight: 600; }
+  @media (prefers-color-scheme: dark) {
+    .nav .grp { color: #86828c; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<nav class="nav">
+  <a href="01.index.html">← artifacts</a>
+  <span class="sep">｜</span>
+  <span class="grp">AI 產碼的約束</span>
+  <span class="sep">·</span>
+  <b>1　瓶頸</b>
+  <span class="sep">·</span>
+  <a href="ai-constraints-2-testing.html">2　測試路線</a>
+  <span class="sep">·</span>
+  <a href="ai-constraints-3-uncle-bob.html">3　全押案例</a>
+</nav>
+
+<h1>瓶頸可能不在你以為的地方</h1>
+<p class="lede">產碼速度上去之後，業界處方分四條路線。但在選路線之前有個更前面的問題：<strong>「瓶頸已經從寫碼移到 review」這個大家共用的前提，認知與觀測互相矛盾</strong>——選錯瓶頸，所有投資都會落在錯的地方。這頁只做一件事：把那個矛盾攤開，給你一個成本近零的自我檢驗，然後標出四條路線各自攔在流程的哪個位置。</p>
+
+<nav class="toc" aria-label="頁內目錄">
+  <a href="#s01"><span class="tnum">01</span>認知與觀測對不上</a>
+  <a href="#s02"><span class="tnum">02</span>機制根源：verification tax</a>
+  <a href="#s03"><span class="tnum">03</span>四條路線各自攔在哪</a>
+  <a href="#s04"><span class="tnum">04</span>這些數字別引</a>
+</nav>
+
+<section id="s01">
+  <h2><span class="num">01</span>認知與觀測對不上</h2>
+
+  <div class="col">
+  <p><a class="ref" href="https://dora.dev/research/2025/dora-report/">DORA 2025</a> 的大樣本問卷給了一組彼此矛盾的事實：90% 的技術人員在用 AI、超過八成自認生產力提升，但<strong>三成對 AI 產的碼幾乎不信任</strong>。同一份報告觀測到 AI 採用同時關聯到交付吞吐量上升<strong>與</strong>交付不穩定性上升——更多變更失敗、更多返工、更長的修復時間。（相關性，非因果。）</p>
+
+  <p>壓力確實落在 review 上。高 AI 採用團隊的 merge PR 數 +98%、review 時間 +91%、PR 平均大小 +154%<span class="weak">medium：Faros AI，1 萬名開發者，廠商研究未同儕審查</span>。GitLab 的調查裡有 <strong>85% 的人同意「瓶頸已從寫碼移到 review」</strong><span class="weak">low：主觀認知調查，非行為觀測</span>。</p>
+
+  <p>問題在於另一組觀測對不上：<strong>超過九成的團隊仍在批次部署</strong>，半數批次含 2–10 個變更、四分之一含 11–50 個<span class="weak">low-medium：單一廠商進行中的研究</span>。這兩件事不可能同時成立——如果變更 review 完之後還在排隊，review 就不是約束點，而<strong>加快 review 只會把壓力更快推給真正的瓶頸</strong>。</p>
+  </div>
+
+  <figure>
+    <div class="scroll">
+    <svg viewBox="0 0 1000 330" role="img" aria-label="PR 生命週期圖：從寫碼、開 PR、review 佇列、批准到等待部署、上線。上方標示大家以為的瓶頸在 review 佇列，下方標示實際觀測到的積壓發生在批准之後、部署之前">
+      <defs>
+        <marker id="a1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+          <path d="M0,0 L10,5 L0,10 z" fill="currentColor" opacity=".5"/>
+        </marker>
+      </defs>
+
+      <text class="s accent-text" x="30" y="40">大家以為的瓶頸</text>
+      <path class="edge-opt" d="M150 34 L385 34 L385 92"/>
+      <text class="xs off" x="160" y="30">85% 同意「瓶頸從寫碼移到 review」</text>
+
+      <line class="axis" x1="30" y1="150" x2="960" y2="150" marker-end="url(#a1)"/>
+
+      <rect class="box" x="60" y="122" width="96" height="56" rx="2"/>
+      <text class="s" x="108" y="147" text-anchor="middle">agent 寫碼</text>
+      <text class="xs off" x="108" y="165" text-anchor="middle">變快了</text>
+
+      <rect class="box" x="196" y="122" width="90" height="56" rx="2"/>
+      <text class="s" x="241" y="154" text-anchor="middle">開 PR</text>
+
+      <rect class="box-accent" x="326" y="122" width="118" height="56" rx="2"/>
+      <text class="s accent-text" x="385" y="147" text-anchor="middle">review 佇列</text>
+      <text class="xs off" x="385" y="165" text-anchor="middle">時間 +91%</text>
+      <rect class="queue-accent" x="326" y="104" width="118" height="10"/>
+
+      <rect class="box" x="484" y="122" width="80" height="56" rx="2"/>
+      <text class="s" x="524" y="154" text-anchor="middle">批准</text>
+
+      <rect class="box-bad" x="604" y="122" width="150" height="56" rx="2"/>
+      <text class="s bad-text" x="679" y="147" text-anchor="middle">等待部署</text>
+      <text class="xs off" x="679" y="165" text-anchor="middle">批次累積</text>
+      <rect class="queue" x="604" y="98" width="150" height="16"/>
+      <rect class="queue" x="604" y="88" width="150" height="6"/>
+
+      <rect class="box" x="794" y="122" width="96" height="56" rx="2"/>
+      <text class="s" x="842" y="154" text-anchor="middle">使用者</text>
+
+      <line class="rule" x1="30" y1="220" x2="960" y2="220"/>
+
+      <text class="s bad-text" x="30" y="252">實際觀測到的積壓</text>
+      <path class="edge-bad" d="M175 246 L660 246 L660 190"/>
+      <text class="xs off" x="185" y="242">&gt;90% 團隊批次部署，半數批次含 2–10 個變更、1/4 含 11–50 個</text>
+
+      <text class="lab-accent" x="30" y="300">成本近零的自我檢驗　數一下你的專案裡「已通過 review 但還沒部署給使用者」的變更有幾個</text>
+      <text class="s dim" x="30" y="320">答案是 0 或 1 → 瓶頸真的在 review；超過 1 → 瓶頸在下游，買再多 review bot 都沒用</text>
+    </svg>
+    </div>
+    <figcaption><b>兩個佇列的可見度不同。</b>Octopus 那方的論點是：code review 看起來像瓶頸，只因為它的佇列是可見的；下游佇列因為「行業一直都這樣」而隱形。原文說法是「coding wasn't the bottleneck in the first place, and it's not code review now」。</figcaption>
+  </figure>
+
+  <div class="col">
+  <p><strong>獨立印證來自完全不同的方向。</strong>2026-02 Thoughtworks 在 Deer Valley 主辦的 Future of Software Engineering 閉門工作坊（Agile Manifesto 25 週年、Martin Fowler 主辦、約 50 位資深實踐者、Chatham House Rule，<a class="ref" href="https://www.thoughtworks.com/content/dam/thoughtworks/documents/report/tw_future%20_of_software_development_retreat_%20key_takeaways.pdf">一手報告 PDF</a> 公開）得出同方向但更廣的結論：</p>
+
+  <blockquote><p>It is the same speed with more frustration, because the bottleneck has shifted from engineering capacity to everything else.</p></blockquote>
+
+  <p>報告點名的「everything else」包含跨團隊依賴、架構審查與專案決策，並提出兩個延伸判斷：<strong>code review 正在被拆解</strong>成依風險分級的不同處理路徑（risk tiering），以及 <strong>decision fatigue 才是新瓶頸</strong>——當 agent 產出快過決策者能審核批准的速度，約束就從產能移到決策容量，原本作為協調節點的中階管理者變成核准瓶頸。</p>
+
+  <div class="callout">
+    <span class="k">這裡的證據強度要誠實</span>
+    <p>批次那份是單一廠商進行中的研究；Thoughtworks 這份則是<strong>閉門群體共識、非量測</strong>，且 Chatham House Rule 下無具名歸屬。兩者利益方向不同、獨立同向，合起來足以支持「別預設瓶頸在 review」，但<strong>不足以推翻 DORA 的不穩定性觀測</strong>（那是獨立的、更大的樣本）。三者其實可以並存——AI 確實對 review 造成壓力（+91% 是實測），但壓力大不等於它是<strong>約束點</strong>。務實的讀法是：先跑上面那個檢驗，再決定投哪條路線。</p>
+  </div>
+  </div>
+</section>
+
+<section id="s02">
+  <h2><span class="num">02</span>機制根源：verification tax</h2>
+
+  <div class="col">
+  <p>DORA 基於 1,110 份 Google 工程師開放式回答的質化分析，給了一個比「速度變快」更有解釋力的框架：<strong>寫作省下的時間被重新分配到稽核與驗證</strong>。因為模型無法表達自己的不確定性、又會用高信心輸出幻覺，工程師被迫把每次互動都當成可能有詐。受訪工程師的原話：</p>
+
+  <blockquote><p>Reviewing [another's] code is so much harder than writing it. AI tools are increasing the rate at which people can churn out code that needs to be reviewed…</p></blockquote>
+
+  <p>這解釋了為何吞吐量與不穩定性會同時上升，也解釋了為何<strong>單純加快 review 不會解決問題</strong>——review 的成本結構是認知性的，不是流程性的。DORA 對此的總結是：AI 是<strong>放大器</strong>，會放大高效組織的優勢，也會放大失能組織的問題；測試實踐薄弱的團隊，AI 只會幫他們更快產生技術債。</p>
+
+  <p>還有一個分佈上的發現值得單獨記：OSS 專案導入 Copilot 後，生產力提升主要來自<strong>經驗較淺</strong>的貢獻者，負擔則落在核心開發者身上——他們多 review 6.5% 的碼，自己的原創產出掉 19%<span class="weak">medium-high：OSS 行為數據計量分析、非自陳；preprint 未同儕審查</span>。<a class="ref" href="https://arxiv.org/abs/2603.27249">另一份對 Reddit 與 HN 上 15 個討論串、1,154 篇貼文的質化編碼</a>把這個現象框成 <strong>tragedy of the commons</strong>：個人的生產力收益把成本外部化給 reviewer、maintainer 與整個社群。</p>
+
+  <p>從那份討論分析裡萃取出的實際反制手段值得直接參考：<strong>PR 行數上限</strong>（有團隊訂 500 LOC，超過不審）、<strong>要求作者自審後才能送 peer review</strong>、<strong>同步 walkthrough</strong>（「can you walk me through it and explain some of your choices?」）、跨團隊雙重 review。問責規範「It's not AI's code, it's my code」被廣泛認同，有組織寫進年度考核。</p>
+  </div>
+</section>
+
+<section id="s03">
+  <h2><span class="num">03</span>四條路線各自攔在哪</h2>
+
+  <div class="col">
+  <p>四條路線不是替代品，它們攔在開發流程的不同位置。看清楚位置比比較優劣重要——因為<strong>你的瓶頸在哪，決定了哪一條對你有用</strong>。</p>
+  </div>
+
+  <figure>
+    <div class="scroll">
+    <svg viewBox="0 0 1000 400" role="img" aria-label="四條路線攔截位置圖：C 約束前移攔在規格階段、B 用測試約束攔在程式碼寫完之後、A 的 AI review 工具攔在 PR 階段、D 部署層安全網攔在上線之後">
+      <defs>
+        <marker id="a2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+          <path d="M0,0 L10,5 L0,10 z" fill="currentColor" opacity=".5"/>
+        </marker>
+      </defs>
+
+      <line class="axis" x1="40" y1="210" x2="960" y2="210" marker-end="url(#a2)"/>
+      <text class="xs off" x="40" y="238">需求</text>
+      <text class="xs off" x="215" y="238">規格</text>
+      <text class="xs off" x="410" y="238">agent 寫碼</text>
+      <text class="xs off" x="605" y="238">PR</text>
+      <text class="xs off" x="775" y="238">merge · 部署</text>
+      <text class="xs off" x="920" y="238">使用者</text>
+
+      <circle class="dot" cx="55" cy="210" r="4"/>
+      <circle class="dot-accent" cx="230" cy="210" r="5.5"/>
+      <circle class="dot" cx="425" cy="210" r="5.5"/>
+      <circle class="dot" cx="615" cy="210" r="5.5"/>
+      <circle class="dot" cx="800" cy="210" r="5.5"/>
+      <circle class="dot" cx="930" cy="210" r="4"/>
+
+      <rect class="box-accent" x="150" y="86" width="160" height="66" rx="2"/>
+      <text class="n" x="166" y="112">C</text>
+      <text class="t" x="192" y="112">約束前移</text>
+      <text class="xs off" x="166" y="134">spec-driven · 小批次</text>
+      <line class="edge-accent" x1="230" y1="152" x2="230" y2="200"/>
+
+      <rect class="box-accent" x="345" y="86" width="160" height="66" rx="2"/>
+      <text class="n" x="361" y="112">B</text>
+      <text class="t" x="387" y="112">用測試約束</text>
+      <text class="xs off" x="361" y="134">機械判準取代注意力</text>
+      <line class="edge-accent" x1="425" y1="152" x2="425" y2="200"/>
+
+      <rect class="box" x="535" y="86" width="160" height="66" rx="2"/>
+      <text class="n" x="551" y="112">A</text>
+      <text class="t" x="577" y="112">AI review 工具</text>
+      <text class="xs off" x="551" y="134">CodeRabbit · Greptile …</text>
+      <line class="edge" x1="615" y1="152" x2="615" y2="200"/>
+
+      <rect class="box" x="720" y="86" width="170" height="66" rx="2"/>
+      <text class="n" x="736" y="112">D</text>
+      <text class="t" x="762" y="112">部署層安全網</text>
+      <text class="xs off" x="736" y="134">flag · canary · rollback</text>
+      <line class="edge" x1="800" y1="152" x2="800" y2="200"/>
+
+      <line class="rule" x1="40" y1="280" x2="960" y2="280"/>
+
+      <text class="s accent-text" x="40" y="312">DORA 的第 4 條建議偏向 B</text>
+      <text class="s dim" x="40" y="334">「投資 robust test automation 的 ROI，可能高於優化人工 review」——這是 A 與 B 的分水嶺</text>
+      <text class="s dim" x="40" y="366">若第 01 節那個檢驗指向下游積壓，你的路線是 D，不是 A 也不是 B</text>
+    </svg>
+    </div>
+    <figcaption><b>只有 B 有一手效果實證，也只有 B 最容易做成「覆蓋率表演」。</b>A 的選型判準其實是 signal-to-noise 而非抓 bug 率——各家廠商的自評數字互相矛盾且方法不公開，<b>不可作為選型依據</b>（見第 04 節）。C 的可抄措辭層（EARS 驗收判準、機器可檢的停止條件）與 D 的爆炸半徑控制都與本主題相鄰，但這一組頁往下走的是 B。</figcaption>
+  </figure>
+
+  <div class="col">
+  <h3>DORA 對 review 流程的四條建議</h3>
+
+  <p>一手來源、訊號最強的一組（出自 <a class="ref" href="https://dora.dev/insights/balancing-ai-tensions/">Balancing AI tensions</a>）：</p>
+
+  <ol>
+    <li><strong>把 AI 回饋移到 author 端</strong>——在寫作階段就攔，比事後丟給 reviewer 有效率得多。</li>
+    <li><strong>用 context-aware 的 review agent 自動執行組織標準</strong>，人力介入前先過一輪。</li>
+    <li><strong>小批次</strong>——強迫把大塊 AI 生成拆成可審、可測的單位。</li>
+    <li><strong>重新質疑非同步 review 本身</strong>：「投資 robust test automation 的 ROI，可能高於優化人工 review。」</li>
+  </ol>
+
+  <p>第 4 條是這批建議裡最反直覺的。原文還補了一句更根本的——傳統 code review 是一道 quality gate，在 AI 時代值得重新想「<strong>這道 gate 的目的本身</strong>，是否有其他技術能承擔它的一部分」。</p>
+
+  <div class="callout">
+    <span class="k">接下來</span>
+    <p>如果你的檢驗指向 review 而不是下游，那 B 路線就是這組頁的下一站——但它有自己的一堆坑，而且是最容易做成表演的一條。<a class="ref" href="ai-constraints-2-testing.html">第 2 頁：把驗證交給測試會踩到什麼 →</a></p>
+  </div>
+  </div>
+</section>
+
+<section id="s04" class="avoid">
+  <h2><span class="num">04</span>這些數字別引</h2>
+
+  <div class="col">
+  <p>本頁範圍內被查證否決的主張，列在這裡避免日後從別處流回來。</p>
+
+  <ul>
+    <li><strong>各家 AI review 工具的相對抓 bug 率</strong>——全為廠商自評，互相矛盾且方法不公開。例如某家宣稱在 50 個 open-source PR 上比對手多抓 50%+ bug，無法交叉驗證。選型請看 signal-to-noise，不看這類數字。</li>
+    <li><strong>review 工具的 false positive 率「成熟工具 5–10%、較弱的 15–30%」</strong>——出自部落格彙整，未見一手方法。可當粗略印象，不可當選型依據。</li>
+  </ul>
+
+  <p>另有一條屬於「方法上要小心」：HN／Reddit 的留言樹用一般網頁擷取工具讀取時，容易錯置歸屬、甚至產生原串不存在的回覆。要引用原句，一律走 HN Algolia API 取結構化資料，或直接開原串核對，不憑摘要轉述。</p>
+  </div>
+</section>
+
+<p class="foot"><b>這頁沒講什麼。</b>四條路線只標出位置，沒有展開。B（用測試約束）在<a class="ref" href="ai-constraints-2-testing.html">第 2 頁</a>完整展開，一個把它推到極致的實作在<a class="ref" href="ai-constraints-3-uncle-bob.html">第 3 頁</a>。C（約束前移）的可抄措辭層與 D（部署層安全網）都不在這一組裡。</p>
+
+<p class="foot"><b>證據標註的規則。</b>沒有標註的主張，其依據是一手來源、原始碼、或同儕審查的研究，可以直接引用。加了灰底小標籤的是<b>弱證據</b>——單一 preprint、廠商自評、單一作者實測、閉門共識——標籤上寫明是哪一種。被查證否決的主張不會出現在正文，全部收在第 04 節。</p>
+
+<p class="foot"><b>快照。</b>本頁依據 vault 於 2026-08-09 的 <code>AI-產碼加速下的-review-瓶頸</code> 改寫。來源頁之後若被更新，本頁不會自動跟上——要更新請整組重跑。</p>
+
+</div>
+</body>
+</html>

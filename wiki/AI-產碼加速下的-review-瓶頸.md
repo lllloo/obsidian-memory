@@ -12,7 +12,7 @@ tags:
 
 產碼速度上去之後，業界處方分四條路線。但在選路線之前有個更前面的問題：**「瓶頸已經從寫碼移到 review」這個大家共用的前提，認知與觀測互相矛盾**——選錯瓶頸，所有投資都會落在錯的地方。
 
-> 本頁與 [[用測試約束-AI-產碼]]、[[Uncle-Bob-的不讀碼約束閘門]] 的人讀合併版（長文＋八張圖）在 [`artifacts/ai-code-constraints.html`](../artifacts/ai-code-constraints.html)，單檔可直接用瀏覽器開；該頁是 2026-08-09 的快照，本頁維持完整密度與後續更新。
+> 人讀版是 `artifacts/` 的「AI 產碼的約束」三頁組，本頁對應第 1 頁 [`ai-constraints-1-bottleneck.html`](../artifacts/ai-constraints-1-bottleneck.html)（另兩頁由 [[用測試約束-AI-產碼]] 與 [[Uncle-Bob-的不讀碼約束閘門]] 承接）。該組是 2026-08-09 的快照，本頁維持完整密度與後續更新。
 
 ## 現況數字
 

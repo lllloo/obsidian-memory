@@ -17,7 +17,7 @@ Robert C. Martin 在 2026-07-23 的[推文](https://x.com/unclebobmartin/status/
 
 > **兩個結論在第二輪查證時被推翻，值得先講**（2026-08-09）：（1）第一輪判定「護欄全在 prompt 層、沒有機械強制」是**錯的**——漏看了 `.github/workflows/`，實際上驗收規格與 parser 被 CI 鎖死；（2）推文字面的「沒有人讀碼」也不成立——`swarm-forge` 的 `adversaries` 分支派了一個**對抗式 reviewer agent 專門讀碼**。真正的命題不是「測試取代 review」，而是「review 的判準可以被寫下來交給 agent 執行」。本頁是 [[用測試約束-AI-產碼]] 的一個具體人物案例：那頁回答「哪些手段有證據」，本頁回答「一個把這條路線推到極致的人，實際搭出來的東西長什麼樣、哪裡撐不住」。
 
-> 本頁與 [[用測試約束-AI-產碼]]、[[AI-產碼加速下的-review-瓶頸]] 的人讀合併版（長文＋八張圖）在 [`artifacts/ai-code-constraints.html`](../artifacts/ai-code-constraints.html)，單檔可直接用瀏覽器開；該頁是 2026-08-09 的快照，本頁維持完整密度與後續更新。
+> 人讀版是 `artifacts/` 的「AI 產碼的約束」三頁組，本頁對應第 3 頁 [`ai-constraints-3-uncle-bob.html`](../artifacts/ai-constraints-3-uncle-bob.html)（另兩頁由 [[AI-產碼加速下的-review-瓶頸]] 與 [[用測試約束-AI-產碼]] 承接）。該組是 2026-08-09 的快照，本頁維持完整密度與後續更新。
 
 ## 一、先清掉兩個流傳的誤讀
 

@@ -33,6 +33,19 @@
   }
   .ttl:hover { border-bottom-color: #a8794a; }
   .desc { color: #5d5d63; margin: .35rem 0 0; }
+  .grp-ttl { font-size: 1.05rem; font-weight: 620; }
+  ol.sub {
+    list-style: none; margin: .9rem 0 0; padding: 0;
+    border-left: 2px solid rgba(0,0,0,.1);
+  }
+  ol.sub > li { margin: 0; padding: .3rem 0 .3rem 1rem; }
+  ol.sub a {
+    color: inherit; text-decoration: none;
+    border-bottom: 1px solid transparent; font-weight: 600;
+  }
+  ol.sub a:hover { border-bottom-color: #a8794a; }
+  ol.sub .sn { color: #a8794a; font-weight: 700; margin-right: .5rem; }
+  ol.sub .sd { color: #8d8a84; font-weight: 400; }
   .meta {
     margin-top: .5rem; font-size: .8125rem; color: #8d8a84;
     font-variant-numeric: tabular-nums;
@@ -77,8 +90,13 @@
 <ul class="list">
 
   <li>
-    <a class="ttl" href="ai-code-constraints.html">AI 產碼之後：約束要放在哪裡</a>
-    <p class="desc">產碼變快之後該把驗證放在哪。從「瓶頸可能根本不在 review」這個成本近零的自我檢驗開始，走完四條約束路線的位置、AI 產測試的四種失效模式、已量測到的作弊行為、TDD 最容易做錯的那一步，最後解剖一個把「不讀 agent 產碼」推到極致的實作——包括它撐不住的三個地方。八張圖。</p>
+    <span class="grp-ttl">AI 產碼的約束</span>
+    <p class="desc">產碼變快之後該把驗證放在哪。三頁一組，可以照順序讀，也可以直接跳到需要的那一頁。八張圖。</p>
+    <ol class="sub">
+      <li><a href="ai-constraints-1-bottleneck.html"><span class="sn">1</span>瓶頸可能不在你以為的地方</a><br><span class="sd">85% 相信瓶頸在 review，但 &gt;90% 團隊 review 完仍卡在部署前；附一個成本近零的自我檢驗，與四條約束路線各自的攔截位置。</span></li>
+      <li><a href="ai-constraints-2-testing.html"><span class="sn">2</span>把驗證交給測試會踩到什麼</a><br><span class="sd">AI 產測試的四種失效模式、已量測到的作弊行為、TDD 最容易做錯的那一步，以及判準的權威在實作之內還是之外這個分類軸。</span></li>
+      <li><a href="ai-constraints-3-uncle-bob.html"><span class="sn">3</span>有人全押了：不讀碼的約束閘門</a><br><span class="sd">逐項解剖一個把「不讀 agent 產碼」推到極致的實作——七道閘門實際擋住什麼、唯一被機械鎖死的那一道、以及它撐不住的三個地方。</span></li>
+    </ol>
     <p class="meta">2026-08-09 ｜ 來源：<code>AI-產碼加速下的-review-瓶頸</code>、<code>用測試約束-AI-產碼</code>、<code>Uncle-Bob-的不讀碼約束閘門</code></p>
   </li>
 

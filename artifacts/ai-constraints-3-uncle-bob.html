@@ -1,0 +1,613 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>有人全押了：不讀碼的約束閘門</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    padding: 3rem 1.5rem 5rem;
+    font-family: -apple-system, "Segoe UI", "Noto Sans TC", "PingFang TC",
+                 "Microsoft JhengHei", system-ui, sans-serif;
+    line-height: 1.8;
+    color: #1c1c1e;
+    background: #fbfaf8;
+  }
+  .wrap { max-width: 68rem; margin: 0 auto; }
+  .col { max-width: 46rem; }
+
+  .nav {
+    font-size: .8125rem; color: #5d5d63; margin: 0 0 2.5rem;
+    display: flex; flex-wrap: wrap; gap: .6rem; align-items: baseline;
+  }
+  .nav b { color: #1c1c1e; font-weight: 600; }
+  .nav a { color: #a8794a; text-decoration: none; border-bottom: 1px solid transparent; }
+  .nav a:hover { border-bottom-color: currentColor; }
+  .nav .sep { opacity: .3; }
+
+  .toc {
+    display: flex; flex-wrap: wrap; gap: .5rem 1.75rem;
+    margin: 0 0 4rem; padding-top: 1.5rem;
+    border-top: 1px solid rgba(0,0,0,.1);
+    font-size: .875rem;
+  }
+  .toc a {
+    color: inherit; text-decoration: none;
+    display: inline-flex; gap: .55rem; align-items: baseline;
+    border-bottom: 1px solid transparent;
+  }
+  .toc a:hover { border-bottom-color: currentColor; }
+  .toc .tnum { color: #a8794a; font-weight: 700; font-variant-numeric: tabular-nums; }
+
+  h1 { font-size: 1.7rem; font-weight: 620; letter-spacing: -0.01em; margin: 0 0 .4rem; }
+  .lede { color: #5d5d63; margin: 0 0 3.5rem; max-width: 46rem; font-size: 1.02rem; }
+  h2 {
+    font-size: 1.12rem; font-weight: 620; margin: 0 0 1.2rem;
+    letter-spacing: .01em;
+  }
+  h2 .num {
+    display: inline-block; min-width: 1.9rem;
+    color: #a8794a; font-variant-numeric: tabular-nums;
+  }
+  h3 {
+    font-size: .95rem; font-weight: 620; margin: 2.5rem 0 .8rem;
+    letter-spacing: .01em;
+  }
+  section { margin-bottom: 5rem; scroll-margin-top: 1.5rem; }
+  p { margin: 0 0 1.1rem; }
+  strong { font-weight: 620; }
+
+  a.ref { color: #a8794a; text-decoration: none; border-bottom: 1px solid rgba(168,121,74,.35); }
+  a.ref:hover { border-bottom-color: currentColor; }
+
+  code {
+    font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace;
+    font-size: .9em;
+  }
+  blockquote {
+    margin: 1.5rem 0; padding: 0 0 0 1.25rem;
+    border-left: 2px solid #a8794a;
+    color: #4a4a50; font-style: normal;
+  }
+  blockquote p:last-child { margin-bottom: 0; }
+  blockquote .who { display: block; font-size: .85rem; color: #8d8a84; margin-top: .5rem; }
+
+  .callout {
+    margin: 2rem 0; padding: 1.25rem 1.5rem;
+    background: #fff; border: 1px solid rgba(0,0,0,.12);
+    border-left: 3px solid #a8794a;
+    max-width: 46rem;
+  }
+  .callout p:last-child { margin-bottom: 0; }
+  .callout .k {
+    display: block; font-size: .75rem; letter-spacing: .08em;
+    text-transform: uppercase; color: #a8794a; font-weight: 700;
+    margin-bottom: .5rem;
+  }
+
+  .weak {
+    display: inline-block; font-size: .8rem; color: #8d8a84;
+    border: 1px solid rgba(0,0,0,.15); border-radius: 2px;
+    padding: 0 .4rem; margin-left: .25rem; white-space: nowrap;
+    vertical-align: .05em;
+  }
+
+  .tbl { overflow-x: auto; margin: 1.75rem 0; }
+  table { border-collapse: collapse; font-size: .9rem; min-width: 34rem; width: 100%; }
+  th, td { text-align: left; vertical-align: top; padding: .6rem .9rem .6rem 0; }
+  th {
+    font-weight: 620; border-bottom: 1.5px solid rgba(0,0,0,.25);
+    white-space: nowrap;
+  }
+  td { border-bottom: 1px solid rgba(0,0,0,.08); }
+  td:first-child, th:first-child { padding-left: 0; }
+  .yes { color: #4a7c59; font-weight: 700; }
+  .no { color: #a8544a; font-weight: 700; }
+  .warn { color: #a8794a; font-weight: 700; }
+
+  figure { margin: 2.5rem 0; }
+  .scroll { overflow-x: auto; padding-bottom: .5rem; }
+  svg { display: block; width: 100%; min-width: 40rem; height: auto; }
+  figcaption {
+    margin-top: 1rem; font-size: .875rem; color: #5d5d63;
+    max-width: 46rem; line-height: 1.7;
+  }
+  figcaption b { color: #1c1c1e; font-weight: 600; }
+
+  ul, ol { margin: 0 0 1.1rem; padding-left: 1.3rem; max-width: 46rem; }
+  li { margin-bottom: .45rem; }
+  li::marker { color: #a8794a; }
+
+  .avoid { border-top: 1px solid rgba(0,0,0,.1); padding-top: 2rem; }
+  .avoid li { margin-bottom: 1rem; }
+
+  .foot {
+    margin-top: 4rem; padding-top: 1.5rem;
+    border-top: 1px solid rgba(0,0,0,.1);
+    color: #5d5d63; font-size: .875rem; max-width: 46rem;
+  }
+  .foot b { color: #1c1c1e; font-weight: 600; }
+  .foot + .foot { margin-top: 1.5rem; padding-top: 0; border-top: 0; }
+
+  /* SVG 共用樣式（頁面層 CSS，SVG 片段本身保持無 style/script） */
+  svg text { fill: currentColor; font-family: inherit; }
+  .box { fill: #fff; stroke: currentColor; stroke-width: 1.4; }
+  .box-accent { fill: #fff; stroke: #a8794a; stroke-width: 2.2; }
+  .box-opt { fill: none; stroke: #b3b0aa; stroke-width: 1.4; stroke-dasharray: 5 4; }
+  .box-bad { fill: #fff; stroke: #a8544a; stroke-width: 2; }
+  .t { font-size: 14px; font-weight: 600; }
+  .s { font-size: 11.5px; }
+  .xs { font-size: 10.5px; }
+  .n { font-size: 13px; font-weight: 700; fill: #a8794a; }
+  .dim { opacity: .62; }
+  .off { fill: #8d8a84; }
+  .edge { stroke: currentColor; stroke-width: 1.5; fill: none; }
+  .edge-accent { stroke: #a8794a; stroke-width: 2; fill: none; }
+  .edge-bad { stroke: #a8544a; stroke-width: 2; fill: none; }
+  .edge-opt { stroke: #b3b0aa; stroke-width: 1.4; fill: none; stroke-dasharray: 5 4; }
+  .lab { font-size: 11.5px; }
+  .lab-accent { font-size: 11.5px; fill: #a8794a; font-weight: 600; }
+  .lab-bad { font-size: 11.5px; fill: #a8544a; font-weight: 600; }
+  .rule { stroke: currentColor; stroke-width: 1; opacity: .18; }
+  .divider { stroke: currentColor; stroke-width: 1.2; opacity: .3; stroke-dasharray: 4 5; fill: none; }
+  .accent-text { fill: #a8794a; }
+  .bad-text { fill: #a8544a; }
+  .axis { stroke: currentColor; stroke-width: 1.3; opacity: .45; fill: none; }
+  .dot { fill: currentColor; }
+  .dot-accent { fill: #a8794a; }
+  .queue { fill: currentColor; opacity: .28; }
+  .queue-accent { fill: #a8794a; opacity: .55; }
+
+  @media (prefers-color-scheme: dark) {
+    body { color: #e9e7e3; background: #17161a; }
+    .lede, .claim, figcaption, .foot, .nav { color: #a3a09b; }
+    .nav b { color: #e9e7e3; }
+    .nav a { color: #d3a06a; }
+    .toc { border-top-color: rgba(255,255,255,.12); }
+    .toc .tnum { color: #d3a06a; }
+    figcaption b, .foot b { color: #e9e7e3; }
+    h2 .num { color: #d3a06a; }
+    a.ref { color: #d3a06a; border-bottom-color: rgba(211,160,106,.35); }
+    blockquote { border-left-color: #d3a06a; color: #bfbcb7; }
+    blockquote .who { color: #86828c; }
+    .callout { background: #201f24; border-color: rgba(255,255,255,.12); border-left-color: #d3a06a; }
+    .callout .k { color: #d3a06a; }
+    .weak { color: #86828c; border-color: rgba(255,255,255,.18); }
+    th { border-bottom-color: rgba(255,255,255,.3); }
+    td { border-bottom-color: rgba(255,255,255,.1); }
+    .yes { color: #7ba888; }
+    .no { color: #d08b80; }
+    .warn { color: #d3a06a; }
+    .avoid { border-top-color: rgba(255,255,255,.12); }
+    .box, .box-accent, .box-bad { fill: #201f24; }
+    .box-accent { stroke: #d3a06a; }
+    .box-bad { stroke: #d08b80; }
+    .box-opt, .edge-opt { stroke: #57545c; }
+    .off { fill: #86828c; }
+    .edge-accent { stroke: #d3a06a; }
+    .edge-bad { stroke: #d08b80; }
+    .lab-accent, .n, .accent-text, .dot-accent { fill: #d3a06a; }
+    .lab-bad, .bad-text { fill: #d08b80; }
+    .queue-accent { fill: #d3a06a; }
+    li::marker { color: #d3a06a; }
+    .foot { border-top-color: rgba(255,255,255,.12); }
+  }
+  @media (max-width: 40rem) {
+    body { padding: 2rem 1rem 3rem; }
+  }
+
+  .nav .grp { color: #8d8a84; font-weight: 600; }
+  @media (prefers-color-scheme: dark) {
+    .nav .grp { color: #86828c; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<nav class="nav">
+  <a href="01.index.html">← artifacts</a>
+  <span class="sep">｜</span>
+  <span class="grp">AI 產碼的約束</span>
+  <span class="sep">·</span>
+  <a href="ai-constraints-1-bottleneck.html">1　瓶頸</a>
+  <span class="sep">·</span>
+  <a href="ai-constraints-2-testing.html">2　測試路線</a>
+  <span class="sep">·</span>
+  <b>3　全押案例</b>
+</nav>
+
+<h1>有人全押了：不讀碼的約束閘門</h1>
+<p class="lede">Robert C. Martin 在 2026-07-23 的<a class="ref" href="https://x.com/unclebobmartin/status/2080257779395154409">推文</a>（5M views）宣告：<strong>不讀 agent 寫的任何程式碼</strong>，改用「極端約束」包圍 agent，跑完 gauntlet 之後對產出有「very high confidence」。這值得逐項研究，原因不是它有名，而是<strong>他把每一道閘門都自己寫成了工具、公開在 GitHub 上</strong>——所以以下依據幾乎全部來自那些 repo 的原始碼、角色 prompt 與 CI 設定，而不是轉述文章。</p>
+
+<nav class="toc" aria-label="頁內目錄">
+  <a href="#s01"><span class="tnum">01</span>先清掉兩個流傳的誤讀</a>
+  <a href="#s02"><span class="tnum">02</span>閘門陣實際長什麼樣</a>
+  <a href="#s03"><span class="tnum">03</span>真正的創新：把 mutation 搬上驗收層</a>
+  <a href="#s04"><span class="tnum">04</span>CRAP、覆蓋率、introverted test</a>
+  <a href="#s05"><span class="tnum">05</span>他不讀碼，但他派了 agent 去讀</a>
+  <a href="#s06"><span class="tnum">06</span>撐不住的三個地方與防繞過五層</a>
+  <a href="#s07"><span class="tnum">07</span>你能搬什麼</a>
+  <a href="#s08"><span class="tnum">08</span>這些數字別引</a>
+</nav>
+
+<section id="s01">
+  <h2><span class="num">01</span>先清掉兩個流傳的誤讀</h2>
+
+  <div class="col">
+  <p><strong>誤讀一：「Lots of times I just use unit tests and crap.」</strong>這句被多篇二手文章當成他自嘲隨便測測。回讀原文是「unit tests and <strong>crap evaluation</strong>」——<code>crap</code> 是 <strong>CRAP（Change Risk Anti-Patterns）度量</strong>，不是形容詞。斷句斷在 <code>crap</code> 後面，意思從「我用 CRAP 度量」反轉成「我隨便測測」。佐證是決定性的：他自己有 <code>crap4java</code>、<code>crap4clj</code>、<code>crap4go</code> 三個 repo。</p>
+
+  <p><strong>誤讀二：「七道閘門是他的標準做法」。</strong>同一則前串裡他自己就打了折：「I've been pushing very hard on overloading with tests. […] But just because we can do them doesn't mean we actually should.」他的編排工具 <code>swarm-forge</code> 也把這件事寫死進設計：<code>two-pack</code> 分支明文是「不含 Gherkin 與驗收測試的開銷」的快速流程。<strong>閘門數量隨專案規模調整，不是一套鐵板清單。</strong></p>
+  </div>
+</section>
+
+<section id="s02">
+  <h2><span class="num">02</span>閘門陣實際長什麼樣</h2>
+
+  <div class="col">
+  <p>七項約束對應到一組他親手寫、且<strong>三個語言各做一套</strong>的工具（2026-08-09 經 GitHub API 逐一驗證）：mutation testing 有 <code>clj-mutate</code>／<code>mutate4go</code>／<code>mutate4java</code>，CRAP 度量有 <code>crap4clj</code>／<code>crap4go</code>／<code>crap4java</code>，重複偵測有 <code>dry4clj</code>／<code>dry4go</code>／<code>dry4java</code>。外加只有 Clojure 版的 <code>dependency-checker</code>、<code>deintroverter4clj</code>、<code>speclj-structure-check</code>，跨語言的 <code>Acceptance-Pipeline-Specification</code>，以及編排層 <code>swarm-forge</code>（★1982）。</p>
+
+  <p>這些不是散落的玩具——<code>swarm-forge</code> 的 <code>constitution/articles/engineering.prompt</code> 開頭就是工具採購指令：「On startup, procure the latest version of each required CRAP, mutation, and DRY tool for the project language directly from the listed <code>github.com/unclebob/...</code> repositories and get each one ready to run.」</p>
+
+  <p><code>swarm-forge</code> 提供幾種編制，直接對應閘門的取捨光譜：<code>two-pack</code>（coder → cleaner，小任務、跳過 Gherkin）、<code>four-pack</code>（specifier → coder → refactorer → architect）、<code>six-pack</code>（每道品質閘門各有專責 agent）、<code>adversaries</code>（coder ↔ reviewer，見第 05 節）。而他用這套做出來的東西是 <code>empire-2025</code>——經典戰棋遊戲 Empire 的 Clojure 重製版（100×60 地圖、九種兵種、電腦 AI）。這個答案很重要，第 06 節會回來談。</p>
+  </div>
+
+  <figure>
+    <div class="scroll">
+    <svg viewBox="0 0 1000 440" role="img" aria-label="七道閘門的位置圖：人核准規格後交給 coder，依序經過單元測試、Gherkin 驗收與其變異、CRAP 與 DRY 度量、原始碼變異測試、端到端 QA、對抗式 reviewer 讀碼，最後回到人決定下一個功能。只有規格檔被 CI 機械鎖定">
+      <rect class="box-accent" x="30" y="120" width="120" height="70" rx="2"/>
+      <text class="s accent-text" x="90" y="148" text-anchor="middle">人核准規格</text>
+      <text class="xs off" x="90" y="166" text-anchor="middle">specifier</text>
+      <text class="xs accent-text" x="90" y="182" text-anchor="middle">控制點 1</text>
+
+      <line class="edge" x1="150" y1="155" x2="196" y2="155"/>
+
+      <rect class="box" x="196" y="120" width="110" height="70" rx="2"/>
+      <text class="s" x="251" y="148" text-anchor="middle">coder</text>
+      <text class="xs off" x="251" y="166" text-anchor="middle">TDD 寫實作</text>
+
+      <line class="edge" x1="306" y1="155" x2="352" y2="155"/>
+
+      <rect class="box" x="352" y="106" width="416" height="98" rx="2"/>
+      <text class="xs off" x="368" y="126">閘門陣（全部在本地執行，由 agent 自行回報）</text>
+      <rect class="box" x="368" y="136" width="92" height="52" rx="2"/>
+      <text class="xs" x="414" y="158" text-anchor="middle">單元測試</text>
+      <text class="xs off" x="414" y="176" text-anchor="middle">1</text>
+      <rect class="box" x="472" y="136" width="92" height="52" rx="2"/>
+      <text class="xs" x="518" y="158" text-anchor="middle">Gherkin</text>
+      <text class="xs off" x="518" y="176" text-anchor="middle">2</text>
+      <rect class="box" x="576" y="136" width="92" height="52" rx="2"/>
+      <text class="xs" x="622" y="152" text-anchor="middle">CRAP · DRY</text>
+      <text class="xs" x="622" y="168" text-anchor="middle">coverage</text>
+      <text class="xs off" x="622" y="182" text-anchor="middle">4 · 6</text>
+      <rect class="box" x="680" y="136" width="76" height="52" rx="2"/>
+      <text class="xs" x="718" y="158" text-anchor="middle">mutation</text>
+      <text class="xs off" x="718" y="176" text-anchor="middle">5</text>
+
+      <line class="edge" x1="768" y1="155" x2="814" y2="155"/>
+
+      <rect class="box" x="814" y="120" width="110" height="70" rx="2"/>
+      <text class="s" x="869" y="148" text-anchor="middle">QA 端到端</text>
+      <text class="xs off" x="869" y="166" text-anchor="middle">3 · 只走 UI</text>
+
+      <path class="edge" d="M869 190 L869 244 L540 244"/>
+      <rect class="box-accent" x="352" y="222" width="188" height="46" rx="2"/>
+      <text class="s accent-text" x="446" y="244" text-anchor="middle">reviewer agent 讀碼</text>
+      <text class="xs off" x="446" y="260" text-anchor="middle">Clean Architecture 四項判準</text>
+
+      <path class="edge-accent" d="M352 245 L200 245 L200 196"/>
+      <text class="xs off" x="150" y="230">不滿意就退回</text>
+
+      <rect class="box-accent" x="30" y="222" width="120" height="46" rx="2"/>
+      <text class="s accent-text" x="90" y="244" text-anchor="middle">人決定下個功能</text>
+      <text class="xs accent-text" x="90" y="260" text-anchor="middle">控制點 2</text>
+
+      <line class="rule" x1="30" y1="300" x2="970" y2="300"/>
+
+      <text class="s bad-text" x="30" y="332">機械鎖死的只有一處</text>
+      <rect class="box-bad" x="240" y="312" width="250" height="46" rx="2"/>
+      <text class="s bad-text" x="365" y="334" text-anchor="middle">CI：acceptance-boundary-guard</text>
+      <text class="xs off" x="365" y="350" text-anchor="middle">改到驗收規格或 parser 就紅</text>
+      <path class="edge-bad" d="M490 322 L560 322 L560 210"/>
+
+      <text class="s dim" x="30" y="386">其餘閘門全在 prompt 層與本地指令鏈——CI 不跑測試、不跑 mutation、不跑 CRAP。</text>
+      <text class="s dim" x="30" y="410">agent 說「全綠」與「真的全綠」之間，在這套設定裡沒有機械上的區別。這是第 06 節的主題。</text>
+    </svg>
+    </div>
+    <figcaption><b>人的閘門在規格邊界，不在程式碼邊界。</b><code>specifier.prompt</code> 的工作流最後一步寫死「Ask the user for approval to hand off to the coder」，且「Do not commit or notify coder until the user explicitly approves the handoff」。所以整條流水線的人工控制點有兩個：<b>開頭核准規格、結尾決定下一個功能，中間全自動</b>。「不讀 AI 產的程式碼」這個標題是準確的，但推論成「他不看 agent 的產出」是錯的——他把人類注意力從實作層整個搬到規格層。省下來的是讀函式本體的時間，不是驗證的時間。</figcaption>
+  </figure>
+
+  <div class="col">
+  <p>單元測試那一項本身沒有新意，但<strong>與第 2 頁的證據有一處張力值得標出來</strong>。那頁的結論是「有效的不是叫 agent 遵循 TDD，而是測試先於程式碼存在」。他的 <code>empire-2025/AGENTS.md</code> 通篇沒有 TDD 指令；但 <code>swarm-forge</code> 的角色設計把它放回去了，而且 <code>coder.prompt</code> 的原文比「with TDD」四個字精確得多：</p>
+
+  <blockquote><p>Use TDD to specify behavior before implementation. First write focused unit tests that express the requested observable behavior and <strong>would fail for a plausible wrong implementation</strong>. Then write only enough production code to pass those tests.</p></blockquote>
+
+  <p>「<strong>會因為一個合理的錯誤實作而失敗</strong>」——這就是 mutation testing 的判準，被寫成寫測試當下的自我檢查。用 prompt 要求 agent 自己滿足這個判準當然不如機械變異可靠，但它把正確的目標講清楚了。同一份檔案還有一條防止閘門互相稀釋的規則：「<strong>Do not rely on generated acceptance tests as a substitute for unit tests.</strong>」</p>
+
+  <p>QA 那一項的「端到端」定義也嚴格得值得抄：「End-to-end means the QA suite operates at the user interface and <strong>does not use an API into the project</strong>.」這順帶解釋了 <code>empire-2025</code> 的 <code>--headless=N</code>、<code>--seed=N</code>、<code>--log</code> 不是隨手加的除錯旗標，而是<strong>刻意設計的可測性 affordance</strong>——規則明文允許新增命令列參數來曝露難測的邏輯，只要那些 affordance 位於使用者介面、且不構成給 QA 的私有 API。<code>QA.prompt</code> 裡還有一條直接對應 reward hacking 的防線：「<strong>If the QA suite contradicts the Gherkin or unit tests, stop and ask for clarification before changing behavior.</strong>」——正是 ImpossibleBench 測出模型做不到的那件事。</p>
+  </div>
+</section>
+
+<section id="s03">
+  <h2><span class="num">03</span>真正的創新：把 mutation 搬上驗收層</h2>
+
+  <div class="col">
+  <p>Gherkin 本身是老東西（Given/When/Then 驗收規格）。他做的新東西叫 <strong>acceptance mutation</strong>，<code>Acceptance-Pipeline-Specification</code> 的 README 定義得很清楚：</p>
+
+  <blockquote><p>Acceptance mutation means mutating Gherkin example values in the specification-derived JSON IR. <strong>It does not mean conventional mutation testing of application source code.</strong></p></blockquote>
+  </div>
+
+  <figure>
+    <div class="scroll">
+    <svg viewBox="0 0 1000 340" role="img" aria-label="兩種變異測試的對照圖：一般 mutation 變異的是應用程式原始碼，用來檢查單元測試會不會發現；gherkin mutation 變異的是驗收規格裡的 example 值，用來檢查驗收測試有沒有真的把值接到系統">
+      <text class="s dim" x="30" y="30">兩種 mutation，變異的對象完全不同</text>
+
+      <text class="n" x="30" y="82">A</text>
+      <text class="t" x="62" y="82">一般 mutation</text>
+      <text class="xs off" x="62" y="100">變異應用程式原始碼</text>
+
+      <rect class="box-bad" x="270" y="58" width="150" height="48" rx="2"/>
+      <text class="s bad-text" x="345" y="80" text-anchor="middle">production code</text>
+      <text class="xs off" x="345" y="96" text-anchor="middle">改一個運算子</text>
+      <line class="edge" x1="420" y1="82" x2="476" y2="82"/>
+      <rect class="box" x="476" y="58" width="130" height="48" rx="2"/>
+      <text class="s" x="541" y="87" text-anchor="middle">單元測試</text>
+      <line class="edge" x1="606" y1="82" x2="662" y2="82"/>
+      <text class="s accent-text" x="672" y="80">測試該變紅</text>
+      <text class="xs off" x="672" y="96">沒紅 → 測試沒在驗這行</text>
+
+      <line class="rule" x1="30" y1="140" x2="970" y2="140"/>
+
+      <text class="n" x="30" y="192">B</text>
+      <text class="t" x="62" y="192">gherkin mutation</text>
+      <text class="xs off" x="62" y="210">變異規格裡的 example 值</text>
+
+      <rect class="box-bad" x="270" y="168" width="150" height="48" rx="2"/>
+      <text class="s bad-text" x="345" y="190" text-anchor="middle">Gherkin example</text>
+      <text class="xs off" x="345" y="206" text-anchor="middle">20 → 27</text>
+      <line class="edge" x1="420" y1="192" x2="476" y2="192"/>
+      <rect class="box" x="476" y="168" width="130" height="48" rx="2"/>
+      <text class="s" x="541" y="197" text-anchor="middle">驗收測試</text>
+      <line class="edge" x1="606" y1="192" x2="662" y2="192"/>
+      <text class="s accent-text" x="672" y="190">測試該變紅</text>
+      <text class="xs off" x="672" y="206">沒紅 → step 根本沒把值接到系統</text>
+
+      <line class="rule" x1="30" y1="250" x2="970" y2="250"/>
+
+      <text class="s dim" x="30" y="282">變異規則是型別推斷式的值擾動，刻意不含領域語意：整數與浮點加一個非零隨機差、布林取反、</text>
+      <text class="s dim" x="30" y="304">null 換成非空字串、ISO-8601 依精度移動、逗號清單隨機挑一項遞迴變異、其他字串做 dither（accepted → accfpted）。</text>
+      <text class="s dim" x="30" y="326">對固定路徑與原值為決定性偽隨機，所以同一份規格每次跑得到同一組變異。</text>
+    </svg>
+    </div>
+    <figcaption><b>B 抓的是一種第 2 頁沒有偵測手段的假測試</b>：Gherkin 場景寫得漂漂亮亮、也綠了，但 step definition 根本沒把 example 表格裡的值接到系統上——換掉數字，測試照樣綠。這是「同義反覆」與「弱斷言」在驗收層的化身。</figcaption>
+  </figure>
+
+  <div class="col">
+  <div class="callout">
+    <span class="k">兩條防「為了分數而作弊」的規則，值得單獨抄</span>
+    <p><code>specifier.prompt</code>：「Gherkin will be mutation tested; <strong>use Gherkin parameters for any fields that might vary.</strong>」</p>
+    <p><code>hardender.prompt</code> 講得更直白：「If Gherkin mutation exposes a <strong>no-op step</strong>, consider <strong>removing that step</strong> from the Gherkin rather than adding example columns only to assert the no-op.」</p>
+    <p>也就是說：變異存活代表這個步驟根本沒在驗任何東西，正確的反應是<strong>刪掉那個假步驟</strong>，而不是硬加一欄斷言把分數補回來。這與「mutation 是體檢不是門禁」是同一個警覺，只是他把對策直接寫進了 agent 的行為規則。</p>
+  </div>
+
+  <p><span class="warn">⚠️</span> <strong>一個結構性盲區</strong>：成本控制走差分，<code>--level</code> 有 <code>full</code>／<code>hard</code>／<code>soft</code> 三檔，決定什麼情況可以沿用上次結果。<code>hard</code>（預設）要 feature 內容、scenario、background <strong>與實作雜湊</strong>全部相符才沿用，<code>soft</code> 則<strong>不看實作雜湊</strong>——而 <code>hardender</code> 的最終驗證序列用的正是 <code>--level soft</code>，意味著<strong>規格沒變、只有實作變了的 scenario 會沿用舊的「全殺光」結論而不重跑</strong><span class="weak">medium-high：三檔定義與用法皆直讀，「因此可能沿用過期結論」是依定義推導、非實測</span>。</p>
+
+  <h3>驗收檔其實不是標準 Gherkin</h3>
+
+  <p><code>empire-2025</code> 的實際驗收檔是一套自製 DSL，關鍵在於它用 <strong>ASCII 地圖直接當作初始狀態</strong>：<code>A#+</code> 就是「陸軍、陸地、城市」三格相鄰的盤面。這解釋了他為什麼要自己寫 parser 而不用 Cucumber——<strong>標準 Gherkin 的 example table 表達不了這種二維空間狀態</strong>，而在戰棋領域，盤面就是規格最自然的寫法。</p>
+
+  <div class="callout">
+    <span class="k">可搬的教訓</span>
+    <p>Gherkin 的價值不在 Given/When/Then 這三個字，而在「<strong>規格用領域自己的語彙寫、且可執行</strong>」。照抄關鍵字卻用錯記法，反而會得到那種 UI 腳本式的假規格。</p>
+  </div>
+
+  <p><code>AGENTS.md</code> 裡另有兩條規則值得抄：「Never modify an acceptance test <code>.txt</code> file without explicit permission」，以及「If an acceptance test cannot be translated to a spec, report which test and why to the user. <strong>Still generate the spec as a failing test documenting the desired behavior.</strong>」——第二條是好設計：翻譯不了的規格不會消失成沉默的缺口，而是變成一個紅燈。</p>
+
+  <p><strong>必須並列的反對意見</strong>：測試自動化顧問 Zhimin Zhan 同意「不讀碼、靠自動化測試」的主張，卻<strong>單獨反對 Gherkin 這一項</strong>，理由是 Cucumber／SpecFlow 路線在商業上的失敗史。不過他本人銷售競品測試工具，且該文的失敗率宣稱沒有可查證的一手依據<span class="weak">low：單一具利益關係的從業者主張，僅記錄存在對立意見</span>。</p>
+  </div>
+</section>
+
+<section id="s04">
+  <h2><span class="num">04</span>CRAP、覆蓋率、introverted test</h2>
+
+  <div class="col">
+  <h3>CRAP 是複雜度上限偽裝成測試度量</h3>
+
+  <p>他點名的 quality metric 就是 CRAP。從 <code>crap4clj</code> 原始碼確認的公式是教科書版本：</p>
+
+  <div class="callout">
+    <p><code>CRAP(m) = CC² × (1 − 覆蓋率)³ + CC</code></p>
+  </div>
+
+  <p><strong>這個公式的性質比它的數值更重要。</strong>業界慣例門檻是 30，而指數的設計讓覆蓋率的效果三次方衰減：CC=10 的函式覆蓋 42% 就能壓到門檻以下，CC=25 要 80%，而 <strong>CC 超過 30 時，無論覆蓋率多高都不可能低於門檻</strong>——因為公式尾巴那個 <code>+ CC</code> 是保底項。</p>
+
+  <p>所以 CRAP 名義上是「測試品質度量」，實際運作起來是<strong>一條硬性的複雜度上限</strong>：你不能用寫測試的方式贖回一個過度複雜的函式。這與他推文裡「I constrain the hell out of function size and complexity」是同一件事的兩種表述。</p>
+
+  <p>另外兩個度量工具的機制也值得記：<code>dry4clj</code> 不比對文字，而是把每個 top-level form 正規化成語法指紋集合，用 <strong>Jaccard 相似度</strong>（預設門檻 0.82）找結構重複——所以改名字、換述詞躲不掉。<code>dependency-checker</code> 則檢查元件邊界與依賴方向。</p>
+
+  <p>他的 <code>clj-mutate</code> 另用一個<strong>差分機制</strong>解 mutation 的成本問題：原始碼檔尾嵌一份 manifest，預設<strong>只變異上次執行後改動過的 top-level form</strong>。這與 Meta ACH「不做全量變異」的方向一致但手段不同——ACH 靠「只產與特定關注議題相關的 fault」縮範圍，他靠「只測改動過的部分」縮範圍。前者需要人先指定關注議題，後者不需要，代價是不會回頭複驗舊碼。一個小細節透露了紀律：<code>crap.cljc</code> 的檔頭是 <code>;; mutation-tested: 2026-03-04</code>——工具自己也跑過自己。</p>
+
+  <h3>覆蓋率：單獨當閘門，證據並不支持</h3>
+
+  <p>這是七項裡<strong>外部證據最不利</strong>的一項，而他的用法恰好繞開了問題。經典研究是 Inozemtseva 與 Holmes 的 <a class="ref" href="https://dl.acm.org/doi/10.1145/2568225.2568271">Coverage Is Not Strongly Correlated with Test Suite Effectiveness</a>（ICSE 2014）：為五個系統（最大 724,000 行）生成 <strong>31,000 組測試套件</strong>，結論是覆蓋率與有效性之間，在<strong>控制測試數量之後</strong>只有低至中等的相關。也就是說，兩者看似相關很大一部分只是「測試寫得多」這個共同因子造成的假象；更強形式的覆蓋率（分支、路徑）也沒有帶來更多洞見。</p>
+
+  <p><strong>但這正是 CRAP 存在的理由</strong>：覆蓋率單獨看沒有意義，放進複雜度的脈絡裡才有——同樣是 60% 覆蓋率，CC=3 的函式無所謂，CC=20 的函式是紅燈。他不用覆蓋率當閘門，他用覆蓋率當 CRAP 的一個輸入。這個用法沒有被那份研究否定。</p>
+
+  <h3>清單省略號裡最有意思的一項</h3>
+
+  <p>「a plethora of others」可以從他的 repo 補完，其中最值得抄的是 <code>deintroverter4clj</code>。它做靜態分析，把每個測試分類成 <strong>extroverted／likely-extroverted／introverted／questionable</strong>：</p>
+
+  <blockquote><p>An <strong>introverted test</strong> passes but does not ground its assertions in SUT behavior — for example, asserting on literals, test-local data, or <code>clojure.core</code> helpers without calling production code.</p></blockquote>
+
+  <p><strong>這是把第 2 頁的「同義反覆」機械化成可掃描的檢查。</strong>那裡給的偵測法是「手動翻一個運算子，測試仍綠即是」——需要人或需要跑 mutation。deintroverter 走靜態路徑：追斷言能不能溯源到 production code，不用執行、不用變異，因此便宜得多。對 AI 產測試場景這很對口，因為「斷言的是 mock 或字面值」正是最高頻的病徵。</p>
+
+  <p><span class="warn">⚠️</span> <strong>但他自己的 README 明文反對把它當閘門</strong>：「Use it <strong>manually</strong>: point it at paths, read the report, and follow up in the editor. <strong>It is not meant to be wired into CI gates</strong>… Verdicts are heuristic […] treat them as guidance for human judgment, <strong>not pass/fail criteria</strong>.」</p>
+
+  <p>一個宣稱「不讀碼、只靠 gauntlet」的人，他最貼近 AI 測試病徵的工具卻要求人去讀報告、回編輯器跟進。這不是矛盾，是誠實——但它精準地標出了 gauntlet 的邊界在哪裡。</p>
+  </div>
+</section>
+
+<section id="s05">
+  <h2><span class="num">05</span>他不讀碼，但他派了 agent 去讀</h2>
+
+  <div class="col">
+  <p>推文的字面讀法是「程式碼沒有人讀」。<code>swarm-forge</code> 的 <code>adversaries</code> 分支推翻了這個讀法：那是一個只有兩個角色的編制，<code>coder</code> 與 <code>reviewer</code>，而 <strong>reviewer 的職責就是讀碼</strong>：</p>
+
+  <blockquote>
+    <p>Review <strong>the code</strong>, tests, commit history, handoff state, and relevant project behavior.</p>
+    <p>Also review <strong>low-level code quality: names, control flow, duplication, error handling, edge cases, and local readability</strong>.</p>
+    <p>Be <strong>adversarial</strong> but concrete: every recommendation must name the issue, the risk, and the expected change.</p>
+  </blockquote>
+
+  <p>它的四個審查階段就是 Clean Architecture 的條目本身：<strong>UI/Core 分離、依賴規則、資訊隱藏與封裝、局部程式碼品質</strong>。</p>
+
+  <div class="callout">
+    <span class="k">這是對整套主張最重要的修正</span>
+    <p>他沒有放棄 code review，他放棄的是<strong>由人做 code review</strong>。他把自己畢生主張的那套架構判準寫成 prompt，交給另一個 agent 去執行。所以正確的命題不是「測試可以取代 review」，而是「<strong>review 的判準可以被寫下來、交給 agent 反覆執行</strong>」——這是個弱得多、但也可信得多的主張。</p>
+  </div>
+
+  <p>三個設計細節值得單獨記：</p>
+
+  <ul>
+    <li><strong>寫入範圍受限</strong>：「Do not modify production code, test code, build scripts, or project behavior. The only files you may change are review artifacts under <code>review/</code>」。而且 <code>swarmforge.conf</code> 給它獨立的 git worktree，所以<strong>隔離是機械的</strong>，檔案範圍限制才是 prompt 層的。</li>
+    <li><strong>它驗證的是「閘門有沒有被跑」，不只是碼本身</strong>：「Check that the coder used TDD where evidence is available」「Check that coder <strong>ran language mutation testing or explicitly justified any omission</strong>」。這是對 gauntlet 本身的後設查核——雖然查核者仍是 agent。</li>
+    <li><strong>職責切乾淨</strong>：「<strong>Do not run language mutation testing</strong>」——reviewer 自己不跑 mutation，只確認 coder 跑了。避免評審者變成執行者。</li>
+  </ul>
+
+  <p>收斂條件也明確：不滿意就寫 <code>review/recommendations/NNN-recommendations.md</code>（序號遞增、每項須寫明問題、風險、預期變更）交還 coder；滿意才寫 <code>review/approval.md</code> 並停止。<strong>評審歷程留成 git 裡的檔案</strong>，這比對話紀錄可回溯得多。</p>
+  </div>
+</section>
+
+<section id="s06">
+  <h2><span class="num">06</span>撐不住的三個地方與防繞過五層</h2>
+
+  <div class="col">
+  <p>測試再好，agent 繞過就等於沒有。</p>
+
+  <blockquote><p>如果 agent 一被擋就能繞開，那不是護欄，那是排版好看的建議。<span class="who">— Steve Kinney</span></p></blockquote>
+
+  <p>已知的繞過手法：<code>git commit --no-verify</code>、<code>HUSKY=0</code>／<code>LEFTHOOK=0</code> 之類的 skip 環境變數、直接編輯 hook 設定或 CI workflow、推到不受保護的分支、force push 掉不方便的歷史。</p>
+  </div>
+
+  <figure>
+    <div class="scroll">
+    <svg viewBox="0 0 1000 430" role="img" aria-label="防繞過五層圖：第一層明文寫進規則檔、第二層執行前 deny、第三層 CI 鏡像本地檢查、第四層保護護欄本身、第五層是最陰險的弱化規則本身。全押方案在第一層與第四層有做、第二層缺席、第三層只鏡像了邊界檢查">
+      <text class="s dim" x="30" y="30">五層防繞過，任一層單獨都不夠。右側標出這套全押方案各層的實際狀態</text>
+
+      <text class="n" x="30" y="88">01</text>
+      <rect class="box" x="72" y="64" width="430" height="46" rx="2"/>
+      <text class="s" x="88" y="84">明文寫進 agent 規則檔</text>
+      <text class="xs off" x="88" y="101">禁用整類 skip flag 與 skip 環境變數；改設定檔視同高風險變更</text>
+      <text class="s yes" x="530" y="84">✅ 有</text>
+      <text class="xs off" x="580" y="84">engineering.prompt · AGENTS.md</text>
+      <text class="xs off" x="580" y="101">但 ImpossibleBench 測到這類指示擋不住 76% 的作弊</text>
+
+      <text class="n" x="30" y="158">02</text>
+      <rect class="box" x="72" y="134" width="430" height="46" rx="2"/>
+      <text class="s" x="88" y="154">執行前 deny</text>
+      <text class="xs off" x="88" y="171">PreToolUse 類的 hook 攔截整類繞過，而非單一旗標</text>
+      <text class="s no" x="530" y="158">❌ 未見</text>
+
+      <text class="n" x="30" y="228">03</text>
+      <rect class="box-bad" x="72" y="204" width="430" height="46" rx="2"/>
+      <text class="s bad-text" x="88" y="224">CI 鏡像本地檢查</text>
+      <text class="xs off" x="88" y="241">本地 hook 是便利，CI 與 merge rule 才是權威</text>
+      <text class="s warn" x="530" y="224">⚠️ 只鏡像了邊界檢查</text>
+      <text class="xs bad-text" x="530" y="241">測試 · mutation · CRAP · DRY 全在本地指令鏈</text>
+
+      <text class="n" x="30" y="298">04</text>
+      <rect class="box" x="72" y="274" width="430" height="46" rx="2"/>
+      <text class="s" x="88" y="294">保護護欄本身</text>
+      <text class="xs off" x="88" y="311">用 CODEOWNERS 之類的機制蓋住 hook 設定、CI workflow、政策檔</text>
+      <text class="s yes" x="530" y="294">✅ 有，且做得更直接</text>
+      <text class="xs off" x="530" y="311">boundary guard：預設鎖定、逐項解鎖</text>
+
+      <text class="n" x="30" y="368">05</text>
+      <rect class="box-accent" x="72" y="344" width="430" height="46" rx="2"/>
+      <text class="s accent-text" x="88" y="364">最陰險的不是 --no-verify，是弱化規則本身</text>
+      <text class="xs off" x="88" y="381">刪掉一個 job、改掉必要檢查的名稱、把 glob 縮窄讓 hook 看不到重要檔案</text>
+      <text class="xs off" x="530" y="364">第 04 層擋的正是這一類</text>
+      <text class="xs off" x="530" y="381">「技術上完全遵守了」</text>
+
+      <line class="rule" x1="30" y1="404" x2="970" y2="404"/>
+      <text class="s bad-text" x="30" y="426">破口在第 03 層：所有驗證都由 agent 在本地跑、由 agent 回報，沒有任何獨立於 agent 的地方重跑一次</text>
+    </svg>
+    </div>
+    <figcaption><b>他確實工程化了最該工程化的那一道。</b><code>empire-2025</code> 唯一的 GitHub Actions workflow 叫 <code>acceptance-boundary-guard.yml</code>，在 <code>pull_request</code> 與 <code>push</code> 都跑：只要變更集碰到 <code>acceptanceTests/</code> 或 parser 原始碼就 <code>exit 1</code>。設計上還有一個細節值得抄：鎖是<b>預設鎖住、逐項解鎖</b>——排除清單裡那十來個檔案是當時正在規格化的，做完就會收回鎖定。agent 想讓失敗變通過，最省事的路徑就是改驗收規格，而這條路被機械擋住了。</figcaption>
+  </figure>
+
+  <div class="col">
+  <h3>另外兩個撐不住的地方</h3>
+
+  <p><strong>領域的優勢被低估了。</strong><code>empire-2025</code> 是：單機遊戲、單一開發者、無使用者資料、無認證與權限、無外部系統整合、無並行使用者、無資料庫遷移、無合規要求，而且他刻意建了 <code>--seed=N</code>（固定亂數）與 <code>--headless=N</code>（無 UI 跑完整迴圈）讓行為可決定性重現。<strong>這是一個「正確性幾乎可以被測試完整指定」的領域</strong>——遊戲規則就是規格，而且規格是封閉的。</p>
+
+  <p>相對地，一般前後端分離系統的核心風險（前端等 <code>total</code>、後端回 <code>total_amount</code> 這種跨邊界契約漂移、資料遷移、權限邊界、第三方 API 行為變更）在 Empire 裡根本不存在。<strong>這不否定他的方法，但否定直接外推</strong>：他證明的是「在規格封閉、行為可決定的領域，約束陣可以取代讀碼」，他沒有證明、也沒有宣稱在有真實使用者與資料的系統上成立。</p>
+
+  <p><strong>沒有外部量測。</strong>「very high confidence」是自評，全串與全部 repo 都沒有缺陷逃逸率、生產事故、或與對照組的比較。這與第 2 頁的判準直接衝突——那裡說唯一該用的成效判準是「有沒有抓到真 bug」，而這裡能拿到的只有「閘門都綠了」。公平地說：他是在推特上回一個問題，不是發表研究。但引用這套方案時得誠實標明它的證據等級是<strong>單一資深從業者的實作示範</strong>，而不是效果實證。</p>
+  </div>
+</section>
+
+<section id="s07">
+  <h2><span class="num">07</span>你能搬什麼</h2>
+
+  <div class="col">
+  <p>他的工具全是 Clojure／Go／Java。以 Vue ＋ Laravel 為例，逐項對照現成程度：</p>
+
+  <div class="tbl">
+  <table>
+    <thead><tr><th>閘門</th><th>現成程度</th></tr></thead>
+    <tbody>
+      <tr><td>Unit tests</td><td><span class="yes">✅</span> Vitest／PHPUnit</td></tr>
+      <tr><td>Mutation testing</td><td><span class="yes">✅</span> Stryker（JS/TS）、Pest <code>--mutate</code>／Infection（PHP）</td></tr>
+      <tr><td>Test coverage</td><td><span class="yes">✅</span> 兩端內建；但別單獨當閘門</td></tr>
+      <tr><td><strong>CRAP 度量</strong></td><td><span class="warn">⚠️</span> <strong>無現成整合</strong>。兩端都能取得 CC 與行覆蓋率（PHPMD／<code>phpunit --coverage-clover</code>；ESLint complexity／Vitest coverage），公式只有一行，<strong>自己算是划算的</strong></td></tr>
+      <tr><td>DRY 偵測</td><td><span class="warn">⚠️</span> 有 <code>jscpd</code>（跨語言 token 級）但非 Jaccard 語法指紋；PHP 有 PHPMD 的 CPD</td></tr>
+      <tr><td>依賴方向檢查</td><td><span class="yes">✅</span> 前端有 dependency-cruiser／Madge；PHP 有 Deptrac</td></tr>
+      <tr><td><strong>Introverted test 偵測</strong></td><td><span class="no">❌</span> <strong>找不到對應工具</strong>。概念可搬（斷言是否溯源到 production code），實作得自己寫</td></tr>
+      <tr><td>Gherkin ＋ acceptance mutation</td><td><span class="no">❌</span> Gherkin 有 Behat（PHP）／Cucumber.js，但 <strong>example 值變異這一層沒有現成品</strong></td></tr>
+      <tr><td>QA procedures</td><td><span class="warn">⚠️</span> 人的流程，與語言無關，可直接抄</td></tr>
+      <tr><td><strong>鎖住規格檔的 CI guard</strong></td><td><span class="yes">✅</span> <strong>與語言完全無關、當天可做</strong>：一個 workflow 跑 <code>git diff --name-only</code> 比對受保護路徑即可</td></tr>
+      <tr><td><strong>對抗式 reviewer agent</strong></td><td><span class="yes">✅</span> 概念可直接搬：獨立 worktree、只能寫 <code>review/</code>、審查判準寫成固定清單、產出序號遞增的 recommendations 檔</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <div class="callout">
+    <span class="k">建議的採用順序</span>
+    <p><strong>1　鎖住規格檔的 CI guard 先做</strong>——成本約一小時、與語言無關，擋掉最陰險的那類繞過。<br>
+    <strong>2　CRAP 一行公式算一次</strong>，找出最該補測試的函式。<br>
+    <strong>3　量一次 mutation 基線</strong>（知道現況）。<br>
+    <strong>4　對純函式跑 PBT</strong>（找真 bug）。<br>
+    <strong>5　補防繞過層</strong>，最後才考慮把流程 codify。</p>
+    <p>Gherkin 那一整套除非專案規模到了他說的「larger projects」，否則按他自己的話就是 overloading。</p>
+  </div>
+
+  <p>還有一條實務提醒：<strong>親自測一次 agent 是否真的被擋</strong>——沒實測過的護欄不算護欄。</p>
+  </div>
+</section>
+
+<section id="s08" class="avoid">
+  <h2><span class="num">08</span>這些數字別引</h2>
+
+  <div class="col">
+  <ul>
+    <li><strong>「AI 產碼的問題比人寫的多 1.7 倍、安全漏洞多 2.7 倍」</strong>——追到源頭是 <strong>CodeRabbit 的自家報告</strong>（n=470 個 GitHub PR，320 個標為 AI 共同撰寫），而<strong>問題的分類用的是 CodeRabbit 自己的 review taxonomy</strong>。賣 AI code review 的廠商，用自家工具的判準，量測「AI 產碼問題比較多」。</li>
+    <li><strong><code>crap4clj</code> README 範例輸出的 <code>CRAP=130.2</code></strong>——與該 repo 自己的公式實作不符（正確值 ≈36.0），是手寫的示範數字。要引用 CRAP 值請自己算或實跑。</li>
+    <li><strong>「99+% 的團隊導入 Gherkin E2E 測試失敗」「SmartBear 與 Tricentis 因此虧損放棄」</strong>——出自銷售競品測試工具的從業者部落格，無可查證一手依據。可記錄為存在對立意見，不可當事實。</li>
+    <li><strong>「這套 gauntlet 能給出 very high confidence」</strong>——不可引用為效果證據：自評，無缺陷逃逸率、無對照組、無外部量測。</li>
+  </ul>
+  </div>
+</section>
+
+<p class="foot"><b>這頁沒講什麼。</b>各項閘門手段本身的證據盤點（mutation 的業界定位、PBT 的一手實證、判準權威的分類軸）在<a class="ref" href="ai-constraints-2-testing.html">第 2 頁</a>，這裡只記他的增量與可搬性。實際要在專案裡逐層堆測試的步驟見 <a class="ref" href="testing-layers-vue-laravel.html">前後端分離的測試地圖</a>。</p>
+
+<p class="foot"><b>證據標註的規則。</b>沒有標註的主張，其依據是一手來源、原始碼、或同儕審查的研究，可以直接引用。加了灰底小標籤的是<b>弱證據</b>，標籤上寫明是哪一種。被查證否決的主張全部收在第 08 節。</p>
+
+<p class="foot"><b>快照。</b>本頁依據 vault 於 2026-08-09 的 <code>Uncle-Bob-的不讀碼約束閘門</code> 改寫。來源頁之後若被更新，本頁不會自動跟上——要更新請整組重跑。</p>
+
+</div>
+</body>
+</html>

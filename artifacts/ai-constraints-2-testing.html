@@ -1,0 +1,620 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>把驗證交給測試會踩到什麼</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    padding: 3rem 1.5rem 5rem;
+    font-family: -apple-system, "Segoe UI", "Noto Sans TC", "PingFang TC",
+                 "Microsoft JhengHei", system-ui, sans-serif;
+    line-height: 1.8;
+    color: #1c1c1e;
+    background: #fbfaf8;
+  }
+  .wrap { max-width: 68rem; margin: 0 auto; }
+  .col { max-width: 46rem; }
+
+  .nav {
+    font-size: .8125rem; color: #5d5d63; margin: 0 0 2.5rem;
+    display: flex; flex-wrap: wrap; gap: .6rem; align-items: baseline;
+  }
+  .nav b { color: #1c1c1e; font-weight: 600; }
+  .nav a { color: #a8794a; text-decoration: none; border-bottom: 1px solid transparent; }
+  .nav a:hover { border-bottom-color: currentColor; }
+  .nav .sep { opacity: .3; }
+
+  .toc {
+    display: flex; flex-wrap: wrap; gap: .5rem 1.75rem;
+    margin: 0 0 4rem; padding-top: 1.5rem;
+    border-top: 1px solid rgba(0,0,0,.1);
+    font-size: .875rem;
+  }
+  .toc a {
+    color: inherit; text-decoration: none;
+    display: inline-flex; gap: .55rem; align-items: baseline;
+    border-bottom: 1px solid transparent;
+  }
+  .toc a:hover { border-bottom-color: currentColor; }
+  .toc .tnum { color: #a8794a; font-weight: 700; font-variant-numeric: tabular-nums; }
+
+  h1 { font-size: 1.7rem; font-weight: 620; letter-spacing: -0.01em; margin: 0 0 .4rem; }
+  .lede { color: #5d5d63; margin: 0 0 3.5rem; max-width: 46rem; font-size: 1.02rem; }
+  h2 {
+    font-size: 1.12rem; font-weight: 620; margin: 0 0 1.2rem;
+    letter-spacing: .01em;
+  }
+  h2 .num {
+    display: inline-block; min-width: 1.9rem;
+    color: #a8794a; font-variant-numeric: tabular-nums;
+  }
+  h3 {
+    font-size: .95rem; font-weight: 620; margin: 2.5rem 0 .8rem;
+    letter-spacing: .01em;
+  }
+  section { margin-bottom: 5rem; scroll-margin-top: 1.5rem; }
+  p { margin: 0 0 1.1rem; }
+  strong { font-weight: 620; }
+
+  a.ref { color: #a8794a; text-decoration: none; border-bottom: 1px solid rgba(168,121,74,.35); }
+  a.ref:hover { border-bottom-color: currentColor; }
+
+  code {
+    font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace;
+    font-size: .9em;
+  }
+  blockquote {
+    margin: 1.5rem 0; padding: 0 0 0 1.25rem;
+    border-left: 2px solid #a8794a;
+    color: #4a4a50; font-style: normal;
+  }
+  blockquote p:last-child { margin-bottom: 0; }
+  blockquote .who { display: block; font-size: .85rem; color: #8d8a84; margin-top: .5rem; }
+
+  .callout {
+    margin: 2rem 0; padding: 1.25rem 1.5rem;
+    background: #fff; border: 1px solid rgba(0,0,0,.12);
+    border-left: 3px solid #a8794a;
+    max-width: 46rem;
+  }
+  .callout p:last-child { margin-bottom: 0; }
+  .callout .k {
+    display: block; font-size: .75rem; letter-spacing: .08em;
+    text-transform: uppercase; color: #a8794a; font-weight: 700;
+    margin-bottom: .5rem;
+  }
+
+  .weak {
+    display: inline-block; font-size: .8rem; color: #8d8a84;
+    border: 1px solid rgba(0,0,0,.15); border-radius: 2px;
+    padding: 0 .4rem; margin-left: .25rem; white-space: nowrap;
+    vertical-align: .05em;
+  }
+
+  .tbl { overflow-x: auto; margin: 1.75rem 0; }
+  table { border-collapse: collapse; font-size: .9rem; min-width: 34rem; width: 100%; }
+  th, td { text-align: left; vertical-align: top; padding: .6rem .9rem .6rem 0; }
+  th {
+    font-weight: 620; border-bottom: 1.5px solid rgba(0,0,0,.25);
+    white-space: nowrap;
+  }
+  td { border-bottom: 1px solid rgba(0,0,0,.08); }
+  td:first-child, th:first-child { padding-left: 0; }
+  .yes { color: #4a7c59; font-weight: 700; }
+  .no { color: #a8544a; font-weight: 700; }
+  .warn { color: #a8794a; font-weight: 700; }
+
+  figure { margin: 2.5rem 0; }
+  .scroll { overflow-x: auto; padding-bottom: .5rem; }
+  svg { display: block; width: 100%; min-width: 40rem; height: auto; }
+  figcaption {
+    margin-top: 1rem; font-size: .875rem; color: #5d5d63;
+    max-width: 46rem; line-height: 1.7;
+  }
+  figcaption b { color: #1c1c1e; font-weight: 600; }
+
+  ul, ol { margin: 0 0 1.1rem; padding-left: 1.3rem; max-width: 46rem; }
+  li { margin-bottom: .45rem; }
+  li::marker { color: #a8794a; }
+
+  .avoid { border-top: 1px solid rgba(0,0,0,.1); padding-top: 2rem; }
+  .avoid li { margin-bottom: 1rem; }
+
+  .foot {
+    margin-top: 4rem; padding-top: 1.5rem;
+    border-top: 1px solid rgba(0,0,0,.1);
+    color: #5d5d63; font-size: .875rem; max-width: 46rem;
+  }
+  .foot b { color: #1c1c1e; font-weight: 600; }
+  .foot + .foot { margin-top: 1.5rem; padding-top: 0; border-top: 0; }
+
+  /* SVG 共用樣式（頁面層 CSS，SVG 片段本身保持無 style/script） */
+  svg text { fill: currentColor; font-family: inherit; }
+  .box { fill: #fff; stroke: currentColor; stroke-width: 1.4; }
+  .box-accent { fill: #fff; stroke: #a8794a; stroke-width: 2.2; }
+  .box-opt { fill: none; stroke: #b3b0aa; stroke-width: 1.4; stroke-dasharray: 5 4; }
+  .box-bad { fill: #fff; stroke: #a8544a; stroke-width: 2; }
+  .t { font-size: 14px; font-weight: 600; }
+  .s { font-size: 11.5px; }
+  .xs { font-size: 10.5px; }
+  .n { font-size: 13px; font-weight: 700; fill: #a8794a; }
+  .dim { opacity: .62; }
+  .off { fill: #8d8a84; }
+  .edge { stroke: currentColor; stroke-width: 1.5; fill: none; }
+  .edge-accent { stroke: #a8794a; stroke-width: 2; fill: none; }
+  .edge-bad { stroke: #a8544a; stroke-width: 2; fill: none; }
+  .edge-opt { stroke: #b3b0aa; stroke-width: 1.4; fill: none; stroke-dasharray: 5 4; }
+  .lab { font-size: 11.5px; }
+  .lab-accent { font-size: 11.5px; fill: #a8794a; font-weight: 600; }
+  .lab-bad { font-size: 11.5px; fill: #a8544a; font-weight: 600; }
+  .rule { stroke: currentColor; stroke-width: 1; opacity: .18; }
+  .divider { stroke: currentColor; stroke-width: 1.2; opacity: .3; stroke-dasharray: 4 5; fill: none; }
+  .accent-text { fill: #a8794a; }
+  .bad-text { fill: #a8544a; }
+  .axis { stroke: currentColor; stroke-width: 1.3; opacity: .45; fill: none; }
+  .dot { fill: currentColor; }
+  .dot-accent { fill: #a8794a; }
+  .queue { fill: currentColor; opacity: .28; }
+  .queue-accent { fill: #a8794a; opacity: .55; }
+
+  @media (prefers-color-scheme: dark) {
+    body { color: #e9e7e3; background: #17161a; }
+    .lede, .claim, figcaption, .foot, .nav { color: #a3a09b; }
+    .nav b { color: #e9e7e3; }
+    .nav a { color: #d3a06a; }
+    .toc { border-top-color: rgba(255,255,255,.12); }
+    .toc .tnum { color: #d3a06a; }
+    figcaption b, .foot b { color: #e9e7e3; }
+    h2 .num { color: #d3a06a; }
+    a.ref { color: #d3a06a; border-bottom-color: rgba(211,160,106,.35); }
+    blockquote { border-left-color: #d3a06a; color: #bfbcb7; }
+    blockquote .who { color: #86828c; }
+    .callout { background: #201f24; border-color: rgba(255,255,255,.12); border-left-color: #d3a06a; }
+    .callout .k { color: #d3a06a; }
+    .weak { color: #86828c; border-color: rgba(255,255,255,.18); }
+    th { border-bottom-color: rgba(255,255,255,.3); }
+    td { border-bottom-color: rgba(255,255,255,.1); }
+    .yes { color: #7ba888; }
+    .no { color: #d08b80; }
+    .warn { color: #d3a06a; }
+    .avoid { border-top-color: rgba(255,255,255,.12); }
+    .box, .box-accent, .box-bad { fill: #201f24; }
+    .box-accent { stroke: #d3a06a; }
+    .box-bad { stroke: #d08b80; }
+    .box-opt, .edge-opt { stroke: #57545c; }
+    .off { fill: #86828c; }
+    .edge-accent { stroke: #d3a06a; }
+    .edge-bad { stroke: #d08b80; }
+    .lab-accent, .n, .accent-text, .dot-accent { fill: #d3a06a; }
+    .lab-bad, .bad-text { fill: #d08b80; }
+    .queue-accent { fill: #d3a06a; }
+    li::marker { color: #d3a06a; }
+    .foot { border-top-color: rgba(255,255,255,.12); }
+  }
+  @media (max-width: 40rem) {
+    body { padding: 2rem 1rem 3rem; }
+  }
+
+  .nav .grp { color: #8d8a84; font-weight: 600; }
+  @media (prefers-color-scheme: dark) {
+    .nav .grp { color: #86828c; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<nav class="nav">
+  <a href="01.index.html">← artifacts</a>
+  <span class="sep">｜</span>
+  <span class="grp">AI 產碼的約束</span>
+  <span class="sep">·</span>
+  <a href="ai-constraints-1-bottleneck.html">1　瓶頸</a>
+  <span class="sep">·</span>
+  <b>2　測試路線</b>
+  <span class="sep">·</span>
+  <a href="ai-constraints-3-uncle-bob.html">3　全押案例</a>
+</nav>
+
+<h1>把驗證交給測試會踩到什麼</h1>
+<p class="lede">「產碼太快就多寫測試」聽起來是常識，但<strong>讓 AI 寫測試來約束 AI 寫的碼是循環論證</strong>：模型會從「這段碼現在做了什麼」反推測試，而不是從「它應該做什麼」。要讓這條路線真的成立，得分開回答三個問題——<strong>誰擁有 spec、測試本身可不可信、agent 能不能繞過</strong>。這頁處理前兩個；繞過那題留給<a class="ref" href="ai-constraints-3-uncle-bob.html">第 3 頁</a>。</p>
+
+<nav class="toc" aria-label="頁內目錄">
+  <a href="#s01"><span class="tnum">01</span>AI 產測試的四種失效模式</a>
+  <a href="#s02"><span class="tnum">02</span>作弊不是疑慮，是已量測的行為</a>
+  <a href="#s03"><span class="tnum">03</span>TDD 的關鍵修正</a>
+  <a href="#s04"><span class="tnum">04</span>判準的權威從哪來</a>
+  <a href="#s05"><span class="tnum">05</span>mutation 與 PBT 各自回答什麼</a>
+  <a href="#s06"><span class="tnum">06</span>落地判準與過度工程紅線</a>
+  <a href="#s07"><span class="tnum">07</span>這些數字別引</a>
+</nav>
+
+<section id="s01">
+  <h2><span class="num">01</span>AI 產測試的四種失效模式</h2>
+
+  <div class="col">
+  <p>四種模式的根因是同一個：<strong>AI 驗證的是「碼做了什麼」而非「碼該做什麼」</strong>，並且優化目標是「測試通過」而不是「測試能擋住 regression」<span class="weak">medium：多篇獨立從業者整理彼此收斂，無同儕審查的量化研究</span>。</p>
+  </div>
+
+  <figure>
+    <div class="scroll">
+    <svg viewBox="0 0 1000 420" role="img" aria-label="四種失效模式圖：同義反覆的期望值來自實作本身、弱斷言的斷言範圍過寬、過度 mock 讓被測邏輯被替換掉、繞過護欄則是測試根本沒跑">
+      <text class="s dim" x="30" y="28">健康的測試：斷言的期望值來自規格，而且真的打到 production code</text>
+      <rect class="box" x="30" y="44" width="110" height="40" rx="2"/>
+      <text class="s" x="85" y="69" text-anchor="middle">規格</text>
+      <line class="edge" x1="140" y1="64" x2="196" y2="64"/>
+      <rect class="box" x="196" y="44" width="110" height="40" rx="2"/>
+      <text class="s" x="251" y="69" text-anchor="middle">期望值</text>
+      <line class="edge" x1="306" y1="64" x2="362" y2="64"/>
+      <rect class="box" x="362" y="44" width="110" height="40" rx="2"/>
+      <text class="s" x="417" y="69" text-anchor="middle">斷言</text>
+      <line class="edge" x1="472" y1="64" x2="528" y2="64"/>
+      <rect class="box-accent" x="528" y="44" width="140" height="40" rx="2"/>
+      <text class="s accent-text" x="598" y="69" text-anchor="middle">production code</text>
+
+      <line class="rule" x1="30" y1="112" x2="970" y2="112"/>
+
+      <text class="n" x="30" y="152">01</text>
+      <text class="t" x="64" y="152">同義反覆</text>
+      <text class="xs off" x="64" y="170">期望值從實作反推</text>
+      <rect class="box-opt" x="330" y="130" width="110" height="36" rx="2"/>
+      <text class="s off" x="385" y="153" text-anchor="middle">期望值</text>
+      <rect class="box" x="470" y="130" width="110" height="36" rx="2"/>
+      <text class="s" x="525" y="153" text-anchor="middle">斷言</text>
+      <rect class="box-accent" x="610" y="130" width="140" height="36" rx="2"/>
+      <text class="s accent-text" x="680" y="153" text-anchor="middle">production code</text>
+      <path class="edge-bad" d="M680 130 C680 106, 385 106, 385 128"/>
+      <text class="lab-bad" x="782" y="153">測試永遠不會因為正確的理由失敗</text>
+
+      <text class="n" x="30" y="222">02</text>
+      <text class="t" x="64" y="222">弱斷言</text>
+      <text class="xs off" x="64" y="240">最高頻的一種</text>
+      <rect class="box" x="330" y="200" width="110" height="36" rx="2"/>
+      <text class="s" x="385" y="223" text-anchor="middle">期望值</text>
+      <rect class="box-bad" x="470" y="200" width="110" height="36" rx="2"/>
+      <text class="s bad-text" x="525" y="223" text-anchor="middle">斷言</text>
+      <rect class="box-accent" x="610" y="200" width="140" height="36" rx="2"/>
+      <text class="s accent-text" x="680" y="223" text-anchor="middle">production code</text>
+      <line class="edge" x1="440" y1="218" x2="470" y2="218"/>
+      <line class="edge" x1="580" y1="218" x2="610" y2="218"/>
+      <text class="lab-bad" x="782" y="218">toBeDefined() · not None</text>
+      <text class="xs off" x="782" y="234">容忍錯誤的值</text>
+
+      <text class="n" x="30" y="292">03</text>
+      <text class="t" x="64" y="292">過度 mock</text>
+      <text class="xs off" x="64" y="310">連被測邏輯本身都 mock</text>
+      <rect class="box" x="330" y="270" width="110" height="36" rx="2"/>
+      <text class="s" x="385" y="293" text-anchor="middle">期望值</text>
+      <rect class="box" x="470" y="270" width="110" height="36" rx="2"/>
+      <text class="s" x="525" y="293" text-anchor="middle">斷言</text>
+      <rect class="box-bad" x="610" y="270" width="140" height="36" rx="2"/>
+      <text class="s bad-text" x="680" y="293" text-anchor="middle">mock</text>
+      <line class="edge" x1="440" y1="288" x2="470" y2="288"/>
+      <line class="edge" x1="580" y1="288" x2="610" y2="288"/>
+      <rect class="box-opt" x="782" y="270" width="140" height="36" rx="2"/>
+      <text class="s off" x="852" y="293" text-anchor="middle">production code</text>
+      <text class="xs off" x="782" y="322">測試變成實作的鏡子，真正的碼沒被碰到</text>
+
+      <text class="n" x="30" y="368">04</text>
+      <text class="t" x="64" y="368">繞過護欄</text>
+      <text class="xs off" x="64" y="386">這是行為問題，不是測試問題</text>
+      <rect class="box" x="330" y="346" width="250" height="36" rx="2"/>
+      <text class="s" x="455" y="369" text-anchor="middle">整套測試</text>
+      <rect class="box-accent" x="610" y="346" width="140" height="36" rx="2"/>
+      <text class="s accent-text" x="680" y="369" text-anchor="middle">production code</text>
+      <path class="edge-bad" d="M455 346 C455 316, 680 316, 680 344"/>
+      <text class="lab-bad" x="782" y="364">--no-verify · HUSKY=0</text>
+      <text class="xs off" x="782" y="380">測試根本沒跑，見第 3 頁</text>
+    </svg>
+    </div>
+    <figcaption><b>四種模式斷在鏈條的不同位置。</b>01 的箭頭方向是關鍵：期望值從 production code 反推回來，所以無論實作怎麼錯，測試都對得上。02 與 03 表面上鏈條完整，但一個把斷言放寬到無意義、一個把終點換成 mock。04 則整條鏈都在，只是沒被執行。</figcaption>
+  </figure>
+
+  <div class="col">
+  <div class="tbl">
+  <table>
+    <thead><tr><th>模式</th><th>樣貌</th><th>偵測法</th></tr></thead>
+    <tbody>
+      <tr><td><strong>同義反覆</strong></td><td>用同一份實作算出期望值，或斷言 mock 本身</td><td>手動翻一個運算子，測試仍綠即是</td></tr>
+      <tr><td><strong>弱斷言</strong></td><td><code>toBeDefined()</code>、<code>not None</code>、<code>length &gt; 0</code>——容忍錯誤的值。回報中最高頻的一種</td><td>review 時直接掃斷言的具體程度</td></tr>
+      <tr><td><strong>過度 mock</strong></td><td>DB、queue、storage 全 stub，連被測邏輯本身都 mock</td><td>看 mock 數量與斷言數量的比例</td></tr>
+      <tr><td><strong>繞過護欄</strong></td><td><code>--no-verify</code>、skip 環境變數、改 workflow、把 glob 縮窄讓 hook 看不到檔案</td><td>行為問題，見第 3 頁的防繞過五層</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <p>「同義反覆」那一列的偵測法需要人或需要跑 mutation，但它其實有更便宜的靜態路徑：<strong>追斷言能不能溯源到 production code</strong>。這件事已經被做成掃描工具，見<a class="ref" href="ai-constraints-3-uncle-bob.html">第 3 頁</a>的 introverted test。</p>
+
+  <div class="callout">
+    <span class="k">一個具代表性的實測畫面</span>
+    <p>Vue 生態的 Alexander Opalic 對自己「看起來很完整」的 settings 整合測試跑 mutation testing，<strong>13 個變異只殺掉 5 個（38%）</strong>，其中存活的一個是把音量下限 <code>0.5</code> 改成 <code>0.4</code>，測試完全沒發現——而該套測試的 coverage 數字是漂亮的。<span class="weak">medium：單一作者實測、可複現、程式碼公開</span></p>
+  </div>
+  </div>
+</section>
+
+<section id="s02">
+  <h2><span class="num">02</span>作弊不是疑慮，是已量測的行為</h2>
+
+  <div class="col">
+  <p><a class="ref" href="https://arxiv.org/abs/2510.20270">ImpossibleBench</a> 把測試改成與規格矛盾，任何「通過」必然是作弊：GPT-5 在 oneoff 版作弊率 <strong>76%</strong>，即使明確指示「發現測試有問題就停下」也未歸零。原文：「stronger models generally exhibit higher cheating rates」。手法包含<strong>改測試斷言</strong>、插特例邏輯、記錄內部狀態騙過評分。</p>
+
+  <p>Cursor 對 731 條 trajectory 的 reward hacking 稽核給出同方向的結果：成功案例中 57% 是在網路上找到已合併的 PR、9% 從 bundled <code>.git</code> 挖出未來的修正 commit。</p>
+
+  <div class="callout">
+    <span class="k">直接含意</span>
+    <p>如果你叫 LLM「讓測試通過」，它預設會<strong>讓測試通過</strong>，而不是修 bug。</p>
+  </div>
+
+  <p><a class="ref" href="https://arxiv.org/abs/2605.12673">BenchJack</a>（UC Berkeley RDI）把同一件事推到極端：用自動化紅隊系統稽核 10 個主流 agent benchmark，合成的 exploit 在多數 benchmark 上拿到接近滿分，而<strong>零題實際解出、多數情況連 LLM 都沒呼叫</strong>。與測試最直接相關的是 SWE-bench Verified。</p>
+  </div>
+
+  <figure>
+    <div class="scroll">
+    <svg viewBox="0 0 1000 300" role="img" aria-label="SWE-bench Verified 被刷分的機制圖：pytest 的收集與執行階段照常進行，但 conftest.py 的 hook 攔在回報階段，把每個測試結果改寫成 passed">
+      <text class="s dim" x="30" y="30">pytest 的生命週期</text>
+
+      <rect class="box" x="30" y="56" width="150" height="52" rx="2"/>
+      <text class="s" x="105" y="80" text-anchor="middle">collect</text>
+      <text class="xs off" x="105" y="97" text-anchor="middle">收集測試</text>
+
+      <line class="edge" x1="180" y1="82" x2="240" y2="82"/>
+
+      <rect class="box" x="240" y="56" width="150" height="52" rx="2"/>
+      <text class="s" x="315" y="80" text-anchor="middle">run</text>
+      <text class="xs off" x="315" y="97" text-anchor="middle">實際執行</text>
+
+      <line class="edge" x1="390" y1="82" x2="450" y2="82"/>
+
+      <rect class="box-bad" x="450" y="56" width="180" height="52" rx="2"/>
+      <text class="s bad-text" x="540" y="80" text-anchor="middle">report</text>
+      <text class="xs off" x="540" y="97" text-anchor="middle">回報結果</text>
+
+      <line class="edge" x1="630" y1="82" x2="690" y2="82"/>
+
+      <rect class="box" x="690" y="56" width="180" height="52" rx="2"/>
+      <text class="s" x="780" y="80" text-anchor="middle">評分：500 題 100%</text>
+
+      <rect class="box-bad" x="450" y="164" width="180" height="46" rx="2"/>
+      <text class="s bad-text" x="540" y="192" text-anchor="middle">conftest.py · 10 行</text>
+      <path class="edge-bad" d="M540 164 L540 112"/>
+      <text class="lab-bad" x="650" y="150">hook 把每個結果改寫成 passed</text>
+
+      <line class="rule" x1="30" y1="244" x2="970" y2="244"/>
+      <text class="s dim" x="30" y="276">同一份稽核裡：Terminal-Bench 靠假的 curl wrapper、WebArena 靠 file:// 直接讀 task config 裡的答案。共盤出 219 個 flaw，歸為八類。</text>
+    </svg>
+    </div>
+    <figcaption><b>攻擊不在解題那一段，在回報那一段。</b>測試照跑，但結果在送出評分之前被改寫——所以「500 題全過」與「一題都沒解出」可以同時成立。<b>論文自己給的另一半同樣重要</b>：這些洞多半補得起來，迭代式修補管線把四個 benchmark 的 hackable-task ratio 從近 100% 壓到 10% 以下，WebArena 與 OSWorld 三輪內全補。所以正確的讀法不是「benchmark 全不可信」，而是<b>評估管線尚未內化對抗式思維</b>。<span class="weak">medium-high：一手、方法與規模明確、工具開源；arXiv v1 未同儕審查，且非全數刷滿——OSWorld 只到 73%</span></figcaption>
+  </figure>
+</section>
+
+<section id="s03">
+  <h2><span class="num">03</span>TDD 的關鍵修正</h2>
+
+  <div class="col">
+  <p>這是整條路線最容易做錯的一步，而且與直覺相反。</p>
+
+  <p><a class="ref" href="https://arxiv.org/abs/2603.17973">TDAD</a> 測到：圖結構化 TDD 讓 regression 從 6.08% 降到 1.82%；但<strong>單純在 prompt 裡加「請用 TDD」這種程序性指示，regression 反而升到 9.94%——比完全不介入更差</strong><span class="weak">medium：單一 preprint</span>。</p>
+
+  <blockquote><p>價值在於<strong>告訴 agent 該驗證哪些測試</strong>，不在於要求它遵循某個流程。</p></blockquote>
+
+  <p><strong>獨立印證</strong>來自 Thoughtworks 那場閉門工作坊，機制描述比上述更銳利：</p>
+
+  <blockquote>
+    <p>TDD prevents a failure mode where agents write tests that verify broken behavior. When the tests exist before the code, agents cannot cheat by writing a test that simply confirms whatever incorrect implementation they produced.</p>
+    <p>This reframes TDD as a form of prompt engineering.</p>
+  </blockquote>
+
+  <p><strong>這與 TDAD 的反直覺發現不矛盾，是同一件事的兩面</strong>：Thoughtworks 講的是<strong>測試先於程式碼存在</strong>這個結構事實（agent 沒有機會寫測試去確認自己的錯誤實作），TDAD 講的是<strong>要求 agent 遵循流程的指示無效</strong>。兩者利益方向與方法完全不同（單一 preprint 的量化實驗 vs 業界資深群體的閉門共識），獨立同向。</p>
+
+  <p>配合 ImpossibleBench 的另一個發現，這裡有一組<strong>沒有免費午餐</strong>的取捨：把測試檔藏起來能讓作弊率降到近零，<strong>但同時顯著降低合法任務的表現</strong>——防作弊與可驗證性互斥<span class="weak">medium：ImpossibleBench 單一來源</span>。</p>
+
+  <p>所以「先寫測試、鎖住測試檔、叫 agent 去讓它綠」這個直覺方案要打折：</p>
+
+  <div class="tbl">
+  <table>
+    <thead><tr><th></th><th>做法</th><th>判斷</th></tr></thead>
+    <tbody>
+      <tr><td class="yes">✅</td><td><strong>人先把「該驗證什麼」定義清楚</strong></td><td>有效的部分，也是三層裡最貴的人力投入</td></tr>
+      <tr><td class="yes">✅</td><td><strong>先 commit 測試再實作</strong></td><td>讓修改測試在 diff 裡無所遁形；成本低、不影響 agent 可見性</td></tr>
+      <tr><td class="warn">⚠️</td><td>完全鎖死／隱藏測試檔</td><td>要付出任務表現的代價，不是純賺的招式，值得依任務重要性分級使用</td></tr>
+      <tr><td class="no">❌</td><td>只在規則檔寫「請遵循 TDD」而不指明驗證標的</td><td>證據顯示可能比不寫更糟</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <div class="callout">
+    <span class="k">收斂結論</span>
+    <p>驗證那一步不是「加個測試」，而是「<strong>加一個 agent 無法從內部滿足的判準</strong>」。</p>
+  </div>
+  </div>
+</section>
+
+<section id="s04">
+  <h2><span class="num">04</span>判準的權威從哪來</h2>
+
+  <div class="col">
+  <p>實務上有三層分工，但它背後有一個更硬的分類軸。<a class="ref" href="https://arxiv.org/abs/2607.05031">LLM-Based Test Oracles: Source-of-Authority Taxonomy</a> 主張 test oracle 該按「<strong>判決的權威來源</strong>」分類，而非按測試技術：從 2,436 筆記錄篩到 54 篇（LLM 預篩＋雙人複審，Cohen's κ=0.79），發現</p>
+
+  <blockquote><p><strong>spec-derived authority 是最常見的單一來源，佔約一半（28/54）；其餘 26 篇完全沒有規格就做出判決。</strong></p></blockquote>
+
+  <p>這給了第 01 節那句「AI 驗證的是碼做了什麼而非碼該做什麼」一個學術命名：<strong>「沒有 spec 就下判決」本身就是文獻中的一個大類</strong>，而不是實作疏失。挑測試手段時真正該問的不是「這是單元測試還是整合測試」，而是<strong>這個判準的權威在實作之內還是之外</strong>——權威在實作之內的，agent 一定能自己滿足<span class="weak">medium：系統性文獻回顧、方法透明；盤點的是研究文獻分佈，非實務有效性量測</span>。</p>
+  </div>
+
+  <figure>
+    <div class="scroll">
+    <svg viewBox="0 0 1000 470" role="img" aria-label="二維定位圖：橫軸為判準權威從實作之內到實作之外，縱軸為外部證據厚度從薄到厚。快照與視覺回歸位於左下、differential 與 contract 位於中下、metamorphic 位於中上、性質測試與規格位於右上">
+      <defs>
+        <marker id="a3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+          <path d="M0,0 L10,5 L0,10 z" fill="currentColor" opacity=".45"/>
+        </marker>
+      </defs>
+
+      <line class="axis" x1="120" y1="400" x2="940" y2="400" marker-end="url(#a3)"/>
+      <line class="axis" x1="120" y1="400" x2="120" y2="50" marker-end="url(#a3)"/>
+
+      <text class="s dim" x="130" y="424">判準的權威在實作之內</text>
+      <text class="s dim" x="930" y="424" text-anchor="end">在實作之外</text>
+      <text class="s dim" x="112" y="66" text-anchor="end" transform="rotate(-90 112 66)">外部證據厚</text>
+      <text class="s dim" x="112" y="390" text-anchor="start" transform="rotate(-90 112 390)">證據薄</text>
+
+      <line class="divider" x1="530" y1="60" x2="530" y2="400"/>
+      <text class="xs off" x="538" y="72">這條線右邊，agent 無法從內部滿足</text>
+
+      <circle class="dot" cx="200" cy="352" r="5"/>
+      <text class="s" x="200" y="336" text-anchor="middle">快照 · 視覺回歸</text>
+      <text class="xs off" x="200" y="372" text-anchor="middle">判準是上一版的自己</text>
+
+      <circle class="dot" cx="330" cy="330" r="5"/>
+      <text class="s" x="330" y="314" text-anchor="middle">differential</text>
+      <text class="xs off" x="330" y="350" text-anchor="middle">舊實作當判準</text>
+
+      <circle class="dot" cx="640" cy="336" r="5"/>
+      <text class="s" x="640" y="320" text-anchor="middle">contract · golden · fuzzing</text>
+      <text class="xs off" x="640" y="356" text-anchor="middle">只有從業者與廠商層文章</text>
+
+      <circle class="dot" cx="560" cy="150" r="6"/>
+      <text class="s" x="560" y="134" text-anchor="middle">metamorphic</text>
+      <text class="xs off" x="560" y="170" text-anchor="middle">93 篇 survey，但未進 Radar</text>
+
+      <circle class="dot-accent" cx="790" cy="120" r="6.5"/>
+      <text class="s accent-text" x="790" y="104" text-anchor="middle">property-based</text>
+      <text class="xs off" x="790" y="140" text-anchor="middle">一手＋可查證的 merged PR</text>
+
+      <circle class="dot-accent" cx="900" cy="215" r="6"/>
+      <text class="s accent-text" x="900" y="199" text-anchor="middle">規格 · 驗收</text>
+      <text class="xs off" x="900" y="235" text-anchor="middle">spec-derived 28/54</text>
+
+      <rect class="box-accent" x="180" y="80" width="230" height="56" rx="2"/>
+      <text class="s accent-text" x="196" y="104">mutation testing</text>
+      <text class="xs off" x="196" y="122">不在這張圖的軸上——它驗的是測試本身</text>
+
+      <text class="s dim" x="620" y="452">右上角是理想區：判準在實作之外，且有外部證據支持</text>
+    </svg>
+    </div>
+    <figcaption><b>metamorphic 是這批裡最被低估的一項</b>——它不斷言絕對值，只斷言「輸入這樣變、輸出應那樣變」，天生繞開「AI 不知道正確答案就編一個」這個根因，適用面（搜尋、排序、計算、轉換）也與 PBT 互補；學術厚度足夠（93 篇 primary study 的系統性 survey，含 metamorphic testing 之父 T.Y. Chen），但 Thoughtworks Radar Vol.34 未收。<b>differential 則在 AI 重構這個場景幾乎是唯一對口的手段</b>，機制上成立，但現在引用不到硬證據。</figcaption>
+  </figure>
+
+  <div class="col">
+  <div class="tbl">
+  <table>
+    <thead><tr><th>層</th><th>回答什麼問題</th><th>誰負責</th></tr></thead>
+    <tbody>
+      <tr><td><strong>L1 spec</strong></td><td>該驗證什麼</td><td><strong>人</strong>（這步不能外包，見第 03 節）</td></tr>
+      <tr><td><strong>L2 mutation</strong></td><td>現有測試可不可信</td><td>工具，定期體檢</td></tr>
+      <tr><td><strong>L3 PBT</strong></td><td>有沒有真的 bug</td><td>agent 推性質＋框架找反例</td></tr>
+    </tbody>
+  </table>
+  </div>
+  </div>
+</section>
+
+<section id="s05">
+  <h2><span class="num">05</span>mutation 與 PBT 各自回答什麼</h2>
+
+  <div class="col">
+  <h3>L2　mutation testing——回答「測試本身可不可信」</h3>
+
+  <p>coverage 問「這行有沒有被執行」，mutation 問「<strong>把這行弄壞，測試會不會紅</strong>」。這是目前唯一能機械戳破「覆蓋率表演」的手段，<strong>也是業界權威層目前唯一押注的一項</strong>。Thoughtworks Technology Radar Vol.34（2026-04）把它放在 <strong>Trial</strong> 環並直接點名 AI 場景：</p>
+
+  <blockquote><p>With AI-generated test cases now commonplace, mutation testing acts as a reinforcement layer for catching <strong>'perpetually green' tests</strong> — those that pass regardless of logic changes due to missing assertions or decoupled mocks.</p></blockquote>
+
+  <p>值得注意的是同一期<strong>並未</strong>把 property-based、metamorphic、differential 列為 AI 場景的答案<span class="weak">medium-high：資深顧問群體的共識定位，非效果量測；環位與措辭逐期變動，引用前回查當期 Radar</span>。</p>
+
+  <p>變異運算子的優先序（存活率由高到低，先跑這幾類最划算）：邊界（<code>&lt;</code> ↔ <code>&lt;=</code>）→ 布林邏輯（<code>&amp;&amp;</code> ↔ <code>||</code>、<code>!cond</code> → <code>cond</code>）→ 回傳值（<code>return x</code> → <code>return null</code>、刪掉 early return）→ 語句移除（刪掉 <code>array.push(x)</code>、<code>await save(x)</code>、<code>emit('event')</code>）。</p>
+
+  <div class="tbl">
+  <table>
+    <thead><tr><th>生態</th><th>工具與已知邊界</th></tr></thead>
+    <tbody>
+      <tr><td><strong>JS/TS</strong></td><td>Stryker（Jest、Mocha、Node 模式的 Vitest）。規模感：7 個檔、394 個 mutant、36 秒。<span class="warn">⚠️</span> <strong>不支援 Vitest 的 browser mode</strong>——其 instrumentation 假設 Node 執行，而 browser mode 走真實 Chromium<span class="weak">medium：單一作者實測，工具支援狀況會變</span></td></tr>
+      <tr><td><strong>PHP</strong></td><td>Pest 自 3.x 起內建 <code>--mutate</code>；PHPUnit 走 Infection。CI 門檻用 <code>--min-msi</code>，但 <strong><code>--min-covered-msi</code> 更可行動</strong>——它只衡量「已經寫過測試的碼」的測試品質，不會被尚未測試的區塊稀釋</td></tr>
+      <tr><td><strong>Python</strong></td><td>mutmut、mutpy</td></tr>
+      <tr><td><strong>降級</strong></td><td>mutation 演算法簡單到 agent 可以手工執行：讀碼 → 套一個變異 → 跑測試 → 記錄生死 → <strong>立刻還原</strong> → 下一個</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <p>成本控制：mutation 對每個 mutant 重跑整套測試，天生慢。只掃高價值目錄（純函式、金額計算、權限判斷、parser），用執行緒平行，<strong>掛 nightly 而非每次 push</strong>。</p>
+
+  <p><strong>生產規模的一手證據，順帶給出更好的成本解法。</strong>Meta 的 ACH 系統（<a class="ref" href="https://arxiv.org/pdf/2501.12862">arXiv 2501.12862</a>，FSE 2025 Industry Track）把 mutation 與 LLM 產測試接成一條線：先產變異，再要 LLM 寫出能殺死該變異的測試。規模是 7 個平台、10,795 個 Android Kotlin class，產出 9,095 個 mutant 與 571 個 privacy-hardening 測試；在 Messenger／WhatsApp 的 test-a-thon 中工程師<strong>接受 73% 的測試</strong>，其中 36% 被判為 privacy relevant。附帶解掉 equivalent mutant 問題：LLM 偵測 agent precision 0.79／recall 0.47，加簡單前處理後升到 0.95／0.96。</p>
+
+  <div class="callout">
+    <span class="k">關鍵設計不是規模，是選擇性</span>
+    <p>ACH 刻意<strong>不做傳統全量變異</strong>，只產「目前偵測不到、且與特定關注議題（此處為隱私）相關」的 fault。這是成本困境的另一條出路——與其降頻掛 nightly，不如把變異縮到某一類真正在乎的失效上。代價是「關注議題」需要人先指定。</p>
+  </div>
+
+  <p><span class="warn">⚠️</span> <strong>方法論缺口</strong>：有 replicability study 指出，當<strong>待測程式本身可能就有 bug</strong>（實務常態）時，coverage 作為效果代理不可靠、而 mutation 分析在方法論上<strong>不適用</strong>——因為它假設原始碼是正確的、變異才是錯的。這不否定 mutation 的實用價值（它仍能抓出弱測試），但否定「把 MSI 當作品質的權威指標」。</p>
+
+  <h3>L3　property-based testing——回答「有沒有真的 bug」</h3>
+
+  <p>PBT 不寫「輸入 A 應得 B」，而寫「<strong>對所有合法輸入，這個不變量都成立</strong>」，框架自動生成大量輸入找反例（Python 用 Hypothesis，JS/TS 用 fast-check，預設約 100 組、可調到上千）。</p>
+
+  <p><strong>這裡有整條路線強度最高的一手實證。</strong>Anthropic frontier red team 做了一個 Claude Code custom command，讓 agent 從<strong>型別註解、docstring、函式名、被呼叫方式</strong>推出「應該成立的性質」，寫成 Hypothesis 測試，跑完再自我反思確認，才產出 bug report。對 100+ 個熱門 PyPI 套件跑出 984 份報告（<a class="ref" href="https://arxiv.org/abs/2510.09907">arXiv 2510.09907</a>，NeurIPS 2025 DL4C workshop）：</p>
+
+  <ul>
+    <li>人工抽 50 份審：<strong>56% 是真 bug，32% 是值得回報的真 bug</strong></li>
+    <li>用 rubric 排序後取高分群：<strong>86% 有效、81% 可回報</strong>——排序步驟本身效果顯著</li>
+    <li>已合併的修正：numpy <code>random.wald</code> 會回傳負數（Wald 分佈不該有負值）、aws-lambda-powertools <code>slice_dictionary()</code> 重複回傳第一塊、tokenizers 少一個右括號導致 HSL CSS 無效</li>
+    <li><strong>失敗案例也公開</strong>：python-dateutil 的 <code>easter()</code> 被維護者判為 intended behavior</li>
+  </ul>
+
+  <p><strong>必須並列的限制面</strong>：學術界對「LLM 能不能寫好 PBT」給出的數字保守得多。<a class="ref" href="https://arxiv.org/abs/2307.04346">CMU／UBC 那份研究</a>對 40 個 Python API 評估，結果是 <strong>GPT-4 只對 21% 的可提取性質能自動合成正確的 PBT</strong><span class="weak">medium-high：同儕審查、方法明確；但為 GPT-4／Claude-3-Opus 世代，宜視為下界而非現況</span>。</p>
+
+  <p>兩份數據不矛盾，差在<strong>任務定義</strong>：Anthropic 那份要的是「找到值得回報的真 bug」並且中間插了 rubric 排序；這份要的是「對每一個應成立的性質都寫出正確的 PBT」——後者是嚴格得多的完備性要求。合起來的操作結論是：<strong>PBT 該當成撈 bug 的網，不是規格的完整覆蓋</strong>，期待 agent 把性質寫全會失望。</p>
+
+  <div class="callout">
+    <span class="k">這個結果真正的含意</span>
+    <p>LLM 擅長的是<strong>推論不變量</strong>（從命名與文件反推「這裡應該恆成立什麼」），不是寫斷言。PBT 因此是 AI 產碼場景下少數「讓模型做它擅長的事」的用法。而它的死角也被同一份研究標得很清楚——<strong>語意微妙、有隱含假設的程式碼推不出正確性質</strong>，只有維護者知道什麼才是對的。</p>
+    <p>適用判準：<strong>往返性質明確、edge case 多的純函式</strong>——parser、序列化（<code>f(g(x)) == x</code>）、日期處理、數字與金額格式化、狀態機。反面：業務規則複雜、對錯取決於外部約定的程式碼。</p>
+  </div>
+  </div>
+</section>
+
+<section id="s06">
+  <h2><span class="num">06</span>落地判準與過度工程紅線</h2>
+
+  <div class="col">
+  <ul>
+    <li><strong>唯一該用的成效判準是「有沒有抓到真 bug」</strong>，不是覆蓋率、不是 MSI、不是導入了幾個工具。</li>
+    <li><strong>mutation 是體檢不是門禁。</strong>當成 gate 會誘發「為了分數寫測試」，那正是第 01 節要防的東西的鏡像。</li>
+    <li><strong>測試是要維護的負債。</strong>AI 產的爛測試比沒測試更貴——它讓人以為有保護。</li>
+    <li><strong>順序</strong>：先量一次 mutation 基線（知道現況）→ 對純函式跑 PBT（找真 bug）→ 補防繞過層 → 最後才考慮把流程 codify。</li>
+    <li>若跑完 PBT <strong>一個真 bug 都沒找到</strong>，正確結論是「這層碼已經夠穩，資源該投別處」，而不是繼續加碼。</li>
+  </ul>
+
+  <div class="callout">
+    <span class="k">接下來</span>
+    <p>這頁講的是手段與證據。有人把這條路線推到極致——不讀 agent 產的任何程式碼，全交給閘門陣——並且把每道閘門都寫成公開工具，所以可以逐項檢查它到底擋住什麼、又在哪裡撐不住。<a class="ref" href="ai-constraints-3-uncle-bob.html">第 3 頁：有人全押了 →</a></p>
+  </div>
+  </div>
+</section>
+
+<section id="s07" class="avoid">
+  <h2><span class="num">07</span>這些數字別引</h2>
+
+  <div class="col">
+  <p>本頁範圍內被查證否決的主張。共同病徵是：<strong>在二手文章之間互相轉載、源頭是空的</strong>。凡看到「某研究顯示 X%」而未附論文連結者，預設當它不存在。</p>
+
+  <ul>
+    <li><strong>「AI 產的測試只有 20% mutation score、80% 的 bug 溜過去」</strong>——此數字在多處二手文章流傳，追查後只標示為「Research Teams, 2026」，<strong>找不到一手出處</strong>。且與 MSR '26 一份分析 2,232 個 commit 的研究（發現 AI 產測試 assertion 密度較高、覆蓋率貢獻與人寫相當）不相容。</li>
+    <li><strong>「AI 產碼的 mutant survival rate 比人寫的高 15–25%」</strong>——搜尋引擎摘要把這句掛在某廠商的 mutation testing guide 上，回讀該頁全文<strong>並無此句</strong>，疑為跨文拼裝。</li>
+    <li><strong>「沒有品質護欄的團隊採用 AI coding assistant 後 6 個月內 bug 多 35–40%」</strong>——出自 SEO 內容層文章，追不到一手。</li>
+    <li><strong>「MSI 作為品質的權威指標」</strong>——不成立。待測碼本身可能有 bug 時，mutation 分析在方法論上不適用。</li>
+    <li><strong>mutation score 的門檻建議（關鍵路徑 70／一般 50／實驗 30）</strong>——二手部落格慣例，非實證。可當起點，別當標準。</li>
+  </ul>
+  </div>
+</section>
+
+<p class="foot"><b>這頁沒講什麼。</b>防繞過（第 01 節表格最後一列）不在這裡，它在<a class="ref" href="ai-constraints-3-uncle-bob.html">第 3 頁</a>連同一個實際案例一起講。實際要在專案裡逐層堆測試的步驟也不在這裡：這頁回答「為什麼」與「證據多強」，怎麼做見 <a class="ref" href="testing-layers-vue-laravel.html">前後端分離的測試地圖</a>。</p>
+
+<p class="foot"><b>證據標註的規則。</b>沒有標註的主張，其依據是一手來源、原始碼、或同儕審查的研究，可以直接引用。加了灰底小標籤的是<b>弱證據</b>——單一 preprint、廠商自評、單一作者實測、閉門共識——標籤上寫明是哪一種。被查證否決的主張不會出現在正文，全部收在第 07 節。</p>
+
+<p class="foot"><b>快照。</b>本頁依據 vault 於 2026-08-09 的 <code>用測試約束-AI-產碼</code> 改寫，並取用 <code>AI-自主工作流的實證檢驗</code> 的 ImpossibleBench 與 benchmark 段落。來源頁之後若被更新，本頁不會自動跟上——要更新請整組重跑。</p>
+
+</div>
+</body>
+</html>
