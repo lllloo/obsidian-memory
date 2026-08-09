@@ -27,6 +27,21 @@
   .nav a:hover { border-bottom-color: currentColor; }
   .nav .sep { opacity: .3; }
 
+  .toc {
+    display: flex; flex-wrap: wrap; gap: .5rem 1.75rem;
+    margin: 0 0 4rem; padding-top: 1.5rem;
+    border-top: 1px solid rgba(0,0,0,.1);
+    font-size: .875rem;
+  }
+  .toc a {
+    color: inherit; text-decoration: none;
+    display: inline-flex; gap: .55rem; align-items: baseline;
+    border-bottom: 1px solid transparent;
+  }
+  .toc a:hover { border-bottom-color: currentColor; }
+  .toc .tnum { color: #a8794a; font-weight: 700; font-variant-numeric: tabular-nums; }
+  section { scroll-margin-top: 1.5rem; }
+
   h1 { font-size: 1.6rem; font-weight: 620; letter-spacing: -0.01em; margin: 0 0 .4rem; }
   .lede { color: #5d5d63; margin: 0 0 3.5rem; max-width: 46rem; }
   h2 {
@@ -92,6 +107,8 @@
     .lede, .claim, figcaption, .foot, .nav { color: #a3a09b; }
     .nav b { color: #e9e7e3; }
     .nav a { color: #d3a06a; }
+    .toc { border-top-color: rgba(255,255,255,.12); }
+    .toc .tnum { color: #d3a06a; }
     figcaption b, .foot b { color: #e9e7e3; }
     h2 .num { color: #d3a06a; }
     .box, .box-accent, .band, .band-accent { fill: #201f24; }
@@ -120,7 +137,16 @@
 <h1>前後端分離的測試地圖</h1>
 <p class="lede">前端 Vue、後端 Laravel，兩端各自獨立部署、透過 HTTP API 溝通。「還有什麼測試」之所以列不完，是因為測試不是一條清單而是<strong>四個互相垂直的維度</strong>；把它們排成一列，就會覺得永遠有漏。六張圖：先給四維度的總框架，再展開最常用的那一維（射程），最後是判準來源的光譜與導入順序。</p>
 
-<section>
+<nav class="toc" aria-label="頁內目錄">
+  <a href="#s01"><span class="tnum">01</span>四個維度</a>
+  <a href="#s02"><span class="tnum">02</span>射程：四層測試各自涵蓋誰</a>
+  <a href="#s03"><span class="tnum">03</span>第一層的關鍵動作：讓判斷脫離框架</a>
+  <a href="#s04"><span class="tnum">04</span>一個測試該歸哪一層</a>
+  <a href="#s05"><span class="tnum">05</span>判準從哪裡來</a>
+  <a href="#s06"><span class="tnum">06</span>導入順序與停止條件</a>
+</nav>
+
+<section id="s01">
   <h2><span class="num">01</span>四個維度</h2>
   <p class="claim">任何一種測試都可以在這四條軸上定位。列不完的感覺來自把不同軸的東西排成同一列。</p>
   <figure>
@@ -195,7 +221,7 @@
   </figure>
 </section>
 
-<section>
+<section id="s02">
   <h2><span class="num">02</span>射程：四層測試各自涵蓋誰</h2>
   <p class="claim">維度 01 的展開。前兩層在單邊之內，後兩層跨越 HTTP 邊界。中間那條虛線是分離架構所有麻煩的來源。</p>
   <figure>
@@ -261,7 +287,7 @@
   </figure>
 </section>
 
-<section>
+<section id="s03">
   <h2><span class="num">03</span>第一層的關鍵動作：讓判斷脫離框架</h2>
   <p class="claim">同一條「滿 1000 打九折」，寫在框架內部與抽出來之後，測試要穿過的東西完全不同。虛線框是「必須先啟動才能進去」的殼。</p>
   <figure>
@@ -321,7 +347,7 @@
   </figure>
 </section>
 
-<section>
+<section id="s04">
   <h2><span class="num">04</span>一個測試該歸哪一層</h2>
   <p class="claim">不必憑感覺分類。三個問題依序問下去，每個測試都有唯一歸屬。</p>
   <figure>
@@ -383,7 +409,7 @@
   </figure>
 </section>
 
-<section>
+<section id="s05">
   <h2><span class="num">05</span>判準從哪裡來</h2>
   <p class="claim">維度 02 的展開，也是挑手段時最該問的問題。越往左，判準的權威來自程式碼自己；越往右，來自程式碼以外的東西。</p>
   <figure>
@@ -447,7 +473,7 @@
   </figure>
 </section>
 
-<section>
+<section id="s06">
   <h2><span class="num">06</span>導入順序與停止條件</h2>
   <p class="claim">每一步的前提是上一步已經穩。停止條件比開始更重要——沒有它，這條路會一直加下去。</p>
   <figure>
