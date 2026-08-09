@@ -2,7 +2,7 @@
 title: AI 產碼加速下的 review 瓶頸
 description: 「瓶頸從寫碼移到 review」這個共識的認知與觀測互相矛盾，四條主流約束路線的定位、適用條件與各自的證據強度
 created: 2026-08-06
-updated: 2026-08-06
+updated: 2026-08-09
 parent: "[[wiki/01.index]]"
 tags:
   - coding-agent
@@ -11,6 +11,8 @@ tags:
 ---
 
 產碼速度上去之後，業界處方分四條路線。但在選路線之前有個更前面的問題：**「瓶頸已經從寫碼移到 review」這個大家共用的前提，認知與觀測互相矛盾**——選錯瓶頸，所有投資都會落在錯的地方。
+
+> 本頁與 [[用測試約束-AI-產碼]]、[[Uncle-Bob-的不讀碼約束閘門]] 的人讀合併版（長文＋八張圖）在 [`artifacts/ai-code-constraints.html`](../artifacts/ai-code-constraints.html)，單檔可直接用瀏覽器開；該頁是 2026-08-09 的快照，本頁維持完整密度與後續更新。
 
 ## 現況數字
 
