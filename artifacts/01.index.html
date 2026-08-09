@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>artifacts 索引</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    padding: 3rem 1.5rem 5rem;
+    font-family: -apple-system, "Segoe UI", "Noto Sans TC", "PingFang TC",
+                 "Microsoft JhengHei", system-ui, sans-serif;
+    line-height: 1.75;
+    color: #1c1c1e;
+    background: #fbfaf8;
+  }
+  .wrap { max-width: 52rem; margin: 0 auto; }
+
+  h1 { font-size: 1.6rem; font-weight: 620; letter-spacing: -0.01em; margin: 0 0 .4rem; }
+  .lede { color: #5d5d63; margin: 0 0 3.5rem; max-width: 46rem; }
+
+  ul.list { list-style: none; margin: 0; padding: 0; }
+  ul.list > li {
+    padding: 1.5rem 0;
+    border-top: 1px solid rgba(0,0,0,.1);
+  }
+  ul.list > li:last-child { border-bottom: 1px solid rgba(0,0,0,.1); }
+  .ttl {
+    font-size: 1.05rem; font-weight: 620; color: inherit;
+    text-decoration: none; border-bottom: 1px solid transparent;
+  }
+  .ttl:hover { border-bottom-color: #a8794a; }
+  .desc { color: #5d5d63; margin: .35rem 0 0; }
+  .meta {
+    margin-top: .5rem; font-size: .8125rem; color: #8d8a84;
+    font-variant-numeric: tabular-nums;
+  }
+  .meta code {
+    font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace;
+    font-size: .92em;
+  }
+
+  .foot {
+    margin-top: 4rem; padding-top: 1.5rem;
+    border-top: 1px solid rgba(0,0,0,.1);
+    color: #5d5d63; font-size: .875rem; max-width: 46rem;
+  }
+  .foot b { color: #1c1c1e; font-weight: 600; }
+  .foot code {
+    font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace;
+    font-size: .92em;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    body { color: #e9e7e3; background: #17161a; }
+    .lede, .desc, .foot { color: #a3a09b; }
+    .meta { color: #86828c; }
+    ul.list > li { border-top-color: rgba(255,255,255,.12); }
+    ul.list > li:last-child { border-bottom-color: rgba(255,255,255,.12); }
+    .ttl:hover { border-bottom-color: #d3a06a; }
+    .foot { border-top-color: rgba(255,255,255,.12); }
+    .foot b { color: #e9e7e3; }
+  }
+  @media (max-width: 40rem) {
+    body { padding: 2rem 1rem 3rem; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<h1>artifacts</h1>
+<p class="lede">這個 vault 的 <code>wiki/</code> 是給 agent 讀的：高密度、逐條證據標註、一段就是好幾百字。這裡放的是同一批知識改寫成人讀的版本，以及不是 markdown 的產出（架構圖、報告）。每頁都是<strong>某個時點的快照</strong>——來源 wiki 頁之後改了不會回頭同步，要更新就整頁重跑。</p>
+
+<ul class="list">
+
+  <li>
+    <a class="ttl" href="testing-layers-vue-laravel.html">前後端分離的測試地圖</a>
+    <p class="desc">Vue ＋ Laravel 的測試怎麼堆。核心是「測試不是一條清單而是四個互相垂直的維度」——射程、判準來源、驗誰、執不執行程式碼；把它們排成一列才會覺得永遠有漏。六張圖含四層射程、判斷脫離框架的關鍵動作、導入順序與兩條停止條件。</p>
+    <p class="meta">2026-08-08 ｜ 來源：<code>專案測試流程</code> 三頁 ＋ <code>用測試約束-AI-產碼</code></p>
+  </li>
+
+  <li>
+    <a class="ttl" href="vault-architecture.html">obsidian-memory 的架構</a>
+    <p class="desc">這個 vault 不是「一堆 markdown」，而是一套用資料夾編碼 agent 權限的系統：同一個 agent 在不同資料夾裡能做的事完全不同。三張圖畫權限邊界、三個動作（Ingest／Query／Lint），以及對外的唯一入口 ask-vault。</p>
+    <p class="meta">2026-08-08 ｜ 來源：<code>CLAUDE.md</code>、<code>schema/SYSTEM-DESIGN.md</code></p>
+  </li>
+
+</ul>
+
+<p class="foot"><b>這一層不參與系統。</b><code>artifacts/</code> 是呈現層，不屬於 vault 的三層架構——不進 Ingest／Query／Lint，也不能當 <code>raw/</code> 或 <code>wiki/</code> 的來源。知識本身仍住在 <code>wiki/</code>，這裡的頁面畫得再好也不取代它。新頁由 <code>/vault-page</code> 產出並在此登錄。</p>
+
+</div>
+</body>
+</html>
