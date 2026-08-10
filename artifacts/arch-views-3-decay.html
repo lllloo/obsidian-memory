@@ -1,0 +1,249 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>怎麼防它過期 — 三層防線與唯一的閘門</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body, h1, h2, h3, p, ul, ol, li, figure, figcaption, table { margin: 0; padding: 0; }
+  ul, ol { list-style: none; }
+  table { border-collapse: collapse; }
+
+  :root {
+    --bg: #fbfaf8; --surface: #fff; --fg: #1c1a17;
+    --fg-muted: #6b655d; --fg-faint: #9b948a;
+    --rule: #e4dfd6; --rule-strong: #cac3b7;
+    --accent: #8a6d3b; --gap: #b3402f; --ok: #3f6b52;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #16151a; --surface: #1e1d23; --fg: #e8e4dd;
+      --fg-muted: #a29b91; --fg-faint: #756e65;
+      --rule: #33313a; --rule-strong: #4c4954;
+      --accent: #c9a86a; --gap: #e8796a; --ok: #7fb094;
+    }
+  }
+
+  body {
+    background: var(--bg); color: var(--fg);
+    font-family: system-ui, -apple-system, "Segoe UI", "Noto Sans TC", "PingFang TC", sans-serif;
+    font-size: 17px; line-height: 1.68; -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 66rem; margin: 0 auto; padding: 3rem 1.5rem 5rem; }
+
+  .nav { font-size: .9rem; color: var(--fg-faint); margin-bottom: 1.6rem; }
+  .nav a { color: var(--fg-muted); text-decoration: none; border-bottom: 1px solid var(--rule-strong); }
+  .nav a:hover { color: var(--fg); }
+
+  header { margin-bottom: 2.6rem; }
+  h1 { font-size: 1.85rem; font-weight: 600; letter-spacing: -.015em; line-height: 1.28; }
+  .sub { color: var(--fg-muted); font-size: .98rem; margin-top: .7rem; max-width: 44rem; }
+
+  h2 {
+    font-size: .86rem; font-weight: 600; letter-spacing: .1em; text-transform: uppercase;
+    color: var(--fg-faint); margin: 3.4rem 0 1rem;
+    display: flex; align-items: center; gap: .75rem;
+  }
+  h2::after { content: ""; flex: 1; height: 1px; background: var(--rule); }
+  h3 { font-size: 1.05rem; font-weight: 600; margin: 2rem 0 .5rem; }
+  p { margin-bottom: 1rem; max-width: 46rem; }
+
+  figure { margin: 0; }
+  .frame {
+    background: var(--surface); border: 1px solid var(--rule);
+    border-radius: 7px; padding: 1.4rem 1rem; margin-inline: -1.4rem;
+  }
+  @media (max-width: 48rem) { .frame { margin-inline: 0; } }
+  figure svg { display: block; width: 100%; height: auto; }
+  figcaption { margin-top: .8rem; font-size: .92rem; color: var(--fg-muted); max-width: 46rem; }
+
+  .flag {
+    font-size: .88rem; color: var(--fg-muted); margin: .6rem 0 0;
+    padding-left: 1.35rem; position: relative; line-height: 1.55; max-width: 46rem;
+  }
+  .flag::before { content: "▲"; position: absolute; left: 0; top: .1em; font-size: .66rem; color: var(--accent); }
+  .flag.no::before { content: "✕"; color: var(--gap); font-size: .8rem; }
+
+  code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: .88em; }
+  pre {
+    background: var(--surface); border: 1px solid var(--rule); border-radius: 6px;
+    padding: .8rem 1rem; overflow-x: auto; font-size: .86rem; margin: 1rem 0; max-width: 46rem;
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace; line-height: 1.6;
+  }
+  strong { font-weight: 600; }
+
+  .scroll { overflow-x: auto; margin: 1.4rem 0; }
+  table { width: 100%; font-size: .93rem; min-width: 38rem; }
+  th, td { padding: .5rem .7rem; text-align: left; border-bottom: 1px solid var(--rule); vertical-align: top; }
+  th {
+    font-size: .78rem; letter-spacing: .05em; text-transform: uppercase;
+    color: var(--fg-faint); font-weight: 600; border-bottom: 1px solid var(--rule-strong); white-space: nowrap;
+  }
+  td.num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .has { color: var(--ok); font-weight: 600; }
+  .none { color: var(--gap); font-weight: 600; }
+  .dim { color: var(--fg-faint); }
+  tr.dead td { text-decoration: line-through; color: var(--fg-faint); }
+
+  footer { margin-top: 4rem; padding-top: 1.3rem; border-top: 1px solid var(--rule); font-size: .84rem; color: var(--fg-faint); }
+  footer a { color: var(--fg-muted); }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<p class="nav"><a href="01.index.html">← artifacts</a> ／ 架構視圖 3／3</p>
+
+<header>
+  <h1>怎麼防它過期</h1>
+  <p class="sub">圖會過期不是問題，<strong>過期而沒有人發現</strong>才是。這頁把「圖與程式碼一致性」拆成三層來看——其中兩層有現成做法可以直接抄，一層目前無解，而無解的那層恰好是你最想畫的那層。</p>
+</header>
+
+<h2>三層防線</h2>
+
+<figure>
+  <div class="frame">
+    <svg viewBox="0 0 880 300" role="img" aria-label="三層防過期：schema 層有 tbls diff、component 層有 ArchUnit 讀 PlantUML 圖當測試、container 層目前無解">
+      <g fill="none" stroke="currentColor">
+        <rect x="20" y="60" width="270" height="170" rx="6" stroke-width="2"/>
+        <rect x="305" y="60" width="270" height="170" rx="6" stroke-width="2"/>
+        <rect x="590" y="60" width="270" height="170" rx="6" stroke-width="1.6" stroke-dasharray="7 4"/>
+      </g>
+
+      <g text-anchor="middle">
+        <g style="color: var(--ok)">
+          <text x="155" y="42" font-size="11" fill="currentColor" font-weight="600">有解</text>
+        </g>
+        <text x="155" y="90" font-size="13.5" font-weight="600" fill="currentColor">schema 層</text>
+        <text x="155" y="116" font-size="11" fill="currentColor" opacity=".7">ER 圖 vs 資料庫</text>
+        <text x="155" y="146" font-size="10.5" fill="currentColor" opacity=".62">tbls doc 產文件並 commit</text>
+        <text x="155" y="164" font-size="10.5" fill="currentColor" opacity=".62">→ CI 跑 tbls diff</text>
+        <text x="155" y="182" font-size="10.5" fill="currentColor" opacity=".62">有差即失敗</text>
+        <text x="155" y="210" font-size="10.5" fill="currentColor" opacity=".5">官方附 GitHub Actions 範例</text>
+
+        <g style="color: var(--ok)">
+          <text x="440" y="42" font-size="11" fill="currentColor" font-weight="600">有解，但限 Java</text>
+        </g>
+        <text x="440" y="90" font-size="13.5" font-weight="600" fill="currentColor">component 層</text>
+        <text x="440" y="116" font-size="11" fill="currentColor" opacity=".7">元件圖 vs import graph</text>
+        <text x="440" y="146" font-size="10.5" fill="currentColor" opacity=".62">ArchUnit 直接讀 .puml</text>
+        <text x="440" y="164" font-size="10.5" fill="currentColor" opacity=".62">箭頭方向即依賴約束</text>
+        <text x="440" y="182" font-size="10.5" fill="currentColor" opacity=".62">圖檔本身變成測試</text>
+        <text x="440" y="210" font-size="10.5" fill="currentColor" opacity=".5">deterministic · 無 LLM</text>
+
+        <g style="color: var(--gap)">
+          <text x="725" y="42" font-size="11" fill="currentColor" font-weight="600">無解</text>
+          <text x="725" y="90" font-size="13.5" font-weight="600" fill="currentColor">container 層</text>
+          <text x="725" y="116" font-size="11" fill="currentColor" opacity=".85">容器圖 vs 實際部署</text>
+        </g>
+        <text x="725" y="146" font-size="10.5" fill="currentColor" opacity=".62">邊界證據散在部署設定、</text>
+        <text x="725" y="164" font-size="10.5" fill="currentColor" opacity=".62">網路呼叫、訊息 topic 裡</text>
+        <text x="725" y="182" font-size="10.5" fill="currentColor" opacity=".62">不像 import graph 可從</text>
+        <text x="725" y="200" font-size="10.5" fill="currentColor" opacity=".62">單一 codebase 靜態還原</text>
+        <text x="725" y="224" font-size="10.5" fill="currentColor" opacity=".5">2024–2026 無工具填補</text>
+      </g>
+
+      <text x="440" y="272" text-anchor="middle" font-size="11.5" fill="currentColor" style="color: var(--accent)">無解的那層，正好是「不讀碼時最該看」的那層</text>
+    </svg>
+  </div>
+  <figcaption>
+    這三層的差別不在有沒有人做工具，在<strong>證據存不存在於單一可掃描的來源</strong>。schema 在資料庫裡、component 在 import graph 裡、container 的邊界哪裡都不完整。
+  </figcaption>
+</figure>
+
+<h3>component 層那條，具體長這樣</h3>
+
+<pre>classes().should(adhereToPlantUmlDiagram(
+    diagramFile, consideringAllDependencies()))</pre>
+
+<p>圖檔進 repo、測試進 CI，圖與碼不一致就紅燈。限制：僅支援 PlantUML <strong>component 圖</strong>，元件須用 <code>[Name]</code> 加 package stereotype，箭頭僅認 <code>--&gt;</code>／<code>&lt;--</code>；官方文件未提 C4／Structurizr 支援。</p>
+
+<h2>一個反向訊號：新工具正在放棄拿圖當基準</h2>
+
+<p>比工具清單更有訊息量的是這件事——2024 年後出現的漂移偵測工具，幾乎都<strong>不用圖當基準</strong>：</p>
+
+<div class="scroll">
+<table>
+  <thead><tr><th>工具</th><th>基準是什麼</th><th>做法</th></tr></thead>
+  <tbody>
+    <tr><td><code>drift</code></td><td>已觀測到的 import</td><td>把現有 directory-to-directory import 當基準，首次跨界即告警</td></tr>
+    <tr><td>ArchSteer</td><td>自宣告 invariant</td><td>算 Drift Index，CI 走 ratchet 只擋<strong>淨新增</strong>違規</td></tr>
+    <tr><td><code>erode</code></td><td>Structurizr／LikeC4 模型</td><td>唯一仍以圖為基準，但靠 LLM 比對 PR diff，36★、無量化評估</td></tr>
+  </tbody>
+</table>
+</div>
+
+<p>前兩者都繞開「維護一張圖」。這暗示的業界共識是：<strong>圖太貴、太容易自己過期，不適合當 CI 基準</strong>。真正能守住的是「不准新增違規」這種相對規則，不是「必須符合這張圖」。</p>
+
+<h2>依賴規則工具：用的人比研究以為的多得多</h2>
+
+<p>先前一輪從<strong>架構文件研究側</strong>查，四份一手來源對 ArchUnit／fitness function 的命中數全是零。從<strong>工具生態側</strong>反查，數字完全是另一回事：</p>
+
+<div class="scroll">
+<table>
+  <thead><tr><th>工具</th><th>生態</th><th>採用量</th><th>維護</th></tr></thead>
+  <tbody>
+    <tr><td><strong>dependency-cruiser</strong></td><td>JS／TS</td><td class="num has">3,205,203 ／週</td><td class="num">★7,050 · 2026-08-08</td></tr>
+    <tr><td><strong>deptrac／deptrac</strong></td><td>PHP</td><td class="num has">891,172 ／月</td><td class="num">★2,988 · v4.7.1（2026-07-23）</td></tr>
+    <tr><td><strong>PHPArkitect</strong></td><td>PHP</td><td class="num">189,539 ／月</td><td class="num dim">—</td></tr>
+    <tr><td>ArchUnit</td><td>Java</td><td class="num dim">Maven 未公開</td><td class="num">★3,794 · 2026-08-10</td></tr>
+    <tr><td>ArchUnitNET</td><td>.NET</td><td class="num dim">—</td><td class="num">★1,343 · 2026-08-09</td></tr>
+    <tr><td>import-linter</td><td>Python</td><td class="num dim">—</td><td class="num">★1,130 · 2026-08-07</td></tr>
+    <tr><td>arch-unit-ts</td><td>TS</td><td class="num none">1,082 ／週</td><td class="num dim">極小眾</td></tr>
+    <tr class="dead"><td>qossmic/deptrac</td><td>PHP</td><td class="num">64,230 ／月</td><td class="num">已標記 abandoned</td></tr>
+  </tbody>
+</table>
+</div>
+
+<p class="flag no"><strong>套件名有陷阱</strong>：<code>qossmic/deptrac</code> 已在 Packagist 標記為 abandoned（最後穩定版 2.0.4，2024-11-21），官方指定接替者是 <code>deptrac/deptrac</code>。正確指令是 <code>composer require --dev deptrac/deptrac</code>。舊名的月安裝量仍有 6.4 萬，代表不少人還在裝已棄用的版本。</p>
+
+<p><strong>這個生態全部活躍</strong>——四個主要工具本週都有 push。所以「架構文件研究側零命中」的正確解讀不是「沒人用」，而是<strong>架構文件研究不看工具生態</strong>。</p>
+
+<h2>不用手刻：鑽取式文件站的現成路徑</h2>
+
+<div class="scroll">
+<table>
+  <thead><tr><th>工具</th><th>做什麼</th><th>建置成本</th><th>維護</th></tr></thead>
+  <tbody>
+    <tr><td><strong>LikeC4</strong></td><td>DSL 寫架構，<code>build</code> 直接產出<strong>帶鑽取導覽的互動網站</strong>；含 <code>validate</code>、GitHub Action、MCP</td><td class="has">低–中</td><td class="num">★5,394 · 2026-08-09</td></tr>
+    <tr><td>structurizr-site-generatr</td><td>吃 Structurizr DSL 產靜態多頁站，點 system／container 即鑽入，含 ADR 支援（社群專案）</td><td>中</td><td class="num">★329 · 2026-08-09</td></tr>
+    <tr><td>MkDocs Material + Mermaid</td><td>最輕量，Mermaid 原生內建免外掛；但鑽取導覽要自己用頁面結構組</td><td class="has">低</td><td class="dim">活躍</td></tr>
+    <tr><td class="none">Backstage TechDocs</td><td class="dim">需要一整套 Backstage instance、catalog、外部儲存；底層其實就是 MkDocs</td><td class="none">高</td><td class="dim">不建議單一專案</td></tr>
+  </tbody>
+</table>
+</div>
+
+<p class="flag">Backstage 的成本反諷值得記：多付的錢買的是「跨數十個服務的統一 catalog 與所有權對應」——組織級價值，單一專案完全吃不到。獨立的 <code>techdocs-cli</code> 早在 2021 就 archived 了，沒有「只用 TechDocs 不用 Backstage」這條路。</p>
+
+<h2>但防過期的真相：是流程，不是 CI</h2>
+
+<p><code>likec4 validate</code>、Structurizr <code>validate</code>／<code>inspect</code>、PlantUML <code>--check-syntax</code>、<code>d2 validate</code>——這些全部只檢查<strong>你寫的模型檔本身有沒有壞</strong>，不檢查模型還對不對。</p>
+
+<p>真正的防線是：<strong>模型檔與程式碼放同一個 repo、改碼的 PR 順手改模型、靠 review 抓。</strong>這是社會機制，CI 不會替你抓。</p>
+
+<p>唯一的例外是 Structurizr 的 <code>structurizr-component</code> 模組（DSL 的 <code>!components</code>），用 BCEL + JavaParser 掃 codebase 自動發現 component——這是目前唯一真正「從程式碼反推架構模型」的現成路徑，但<strong>僅限 Java</strong>、僅 component 層，system／container 層仍純手寫。</p>
+
+<p>Azure Well-Architected Framework 給了另一組可抄的、非技術的做法：圖要帶 metadata（標題、最後更新日、作者、版本）、廣傳後維護 change log、<strong>不再回答任何 stakeholder 問題的圖就退役</strong>、原始檔跟程式碼放同一個 repo 版控。</p>
+
+<h2>兩個仍然空白的問題</h2>
+
+<p class="flag no"><strong>沒有任何研究或工程部落格量測過「用依賴規則 CI 檢查約束 AI 產碼」的效果</strong>（攔截率、違規數變化、品質差異）。先前從架構文件研究側查是零命中，這輪從工具生態側查也沒找到。這條路線被大量使用（見上表數字），但<strong>從未被量測</strong>。</p>
+
+<p class="flag no"><strong>也沒有查到「文字層架構約束（AGENTS.md／CLAUDE.md）對 agent 產碼效果」的實證。</strong>ADR 官方組織頁 <code>adr.github.io</code> 完全沒提 AI、LLM 或 coding agent。所以「prompt 層約束能不能取代 CI 層閘門」這個問題，目前兩邊都沒有數據可以回答。</p>
+
+<h3>本輪的方法限制</h3>
+
+<p class="flag">12 項平行查證中有 3 項未交件（大樣本調查窮盡確認、AGENTS.md 實證、ArchUnit 生態自查以外的部分），根因是 <strong>WebSearch 額度（200/200）在它們開工前就被整個 session 用光</strong>。其中量化數字部分我改用 API 直查補齊，但「窮盡搜尋」這件事本輪做不到——凡是寫「查不到」的地方，正確讀法是「在已檢索範圍內未出現」，不是「已證實不存在」。</p>
+
+<p class="flag">本輪出現<strong>兩次網頁摘要失真</strong>並被複驗推翻：一次宣稱 Google 提供 PPT／Figma icon 包（實際只有 SVG／PNG），一次宣稱 D2 的 TALA 是開源（實際為 proprietary、收費）。只有摘要來源、未經原文複驗的值，都不應直接引用。</p>
+
+<footer>
+  快照 2026-08-10 ｜ 3／3 ｜ <a href="arch-views-2-auto.html">← 哪些能自動產</a> ｜ <a href="arch-views-1-which.html">回第一頁</a><br>
+  ADR 工具生態附記：格式活著、工具停滯——資源集 ★16,618（2026-08-09 更新）、MADR ★2,390（2026-08-03），但 <code>adr-tools</code> 停在 2024-04、<code>log4brains</code> 停在 2024-12。
+</footer>
+
+</div>
+</body>
+</html>

@@ -107,6 +107,17 @@
   </li>
 
   <li>
+    <span class="grp-ttl">架構視圖</span>
+    <p class="desc">AI 在產碼、人不逐行讀碼時，該畫哪些圖、哪些交給工具、哪些根本不該畫。三頁一組，各自回答一個可獨立成立的問題。七張圖。這一組的特點是<strong>否定結論比肯定結論多</strong>——查不到的東西都標成查不到，沒有拿推論補洞。</p>
+    <ol class="sub">
+      <li><a href="arch-views-1-which.html"><span class="sn">1</span>該畫哪些圖</a><br><span class="sd">「架構圖分類」其實是兩條垂直的軸，搞混會結構性地答不到問題。四套體系對照下只有 Rozanski &amp; Woods 有資料與維運視圖；C4 官方自己給了變動速度階梯當選層判準。附三大雲廠商都不採用 C4 的實證，以及「哪套框架主流」這題為何沒有可信答案。</span></li>
+      <li><a href="arch-views-2-auto.html"><span class="sn">2</span>哪些能自動產、可信到什麼程度</a><br><span class="sd">自動產圖是一條光譜不是一個類別：讀 DB metadata 可當依據，掃程式碼推呼叫關係只能探索，差別在資料源有沒有那個資訊。含 Crow's Foot 獨佔的機制原因、狀態機三條自動化路徑、data lineage 為何對一般 Web 應用不適用，與 DaC 四者正面比較。</span></li>
+      <li><a href="arch-views-3-decay.html"><span class="sn">3</span>怎麼防它過期</a><br><span class="sd">一致性檢查分三層：schema 有 <code>tbls diff</code>、component 有 ArchUnit 讀 <code>.puml</code> 當測試、container 無解——而無解那層正是最該看的那層。含新工具正在放棄拿圖當基準的反向訊號、依賴規則工具的真實採用量，以及兩個至今無人量測的空白。</span></li>
+    </ol>
+    <p class="meta">2026-08-10 ｜ 來源：<code>不讀碼時該看哪些圖</code>、<code>架構圖框架採用現況與-AI-時代轉向</code> ＋ 當日 12 項平行查證</p>
+  </li>
+
+  <li>
     <a class="ttl" href="testing-layers-vue-laravel.html">前後端分離的測試地圖</a>
     <p class="desc">Vue ＋ Laravel 的測試怎麼堆。核心是「測試不是一條清單而是四個互相垂直的維度」——射程、判準來源、驗誰、執不執行程式碼；把它們排成一列才會覺得永遠有漏。六張圖含四層射程、判斷脫離框架的關鍵動作、導入順序與兩條停止條件。</p>
     <p class="meta">2026-08-08 ｜ 來源：<code>專案測試流程</code> 三頁 ＋ <code>用測試約束-AI-產碼</code></p>

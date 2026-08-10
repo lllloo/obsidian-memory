@@ -1,0 +1,267 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>哪些能自動產 — 可信度光譜</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body, h1, h2, h3, p, ul, ol, li, figure, figcaption, table { margin: 0; padding: 0; }
+  ul, ol { list-style: none; }
+  table { border-collapse: collapse; }
+
+  :root {
+    --bg: #fbfaf8; --surface: #fff; --fg: #1c1a17;
+    --fg-muted: #6b655d; --fg-faint: #9b948a;
+    --rule: #e4dfd6; --rule-strong: #cac3b7;
+    --accent: #8a6d3b; --gap: #b3402f; --ok: #3f6b52;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #16151a; --surface: #1e1d23; --fg: #e8e4dd;
+      --fg-muted: #a29b91; --fg-faint: #756e65;
+      --rule: #33313a; --rule-strong: #4c4954;
+      --accent: #c9a86a; --gap: #e8796a; --ok: #7fb094;
+    }
+  }
+
+  body {
+    background: var(--bg); color: var(--fg);
+    font-family: system-ui, -apple-system, "Segoe UI", "Noto Sans TC", "PingFang TC", sans-serif;
+    font-size: 17px; line-height: 1.68; -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 66rem; margin: 0 auto; padding: 3rem 1.5rem 5rem; }
+
+  .nav { font-size: .9rem; color: var(--fg-faint); margin-bottom: 1.6rem; }
+  .nav a { color: var(--fg-muted); text-decoration: none; border-bottom: 1px solid var(--rule-strong); }
+  .nav a:hover { color: var(--fg); }
+
+  header { margin-bottom: 2.6rem; }
+  h1 { font-size: 1.85rem; font-weight: 600; letter-spacing: -.015em; line-height: 1.28; }
+  .sub { color: var(--fg-muted); font-size: .98rem; margin-top: .7rem; max-width: 44rem; }
+
+  h2 {
+    font-size: .86rem; font-weight: 600; letter-spacing: .1em; text-transform: uppercase;
+    color: var(--fg-faint); margin: 3.4rem 0 1rem;
+    display: flex; align-items: center; gap: .75rem;
+  }
+  h2::after { content: ""; flex: 1; height: 1px; background: var(--rule); }
+  h3 { font-size: 1.05rem; font-weight: 600; margin: 2rem 0 .5rem; }
+  p { margin-bottom: 1rem; max-width: 46rem; }
+
+  figure { margin: 0; }
+  .frame {
+    background: var(--surface); border: 1px solid var(--rule);
+    border-radius: 7px; padding: 1.4rem 1rem; margin-inline: -1.4rem;
+  }
+  @media (max-width: 48rem) { .frame { margin-inline: 0; } }
+  figure svg { display: block; width: 100%; height: auto; }
+  figcaption { margin-top: .8rem; font-size: .92rem; color: var(--fg-muted); max-width: 46rem; }
+
+  .flag {
+    font-size: .88rem; color: var(--fg-muted); margin: .6rem 0 0;
+    padding-left: 1.35rem; position: relative; line-height: 1.55; max-width: 46rem;
+  }
+  .flag::before { content: "▲"; position: absolute; left: 0; top: .1em; font-size: .66rem; color: var(--accent); }
+  .flag.no::before { content: "✕"; color: var(--gap); font-size: .8rem; }
+
+  code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: .88em; }
+  strong { font-weight: 600; }
+
+  .scroll { overflow-x: auto; margin: 1.4rem 0; }
+  table { width: 100%; font-size: .93rem; min-width: 36rem; }
+  th, td { padding: .5rem .7rem; text-align: left; border-bottom: 1px solid var(--rule); vertical-align: top; }
+  th {
+    font-size: .78rem; letter-spacing: .05em; text-transform: uppercase;
+    color: var(--fg-faint); font-weight: 600; border-bottom: 1px solid var(--rule-strong); white-space: nowrap;
+  }
+  td.num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .has { color: var(--ok); font-weight: 600; }
+  .none { color: var(--gap); font-weight: 600; }
+  .dim { color: var(--fg-faint); }
+
+  footer { margin-top: 4rem; padding-top: 1.3rem; border-top: 1px solid var(--rule); font-size: .84rem; color: var(--fg-faint); }
+  footer a { color: var(--fg-muted); }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<p class="nav"><a href="01.index.html">← artifacts</a> ／ 架構視圖 2／3</p>
+
+<header>
+  <h1>哪些能自動產</h1>
+  <p class="sub">「自動產生的架構圖」不是一個類別，是一條光譜。同樣叫自動產出，讀資料庫 metadata 的結果可以拿來當依據，掃程式碼推呼叫關係的結果只能拿來探索。差別不在工具好壞，在資料源本身有沒有那個資訊。</p>
+</header>
+
+<h2>可信度光譜</h2>
+
+<figure>
+  <div class="frame">
+    <svg viewBox="0 0 880 340" role="img" aria-label="自動產圖的可信度光譜：從讀資料庫 metadata 最可信，經宣告式狀態機、執行期追蹤、LLM 架構恢復，到靜態分析呼叫圖最不可信">
+      <defs>
+        <linearGradient id="gr" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stop-color="currentColor" stop-opacity=".22"/>
+          <stop offset="100%" stop-color="currentColor" stop-opacity=".04"/>
+        </linearGradient>
+      </defs>
+
+      <rect x="20" y="34" width="840" height="26" rx="13" fill="url(#gr)"/>
+      <text x="30" y="52" font-size="11.5" fill="currentColor" font-weight="600">可拿來當依據</text>
+      <text x="850" y="52" text-anchor="end" font-size="11.5" fill="currentColor" opacity=".7">只能拿來探索</text>
+
+      <g fill="none" stroke="currentColor" stroke-width="1.6">
+        <rect x="20" y="86" width="158" height="112" rx="5"/>
+        <rect x="192" y="86" width="158" height="112" rx="5"/>
+        <rect x="364" y="86" width="158" height="112" rx="5"/>
+        <rect x="536" y="86" width="158" height="112" rx="5"/>
+        <rect x="708" y="86" width="152" height="112" rx="5" stroke-dasharray="6 4"/>
+      </g>
+
+      <g text-anchor="middle" fill="currentColor">
+        <text x="99" y="110" font-size="12.5" font-weight="600">DB metadata</text>
+        <text x="99" y="132" font-size="10.5" opacity=".7">ER 圖</text>
+        <text x="99" y="156" font-size="10.5" opacity=".6">資料庫裡有什麼</text>
+        <text x="99" y="172" font-size="10.5" opacity=".6">就是什麼</text>
+        <text x="99" y="190" font-size="10" opacity=".5">tbls · SchemaSpy</text>
+
+        <text x="271" y="110" font-size="12.5" font-weight="600">宣告式狀態機</text>
+        <text x="271" y="132" font-size="10.5" opacity=".7">狀態轉換圖</text>
+        <text x="271" y="156" font-size="10.5" opacity=".6">設定即單一事實來源</text>
+        <text x="271" y="172" font-size="10.5" opacity=".6">一個指令 dump</text>
+        <text x="271" y="190" font-size="10" opacity=".5">Symfony workflow:dump</text>
+
+        <text x="443" y="110" font-size="12.5" font-weight="600">執行期追蹤</text>
+        <text x="443" y="132" font-size="10.5" opacity=".7">服務拓撲 · 實際轉換</text>
+        <text x="443" y="156" font-size="10.5" opacity=".6">只含跑到的路徑</text>
+        <text x="443" y="172" font-size="10.5" opacity=".6">缺禁止規則與 guard</text>
+        <text x="443" y="190" font-size="10" opacity=".5">OTel · audit log LAG()</text>
+
+        <text x="615" y="110" font-size="12.5" font-weight="600">LLM 架構恢復</text>
+        <text x="615" y="132" font-size="10.5" opacity=".7">元素層級 F1 0.966</text>
+        <text x="615" y="156" font-size="10.5" opacity=".6">但 ground truth 是</text>
+        <text x="615" y="172" font-size="10.5" opacity=".6">「與人寫的文件多像」</text>
+        <text x="615" y="190" font-size="10" opacity=".5">ArchAgent</text>
+      </g>
+
+      <g style="color: var(--gap)" text-anchor="middle">
+        <text x="784" y="110" font-size="12.5" font-weight="600" fill="currentColor">靜態呼叫圖</text>
+        <text x="784" y="132" font-size="10.5" fill="currentColor" opacity=".85">中位 recall 0.884</text>
+        <text x="784" y="152" font-size="10.5" fill="currentColor" opacity=".85">13 工具平均漏 61%</text>
+        <text x="784" y="174" font-size="10" fill="currentColor" opacity=".7">漏因換工具補不上</text>
+        <text x="784" y="192" font-size="10" fill="currentColor" opacity=".7">明確不畫</text>
+      </g>
+
+      <g fill="currentColor" font-size="10.5" opacity=".62">
+        <text x="20" y="234">量測依據</text>
+      </g>
+      <g fill="currentColor" font-size="10" opacity=".62">
+        <text x="20" y="256">・靜態呼叫圖：ICSE 2020 對 31 個 Java 程式實測中位 recall 0.884；漏邊主因不是反射（僅 8.08%），是 native 配置與 JVM 主動發起、程式中無對應 call site 的呼叫（52%／40%）</text>
+        <text x="20" y="274">・ISSTA 2024 在 1000 個 Android app 上測 13 個工具，平均漏 61%；工具作者自陳「產生完整 call graph 本來就不是我們的目標」</text>
+        <text x="20" y="292">・ArchAgent 在 8 個 1k–22k 檔專案上 F1 0.966 對 DeepWiki 0.860（p=0.0036，30 位資深工程師評 16 張圖）；⚠ 全文無 Limitations 章節</text>
+        <text x="20" y="310">・兩組數字任務不同不可互推：前者量「邊的完整性」，後者量「元素與人寫文件的相似度」</text>
+      </g>
+    </svg>
+  </div>
+  <figcaption>
+    決定可信度的是<strong>資料源本身有沒有那個資訊</strong>，不是工具做得好不好。metadata 裡有的東西不會漏，程式碼裡沒有 call site 的呼叫，換哪個工具都補不上。
+  </figcaption>
+</figure>
+
+<h2>ER 圖：記法不用選，而且理由不是「差異不大」</h2>
+
+<p>三個主要工具把 Crow's Foot <strong>寫死在原始碼裡</strong>，沒有選項：<code>tbls</code> 的 dot 模板用 <code>arrowtail=crow</code>、SchemaSpy 寫在 <code>Edge.java</code>、Mermaid 官方文件原句是「uses the most popular crow's foot notation」。唯一給選項的 DBeaver 把它做成<strong>檢視時的即時切換</strong>，不是要提前承諾的決定。</p>
+
+<p>獨佔有機制上的原因：<strong>Crow's Foot 的 min／max 兩枚符號，恰好對應 DB metadata 拿得到的東西</strong>。<code>tbls</code> 的 <code>detectCardinality</code> 實作可以直接讀——子側看 constraint 含 <code>UNIQUE</code>／<code>PRIMARY KEY</code>，父側看子欄位是否 nullable。整張圖的關係語意可由 metadata 完全推導。</p>
+
+<p>換記法的代價因此很具體：Chen 需要 relationship 實體與屬性語意、UML 需要 association／aggregation／composition 語意，metadata 都給不出，得人手補——圖立刻退回「會過期的手繪圖」，把「唯一可信自動產物」這個性質弄丟。</p>
+
+<p class="flag">沒有查到任何量化的可讀性實證（Chen vs Crow's Foot vs UML 的理解度實驗）。「Crow's Foot 較易讀」全部來自 blog 層級斷言。正確說法是「沒有證據顯示差異大到值得花時間選」，不是「已證實差異不大」。</p>
+
+<p class="flag">IDEF1X 的美國聯邦標準 FIPS 184 已於 2008-09-02 撤回，現以付費的 ISO/IEC/IEEE 31320-2:2012 存續——標準沒死，但已離開開源工具鏈。</p>
+
+<h2>狀態機圖：自動化程度最高，但取決於你的碼</h2>
+
+<figure>
+  <div class="frame">
+    <svg viewBox="0 0 880 250" role="img" aria-label="狀態機圖的三條自動化路徑：宣告式函式庫可直接匯出、散在服務層的邏輯無現成靜態工具、從稽核日誌反推只能得到實際發生過的轉換">
+      <g fill="none" stroke="currentColor" stroke-width="1.6">
+        <rect x="20" y="50" width="270" height="150" rx="6"/>
+        <rect x="305" y="50" width="270" height="150" rx="6" stroke-dasharray="6 4"/>
+        <rect x="590" y="50" width="270" height="150" rx="6"/>
+      </g>
+      <g text-anchor="middle" fill="currentColor">
+        <text x="155" y="34" font-size="11" opacity=".6">路徑 a</text>
+        <text x="155" y="80" font-size="13" font-weight="600">宣告式函式庫</text>
+        <text x="155" y="106" font-size="11" opacity=".7">一個指令直接 dump</text>
+        <text x="155" y="132" font-size="10.5" opacity=".62">Symfony workflow:dump</text>
+        <text x="155" y="150" font-size="10.5" opacity=".62">python-statemachine</text>
+        <text x="155" y="168" font-size="10.5" opacity=".62">XState / Stately</text>
+        <text x="155" y="190" font-size="10.5" opacity=".5">成本近乎零</text>
+
+        <text x="440" y="34" font-size="11" opacity=".6">路徑 b</text>
+        <text x="440" y="80" font-size="13" font-weight="600">散在服務層的判斷</text>
+        <text x="440" y="106" font-size="11" opacity=".7">無現成靜態分析工具</text>
+        <text x="440" y="132" font-size="10.5" opacity=".62">只能 grep 狀態常數寫入點</text>
+        <text x="440" y="150" font-size="10.5" opacity=".62">＋ LLM 補語意 ＋ 人工核</text>
+        <text x="440" y="176" font-size="10.5" opacity=".5">查不到工具，非「不可能」</text>
+
+        <text x="725" y="34" font-size="11" opacity=".6">路徑 c</text>
+        <text x="725" y="80" font-size="13" font-weight="600">從稽核日誌反推</text>
+        <text x="725" y="106" font-size="11" opacity=".7">只得實際發生過的轉換</text>
+        <text x="725" y="132" font-size="10.5" opacity=".62">一句 SQL 就夠：</text>
+        <text x="725" y="152" font-size="10" opacity=".62">LAG(status) OVER (PARTITION BY id)</text>
+        <text x="725" y="176" font-size="10.5" opacity=".5">缺 guard 與禁止規則</text>
+      </g>
+      <text x="440" y="232" text-anchor="middle" font-size="11.5" fill="currentColor" style="color: var(--accent)">決定落在哪一格的不是工具成熟度，是你的狀態機寫成資料還是寫成條件判斷</text>
+    </svg>
+  </div>
+  <figcaption>
+    真正的建議往往不是「找工具產圖」，而是<strong>把狀態機重構成宣告式，之後圖就免費</strong>。
+  </figcaption>
+</figure>
+
+<p class="flag">路徑 c 有一個其他視圖沒有的獨門用法：把日誌反推的實際 <code>(from, to)</code> 集合與圖上的邊做<strong>集合差</strong>——圖上沒有卻發生過 ＝ 圖過期或有後門寫入；圖上有卻從沒發生 ＝ 死路徑。</p>
+
+<h2>資料流圖：想要的那個工具不存在</h2>
+
+<p><strong>data lineage 工具只適用資料工程與 ETL 管線。</strong> OpenLineage 的官方整合清單全部是資料處理／編排工具（Airflow、Spark、dbt、Flink…），無任何 Web 框架整合。DataHub 的 MySQL source 雖標示支援 column lineage，但限定條件是<strong>只涵蓋 view 定義推導出的依賴</strong>。</p>
+
+<p>換句話說，這些工具答的是「倉儲內表與欄位間的血緣」，不是「一筆請求的資料怎麼流過 controller → service → 幾張表」。<strong>不是同一個問題。</strong></p>
+
+<p>DFD 本身沒死，但轉移到了安全威脅建模，而且已有 as-code 形態：OWASP <code>pytm</code> 把模型寫成 Python 檔進版控，<code>./tm.py --dfd | dot -Tpng</code> 重產圖；<code>Threagile</code> 是 YAML 版。卡點是<strong>模型仍需人寫、不從碼逆推</strong>。</p>
+
+<p class="flag no">唯一嘗試「從原始碼產 DFD」的 Threatspec（靠原始碼註解標記）最後一次 push 是 2020-12-30。這條路線目前無活躍實作。</p>
+
+<h2>diagram-as-code 四者</h2>
+
+<div class="scroll">
+<table>
+  <thead><tr><th></th><th>Mermaid</th><th>PlantUML</th><th>D2</th><th>Structurizr DSL</th></tr></thead>
+  <tbody>
+    <tr><td>規模</td><td class="num">89,658★</td><td class="num">13,232★</td><td class="num">24,887★</td><td class="num">332★</td></tr>
+    <tr><td>平台原生渲染</td><td class="has">GitHub · GitLab · Obsidian</td><td class="dim">需 jar／server</td><td class="none">無</td><td class="dim">需匯出</td></tr>
+    <tr><td>佈局控制</td><td class="none">最弱（C4 靠敘述順序）</td><td class="dim">弱</td><td class="has">最強</td><td class="dim">model-first，UI 拉位</td></tr>
+    <tr><td>原生 C4</td><td class="dim">有但 experimental</td><td class="dim">靠 C4-PlantUML</td><td class="none">無</td><td class="has">就是 C4</td></tr>
+    <tr><td>LLM 正確率量測</td><td class="has">有（見下）</td><td class="dim">有研究無數字</td><td class="none">查無</td><td class="none">查無</td></tr>
+    <tr><td>語法檢查指令</td><td class="dim">CLI 無 syntax-only</td><td><code>--check-syntax</code></td><td><code>d2 validate</code></td><td><code>validate</code> / <code>inspect</code></td></tr>
+  </tbody>
+</table>
+</div>
+
+<p><strong>四者都無法檢查「圖是否還符合程式碼」。</strong>全部只驗語法或模型內部一致性。Structurizr 的 <code>inspect</code> 最接近，但它強制的是 C4 階層規則，不是跟 codebase 對照。</p>
+
+<p class="flag">D2 的佈局優勢有個陷阱：最強的 TALA 引擎是 <strong>proprietary、closed-source、收費</strong>，與 D2 分開安裝，開源部分只剩 dagre 與 ELK。它另外處於矛盾狀態——24,887★、今天仍有 commit，但最後一個 tagged release 是 2025-08-19，近一年未發版。</p>
+
+<p class="flag">唯一的 LLM 產圖量測是 MermaidSeqBench（arXiv 2511.14967）：8B 級模型 syntax 91.29%、logic 87.23%、activation handling 79.55%。限制必須一起記——preprint、只測 8B 級開源模型、LLM-as-Judge、<strong>只測 sequence diagram</strong>，不可外推到 frontier 模型產架構圖。</p>
+
+<p class="flag">另一組相關數字指向同一個弱點：LLM 產 DFD 的評測中 <strong>correctness 一律低於 completeness</strong>——「元素抓得到、語意連錯」。這也解釋了為什麼 ArchAgent 的 F1 0.966 是元素層級比對，元素抓得準不代表關係畫得對。</p>
+
+<footer>
+  快照 2026-08-10 ｜ 2／3 ｜ <a href="arch-views-1-which.html">← 該畫哪些圖</a> ｜ 下一頁：<a href="arch-views-3-decay.html">怎麼防它過期 →</a>
+</footer>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,288 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>該畫哪些圖 — 架構視圖的兩條軸</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body, h1, h2, h3, p, ul, ol, li, figure, figcaption, table { margin: 0; padding: 0; }
+  ul, ol { list-style: none; }
+  table { border-collapse: collapse; }
+
+  :root {
+    --bg: #fbfaf8; --surface: #fff; --fg: #1c1a17;
+    --fg-muted: #6b655d; --fg-faint: #9b948a;
+    --rule: #e4dfd6; --rule-strong: #cac3b7;
+    --accent: #8a6d3b; --gap: #b3402f; --ok: #3f6b52;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #16151a; --surface: #1e1d23; --fg: #e8e4dd;
+      --fg-muted: #a29b91; --fg-faint: #756e65;
+      --rule: #33313a; --rule-strong: #4c4954;
+      --accent: #c9a86a; --gap: #e8796a; --ok: #7fb094;
+    }
+  }
+
+  body {
+    background: var(--bg); color: var(--fg);
+    font-family: system-ui, -apple-system, "Segoe UI", "Noto Sans TC", "PingFang TC", sans-serif;
+    font-size: 17px; line-height: 1.68; -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 66rem; margin: 0 auto; padding: 3rem 1.5rem 5rem; }
+
+  .nav { font-size: .9rem; color: var(--fg-faint); margin-bottom: 1.6rem; }
+  .nav a { color: var(--fg-muted); text-decoration: none; border-bottom: 1px solid var(--rule-strong); }
+  .nav a:hover { color: var(--fg); }
+
+  header { margin-bottom: 2.6rem; }
+  h1 { font-size: 1.85rem; font-weight: 600; letter-spacing: -.015em; line-height: 1.28; }
+  .sub { color: var(--fg-muted); font-size: .98rem; margin-top: .7rem; max-width: 44rem; }
+
+  h2 {
+    font-size: .86rem; font-weight: 600; letter-spacing: .1em; text-transform: uppercase;
+    color: var(--fg-faint); margin: 3.4rem 0 1rem;
+    display: flex; align-items: center; gap: .75rem;
+  }
+  h2::after { content: ""; flex: 1; height: 1px; background: var(--rule); }
+  h3 { font-size: 1.05rem; font-weight: 600; margin: 2rem 0 .5rem; }
+  p { margin-bottom: 1rem; max-width: 46rem; }
+
+  figure { margin: 0; }
+  .frame {
+    background: var(--surface); border: 1px solid var(--rule);
+    border-radius: 7px; padding: 1.4rem 1rem; margin-inline: -1.4rem;
+  }
+  @media (max-width: 48rem) { .frame { margin-inline: 0; } }
+  figure svg { display: block; width: 100%; height: auto; }
+  figcaption { margin-top: .8rem; font-size: .92rem; color: var(--fg-muted); max-width: 46rem; }
+
+  .flag {
+    font-size: .88rem; color: var(--fg-muted); margin: .6rem 0 0;
+    padding-left: 1.35rem; position: relative; line-height: 1.55; max-width: 46rem;
+  }
+  .flag::before { content: "▲"; position: absolute; left: 0; top: .1em; font-size: .66rem; color: var(--accent); }
+  .flag.no::before { content: "✕"; color: var(--gap); font-size: .8rem; }
+
+  code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: .88em; }
+  strong { font-weight: 600; }
+
+  .scroll { overflow-x: auto; margin: 1.4rem 0; }
+  table { width: 100%; font-size: .93rem; min-width: 36rem; }
+  th, td { padding: .5rem .7rem; text-align: left; border-bottom: 1px solid var(--rule); vertical-align: top; }
+  th {
+    font-size: .78rem; letter-spacing: .05em; text-transform: uppercase;
+    color: var(--fg-faint); font-weight: 600; border-bottom: 1px solid var(--rule-strong); white-space: nowrap;
+  }
+  td.c { text-align: center; }
+  .has { color: var(--ok); font-weight: 600; }
+  .none { color: var(--gap); font-weight: 600; }
+  .dim { color: var(--fg-faint); }
+
+  blockquote {
+    margin: 1.4rem 0; padding: .2rem 0 .2rem 1.2rem;
+    border-left: 3px solid var(--rule-strong); color: var(--fg-muted); font-size: .95rem;
+  }
+
+  footer { margin-top: 4rem; padding-top: 1.3rem; border-top: 1px solid var(--rule); font-size: .84rem; color: var(--fg-faint); }
+  footer a { color: var(--fg-muted); }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<p class="nav"><a href="01.index.html">← artifacts</a> ／ 架構視圖 1／3</p>
+
+<header>
+  <h1>該畫哪些圖</h1>
+  <p class="sub">「架構圖有哪些分類」這個問題有兩個答案，因為它其實是兩條互相垂直的軸。搞混的後果很具體：從其中一條軸出發，會結構性地答不到另一條軸上的問題。</p>
+</header>
+
+<h2>兩條軸</h2>
+
+<figure>
+  <div class="frame">
+    <svg viewBox="0 0 880 400" role="img" aria-label="兩條正交軸的示意：橫軸是關注面向（結構、行為、部署、資料），縱軸是抽象層級（系統、容器、元件、類別），C4 只沿縱軸分層，Rozanski and Woods 只沿橫軸分面向">
+      <defs>
+        <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+          <path d="M 0 1 L 9 5 L 0 9 z" fill="currentColor"/>
+        </marker>
+      </defs>
+
+      <line x1="150" y1="330" x2="820" y2="330" stroke="currentColor" stroke-width="1.6" marker-end="url(#ar)"/>
+      <line x1="150" y1="330" x2="150" y2="40" stroke="currentColor" stroke-width="1.6" marker-end="url(#ar)"/>
+
+      <text x="470" y="372" text-anchor="middle" font-size="13" font-weight="600" fill="currentColor">關注面向 — 你在看什麼</text>
+      <g font-size="11" text-anchor="middle" fill="currentColor" opacity=".75">
+        <text x="250" y="352">靜態結構</text>
+        <text x="400" y="352">執行期行為</text>
+        <text x="550" y="352">部署</text>
+        <text x="700" y="352">資料</text>
+      </g>
+
+      <text x="42" y="190" font-size="13" font-weight="600" fill="currentColor" transform="rotate(-90 42 190)" text-anchor="middle">抽象層級 — 放大倍率</text>
+      <g font-size="11" text-anchor="end" fill="currentColor" opacity=".75">
+        <text x="140" y="76">系統 context</text>
+        <text x="140" y="146">容器 container</text>
+        <text x="140" y="216">元件 component</text>
+        <text x="140" y="286">類別 code</text>
+      </g>
+
+      <g stroke="currentColor" stroke-width="1" opacity=".14">
+        <line x1="150" y1="106" x2="820" y2="106"/><line x1="150" y1="176" x2="820" y2="176"/>
+        <line x1="150" y1="246" x2="820" y2="246"/>
+        <line x1="325" y1="330" x2="325" y2="40"/><line x1="475" y1="330" x2="475" y2="40"/>
+        <line x1="625" y1="330" x2="625" y2="40"/>
+      </g>
+
+      <g style="color: var(--accent)">
+        <rect x="158" y="48" width="160" height="272" rx="5" fill="currentColor" fill-opacity=".08" stroke="currentColor" stroke-width="1.6"/>
+        <text x="238" y="36" text-anchor="middle" font-size="11.5" fill="currentColor">C4 只切這一欄</text>
+      </g>
+
+      <g style="color: var(--ok)">
+        <rect x="158" y="112" width="660" height="58" rx="5" fill="currentColor" fill-opacity=".08" stroke="currentColor" stroke-width="1.6" stroke-dasharray="6 4"/>
+        <text x="830" y="146" text-anchor="end" font-size="11.5" fill="currentColor" opacity="0">x</text>
+      </g>
+      <text x="700" y="132" font-size="11.5" fill="currentColor" style="color: var(--ok)">Rozanski &amp; Woods 切這一列</text>
+
+      <g style="color: var(--gap)">
+        <rect x="632" y="112" width="180" height="58" rx="4" fill="none" stroke="currentColor" stroke-width="2"/>
+        <text x="722" y="196" text-anchor="middle" font-size="11.5" fill="currentColor">你要的那一格</text>
+        <text x="722" y="212" text-anchor="middle" font-size="10.5" fill="currentColor" opacity=".8">資料怎麼流 · 容器層</text>
+      </g>
+    </svg>
+  </div>
+  <figcaption>
+    C4 沿<strong>縱軸</strong>分層（同一個東西放大縮小），Rozanski &amp; Woods 沿<strong>橫軸</strong>分面向。多數混淆來自把兩者當成同一種分類。
+  </figcaption>
+</figure>
+
+<h2>四套體系實際涵蓋什麼</h2>
+
+<div class="scroll">
+<table>
+  <thead>
+    <tr><th>關注面向</th><th>C4</th><th>arc42</th><th>4+1</th><th>Rozanski &amp; Woods</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>上下文</td><td>L1 Context</td><td>3. Context &amp; Scope</td><td class="dim">散在 scenarios</td><td>Context</td></tr>
+    <tr><td>靜態結構</td><td>L2/L3 Container／Component</td><td>5. Building Block View</td><td>Logical</td><td>Functional</td></tr>
+    <tr><td>執行期行為</td><td>Dynamic（官方標 <strong>No</strong>）</td><td>6. Runtime View</td><td>Process</td><td>Concurrency</td></tr>
+    <tr><td>部署</td><td>Deployment</td><td>7. Deployment View</td><td>Physical</td><td>Deployment</td></tr>
+    <tr><td>開發組織</td><td class="none">—</td><td class="dim">歸 8. Crosscutting</td><td>Development</td><td>Development</td></tr>
+    <tr><td><strong>資料</strong></td><td class="none">無</td><td class="none">無獨立章</td><td class="none">無</td><td class="has">Information</td></tr>
+    <tr><td><strong>維運</strong></td><td class="none">—</td><td class="none">—</td><td class="none">—</td><td class="has">Operational</td></tr>
+  </tbody>
+</table>
+</div>
+
+<p><strong>最關鍵的是最後兩列。</strong>四套體系裡只有 Rozanski &amp; Woods 把資料與維運當成一等視圖。這有實務後果——當處境是「想先看懂資料怎麼在系統裡來回」時，從 C4 出發會結構性地答不到點，因為那個東西根本不在它的清單上。</p>
+
+<p class="flag">ISO/IEC/IEEE 42010 只定義 viewpoint／view 這組概念框架本身，不提供具體清單，故不列入比較。</p>
+
+<h2>選層：C4 官方自己給了判準</h2>
+
+<p>C4 官方 FAQ 逐字列出四層的過期速度，這是其他框架沒給的東西——arc42 是文件模板、4+1 是視角切分，兩者都沒說哪一層會先爛掉。</p>
+
+<div class="scroll">
+<table>
+  <thead><tr><th>層</th><th>內容</th><th>官方標的變動速度</th><th>對 AI 產碼的意義</th></tr></thead>
+  <tbody>
+    <tr><td>context</td><td>系統與外界誰互動</td><td><code>very slowly</code></td><td>幾乎不受影響</td></tr>
+    <tr><td><strong>container</strong></td><td>可部署／可執行單元</td><td><code>relatively slowly</code></td><td><strong>選這層</strong>；過期＝架構真的變了，而那正是該知道的時刻</td></tr>
+    <tr><td>component</td><td>單一容器內部的程式碼群集</td><td><code>frequently</code></td><td>邊界值得人定，內容不值得追</td></tr>
+    <tr><td>code</td><td>class 圖</td><td><code>very quickly</code></td><td>官方原話：「根本不要畫，或用 IDE 隨需產生」</td></tr>
+  </tbody>
+</table>
+</div>
+
+<p>agent 一天產出的變更幾乎全落在第三、四層。<strong>手繪投資集中在高層、低層交給工具即時生成</strong>，這是 C4 官方自己劃的人工／自動分界線。</p>
+
+<h2>收斂成三張，外加一個不是圖的東西</h2>
+
+<figure>
+  <div class="frame">
+    <svg viewBox="0 0 880 320" role="img" aria-label="三張圖加一個機械檢查：container 圖由人畫一次、ER 切片圖自動產出、依賴規則是會失敗的 CI 檢查而不是圖">
+      <g fill="none" stroke="currentColor">
+        <rect x="20" y="60" width="250" height="150" rx="6" stroke-width="2"/>
+        <rect x="300" y="60" width="250" height="150" rx="6" stroke-width="2"/>
+        <rect x="580" y="60" width="280" height="150" rx="6" stroke-width="2" stroke-dasharray="7 4"/>
+      </g>
+      <g text-anchor="middle" fill="currentColor">
+        <text x="145" y="42" font-size="11" opacity=".6">靜態結構 · container 層</text>
+        <text x="145" y="98" font-size="14" font-weight="600">① container 圖</text>
+        <text x="145" y="126" font-size="11.5" opacity=".75">人畫一次</text>
+        <text x="145" y="150" font-size="11" opacity=".65">框＝各自跑起來的東西</text>
+        <text x="145" y="170" font-size="11" opacity=".65">讀它不需要讀碼</text>
+        <text x="145" y="192" font-size="11" opacity=".65">畫時第四問最值錢</text>
+
+        <text x="425" y="42" font-size="11" opacity=".6">資料 · 四套框架的空缺</text>
+        <text x="425" y="98" font-size="14" font-weight="600">② ER 切片圖</text>
+        <text x="425" y="126" font-size="11.5" opacity=".75">自動產、唯一可信</text>
+        <text x="425" y="150" font-size="11" opacity=".65">讀 DB metadata 不猜程式碼</text>
+        <text x="425" y="170" font-size="11" opacity=".65">每個 use case 一張</text>
+        <text x="425" y="192" font-size="11" opacity=".65">切片，不畫全庫大圖</text>
+
+        <text x="720" y="42" font-size="11" opacity=".6">不在任何框架的清單上</text>
+        <text x="720" y="98" font-size="14" font-weight="600">③ 依賴規則</text>
+        <text x="720" y="126" font-size="11.5" opacity=".75">不是圖，是會 fail 的檢查</text>
+        <text x="720" y="150" font-size="11" opacity=".65">四套體系都預設「視圖描述現狀」</text>
+        <text x="720" y="170" font-size="11" opacity=".65">agent 產碼下描述性的圖每天過期</text>
+        <text x="720" y="192" font-size="11" opacity=".65">站得住的是規範性約束</text>
+      </g>
+      <g style="color: var(--accent)" text-anchor="middle">
+        <text x="145" y="248" font-size="11.5" fill="currentColor">「哪一條連線</text>
+        <text x="145" y="266" font-size="11.5" fill="currentColor">希望永遠不要出現？」</text>
+        <text x="145" y="290" font-size="10.5" fill="currentColor" opacity=".75">整張圖唯一能轉成機械檢查的部分</text>
+      </g>
+    </svg>
+  </div>
+  <figcaption>
+    第三項是這批裡唯一<strong>規範性</strong>的東西——前兩張描述「現在是什麼」，它規定「什麼不准發生」。
+  </figcaption>
+</figure>
+
+<h3>刻意不畫的三個</h3>
+
+<div class="scroll">
+<table>
+  <thead><tr><th>視圖</th><th>不畫的理由</th></tr></thead>
+  <tbody>
+    <tr><td>執行期行為（dynamic／runtime）</td><td>C4 官方在 Recommended 欄標 <strong>No</strong>，且它以靜態模型為輸入——靜態圖還沒穩定就先畫這層是本末倒置</td></tr>
+    <tr><td>部署</td><td>除非真的在管叢集／failover，單機或單一 PaaS 的部署圖只會是三個框</td></tr>
+    <tr><td>類別層（C4 level 4）</td><td>官方原話建議不要畫；agent 一天的產出幾乎全落在這層</td></tr>
+  </tbody>
+</table>
+</div>
+
+<h2>兩個會改變你期待的事實</h2>
+
+<h3>三大雲廠商都不採用 C4</h3>
+
+<p>AWS 與 Google 的官方架構頁完全不提任何記法標準，只給 icon 與 Well-Architected Framework。Microsoft 是唯一具名提到 C4 的，但定位是「可選、非採用」：</p>
+
+<blockquote>
+Several open specifications exist that you can base diagrams on. Adopting one is a workload team decision; do so only if it adds required shared vocabulary to reduce ambiguity. If your current visual communication approach already works, avoid adding process weight just for formality.
+</blockquote>
+
+<p>而 Azure 自訂了一套圖種分類（context／container／component／deployment／DFD／sequence／ERD…），<strong>用詞跟 C4 撞名但不引用 C4 定義</strong>——借用分層直覺，不採規格。</p>
+
+<h3>「哪套框架是主流」這題沒有可信答案</h3>
+
+<p>沒有任何大樣本、非廠商自辦的調查在 2024–2026 量測過架構圖框架的選擇。流通的採用數字只有兩個來源：IcePanel 的問卷（n=96／n=75，<strong>該廠商自己就賣 C4 工具</strong>，兩版全文對 arc42／UML／4+1 命中數皆為 0），以及 arc42 官方 FAQ 自承缺乏國際使用統計。</p>
+
+<p>唯一對真實產物做計數的同儕審查研究（ECSA 2024，373 份 GitHub 架構視圖）顯示的是<strong>框架本身就不是主流</strong>：96% 非正式方框連線、4% 半正式（主要 UML）、0% 正式標記法。</p>
+
+<p class="flag no">「arc42 與 C4 主導實務」是 2026 年 ICSA workshop 論文的寫法，但引用鏈只到框架作者自家網站與自出版書，零採用率數據。同篇還把廠商行銷調查的「93%」洗進同儕審查論文——引用前務必回溯。</p>
+
+<footer>
+  快照 2026-08-10 ｜ 1／3 ｜ 下一頁：<a href="arch-views-2-auto.html">哪些圖能自動產、可信到什麼程度 →</a><br>
+  來源：<code>wiki/不讀碼時該看哪些圖</code>、<code>wiki/架構圖框架採用現況與-AI-時代轉向</code>，加 2026-08-10 一輪 12 項平行查證
+</footer>
+
+</div>
+</body>
+</html>
