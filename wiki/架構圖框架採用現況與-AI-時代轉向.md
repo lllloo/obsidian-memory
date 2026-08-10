@@ -48,9 +48,17 @@ ECSA 2024（Migliorini、Verdecchia、Malavolta、Lago、Vicario，《Architectu
 
 ## AI 時代的三個實際轉向
 
-### ① C4 的專用工具鏈萎縮，語法被通用工具吸收
+### ① C4 的專用工具鏈整併（非萎縮），語法同時被通用工具吸收
+
+> ⚠️ **2026-08-10 就地修正**：本節原標題與首句寫「工具鏈萎縮」，**不完整**。封存屬實，但當時只查 `archived` 欄位、未查繼任者，因而把「整併」誤述為「收縮」。修正如下，原始封存數據保留（它仍是 harness 誤殺案例的證據）。
 
 **`structurizr/cli`、`structurizr/java`、`structurizr/lite` 三個核心 repo 已全部 archived，最後 push 同為 2026-02-01**（**high**；本頁作者以 GitHub API 一手複驗，見下方「被誤殺的主張」）。stars 分別為 567、1,135、384。
+
+**但它們是被整併，不是被放棄**（**high**，2026-08-10 補查，GitHub API 驗 `created_at` 與 release）：新 monorepo `structurizr/structurizr` 建立於 **2025-11-30**（早於舊 repo 封存三個月），未封存、Apache-2.0、最新 release `v2026.06.28`（2026-06-29）、332 stars，頂層模組含 `structurizr-dsl`／`structurizr-export`／`structurizr-inspection`／`structurizr-component`／`structurizr-annotation`／`structurizr-mcp`／`structurizr-autolayout`。封存 repo 的 README 掛有官方遷移公告，`structurizr/cli` 原句：「The Structurizr CLI will not receive any further updates - please migrate to the new consolidated tooling.」授權為 open core，只有 `server` 為閉源商業版。
+
+**故正確命題是「工具鏈從多 repo 整併為單一 monorepo」，不是「C4 作為產品正在收縮」。** 引用舊 repo 連結會誤導；多數教學與整合仍指向已封存的舊 repo，遷移斷層是真實的，但那是文件滯後而非專案停擺。⚠️ 遷移的主要說明文只掛在 Patreon 貼文（付費牆），`docs.structurizr.com` 全站未出現 "vNext" 一詞，該詞的確切所指無法確認。
+
+**方法論教訓**：查「某專案是否還活著」時，`archived: true` 只證明**該 repo** 停止更新，不證明**該專案**停止維護。必須同時查同組織是否有新 repo、README 有無遷移公告。本頁前一版就是漏了這一步。
 
 同時方向相反的訊號是 C4 語法進入通用 diagram-as-code 工具：Mermaid 官方文件有 C4 專頁、npm registry keywords 含 `c4 diagram`。但它在 Mermaid 內長期是二等公民（**high，3-0**）——官方文件掛警語「This is an experimental diagram for now」，不使用全自動佈局（靠敘述順序調位置），`Lay_U/D/L/R` 永不支援，sprites／tags／links／legend 與自訂 stereotypes 皆不支援。GitHub issue #7849（2026-06-12 開，仍 OPEN）目標是「replace the legacy row-grid C4 renderer with the unified rendering pipeline」；至 2026-08 元素形狀遷移（#7842）已併入 develop，**邊線與佈局仍是 legacy**。
 
@@ -88,6 +96,11 @@ ArchAgent（arXiv 2601.13007，Pan、Mao、Ma、Ling，2026-01-19）在 8 個 pr
 | Grundfos：C4 以 PlantUML 寫入 Markdown、與程式碼同 repo，非專用建模工具 | **high，3-0**（單一公司，作者自陳不可外推） |
 | Grundfos 無任何自動化文件—實作一致性檢查，只靠 code review | **high，2-1** |
 | Structurizr cli／java／lite 三 repo 已封存，最後 push 2026-02-01 | **high**（本頁 GitHub API 一手複驗，推翻原 0-3 否決） |
+| 上述封存為**整併**：新 monorepo `structurizr/structurizr` 建於 2025-11-30，2026-06-29 仍有 release | **high**（2026-08-10 補查，驗 `created_at` 與 release；封存 README 有官方遷移公告原文） |
+| 三大雲廠商（AWS／Azure／GCP）皆不採用 C4；Microsoft 唯一具名提及但明列為可選 | **high**（官方文件一手，含 Azure WAF 原句） |
+| arc42 9.0 於 2025-07 發布（章 10 拆分）；2026 年 commit 僅翻譯與建置修正 | **high**（GitHub API ＋ `version.properties` 原文） |
+| component 層有可執行的圖—碼一致性檢查：ArchUnit `adhereToPlantUmlDiagram()` | **high**（官方 user guide） |
+| container 層的架構漂移偵測 2024–2026 仍無工具 | **medium-high**（否定結論，見下方限制） |
 | Mermaid C4 為 experimental、仍跑 legacy renderer、多項功能不支援 | **high，3-0** |
 | `c4-beta` RFC 原型在審、Simon Brown 參與討論、尚未採納 | **high，3-0** |
 | Thoughtworks Radar Vol 34 收錄 architecture drift reduction with LLMs（Assess） | **medium-high**（一手 fetch 摘要，非逐字全文） |
@@ -117,11 +130,24 @@ harness 的對抗查證把「Structurizr 官方工具鏈於 2026 年 2 月封存
 
 以下為零主張，不得由本頁內容推導：
 
-1. **ArchUnit／fitness function 工具生態的量化指標**（Maven Central 下載、GitHub 依賴數、實測攔截率）——本輪只證明架構文件研究側完全沒提，未從工具側反查。這是「架構約束當 AI 產碼驗收界面」能否從聲量升級為實證的關鍵缺口。
-2. **是否存在任何大樣本非廠商調查**曾量測架構圖框架選擇——本輪未檢索到，但也未窮盡（SEI、ThoughtWorks Radar 歷年、IEEE Software 調查等未逐一排查）。
-3. **mermaid 下載成長中 direct 與 transitive 的比例**——要把「AI 帶動 DaC」從相關性推向因果，需要能拆解直接依賴與遞移依賴的資料源。
-4. **雲廠商官方架構文件採用哪套框架**——本輪只碰到 Azure architecture icons 頁，未做系統性比對。
-5. **書籍與會議議程比重**——完全未查。
+> **2026-08-10 更新**：下列第 1、4 項已於當日補查（12 項平行查證），結論見「已補查」小節；第 2 項部分補查但未窮盡；第 3、5 項仍未查。
+
+1. ~~ArchUnit／fitness function 工具生態的量化指標~~ → **已補查**，見下。
+2. **是否存在任何大樣本非廠商調查**曾量測架構圖框架選擇——2026-08-10 派了專責查證但**未交件**（WebSearch 額度在其開工前已被整批 subagent 用盡 200/200），故仍屬未窮盡。已知仍成立的是：IcePanel 兩版為僅有的採用數字來源，arc42 官方 FAQ 自承缺國際統計。
+3. **mermaid 下載成長中 direct 與 transitive 的比例**——仍未查。要把「AI 帶動 DaC」從相關性推向因果，需要能拆解直接依賴與遞移依賴的資料源。
+4. ~~雲廠商官方架構文件採用哪套框架~~ → **已補查**，見下。
+5. **書籍與會議議程比重**——仍未查。
+6. **文字層架構約束（AGENTS.md／CLAUDE.md）對 agent 產碼品質的實證**——2026-08-10 派了專責查證但未交件（同樣因額度耗盡）；本頁作者另查 `adr.github.io` 全頁未提 AI／LLM／coding agent。此問題與第 1 項的空白合起來意味著：**「prompt 層約束 vs CI 層閘門」孰優，目前兩邊都沒有數據可回答**。
+
+### 已補查（2026-08-10）
+
+**ArchUnit／依賴規則工具生態**（**high**，當日 API 直查）：這條路線的採用量遠大於架構文件研究所呈現的。`dependency-cruiser` 週下載 3,205,203（★7,050，2026-08-08 push）、`deptrac/deptrac` 月安裝 891,172（★2,988，v4.7.1 於 2026-07-23）、`PHPArkitect` 月安裝 189,539、`ArchUnit` ★3,794（2026-08-10 push）、`ArchUnitNET` ★1,343、`import-linter` ★1,130；反之 `arch-unit-ts` 週下載僅 1,082，屬極小眾。**四個主要工具當週皆有 push，生態全部活躍。** 故「架構文件研究側零命中」的正確解讀是**該領域研究不看工具生態**，不是沒人用。
+⚠️ **套件名陷阱**：`qossmic/deptrac` 已在 Packagist 標記 abandoned（最後穩定版 2.0.4，2024-11-21），官方接替者為 `deptrac/deptrac`；舊名仍有 64,230 月安裝，代表相當數量的專案在裝已棄用版本。
+⚠️ **但下載量不是「用於約束 AI 產碼」的證據**。「用依賴規則 CI 檢查約束 AI 產碼」的效果（攔截率、違規數變化）**兩側查證皆零命中**——架構文件研究側與工具生態側都沒有。這條路線被廣泛使用，卻**從未被量測**。
+
+**雲廠商採用**（**high**，官方文件一手）：**三大雲廠商皆不採用 C4。** AWS 與 Google 官方架構頁不提任何記法標準，只給 icon 與 Well-Architected Framework。Microsoft 是唯一具名提及者，但明列為可選——Azure WAF〈Create architecture design diagrams〉原句：「Adopting one is a workload team decision; do so only if it adds required shared vocabulary to reduce ambiguity. If your current visual communication approach already works, avoid adding process weight just for formality.」清單為 BPMN／C4／DMN／UML 四者並列。Azure 另自訂一套圖種分類（context／container／component／deployment／DFD／sequence／ERD…），**與 C4 撞名但不引用其定義**——借用分層直覺、不採規格。
+兩個時效訊號方向一致：**AWS Workload Discovery 於 2026-08-14 退休**，官方建議改用 CloudWatch Application Map 與 DevOps Agent；Google 官方 Architecture Diagramming Tool 已 302 重導（當日實測），改推 Application Design Center。即兩家都把「自動架構視圖」從專用繪圖工具移向 **observability 與 agent**。
+**Azure WAF 的防過期四條可直接抄**：圖帶 metadata（標題／最後更新日／作者／版本）、廣傳後維護 change log、**不再回答任何 stakeholder 問題的圖就退役**、原始檔與程式碼同 repo 版控。
 
 ## 時效性
 
