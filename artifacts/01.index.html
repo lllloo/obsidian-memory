@@ -90,6 +90,12 @@
 <ul class="list">
 
   <li>
+    <a class="ttl" href="vault-architecture.html">obsidian-memory 的架構</a>
+    <p class="desc">這個 vault 不是「一堆 markdown」，而是一套用資料夾編碼 agent 權限的系統：同一個 agent 在不同資料夾裡能做的事完全不同。三張圖畫權限邊界、三個動作（Ingest／Query／Lint），以及對外的唯一入口 ask-vault。第一張圖也標出 <code>artifacts/</code> 自己在系統中的位置——<code>wiki/</code> 往下的兩個出口方向相反，一個是你手挑且對外，一個是 agent 產出且不對外。</p>
+    <p class="meta">2026-08-10 ｜ 來源：<code>CLAUDE.md</code>、<code>schema/SYSTEM-DESIGN.md</code></p>
+  </li>
+
+  <li>
     <span class="grp-ttl">AI 產碼的約束</span>
     <p class="desc">產碼變快之後該把驗證放在哪。三頁一組，可以照順序讀，也可以直接跳到需要的那一頁。八張圖。</p>
     <ol class="sub">
@@ -104,12 +110,6 @@
     <a class="ttl" href="testing-layers-vue-laravel.html">前後端分離的測試地圖</a>
     <p class="desc">Vue ＋ Laravel 的測試怎麼堆。核心是「測試不是一條清單而是四個互相垂直的維度」——射程、判準來源、驗誰、執不執行程式碼；把它們排成一列才會覺得永遠有漏。六張圖含四層射程、判斷脫離框架的關鍵動作、導入順序與兩條停止條件。</p>
     <p class="meta">2026-08-08 ｜ 來源：<code>專案測試流程</code> 三頁 ＋ <code>用測試約束-AI-產碼</code></p>
-  </li>
-
-  <li>
-    <a class="ttl" href="vault-architecture.html">obsidian-memory 的架構</a>
-    <p class="desc">這個 vault 不是「一堆 markdown」，而是一套用資料夾編碼 agent 權限的系統：同一個 agent 在不同資料夾裡能做的事完全不同。三張圖畫權限邊界、三個動作（Ingest／Query／Lint），以及對外的唯一入口 ask-vault。</p>
-    <p class="meta">2026-08-08 ｜ 來源：<code>CLAUDE.md</code>、<code>schema/SYSTEM-DESIGN.md</code></p>
   </li>
 
 </ul>

@@ -130,7 +130,7 @@
   <p class="claim">邊框樣式就是權限：粗實線＝agent 全權，虛線＝write-once（可新增、不可改），灰點線＝agent 完全不碰。</p>
   <figure>
     <div class="scroll">
-    <svg viewBox="0 0 980 650" role="img" aria-label="資料流圖：使用者貼 URL 進 raw/fetched 後立即 ingest 進 wiki；Web Clipper 剪藏進 raw/clippings 後停住需使用者明指；YouTube 與 GitHub 由 skill 寫進 feeds 但不得回流；wiki 由使用者手動撿選進 cards 與 topics，再由 Quartz 對外發佈">
+    <svg viewBox="0 0 980 740" role="img" aria-label="資料流圖：使用者貼 URL 進 raw/fetched 後立即 ingest 進 wiki；Web Clipper 剪藏進 raw/clippings 後停住需使用者明指；YouTube 與 GitHub 由 skill 寫進 feeds 但不得回流；wiki 往下有兩個出口，一是 agent 以 vault-page 產出的 artifacts 呈現層且不對外，二是使用者手動撿選進 cards 與 topics 再由 Quartz 對外發佈">
       <defs>
         <marker id="a1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
           <path d="M0,0 L10,5 L0,10 z" fill="currentColor"/>
@@ -170,12 +170,12 @@
       <!-- 落地欄：raw -->
       <rect class="box-frozen" x="290" y="60" width="200" height="72" rx="4"/>
       <text class="t" x="390" y="88" text-anchor="middle">raw/fetched/</text>
-      <text class="s dim" x="390" y="107" text-anchor="middle">11 檔・寫入後凍結</text>
+      <text class="s dim" x="390" y="107" text-anchor="middle">10 篇・寫入後凍結</text>
       <text class="s dim" x="390" y="123" text-anchor="middle">事實來源</text>
 
       <rect class="box-frozen" x="290" y="152" width="200" height="72" rx="4"/>
       <text class="t" x="390" y="180" text-anchor="middle">raw/clippings/</text>
-      <text class="s dim" x="390" y="199" text-anchor="middle">8 檔・寫入後凍結</text>
+      <text class="s dim" x="390" y="199" text-anchor="middle">6 篇・寫入後凍結</text>
       <text class="s dim" x="390" y="215" text-anchor="middle">未被引用是正常狀態</text>
 
       <!-- 落地欄：feeds -->
@@ -192,29 +192,35 @@
       <!-- wiki -->
       <rect class="box-agent" x="620" y="60" width="200" height="164" rx="4"/>
       <text class="t" x="720" y="90" text-anchor="middle">wiki/</text>
-      <text class="s dim" x="720" y="110" text-anchor="middle">32 頁・agent 全權</text>
+      <text class="s dim" x="720" y="110" text-anchor="middle">36 頁・agent 全權</text>
       <text class="s dim" x="720" y="126" text-anchor="middle">建頁・改頁・刪頁</text>
       <line class="rule" x1="644" y1="142" x2="796" y2="142"/>
       <text class="s" x="720" y="162" text-anchor="middle">摘要／實體／概念頁</text>
       <text class="s" x="720" y="180" text-anchor="middle">比較頁／綜合頁</text>
       <text class="s" x="720" y="204" text-anchor="middle">wiki/01.index.md</text>
 
+      <!-- artifacts -->
+      <rect class="box-agent" x="736" y="410" width="220" height="72" rx="4"/>
+      <text class="t" x="846" y="438" text-anchor="middle">artifacts/</text>
+      <text class="s dim" x="846" y="457" text-anchor="middle">5 頁・人讀的呈現層</text>
+      <text class="s dim" x="846" y="473" text-anchor="middle">不進三動作、不對外發佈</text>
+
       <!-- cards / topics -->
-      <rect class="box-off" x="620" y="410" width="200" height="72" rx="4"/>
-      <text class="t off" x="720" y="438" text-anchor="middle">cards/ ・ topics/</text>
-      <text class="s off" x="720" y="457" text-anchor="middle">13 + 87 檔・私人抽屜</text>
-      <text class="s off" x="720" y="473" text-anchor="middle">agent 不讀不寫不索引</text>
+      <rect class="box-off" x="620" y="520" width="200" height="72" rx="4"/>
+      <text class="t off" x="720" y="548" text-anchor="middle">cards/ ・ topics/</text>
+      <text class="s off" x="720" y="567" text-anchor="middle">13 + 87 檔・私人抽屜</text>
+      <text class="s off" x="720" y="583" text-anchor="middle">agent 不讀不寫不索引</text>
 
       <!-- Quartz -->
-      <rect class="box" x="856" y="410" width="100" height="72" rx="4"/>
-      <text class="t" x="906" y="440" text-anchor="middle">Quartz</text>
-      <text class="s dim" x="906" y="459" text-anchor="middle">公開網站</text>
+      <rect class="box" x="856" y="520" width="100" height="72" rx="4"/>
+      <text class="t" x="906" y="550" text-anchor="middle">Quartz</text>
+      <text class="s dim" x="906" y="569" text-anchor="middle">公開網站</text>
 
       <!-- schema -->
-      <rect class="box-agent" x="290" y="540" width="530" height="66" rx="4"/>
-      <text class="t" x="316" y="566">schema 層</text>
-      <text class="s dim" x="316" y="585">CLAUDE.md（＝AGENTS.md symlink）・SYSTEM-DESIGN・vault-map・MEMORY・BACKLOG</text>
-      <text class="s" x="796" y="576" text-anchor="end">約束上面每一格的行為</text>
+      <rect class="box-agent" x="290" y="630" width="530" height="66" rx="4"/>
+      <text class="t" x="316" y="656">schema 層</text>
+      <text class="s dim" x="316" y="675">CLAUDE.md（＝AGENTS.md symlink）・SYSTEM-DESIGN・vault-map・MEMORY・BACKLOG</text>
+      <text class="s" x="796" y="666" text-anchor="end">約束上面每一格的行為</text>
 
       <!-- 邊：來源 → 落地 -->
       <line class="edge" x1="194" y1="96" x2="284" y2="96" marker-end="url(#a1)"/>
@@ -240,30 +246,35 @@
       <path class="edge-off" d="M498,330 L556,300"/>
       <line class="edge-off" x1="540" y1="296" x2="556" y2="312"/>
       <line class="edge-off" x1="556" y1="296" x2="540" y2="312"/>
-      <text class="lab off" x="586" y="290">feeds 不得反向</text>
-      <text class="lab off" x="586" y="306">充當 raw／wiki 來源</text>
+      <text class="lab off" x="500" y="262">feeds 不得反向</text>
+      <text class="lab off" x="500" y="278">充當 raw／wiki 來源</text>
+
+      <!-- 邊：wiki → artifacts（agent 產出的呈現層） -->
+      <path class="edge" d="M820,196 L860,196 L860,404" marker-end="url(#a1)"/>
+      <text class="lab" x="848" y="252" text-anchor="end">/vault-page 產出</text>
+      <text class="lab" x="848" y="268" text-anchor="end">agent 自主更新</text>
 
       <!-- 邊：wiki → cards/topics（人工） -->
-      <line class="edge-soft" x1="720" y1="224" x2="720" y2="404" marker-end="url(#a1)"/>
+      <line class="edge-soft" x1="720" y1="224" x2="720" y2="514" marker-end="url(#a1)"/>
       <text class="lab" x="732" y="300">使用者手動撿選</text>
-      <text class="lab" x="732" y="316">（人的動作，不是系統的一環）</text>
+      <text class="lab" x="732" y="316">非系統的一環</text>
 
       <!-- 邊：cards/topics → Quartz -->
-      <line class="edge-off" x1="820" y1="446" x2="850" y2="446" marker-end="url(#a1o)"/>
-      <text class="lab off" x="856" y="500">唯一對外發佈層</text>
+      <line class="edge-off" x1="820" y1="556" x2="850" y2="556" marker-end="url(#a1o)"/>
+      <text class="lab off" x="856" y="610">唯一對外發佈層</text>
 
       <!-- 圖例 -->
-      <line class="rule" x1="24" y1="540" x2="264" y2="540"/>
-      <text class="s dim" x="24" y="562">圖例</text>
-      <rect class="box-agent" x="24" y="574" width="26" height="14" rx="2"/>
-      <text class="s" x="58" y="585">agent 全權</text>
-      <rect class="box-frozen" x="24" y="596" width="26" height="14" rx="2"/>
-      <text class="s" x="58" y="607">write-once（可新增不可改）</text>
-      <rect class="box-off" x="24" y="618" width="26" height="14" rx="2"/>
-      <text class="s off" x="58" y="629">agent 完全不碰</text>
+      <line class="rule" x1="24" y1="630" x2="264" y2="630"/>
+      <text class="s dim" x="24" y="652">圖例</text>
+      <rect class="box-agent" x="24" y="664" width="26" height="14" rx="2"/>
+      <text class="s" x="58" y="675">agent 全權</text>
+      <rect class="box-frozen" x="24" y="686" width="26" height="14" rx="2"/>
+      <text class="s" x="58" y="697">write-once（可新增不可改）</text>
+      <rect class="box-off" x="24" y="708" width="26" height="14" rx="2"/>
+      <text class="s off" x="58" y="719">agent 完全不碰</text>
     </svg>
     </div>
-    <figcaption>兩條進料管道長得很像，差別只在<b>那一條虛線</b>：貼 URL 進 <code>raw/fetched/</code> 會一路走完 ingest；Web Clipper 剪進 <code>raw/clippings/</code> 就停在原地，等你明說才動。這也是為什麼 lint 的「raw 消化缺口」只掃 fetched——clippings 沒被引用是設計，不是破洞。</figcaption>
+    <figcaption>兩條進料管道長得很像，差別只在<b>那一條虛線</b>：貼 URL 進 <code>raw/fetched/</code> 會一路走完 ingest；Web Clipper 剪進 <code>raw/clippings/</code> 就停在原地，等你明說才動。這也是為什麼 lint 的「raw 消化缺口」只掃 fetched——clippings 沒被引用是設計，不是破洞。<br><br><code>wiki/</code> 往下有兩個方向相反的出口：<code>cards/</code>／<code>topics/</code> 是<b>你手挑的、也是唯一對外發佈</b>的一層；<code>artifacts/</code> 是 <b>agent 產出的、而且刻意不對外</b>——你正在讀的這一頁就住在那裡。兩者都不回頭當 <code>raw/</code>／<code>wiki/</code> 的來源。</figcaption>
   </figure>
 </section>
 
