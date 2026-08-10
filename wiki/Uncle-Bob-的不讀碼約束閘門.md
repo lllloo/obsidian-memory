@@ -2,7 +2,7 @@
 title: Uncle Bob 的不讀碼約束閘門
 description: 逐項解剖「不讀 agent 產碼、改用測試與度量包圍它」這套主張——每道閘門實際擋住什麼、他自己寫的工具怎麼實作、以及這套方案撐不住的三個地方
 created: 2026-08-09
-updated: 2026-08-09
+updated: 2026-08-10
 parent: "[[wiki/01.index]]"
 tags:
   - coding-agent
@@ -367,4 +367,5 @@ blocked="$(printf '%s\n' "$changed" \
 - [[AI-產碼加速下的-review-瓶頸]] — 本頁是該頁四條路線中「**約束前移**」的極端案例：Uncle Bob 不是改善 review，而是整條廢掉 review 換成前移的閘門。該頁引 DORA 的「投資測試自動化的 ROI 可能高於優化人工 review」，本頁是那句話被推到底之後的樣子。
 - [[專案測試流程]] — 一個意外的收斂：`engineering.prompt` 要求「Separate testable modules from environmentally unsuitable modules that open GUIs […] Maximize testable code and minimize the unsuitable boundary」，與該頁「第一個動作不是寫測試而是把判斷抽離框架」是同一條紀律，只是他講的是 GUI、該頁講的是 Vue 元件與 Laravel Controller。第五節的可搬性表則是本頁對該頁的具體回饋。
 - [[AI-自主工作流的實證檢驗]] — 本頁第四節第 1 點的證據基礎（ImpossibleBench 的 76% 作弊率）出自該頁；該頁「驗證迴路必要但不充分，因為測試本身可被 agent 篡改」正是本頁判定 prompt 層護欄不足的依據。
+- [[不讀碼時該看哪些圖]] — 同一處境（不讀 agent 產碼）的另一組答案，且與本頁在**機制上同形**：本頁最高性價比的結論是把驗收規格檔用 CI guard 機械鎖死，該頁則是把架構邊界寫成 CI 上會 fail 的依賴規則——都不是靠人記得檢查，而是把判準外移成機械閘門。差別在射程：本頁的閘門管「行為對不對」，該頁的管「東西有沒有放對地方」，兩者都不可替代對方。
 - [[Agent-工作流-Pattern-藍本庫]] — `swarm-forge` 的 two/four/six-pack 是該頁「複雜度為最後手段、單 agent 優先」選用 gate 的一個實例：同一個人針對任務規模提供三種編制，而不是永遠派六個 agent。
