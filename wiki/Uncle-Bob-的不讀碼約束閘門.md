@@ -368,4 +368,5 @@ blocked="$(printf '%s\n' "$changed" \
 - [[專案測試流程]] — 一個意外的收斂：`engineering.prompt` 要求「Separate testable modules from environmentally unsuitable modules that open GUIs […] Maximize testable code and minimize the unsuitable boundary」，與該頁「第一個動作不是寫測試而是把判斷抽離框架」是同一條紀律，只是他講的是 GUI、該頁講的是 Vue 元件與 Laravel Controller。第五節的可搬性表則是本頁對該頁的具體回饋。
 - [[AI-自主工作流的實證檢驗]] — 本頁第四節第 1 點的證據基礎（ImpossibleBench 的 76% 作弊率）出自該頁；該頁「驗證迴路必要但不充分，因為測試本身可被 agent 篡改」正是本頁判定 prompt 層護欄不足的依據。
 - [[不讀碼時該看哪些圖]] — 同一處境（不讀 agent 產碼）的另一組答案，且與本頁在**機制上同形**：本頁最高性價比的結論是把驗收規格檔用 CI guard 機械鎖死，該頁則是把架構邊界寫成 CI 上會 fail 的依賴規則——都不是靠人記得檢查，而是把判準外移成機械閘門。差別在射程：本頁的閘門管「行為對不對」，該頁的管「東西有沒有放對地方」，兩者都不可替代對方。
+- [[架構圖框架採用現況與-AI-時代轉向]] — 本頁這套做法的**業界定位**：該頁查證後發現「架構約束當 AI 產碼驗收界面」在 2026 年只到 Thoughtworks Radar 的 **Assess** 級（點名 ArchUnit／Spectral／Spring Modulith，問題定義正是 AI agent 複製劣化模式），實務記述皆無量化數據。也就是說本頁記的 `dependency-checker` 與 acceptance-boundary-guard 不是孤例，方向已有機構背書；但同時也印證本頁第四節的判斷——**沒有人拿得出量測**，「very high confidence」缺外部驗證這個問題是整條路線共有的，不是 Uncle Bob 個人的疏漏。
 - [[Agent-工作流-Pattern-藍本庫]] — `swarm-forge` 的 two/four/six-pack 是該頁「複雜度為最後手段、單 agent 優先」選用 gate 的一個實例：同一個人針對任務規模提供三種編制，而不是永遠派六個 agent。
