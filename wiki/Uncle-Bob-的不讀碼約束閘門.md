@@ -2,7 +2,7 @@
 title: Uncle Bob 的不讀碼約束閘門
 description: 逐項解剖「不讀 agent 產碼、改用測試與度量包圍它」這套主張——每道閘門實際擋住什麼、他自己寫的工具怎麼實作、以及這套方案撐不住的三個地方
 created: 2026-08-09
-updated: 2026-08-09
+updated: 2026-08-10
 parent: "[[wiki/01.index]]"
 tags:
   - coding-agent
@@ -364,7 +364,7 @@ blocked="$(printf '%s\n' "$changed" \
 ## 關聯
 
 - [[用測試約束-AI-產碼]] — 本頁是該頁的**人物案例層**：該頁盤點「哪些手段有多少證據」，本頁盤點「一個把這條路線推到極致的人實際搭了什麼」。兩處實質互補：本頁第 2 項的 **gherkin acceptance mutation** 補上該頁沒有的驗收層假測試偵測，第 7 項的 **introverted test 靜態偵測**則把該頁「同義反覆」失效模式從人工偵測法升級成可掃描的檢查。反過來，該頁第五節的五層防繞過正是本頁第四節判定這套方案漏洞所用的尺。
-- [[AI-產碼加速下的-review-瓶頸]] — 本頁是該頁四條路線中「**約束前移**」的極端案例：Uncle Bob 不是改善 review，而是整條廢掉 review 換成前移的閘門。該頁引 DORA 的「投資測試自動化的 ROI 可能高於優化人工 review」，本頁是那句話被推到底之後的樣子。
+- [[AI-產碼加速下的-review-瓶頸]] — 本頁是該頁四條路線中「**B. 用測試約束**」的極端案例（與 [[用測試約束-AI-產碼]] 互為人物案例層，見上一條），而非該頁 C 路線（spec-driven development 工具鏈）——Uncle Bob 的閘門陣以測試／度量為主軸，人的核准點推到規格邊界（見第三節）帶有前移色彩，但手段不是 OpenSpec／Spec Kit 那類工具。該頁引 DORA 的「投資測試自動化的 ROI 可能高於優化人工 review」，本頁是那句話被推到底之後的樣子。
 - [[專案測試流程]] — 一個意外的收斂：`engineering.prompt` 要求「Separate testable modules from environmentally unsuitable modules that open GUIs […] Maximize testable code and minimize the unsuitable boundary」，與該頁「第一個動作不是寫測試而是把判斷抽離框架」是同一條紀律，只是他講的是 GUI、該頁講的是 Vue 元件與 Laravel Controller。第五節的可搬性表則是本頁對該頁的具體回饋。
 - [[AI-自主工作流的實證檢驗]] — 本頁第四節第 1 點的證據基礎（ImpossibleBench 的 76% 作弊率）出自該頁；該頁「驗證迴路必要但不充分，因為測試本身可被 agent 篡改」正是本頁判定 prompt 層護欄不足的依據。
 - [[Agent-工作流-Pattern-藍本庫]] — `swarm-forge` 的 two/four/six-pack 是該頁「複雜度為最後手段、單 agent 優先」選用 gate 的一個實例：同一個人針對任務規模提供三種編制，而不是永遠派六個 agent。

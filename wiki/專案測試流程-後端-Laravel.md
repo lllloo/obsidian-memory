@@ -1,8 +1,8 @@
 ---
 title: 專案測試流程 後端 Laravel
-description: Laravel 端第一層單元測試的落地：把判斷從 Controller 抽到 Service、Unit 與 Feature 兩個 testsuite 的真正分界，以及繼承錯 TestCase 會啟動整個框架的陷阱
+description: Laravel 端第一層單元測試落地：判斷抽出 Controller、Unit／Feature 分界、繼承錯 TestCase 的陷阱
 created: 2026-08-08
-updated: 2026-08-08
+updated: 2026-08-10
 parent: "[[wiki/01.index]]"
 tags:
   - testing

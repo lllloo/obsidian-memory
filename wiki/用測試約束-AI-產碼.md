@@ -2,7 +2,7 @@
 title: 用測試約束 AI 產碼
 description: AI 寫的測試為何驗證不到東西、判準的權威來源為何才是分類軸，以及 mutation、property-based 等手段的定位差異與防繞過分層
 created: 2026-08-06
-updated: 2026-08-09
+updated: 2026-08-10
 parent: "[[wiki/01.index]]"
 tags:
   - coding-agent
@@ -167,7 +167,7 @@ PBT 不寫「輸入 A 應得 B」，而寫「**對所有合法輸入，這個不
 分層設計（任一層單獨都不夠）：
 
 1. **明文寫進 agent 規則檔**：禁用整類 skip flag 與 skip 環境變數；禁止為了讓失敗變通過而弱化 hook／CI／規則設定；改這些設定檔視同高風險變更
-2. **執行前 deny**：PreToolUse 類的 hook 攔截**整類**繞過而非單一旗標。本 vault 已確認 hook 的輸出契約只有 allow/block（見 [[Claude-Code-Hook-能力邊界]]）——而 **block 正是這裡唯一需要的能力**，屬於 hook 少數完全對口的用途
+2. **執行前 deny**：PreToolUse 類的 hook 攔截**整類**繞過而非單一旗標。防繞過只需要 allow/block 這個能力——本 vault 已確認 `prompt`／`agent` 型 hook 的輸出契約就只有 allow/block（`command`／`http` 型能力更廣，含改寫工具輸入輸出與注入 context，見 [[Claude-Code-Hook-能力邊界]]）——**block 正是這裡唯一需要的能力**，屬於 hook 少數完全對口的用途
 3. **CI 鏡像本地檢查**：本地 hook 是便利，**CI 與 merge rule 才是權威**；沒有 CI 時，繞過本地 hook 就是真的繞過了
 4. **保護護欄本身**：用 CODEOWNERS 之類的機制蓋住 hook 設定、CI workflow、agent 政策檔
 5. **最陰險的不是 `--no-verify`，是弱化規則本身**——刪掉一個 job、改掉必要檢查的名稱、把 glob 縮窄讓 hook 看不到重要檔案，然後「技術上完全遵守了」

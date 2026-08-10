@@ -1,8 +1,8 @@
 ---
 title: 專案測試流程 前端 Vue
-description: Vue 端第一層單元測試的落地：把判斷從 script setup 抽到 utils 與 composable、純 composable 與需掛載者的分界，以及 Vitest 的檔案落點
+description: Vue 端第一層單元測試落地：判斷抽出 script setup、composable 分純計算與副作用兩種、Vitest 檔案落點
 created: 2026-08-08
-updated: 2026-08-08
+updated: 2026-08-10
 parent: "[[wiki/01.index]]"
 tags:
   - testing
