@@ -44,6 +44,22 @@ tbls doc mysql://user:pass@localhost:3306/mydb docs/schema
 - **先確認 schema 有沒有宣告 FK**——如 Laravel migration 沒寫 `foreignId()->constrained()`，圖上會沒有邊；讀圖前先確認每條邊是宣告的還是推論的。
 - 要與 DB 保持一致就把產物 commit，CI 掛 `tbls diff` 抓漂移（diff 才是漂移偵測、lint 是品質檢查；exit code 行為 README 未載明，非開箱即擋 PR）。
 
+### 2.5 SchemaSpy 實測補充（2026-08-11 本機單次實測，非查證研究）
+
+[[不讀碼時該看哪些圖]] 列的另一條成熟路線，實跑後補三個執行面事實：
+
+- **官方 Docker image 免裝 JVM／Graphviz**，掛進 compose 網路即可連容器內 DB，77 張表約 14 秒跑完：
+
+  ```bash
+  docker run --rm --network <compose網路名> -v "$PWD/out:/output" \
+    schemaspy/schemaspy -t mariadb -host <db服務名> -port 3306 \
+    -db <庫名> -s <庫名> -u <帳號> -p <密碼>
+  ```
+
+  `-s`（schema）**必給**，漏了會報 `Bad config: Schema was not provided`。產出為可瀏覽 HTML 站：`index.html`（每表有 degree 1／2 切片圖）、`relationships.html`（real／implied 雙版本）、`orphans.html`（孤島表專頁）、`anomalies.html`（schema 異味清單）。
+- **隱含關聯推論對 Laravel／Rails 式命名結構性失效**：推論法是「欄位名＋型別比對他表主鍵名」，而此類慣例的主鍵一律叫 `id`、引用欄叫 `xxx_id`，名字永遠對不上，推論一條真關聯都抓不到；能撞名的反而是 `email` 這類泛用欄（實測 77 表僅推出 4 條、全為誤報，皆為各表 `email` 欄被連到 `password_reset_tokens.email`）。這把 [[不讀碼時該看哪些圖]] 的「誤報實質存在」再收窄一層：對 ORM 慣例命名的庫，**推論不只會誤報、還會漏光真陽性**——孤島表的真實關聯只能回程式碼層查 ORM 關聯宣告（`belongsTo`／`hasMany`／join）。
+- 據此修正本頁定位：SchemaSpy 對「沒宣告 FK 的孤島」的價值**僅在孤島清單本身**（`orphans.html`），不在補出關聯。
+
 ### 3. Azimutt 互動探索
 
 載入後預設空白 → 搜尋一張起點表 → 沿關聯往外點 → 每個 use case 存一張視圖。比靜態圖更貼近「探索陌生大庫」的需求，同樣讀 metadata、不手寫。
