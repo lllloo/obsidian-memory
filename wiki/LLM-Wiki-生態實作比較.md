@@ -2,7 +2,7 @@
 title: LLM Wiki 生態實作比較
 description: nvk、Hermes、Astro-Han 等 Karpathy LLM Wiki 實作與 Letta MemFS 等相鄰記憶系統的收斂設計、分歧點與實證證據對照
 created: 2026-07-10
-updated: 2026-07-21
+updated: 2026-08-11
 parent: "[[wiki/01.index]]"
 tags:
   - wiki
@@ -19,12 +19,15 @@ tags:
 
 | 實作 | 形式 | 與 Karpathy 三層的關係 | 特色機制 |
 |---|---|---|---|
-| [nvk/llm-wiki](https://github.com/nvk/llm-wiki) | 跨工具 skill | raw 不可變＋wiki 編譯＋index，完整對應 | 雙連結（wikilink＋markdown 連結並寫）、structural guardian（操作後自動修瑣碎結構問題）、四層查詢深度、token 成本 benchmark |
+| [nvk/llm-wiki](https://github.com/nvk/llm-wiki) | 跨工具 skill | raw 不可變＋wiki 編譯＋index，**另有獨立 `output/` 產出層**（本欄先前漏記，2026-08-11 補；見下「產出層的生態路線」） | 雙連結（wikilink＋markdown 連結並寫）、structural guardian（操作後自動修瑣碎結構問題）、四層查詢深度、token 成本 benchmark |
 | [[Hermes-Agent]] 內建 `llm-wiki` skill | 官方 bundled skill | 逐字複刻三層 | raw 記 sha256 偵測來源漂移、每頁至少 2 條 outbound link、封閉 tag taxonomy、矛盾入 frontmatter 交使用者複核、10+ 頁大改動先問 |
 | [Astro-Han/karpathy-llm-wiki](https://github.com/Astro-Han/karpathy-llm-wiki) | Agent Skills 標準單一 skill | raw 不可變＋wiki＋index，三動作定義一致 | 跨四工具安裝（Claude Code／Cursor／Codex CLI／OpenCode，自述未獨立驗證）、Lint 含自動修復、維護 log.md |
 | [Wuphf](https://github.com/nex-crm/wuphf)（Nex.ai，YC S26） | 本地 git repo＋MCP 工具 | raw markdown＋wiki，另加私有 notebook 暫存層 | git-native 為 canonical、Bleve BM25＋SQLite 為可重建 cache；per-entity append-only fact log（JSONL、deterministic id）與敘述性頁並存；notebook→wiki 的 promotion gate |
 | [llm-wiki-kit](https://github.com/MauricioPerera/llm-wiki-kit) | git-native、Obsidian 相容 | 三層對應 | **explicit supersession chains**（矛盾不靜默覆寫，留取代鏈）；每次 ingest 為單一 atomic commit 可整筆 revert；三層檢索 grep→BM25→embeddings |
 | [wiki-garden](https://github.com/hachiware-labs/wiki-garden) | 分層知識庫 | raw 不可變＋sources／global／projects | 知識**作用域切分**（global 跨專案可重用 vs projects 僅該專案為真）；兩個主動成長動作 `nurture`（挑主題深化）與 `what's up`（點出發育不良的區域）；lint 唯讀只回報 |
+| [arturseo-geo/llm-knowledge-base](https://github.com/arturseo-geo/llm-knowledge-base)（2026-08-11 收錄） | AGENTS.md schema 標準＋範本 | raw＋wiki，另加 `output/` 沙盒層與 `learning/` 學習層 | **sandbox-first promotion**（生成內容預設落 `output/`，升格進 wiki 需人明示或達品質規則——方向與本 vault 相反，見下「產出層」節）；learning 層 FSRS 間隔複習＋自動 flashcards＋缺口追蹤（生態唯一「知識庫兼學習系統」設計）；`insights/` 人寫區 agent 依 schema 不碰 |
+| [SamurAIGPT/llm-wiki-agent](https://github.com/SamurAIGPT/llm-wiki-agent)（2026-08-11 收錄） | 跨四工具 skill（Claude Code／Codex／OpenCode／Gemini CLI） | raw＋wiki，另加 `graph/` 衍生視圖層 | 自動重生成 `graph.json`＋`graph.html`（vis.js 互動圖譜、SHA256-cached）——與快照式產出本質不同（可重生、恆同步）；wiki 內建 `log.md` 與 `overview.md` 活綜合頁 |
+| [Programming-With-Maury/Karpathy-LLM-Wiki](https://github.com/Programming-With-Maury/Karpathy-LLM-Wiki)（2026-08-11 收錄） | AGENTS.md schema | raw＋wiki，**無產出層**——查詢產物直接進 `wiki/domains/<domain>/queries/` | wiki 內部按 **domain 作用域**切分（`global/` 只收跨兩域以上重用頁，與 wiki-garden 同構）；另設 `archive/`（已合併淘汰頁）與 `staging/`（待審草稿） |
 | 本 vault（obsidian-memory） | Obsidian vault＋repo-local skills | 三層＋Ingest/Query/Lint | 全自主治理（2026-07-20 起 push 亦自主、事後 diff review 把關）、lint 自主修補（真需使用者的決策才進 backlog）、cards/topics 人工策展公開層 |
 
 **Wuphf 的 `/lint` 不值得抄**（2026-07-21 查證）：它抓的四類（矛盾、孤立、stale claim、死連結）與本 vault `vault-lint` 的覆蓋範圍**幾乎完全重合**，但矛盾偵測後是**由使用者手動標哪一邊勝出**——比本 vault 2026-07-17 拍板的「agent 自主修補」更保守，在「lint 修補權」這個分歧點上是退回而非前進。[第三方 review](https://zby.github.io/commonplace/agent-memory-systems/reviews/wuphf/) 另明指其未揭露 lint 實作細節、無規則或覆蓋範圍的具體說明。同一則 review 提出的批評對本 vault 更有價值——**無法證明 agent 真的搜尋過、真的用了記憶、真的因此改變行為**，且找不到 with/without ablation；此盲點本 vault 同樣暴露，見 [[Agent-維護知識庫的已知失效模式]]。
@@ -63,6 +66,28 @@ tags:
 - claude-obsidian 另有 **PostCompact hook（context 壓縮後重注熱脈絡）**——本 vault 無對應 runtime、未採用，僅記為日後若有常駐 runtime 時的參考。
 
 **證據強度**：各實作機制皆有 primary source（repo／官方 docs）；但「有熱層 vs 持久狀態」「自覺先讀 vs hook 注入」的分類含詮釋成分，邊界案例（如 Letta core memory 算不算「近期」）可辯。**關鍵空白：無任一實作公布「熱層省多少 token」的實測數字**，hot.md 效益量級仍無實證。此節為單票 mini-research、未經對抗查證，強度低於本頁其餘經三票查證的主張。
+
+## 產出層（呈現物）的生態路線（2026-08-11 掃描）
+
+給人看的報告、投影片、圖等呈現物放哪，是三層之外一個真實分歧點。起點是一個常被誤讀的事實：**Karpathy 原文根本沒有產出層**——slide deck（Marp）、chart（matplotlib）、canvas 在原文只是 Query 答案的**形式**（「Answers can take different forms depending on the question」），去向是「good answers can be filed back into the wiki as new pages」。呈現物獨立成層全是後人擴充。對本輪已檢索的 10 實作＋原文逐一查產出層立場（皆一手逐字引述），分四路線：
+
+| 路線 | 誰 | 機制 |
+|---|---|---|
+| 收回 wiki（產物即 wiki 頁，原文路線） | Karpathy 原文、Maury、Hermes、wiki-garden | Maury 直接存 `wiki/domains/<domain>/queries/`；Hermes Query 第 ⑤ 步「File valuable answers back — create a page in `queries/` or `comparisons/`」（只收難以重推導的答案，瑣碎查詢不存）；wiki-garden 的 `nurture` 產物是「reviewable knowledge change」回存 wiki |
+| 獨立 output 層＝wiki **前置沙盒** | arturseo-geo | 「All generated content is written to `output/` by default. Promotion to `wiki/` requires explicit human instruction or the agent meeting the quality rules」；並明訂「**Output ≠ wiki.** Files in `output/` are query artifacts. They are not wiki articles」 |
+| 獨立 output 層＝wiki **後置產出** | nvk、本 vault | nvk：`/wiki:output` 產七類（summary／report／study-guide／slides／timeline／glossary／comparison），`output/projects/<slug>/`＋`WHY.md` 分組，且 `/wiki:audit --artifact` 會**追產出的證據鏈**（生態唯一把產出納健檢的）；本 vault：`artifacts/` 是**手寫快照終點**——不進三動作、來源 wiki 頁變動不回頭同步、按需產出非固定一站 |
+| 自動衍生視圖（可重生，嚴格說不是「層」） | SamurAIGPT | `graph/` 每次重生成（SHA256-cached）、與 wiki 恆同步、刪除可重建——與快照式產出本質不同：快照不可重生、過時是設計內行為；衍生視圖永遠新鮮、但也裝不下手寫論述 |
+
+未提及產出層（文件未載，非證實不存在）：Astro-Han（Query 只說「Grounded answers linking to markdown pages」）、Wuphf（notebook 是 wiki **前置**暫存、非產出）、llm-wiki-kit（v0.1 roadmap 的 out-of-scope 清單亦未列此維度）。
+
+判讀：
+
+- **本 vault 與 arturseo-geo 的 output 方向相反**（wiki→呈現 vs output→升格 wiki），但共守同一條線：output ≠ wiki、不作 raw／wiki 的來源。arturseo 的沙盒動機是防生成內容污染知識庫——與 Wuphf promotion gate 同族，本 vault 已於「不採」節拍板不引入前置閘（單使用者＋單 agent 場景）。
+- **nvk 措辭有未解張力**：其流程第 15 步寫「Output artifacts — summaries, reports, slides — **filed back into the wiki**」，但目錄樹上 `output/` 與 `wiki/` 明確並列為獨立層。兩處說法不一致，歸路線時以目錄樹為準、標未解，勿引用其單邊。
+- **產出要不要納健檢，生態只有 nvk 說要**。其代價是每個產出要維護可追的證據鏈；本 vault 的快照定位（過時是設計內行為）刻意不做，兩者是一致的設計選擇而非優劣。
+- 本 vault 在此分歧的獨特組合：**手寫（不可重生）＋快照（不同步）＋不納健檢＋按需產出**。生態最接近的是 nvk，差在它納 audit 且產出可由指令重生。
+
+**證據強度**：10 實作立場皆一手（README／AGENTS.md／SKILL.md 逐字引述，2026-08-11 抓取）；四路線的歸類含詮釋成分（尤其 nvk 的張力與 graph 算不算層）；「未提及」只代表文件未載。單輪查證、未經對抗式驗證。
 
 ## 實證證據（含強度標註）
 
