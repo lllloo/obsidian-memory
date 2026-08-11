@@ -2,7 +2,7 @@
 title: 用測試約束 AI 產碼
 description: AI 寫的測試為何驗證不到東西、判準的權威來源為何才是分類軸，以及 mutation、property-based 等手段的定位差異與防繞過分層
 created: 2026-08-06
-updated: 2026-08-10
+updated: 2026-08-11
 parent: "[[wiki/01.index]]"
 tags:
   - coding-agent
@@ -167,7 +167,7 @@ PBT 不寫「輸入 A 應得 B」，而寫「**對所有合法輸入，這個不
 分層設計（任一層單獨都不夠）：
 
 1. **明文寫進 agent 規則檔**：禁用整類 skip flag 與 skip 環境變數；禁止為了讓失敗變通過而弱化 hook／CI／規則設定；改這些設定檔視同高風險變更
-2. **執行前 deny**：PreToolUse 類的 hook 攔截**整類**繞過而非單一旗標。本 vault 已確認 hook 的輸出契約只有 allow/block（見 [[Claude-Code-Hook-能力邊界]]）——而 **block 正是這裡唯一需要的能力**，屬於 hook 少數完全對口的用途
+2. **執行前 deny**：PreToolUse 類的 hook 攔截**整類**繞過而非單一旗標。本 vault 已確認 `prompt`／`agent` 型 hook 的輸出契約只有 allow/block（`command` 型另有改寫輸入、注入 context 的完整能力，見 [[Claude-Code-Hook-能力邊界]]）——而 **block 正是這裡唯一需要的能力**，屬於 hook 完全對口的用途
 3. **CI 鏡像本地檢查**：本地 hook 是便利，**CI 與 merge rule 才是權威**；沒有 CI 時，繞過本地 hook 就是真的繞過了
 4. **保護護欄本身**：用 CODEOWNERS 之類的機制蓋住 hook 設定、CI workflow、agent 政策檔
 5. **最陰險的不是 `--no-verify`，是弱化規則本身**——刪掉一個 job、改掉必要檢查的名稱、把 glob 縮窄讓 hook 看不到重要檔案，然後「技術上完全遵守了」
@@ -216,7 +216,7 @@ PBT 不寫「輸入 A 應得 B」，而寫「**對所有合法輸入，這個不
 
 - [[AI-產碼加速下的-review-瓶頸]] — 本頁是該頁四條路線中 B 的展開；選擇投入本頁的方法之前，應先跑該頁「數一下 review 完但未部署的變更」那個檢驗，確認瓶頸真的在這裡。
 - [[AI-自主工作流的實證檢驗]] — 本頁第二、三節的證據基礎（ImpossibleBench、Cursor 稽核、TDAD）皆出自該頁的盤點。該頁結論「驗證迴路必要但不充分，因為測試本身可被 agent 篡改」正是本頁存在的理由；本頁補上該頁沒展開的**工具層**（mutation、PBT）與**防繞過層**。
-- [[Claude-Code-Hook-能力邊界]] — 本頁第五節第 2 層的能力依據：hook 出口只有 allow/block、內容過不去，而防繞過恰好只需要 block，是該頁「純放行判斷才留在 hook」原則的正面案例。
+- [[Claude-Code-Hook-能力邊界]] — 本頁第五節第 2 層的能力依據：`prompt`／`agent` 型 hook 的出口只有 allow/block、內容過不去，而防繞過恰好只需要 block，是該頁「純放行判斷才留在 hook」原則的正面案例。
 - [[LLM-as-judge-知識庫頁面評分]] — 同構的方法論警告：該頁記錄「相關性高 ≠ 判準可靠」，本頁的 MSI 缺口（mutation 假設原始碼正確，故在待測碼可能有 bug 時不適用）是同一類代理指標失效。
 - [[長跑-Agent-的目標定義與計畫工具]] — 該頁的「reward hacking 當預設會發生」與機器可檢的停止條件，是本頁第三節「人先定義該驗證什麼」在長跑 agent 場景的措辭層落地。
 - [[架構圖框架採用現況與-AI-時代轉向]] — 對本頁主張的**強度校準**：該頁查證 2024–2026 的一手來源後發現，「用機械閘門約束 AI 產碼」這條路線在架構維度只有 Thoughtworks Radar Vol 34 的 **Assess** 級背書（點名 ArchUnit），實務記述皆無量化數據，唯一同儕審查的工業案例更明說沒有任何自動化一致性檢查。與本頁記的 BenchJack（評估管線本身可被繞過）疊加後的正解是：**「約束住 AI 產碼」在 2026 年仍是設計主張而非已驗證的工程實務**——這不否定本頁做法，但引用本頁時不應把它講成業界已驗證的常規。

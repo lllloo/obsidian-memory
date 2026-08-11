@@ -1,8 +1,8 @@
 ---
 title: 專案測試流程 後端 Laravel
-description: Laravel 端第一層單元測試的落地：把判斷從 Controller 抽到 Service、Unit 與 Feature 兩個 testsuite 的真正分界，以及繼承錯 TestCase 會啟動整個框架的陷阱
+description: Laravel 端單元測試落地：判斷從 Controller 抽到 Service、Unit 與 Feature 的真正分界、繼承錯 TestCase 的陷阱
 created: 2026-08-08
-updated: 2026-08-08
+updated: 2026-08-11
 parent: "[[wiki/01.index]]"
 tags:
   - testing
@@ -23,7 +23,7 @@ tags:
 public function store(Request $request)
 {
     $sum = collect($request->items)->sum(fn ($i) => $i['price'] * $i['qty']);
-    if ($sum > 1000) { $sum = $sum * 0.9; }
+    if ($sum >= 1000) { $sum = $sum * 0.9; }
     return response()->json(['total' => round($sum)]);
 }
 ```
@@ -39,7 +39,7 @@ class PricingService
     public function calcTotal(array $items): int
     {
         $sum = collect($items)->sum(fn ($i) => $i['price'] * $i['qty']);
-        return (int) round($sum > 1000 ? $sum * 0.9 : $sum);
+        return (int) round($sum >= 1000 ? $sum * 0.9 : $sum);
     }
 }
 ```
@@ -47,8 +47,9 @@ class PricingService
 Controller 這側只剩接收與交出，沒有判斷：
 
 ```php
-public function store(Request $request, PricingService $pricing)
+public function store(StoreOrderRequest $request, PricingService $pricing)
 {
+    // StoreOrderRequest 是 FormRequest——validated() 只存在於 FormRequest，基礎 Request 沒有
     return response()->json([
         'total' => $pricing->calcTotal($request->validated()['items']),
     ]);

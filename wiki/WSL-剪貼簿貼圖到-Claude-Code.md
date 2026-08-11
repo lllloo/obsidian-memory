@@ -2,7 +2,7 @@
 title: WSL 剪貼簿貼圖到 Claude Code
 description: WSL2 按 Alt+V 貼圖「閃一下沒反應」的根因在解碼層而非按鍵，附把 BMP 換成 PNG 的 daemon 解法與實測數據
 created: 2026-07-30
-updated: 2026-08-06
+updated: 2026-08-11
 parent: "[[wiki/01.index]]"
 tags:
   - claude-code
@@ -78,7 +78,7 @@ WSLg 的 Weston 不實作 `wlr-data-control`。這條先前只有二手說法（
 
 ## 這頁與 vault 其他頁的關係
 
-把截圖手動貼進 Claude Code 對話（`Ctrl+V`／`Alt+V`）是「把畫面交給 agent 看」最直覺的一條路徑，在 WSL2 上這條路徑會無聲斷掉；但 [[設計品質的可量化檢測]] 那套「截圖 → AI 核對設計偏離」閉環多數走工具管線（axe-core／DeepGaze／Playwright、agent 自駕瀏覽器讀截圖檔），未必依賴人手動貼圖，官方「給檔案路徑」的替代管道也不受此限——只有真的靠貼圖這條路徑時才受影響，不宜說該頁檢測流程「跑不起來」。反方向的載體問題見 [[AI-生成流程圖與架構圖]]：那頁處理「怎麼把圖給人看」（固化成 mermaid.live 連結），本頁處理「怎麼把圖給 agent 看」。
+把截圖手動貼進 Claude Code 對話（`Ctrl+V`／`Alt+V`）是「把畫面交給 agent 看」最直覺的一條路徑，在 WSL2 上這條路徑會無聲斷掉；但 [[設計品質的可量化檢測]] 那套「截圖 → AI 核對設計偏離」閉環多數走工具管線（axe-core／DeepGaze／Playwright、agent 自駕瀏覽器讀截圖檔），未必依賴人手動貼圖，官方「給檔案路徑」的替代管道也不受此限——只有真的靠貼圖這條路徑時才受影響，不宜說該頁檢測流程「跑不起來」。反方向的載體問題見 [[AI-生成流程圖與架構圖]]：那頁處理「怎麼把圖給人看」（原 mermaid.live 連結做法已於 2026-08-06 撤銷，現行為本地 HTML），本頁處理「怎麼把圖給 agent 看」。
 
 ## 上游追蹤
 

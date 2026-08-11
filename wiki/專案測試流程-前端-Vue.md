@@ -1,8 +1,8 @@
 ---
 title: 專案測試流程 前端 Vue
-description: Vue 端第一層單元測試的落地：把判斷從 script setup 抽到 utils 與 composable、純 composable 與需掛載者的分界，以及 Vitest 的檔案落點
+description: Vue 端單元測試落地：判斷從 script setup 抽到 utils 與 composable、需不需掛載的分界、Vitest 檔案落點
 created: 2026-08-08
-updated: 2026-08-08
+updated: 2026-08-11
 parent: "[[wiki/01.index]]"
 tags:
   - testing
@@ -23,7 +23,7 @@ tags:
 <script setup>
 const total = computed(() => {
   let sum = items.value.reduce((a, i) => a + i.price * i.qty, 0)
-  if (sum > 1000) sum = sum * 0.9
+  if (sum >= 1000) sum = sum * 0.9
   return Math.round(sum)
 })
 </script>
@@ -37,7 +37,7 @@ const total = computed(() => {
 // ✅ src/utils/pricing.js — 純函式，不 import 任何 Vue 的東西
 export function calcTotal(items) {
   const sum = items.reduce((a, i) => a + i.price * i.qty, 0)
-  return Math.round(sum > 1000 ? sum * 0.9 : sum)
+  return Math.round(sum >= 1000 ? sum * 0.9 : sum)
 }
 ```
 
