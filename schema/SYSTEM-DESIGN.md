@@ -1,7 +1,7 @@
 ---
 title: Vault 運作模式
 created: 2026-05-25
-updated: 2026-08-03
+updated: 2026-08-11
 tags:
   - vault
   - meta
@@ -58,6 +58,10 @@ repo-local 維護型 skill（`vault-youtube-sync`、`vault-lint`、`vault-watch`
 - `feeds/watch/` 是 `vault-watch` 的 GitHub issue/PR 追蹤看板（`01.index.md`）與變更 digest；不進 raw 或 wiki，追蹤清單以看板為準。
 - lint 不產 feeds 產物——健檢的待處理清單是 `schema/BACKLOG.md`（agent 每輪讀回來約束自身行為的操作狀態，與 `MEMORY.md` 同層）。
 - Quartz 只應發佈 cards/topics，`feeds/**` 不公開；發佈設定在本 repo 外。
+
+### 本 vault 的呈現層：artifacts（不在原文三層裡）
+
+原文沒有呈現層——slide deck、chart 只是 Query 答案的形式，好答案「filed back into the wiki」。本 vault 分歧：知識仍一律回存 wiki，但**使用者要看**的報告、讀本、架構圖（單檔 HTML）**按需**另落 `artifacts/` 作為 wiki 後置的快照層，不回頭同步；它是選配產物、不是每輪 ingest 的固定一站，多數 wiki 頁不會有對應 artifact。維護規則見 [`CLAUDE.md`](../CLAUDE.md)；生態各實作的產出層路線對照見 [[LLM-Wiki-生態實作比較]]。
 
 ### 本 vault 的額外層：cards/topics（不在原文三層裡，系統不管）
 
@@ -135,7 +139,7 @@ AI 承擔重複、瑣碎、容易被延後的維護工作，自主維護 wiki（
 - **不做無界的背景全庫語意掃描**：Ingest 收尾只檢當輪動到的頁；`vault-lint` 的機械層仍全掃規定範圍內可機械驗證的結構問題，語意層則依日期輪替審查近期變動頁的矛盾與明確事實錯誤，發現後由 agent 自主修補（交叉引用缺口、過時、措辭這類「能更好」的項不報，見上「三個動作」的 Lint 一節）。語意掃描以近期窗口與頁數上限控制成本，不隨 vault 規模無界成長。
 - **暫不寫 `log.md`**：見上「索引與日誌」，用 git log 代替。
 - **暫不上搜尋引擎（qmd 等）**：見上「選配」，現階段 Grep 夠用。
-- **暫不做圖片/assets 下載、Marp 簡報**：文字為主，需要時再開。
+- **暫不做圖片/assets 下載、Marp 簡報**：文字為主，需要時再開（按需的呈現層另見上方 artifacts 節）。
 
 ## 細節在哪
 
