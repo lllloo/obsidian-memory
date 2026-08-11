@@ -109,7 +109,7 @@ tags:
 - **採用後移除**：raw sha256 漂移偵測（2026-07-10 採用）——**2026-07-14 移除**。原因：規則只寫「算正文 sha256」但**正文正規化未定義**，易假漂移（專業界 content hash 前必先剝空白／廣告／動態屬性正規化，手動協定做不到）；6 個 fetched 檔僅 2 個實際採用；重貼同 URL 屬低頻。來源過時改由 **lint 語意層＋git 歷史**兜底——此即 Karpathy／nvk／Astro-Han 多數派做法（四大實作僅 Hermes 做來源 hash）。既有 fetched 檔殘留的 sha256 值為 vestigial、不再讀取，raw write-once 不回頭刪。
 - **不採**：nvk 雙連結（讀者是 Obsidian＋agent，wikilink 解析無礙，代價大於收益）、Hermes contested frontmatter 欄位（現規模過度工程，首次真矛盾出現再議）、封閉 tag taxonomy（開放式沿用既有暫夠用）。
 - **不採（2026-07-21 新增）**：Wuphf 的 **promotion gate**——牴觸已拍板的無守門原則，且那是**多 agent 團隊**場景的解法（多 agent 互相污染）；本 vault 單使用者＋單 agent，capture 與 promote 之間沒有第三方，加一層大概率只是把「事後看 diff」改名成「事前看 draft」（論據見 [[Agent-維護知識庫的已知失效模式]] 的 HN 串判讀）。Basic Memory 的**型別化關係**——真正的能力差異，但無「按關係型別查詢」的實際場景，代價是寫作負擔與可讀性下降。nashsu/llm_wiki 的**圖分析套件**（Adamic-Adar、Louvain community detection）——此規模明顯過度工程。**任何向量索引／混合檢索方案**——見上「檢索升級門檻」，證據反而顯示第一步不該是向量。
-- **值得補的缺口（2026-07-21 提出）**：本 vault 的矛盾處理目前只寫「就地標記矛盾」，**舊主張被推翻後的處置是隱性的**——agent 可能改寫、可能並列、可能默默刪掉，事後看不出來。llm-wiki-kit 的 explicit supersession 是對症的方向（雖其 `docs/supersession.md` 為 404、無可照抄的實作規格，且其 lint 明列 v0.1 out of scope），但**不必等它成熟**：自訂一條標記寫法即可，與寫入慣例第 6 條「強度標註」同源、可合併成同一套。
+- **值得補的缺口（2026-07-21 提出，2026-08-11 已解決）**：本 vault 的矛盾處理原只寫「就地標記矛盾」，**舊主張被推翻後的處置是隱性的**——agent 可能改寫、可能並列、可能默默刪掉，事後看不出來。llm-wiki-kit 的 explicit supersession 是對症的方向（雖其 `docs/supersession.md` 為 404、無可照抄的實作規格，且其 lint 明列 v0.1 out of scope），但**不必等它成熟**：2026-08-11 使用者拍板，於 CLAUDE.md 寫入慣例第 6 條增補 supersession 標記——推翻既有主張時原句就地改標「已被取代（日期）：新結論見某處」並保留；只有「推翻」才標、不回頭挖舊頁補標。
 
 ## 關聯
 
