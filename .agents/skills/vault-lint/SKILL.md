@@ -39,8 +39,8 @@ description: vault 健檢:掃 wiki+raw 的死連結、孤立頁、frontmatter �
 3. 執行機械層掃描與唯讀語意選頁。`--date` 傳 `semantic_utc_offset` 所在日期的今日(`YYYY-MM-DD`),不要省略,讓同一日期可重播:
 
 ```
-python3 .agents/skills/vault-lint/scripts/lint_scan.py --days <semantic_days>
-python3 .agents/skills/vault-lint/scripts/semantic_select.py --days <semantic_days> --cap <semantic_page_cap> --date <YYYY-MM-DD> --utc-offset <semantic_utc_offset>
+python3 scripts/lint_scan.py --days <semantic_days>
+python3 scripts/semantic_select.py --days <semantic_days> --cap <semantic_page_cap> --date <YYYY-MM-DD> --utc-offset <semantic_utc_offset>
 ```
 
 4. **熔斷檢查**:兩份輸出任一有 `ERROR:` 行、機械層缺 `SCAN:complete`、或選頁層缺 `SELECT:complete` → 本輪視為掃描異常:**不修補、只新增、不退場**(不依壞輸出動 wiki,也不移除 BACKLOG 既有項),在 `待你決定` 補一條高嚴重度項「掃描或語意選頁異常,本輪不修補不退場」(附錯誤摘要與首見日;去重規則同其他項,已在清單就不重複加)後結束本輪。異常排除後該項照常退場。正常則往下。

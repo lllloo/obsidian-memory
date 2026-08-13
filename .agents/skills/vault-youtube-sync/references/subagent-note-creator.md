@@ -1,6 +1,6 @@
 # Subagent：YouTube 影片轉 Obsidian 筆記
 
-> **路徑契約**：任務 prompt 會傳入 `NOTES_DIR`（repo root 相對路徑：`feeds/youtube/<頻道名>/`）。所有讀寫以 `NOTES_DIR` 為 base，cwd 必為 repo root（subagent 繼承父 agent cwd）。腳本路徑一律從 repo root 起算的完整相對路徑（`.agents/skills/vault-youtube-sync/scripts/...`）。
+> **路徑契約**：任務 prompt 會傳入 `NOTES_DIR`（repo root 相對路徑：`feeds/youtube/<頻道名>/`）。所有讀寫以 `NOTES_DIR` 為 base，cwd 必為 repo root（subagent 繼承父 agent cwd）。**腳本路徑（`scripts/...`）例外：相對於本 skill 目錄根，不是 repo root**——執行前需解析成可用路徑。
 >
 > **NOTES_DIR 自檢**：開工前確認 `NOTES_DIR` 已被主 skill 展開。若含字面 `<`、`>` 或仍是占位符，視為傳錯，**立即回報並停止**，不寫入任何檔案。用 `Read schema/vault-map.md` 確認 cwd 為 vault root。
 >
@@ -23,7 +23,7 @@
 一支腳本完成 defuddle 抓取、videoId 兩階段硬驗證、與 youtube-transcript-api fallback：
 
 ```
-python3 .agents/skills/vault-youtube-sync/scripts/transcript.py "<url>" <videoId>
+python3 scripts/transcript.py "<url>" <videoId>
 ```
 
 讀 stdout（`RESULT:` / `PUBLISHED:` / `---CONTENT---` 後接內容）：
@@ -40,7 +40,7 @@ python3 .agents/skills/vault-youtube-sync/scripts/transcript.py "<url>" <videoId
 **published 補抓**：若 `PUBLISHED` 為空（defuddle 常回空，屬正常），用 video_meta 取上傳日：
 
 ```
-python3 .agents/skills/vault-youtube-sync/scripts/video_meta.py <videoId>
+python3 scripts/video_meta.py <videoId>
 ```
 
 讀 `DATE:` 行（`YYYY-MM-DD`，空則 `published` 留空）。此時 transcript 已取得，若 `video_meta.py` 回 `STATUS:error`，只代表上傳日查核失敗：保留空的 `published` 並繼續寫完整筆記，不因次要 metadata 失敗降級為 draft。
@@ -48,7 +48,7 @@ python3 .agents/skills/vault-youtube-sync/scripts/video_meta.py <videoId>
 ### 步驟 2：影片狀態確認（步驟 1 失敗時）
 
 ```
-python3 .agents/skills/vault-youtube-sync/scripts/video_meta.py <videoId>
+python3 scripts/video_meta.py <videoId>
 ```
 
 - `STATUS:unavailable` → **跳過，不建筆記、不寫占位**，回報「⚠ 影片已刪除，跳過」與 `VIDEO_RESULT:<videoId>:unavailable:-`

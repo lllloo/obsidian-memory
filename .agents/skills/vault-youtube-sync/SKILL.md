@@ -33,7 +33,7 @@ description: 將 YouTube 頻道影片批次轉成 Obsidian 筆記，支援指定
 模式 B 取得頻道清單（每行一個 `source:` URL），cwd = repo root：
 
 ```
-python3 .agents/skills/vault-youtube-sync/scripts/list_channels.py
+python3 scripts/list_channels.py
 ```
 
 模式 B 規則：
@@ -47,7 +47,7 @@ python3 .agents/skills/vault-youtube-sync/scripts/list_channels.py
 用 `fetch_videos.py` 一次抓取頻道頁面，同時取出影片清單與頻道簡介。cwd = repo root：
 
 ```
-python3 .agents/skills/vault-youtube-sync/scripts/fetch_videos.py <handle>
+python3 scripts/fetch_videos.py <handle>
 ```
 
 解析輸出：
@@ -78,7 +78,7 @@ python3 .agents/skills/vault-youtube-sync/scripts/fetch_videos.py <handle>
 Checkpoint 過濾後先取得頻道內的 draft videoId：
 
 ```
-python3 .agents/skills/vault-youtube-sync/scripts/noted_ids.py --draft "feeds/youtube/<頻道名>"
+python3 scripts/noted_ids.py --draft "feeds/youtube/<頻道名>"
 ```
 
 將仍在步驟 1 抓取清單內的 draft 影片**強制加回待處理清單**，不受 checkpoint 位置影響；這也能救回舊版流程已被 checkpoint 跨過的 draft。只有「checkpoint 上方無新影片」且「無可重試 draft」時，才輸出「已是最新，無需更新」並結束。
@@ -90,7 +90,7 @@ python3 .agents/skills/vault-youtube-sync/scripts/noted_ids.py --draft "feeds/yo
 即使通過 checkpoint 篩選，也必須再排除「已有完整筆記的影片」——防止 checkpoint 失效時（如距上次 sync 超過 30 部）產生重複。**`draft: true` 的筆記不算去重命中**——那是先前 transcript 失敗的占位，本次要交給 subagent 覆寫重抓。取得已有非 draft 筆記的 videoId 清單（cwd = repo root）：
 
 ```
-python3 .agents/skills/vault-youtube-sync/scripts/noted_ids.py "feeds/youtube/<頻道名>"
+python3 scripts/noted_ids.py "feeds/youtube/<頻道名>"
 ```
 
 將輸出的 ID 集合與待處理清單比對，**移除任何 ID 已出現在「非 draft」筆記 source 欄位的影片**，不論檔名是否相同。
@@ -189,7 +189,7 @@ views:
 
 2. 主 skill 端先 `Read` `references/subagent-note-creator.md` 取得全文，存為 `NOTE_CREATOR_CONTENT`，再嵌入下方 prompt 的 `<NOTE_CREATOR_CONTENT>` 位置。**不要叫 subagent 自己 Read**——跨工具環境中 subagent 不一定能存取檔案系統。
 
-每個 subagent 的任務 prompt 格式如下。**下列所有 `<...>` 占位符，主 skill 端必須在送出前全部替換為實際值**（頻道名帶入、日期填上），不要把未替換的 `<…>` 傳給 subagent。subagent cwd 必為 repo root，所有路徑為 repo root 相對：
+每個 subagent 的任務 prompt 格式如下。**下列所有 `<...>` 占位符，主 skill 端必須在送出前全部替換為實際值**（頻道名帶入、日期填上），不要把未替換的 `<…>` 傳給 subagent。subagent cwd 必為 repo root，所有路徑為 repo root 相對（唯 `scripts/...` 相對本 skill 目錄根）：
 
 ```
 任務：用 defuddle 抓取 YouTube 影片內容，並在 Obsidian vault 建立筆記。
@@ -230,7 +230,7 @@ N. <標題> — <URL>
 **更新 checkpoint（fail-closed）**：所有 subagent 結束後，只能透過 `update_checkpoint.py` 更新。它會在同一個 process 內先核對 `CHECKPOINT_IDS` 的每支影片都有明確終態，核對失敗便不寫檔。完整筆記與 draft 由腳本掃描實際檔案；內容篩除與已確認不可用的影片分別傳入 `FILTERED_IDS`、`UNAVAILABLE_IDS`：
 
 ```
-python3 .agents/skills/vault-youtube-sync/scripts/update_checkpoint.py "feeds/youtube/<頻道名>/01.index.md" <TODAY> --new-id=<NEW_ID> --expected=<videoId1> --expected=<videoId2> [--filtered=<videoId>] [--unavailable=<videoId>]
+python3 scripts/update_checkpoint.py "feeds/youtube/<頻道名>/01.index.md" <TODAY> --new-id=<NEW_ID> --expected=<videoId1> --expected=<videoId2> [--filtered=<videoId>] [--unavailable=<videoId>]
 ```
 
 - `--expected` 對 `CHECKPOINT_IDS` 每支影片各傳一次；`--filtered` 與 `--unavailable` 亦逐支重複傳入。使用 `--expected=<videoId>` 的等號格式，兼容首字元為 `-` 的合法 ID。已有完整筆記不需額外參數，腳本會依 `source:` 找到。

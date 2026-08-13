@@ -28,7 +28,7 @@ description: 追蹤一批 GitHub issue/PR 的狀態，定期用 gh 抓現況、�
 5. 執行抓取：
 
 ```
-python3 .agents/skills/vault-watch/scripts/watch.py
+python3 scripts/watch.py
 ```
 
 　　自訂看板路徑時加 `--index <path>`。
