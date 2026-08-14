@@ -148,13 +148,12 @@ deep-research 或其他對抗式查證的結果回存 wiki 時：每條主張就
 | `vault-lint` | wiki+raw 健檢，機械項與語意項皆由 agent 自主修補；真需使用者決策的才進「待你決定」，「Agent 已判」與「已婉拒」保留去重約束；手動／排程共用同一流程，本身不執行 git 動作 |
 | `vault-watch` | 追蹤一批 GitHub issue/PR 狀態，`gh` 抓現況與快照比對並每輪更新看板；精選訊號（state 轉換、官方回應、label 變動）有變才寫 digest；本身不執行 git 動作 |
 | `vault-page` | 把 wiki 某主題（交叉引用密集的一組頁）改寫成人類好讀的自包含 HTML 讀本，產出 `docs/architecture/<主題>.html` 並更新 `docs/architecture/01.index.html`；動筆前先提涵蓋範圍給使用者確認，產物為快照、來源頁日後變動不回頭同步 |
-| `ask-vault` | 從**其他專案**向本 vault 發「請求/回應」查詢：依呼叫環境啟動 headless claude／codex／opencode，在 vault root 走 Query（唯讀、附引用），答完即退、不需常駐 |
 
-> **`ask-vault` 與上四者不同**：它是**全域 skill**（源碼 checked-in 於 `.agents/skills/ask-vault/`，symlink 到 `~/.agents/skills/ask-vault`，Claude 的相容入口再由 `~/.claude/skills/ask-vault` 指向它；無 PATH 指令，SKILL.md 以文字說明引導 agent 取 skill 的 Base directory 組出絕對路徑、以 `python3` 執行 bundled 的 `scripts/ask_vault.py`（純 stdlib 跨平台，非綁 bash；不寫死路徑亦不用 Claude 專屬變數）），由**別的專案**呼叫、cwd 不在 vault root，故**不受前述 CWD 契約直接約束**——契約改由腳本以 vault root 為 subprocess cwd 執行、並檢查哨兵檔 `schema/vault-map.md` 滿足。上四者則是只在 vault 內執行、需 cwd 在 vault root 的 skill。此外它是 **cross-CLI**：腳本以 caller-match（`CLAUDECODE`／`CODEX_SANDBOX`／`OPENCODE*` 環境標記，`ASK_VAULT_BACKEND` 可覆寫）偵測呼叫端,分派到 claude／codex／opencode 各自的 headless 唯讀查詢（三者皆已端到端驗證;codex／opencode 的進度走 stderr、答案走 stdout,以 stderr 導流取乾淨輸出,codex 另用 `-o` 只取最終訊息)。**注意**：codex 與 opencode 共用同一 ChatGPT oauth,背靠背呼叫會互相輪替作廢 refresh token——實際使用因 caller-match 一次只在一個工具內、不衝突;要並用需給 opencode 獨立憑證。
+四者都只在 vault 內執行、需 cwd 在 vault root，適用上節 CWD 契約。**目前沒有任何跨專案入口**——別的專案要取本 vault 的知識，只能由使用者自行開 session 進來查。
 
 優先使用 skill，不新增平行流程。新增或修改 skill 時，盡量遵循 [Agent Skills](https://agentskills.io) 開放標準，讓內容可跨工具移植。
 
-> **已移除的核心 skill**：`ob-write`、`ob-read`、`vault-wiki-build`、舊版 `vault-lint`（含 `ob-write`／`ob-read` 兩個全域 symlink）已於重整時移除。三動作（Ingest／Query／Lint）的模型仍是本 vault 的架構；Lint 於 2026-07-10 以 `vault-lint-daily` 之名重建、2026-07-13 改名回 `vault-lint`，目前由同一 skill 承載手動與排程健檢，並自主完成機械與語意修補。它與同名舊版無血緣；Ingest／Query 仍由 agent 依本檔流程執行。
+> **已移除的核心 skill**：`ob-write`、`ob-read`、`vault-wiki-build`、舊版 `vault-lint`（含 `ob-write`／`ob-read` 兩個全域 symlink）已於重整時移除。`ask-vault`（跨專案唯讀查詢入口）於 2026-08-14 使用者拍板移除——建成後實際未使用，跨專案取知識的做法待使用者重新構想；**在新構想落地前不要重建同一套或做輕量版**。三動作（Ingest／Query／Lint）的模型仍是本 vault 的架構；Lint 於 2026-07-10 以 `vault-lint-daily` 之名重建、2026-07-13 改名回 `vault-lint`，目前由同一 skill 承載手動與排程健檢，並自主完成機械與語意修補。它與同名舊版無血緣；Ingest／Query 仍由 agent 依本檔流程執行。
 
 ### 新增 / 修改 skill 的本 repo 約束
 

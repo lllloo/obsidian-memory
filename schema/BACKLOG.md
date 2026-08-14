@@ -1,7 +1,7 @@
 ---
 title: Vault Lint Backlog
 created: 2026-07-13
-updated: 2026-08-03
+updated: 2026-08-14
 tags:
   - meta
   - lint
@@ -66,7 +66,6 @@ _(目前無項目)_
 
 ## 已婉拒
 
-- 2026-07-17 | `ask-vault` `SKILL.md` 補 `OBSIDIAN_VAULT` 環境變數說明 | 使用者判不需要;腳本仍支援該逃生口,只是不寫進文件。**不再提**
 - 2026-07-21 | `raw/` write-once 由文件約定升級為 git pre-commit hook 強制 | 使用者退回。原提案依據見 `wiki/Agent-維護知識庫的已知失效模式.md` 第 4 條（agent 破壞性刪除事故彙整）；該 hook 的實際保護面本就有限——它擋的是 write-once 違規進入 git 歷史，擋不住檔案系統層的刪除（未 commit 的刪除 `git restore` 即可救）。**不再提**
 - 2026-08-03 | 主動提議消化 `raw/clippings/` 未消化剪藏 | 使用者退回（當時 5 篇無 wiki 回連）。clippings 維持憲法的「落地即止」——**由使用者明指才消化，agent 不主動列清單勸進**
 - 2026-08-03 | 重跑「agent 知識庫專案的內建品質評分」第三題(13 個同類 repo 淺 clone＋grep,查是否有偵測式而非排序式的品質機制) | 使用者退回。該題兩輪 deep-research 零產出且證據鏈中從未讀過任何目標 repo,狀態是「未查到」非「已排除」;但 2026-07-22 `vault-page-score` 階段 0 實測已推翻前提——本 vault 22 頁由同一套寫入慣例產出、全過多輪 lint,方差太小,查到與否不改變任何決定。缺口狀態就地留在 `wiki/LLM-as-judge-知識庫頁面評分.md`。**不再提重跑**

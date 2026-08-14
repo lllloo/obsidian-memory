@@ -2,7 +2,7 @@
 title: Agent Skill 腳本路徑的規範與實況
 description: SKILL.md 呼叫 bundled 腳本該怎麼寫路徑：規範明訂裸相對路徑、主流集合一致照做，但規範內部對誰負責解析自相矛盾，實測會找不到檔
 created: 2026-08-13
-updated: 2026-08-13
+updated: 2026-08-14
 parent: "[[wiki/01.index]]"
 tags:
   - claude-code
@@ -112,7 +112,7 @@ Agent Skills 規範（agentskills.io）`skill-creation/using-scripts` L98 逐字
 
 **採純 (a)**：全域 `~/.claude/rules/skill-writing.md` 改為「一律寫相對於 skill 目錄根的裸相對路徑，不用工具專屬替換變數」，`vault-lint`／`vault-watch`／`vault-youtube-sync` 共 11 處呼叫同步改寫（commit `b095ff1`）。取捨是接受首次 not-found 的風險，換取跨工具寫法統一——本 vault 的 skill 實體在 `.agents/skills/`，需被 Codex／OpenCode 讀到，`${CLAUDE_SKILL_DIR}` 與此目標直接衝突。
 
-**`ask-vault` 為明列例外**：它由其他專案呼叫，cwd 既不在 vault root 也不在 skill 安裝根，裸相對路徑**結構上無基準可解析**，維持佔位符寫法。這是 (e) 在本 vault 的唯一適用情境，與 `MengTo/Skills` 的選擇同因。
+**`ask-vault` 曾為明列例外**：它由其他專案呼叫，cwd 既不在 vault root 也不在 skill 安裝根，裸相對路徑**結構上無基準可解析**，故維持佔位符寫法——(e) 在本 vault 的唯一適用情境，與 `MengTo/Skills` 的選擇同因。**該 skill 已於 2026-08-14 移除**（見 [[跨專案第二大腦整合模式]]），本 vault 現存 skill 全數為純 (a)，無例外。判斷本身不撤銷：這裡記的是「從別的 cwd 呼叫」這個結構條件會逼出 (e)，日後重做跨專案入口時會再次適用。
 
 同輪連帶修正 `vault-youtube-sync` 兩處路徑契約敘述：原寫「所有路徑為 repo root 相對」，機械替換後會自相矛盾，各標出 `scripts/` 相對 skill 目錄根的例外。
 
@@ -134,4 +134,4 @@ Agent Skills 規範（agentskills.io）`skill-creation/using-scripts` L98 逐字
 ## 關聯
 
 - [[Claude-Code-Hook-能力邊界]] — 同屬「Claude Code 機制的實測邊界」：該頁的結論是能力上限由輸出契約決定，本頁的結論是路徑可靠性由 harness 有沒有實作 client 端改寫決定，兩者都指向「規範寫得到 ≠ 實作做得到」
-- [[跨專案第二大腦整合模式]] — `ask-vault` 的跨 CLI 定位在該頁展開，本頁記的是它在路徑寫法上為何必須是例外
+- [[跨專案第二大腦整合模式]] — 已撤銷的 `ask-vault` 的跨 CLI 定位與撤銷紀錄在該頁，本頁記的是它在路徑寫法上為何曾必須是例外

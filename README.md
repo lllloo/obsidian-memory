@@ -76,14 +76,11 @@ git clone https://github.com/lllloo/obsidian-memory.git
 - Python 3 — skill 腳本執行所需；Windows 建議先設機器級 `PYTHONUTF8=1`，避免 cp950 編碼問題
 - `pip`（`vault-youtube-sync`）— 首次執行會自動安裝 `youtube-transcript-api`
 - [GitHub CLI](https://cli.github.com/)（`vault-watch`）— 建議先執行 `gh auth login`，可提高 API rate limit
-- `claude`、`codex` 或 `opencode` CLI 其中之一（`ask-vault`）— 需完成對應登入
 - [Obsidian CLI](https://help.obsidian.md/cli)（選用）— 本地開檔輔助，不影響任何流程
 
-在 Obsidian 直接「Open folder as vault」開啟本 repo 即可閱讀編輯。支援 [Agent Skills](https://agentskills.io) 的 AI 工具可載入 `.agents/skills/`；Claude Code 也可用 `/<skill>` 喚起。維護型 skill 在 repo 根目錄執行，跨專案唯讀查詢則使用 `ask-vault`。**WSL 使用者請從 WSL 端執行維護型 skill**——從 Windows PowerShell 走 UNC 路徑（`\\wsl$\...`）呼叫 Windows Python 會因 `AGENTS.md` symlink 讀取失敗，同一份掃描在 WSL 端正常完成，此類失敗易被誤判為 skill 壞掉。
+在 Obsidian 直接「Open folder as vault」開啟本 repo 即可閱讀編輯。支援 [Agent Skills](https://agentskills.io) 的 AI 工具可載入 `.agents/skills/`；Claude Code 也可用 `/<skill>` 喚起。全部 skill 都在 repo 根目錄執行。**WSL 使用者請從 WSL 端執行維護型 skill**——從 Windows PowerShell 走 UNC 路徑（`\\wsl$\...`）呼叫 Windows Python 會因 `AGENTS.md` symlink 讀取失敗，同一份掃描在 WSL 端正常完成，此類失敗易被誤判為 skill 壞掉。
 
-> 原本的全域 `ob-write`／`ob-read` 已移除；其中「從其他專案查詢 vault」的情境已由 [`ask-vault`](./.agents/skills/ask-vault/SKILL.md) 重建。它會依呼叫環境選用 `claude`／`codex`／`opencode` 執行唯讀 headless Query，並自行把查詢程序放在 vault root、檢查 CWD 哨兵；不提供跨專案寫入。
-
-新 clone 不會自動建立全域 skill 入口。若要從其他 repo 觸發 `ask-vault`，需將 `.agents/skills/ask-vault` 安裝或 symlink 到所用工具的全域 Agent Skills 目錄；目前的共用入口是 `~/.agents/skills/ask-vault`，Claude 相容入口再由 `~/.claude/skills/ask-vault` 指向它。
+> **目前沒有跨專案查詢入口。** 早期的全域 `ob-write`／`ob-read` 已移除，其「從其他專案查詢 vault」的情境曾由 `ask-vault`（headless 唯讀 Query，可依環境選用 `claude`／`codex`／`opencode`）承接，但該 skill 於 2026-08-14 移除——建成後實際未使用，跨專案取知識的做法待重新構想。在新做法落地前，要查本 vault 就直接在本 repo 開 session 走 Query。
 
 ## 結構
 
@@ -119,11 +116,11 @@ git clone https://github.com/lllloo/obsidian-memory.git
 | `/vault-youtube-sync` | 同步 YouTube 影片摘要至 `feeds/youtube/` |
 | `/vault-lint` | 健檢 raw／wiki／schema，機械項與語意項皆由 agent 自主修補；BACKLOG 的「待你決定」只收真正需要使用者決策的項目，「Agent 已判」與「已婉拒」保留去重約束；手動／排程共用同一流程，本身不碰 git |
 | `/vault-watch` | 追蹤 GitHub issue／PR，每輪更新看板；有狀態轉換、maintainer 回應或 label 變動時才寫 digest |
-| `/ask-vault` | 從其他專案對本 vault 執行唯讀、附引用的 Query |
+| `/vault-page` | 把 wiki 某主題改寫成人類好讀的自包含 HTML 讀本，產出至 `docs/architecture/` |
 
-**使用契約**：三個維護型 skill（`vault-youtube-sync`、`vault-lint`、`vault-watch`）的 cwd 必須是本 repo 根目錄，並以 `schema/vault-map.md` 為哨兵；所有 repo-local 路徑皆相對於 cwd。`ask-vault` 是例外：它從其他專案呼叫，launcher 會自行設定 vault root 並檢查同一哨兵。
+**使用契約**：全部 skill 的 cwd 必須是本 repo 根目錄，並以 `schema/vault-map.md` 為哨兵；所有 repo-local 路徑皆相對於 cwd。沒有從其他專案呼叫的入口。
 
-> 原核心 skill `ob-write`、`ob-read`（global）、`vault-wiki-build`、舊版 `vault-lint`，以及 `vault-updates-daily`（每日工具更新日報，2026-08-03 因訊號密度過低退場）已移除；Ingest（wiki 綜合）與 vault 內 Query 由 agent 依規則執行，Lint 已按需重建為「健檢即整理」的 `/vault-lint`（與同名舊版無血緣，是重寫的另一套）。
+> 原核心 skill `ob-write`、`ob-read`（global）、`vault-wiki-build`、舊版 `vault-lint`，以及 `vault-updates-daily`（每日工具更新日報，2026-08-03 因訊號密度過低退場）、`ask-vault`（跨專案唯讀查詢，2026-08-14 因建成後未使用退場）已移除；Ingest（wiki 綜合）與 vault 內 Query 由 agent 依規則執行，Lint 已按需重建為「健檢即整理」的 `/vault-lint`（與同名舊版無血緣，是重寫的另一套）。
 
 ## 兩個入口檔的差別
 

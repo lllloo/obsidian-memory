@@ -40,7 +40,7 @@ tags:
 
 本 vault 只吸收**跨專案通用**的知識——工具評測、方法論、AI 生態動態。**專案特定**的架構決策、bug 記錄、實作細節留在各自 repo 的 `CLAUDE.md`／`docs/`，不 ingest 進本 vault，避免 wiki 從「工具生態知識庫」稀釋成大雜燴。
 
-repo-local 維護型 skill（`vault-youtube-sync`、`vault-lint`、`vault-watch`）走 [CWD 契約](../CLAUDE.md)：先進 vault root，再以 `schema/vault-map.md` 驗證位置。其他 repo 若只需查詢既有知識，則用全域 [`ask-vault`](../.agents/skills/ask-vault/SKILL.md)；launcher 會自行把唯讀 Query 放在 vault root 並檢查同一哨兵。兩種介面都是單向：別的專案能呼叫或引用本 vault，本 vault 不會主動伸手進別的 repo，也不建立自動同步。
+repo-local 維護型 skill（`vault-youtube-sync`、`vault-lint`、`vault-watch`）走 [CWD 契約](../CLAUDE.md)：先進 vault root，再以 `schema/vault-map.md` 驗證位置。**跨專案查詢入口目前不存在**——曾有全域 `ask-vault`（headless 唯讀 Query），2026-08-14 因建成後實際未使用而移除，做法待重新構想；在那之前，別的專案要取本 vault 的知識就是使用者自行開 session 進來查。這條邊界仍是單向：別的專案能引用本 vault，本 vault 不會主動伸手進別的 repo，也不建立自動同步。
 
 ## 架構：三層
 

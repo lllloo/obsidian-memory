@@ -2,7 +2,7 @@
 title: Mem0
 description: AI agent 記憶層工具的整合路徑（plugin／MCP／CLI）、hook 實測消耗與失效模式證據，含本 vault 採 MCP-only 的拍板理由
 created: 2026-07-20
-updated: 2026-08-03
+updated: 2026-08-14
 source: https://github.com/mem0ai/mem0
 parent: "[[wiki/01.index]]"
 tags:
@@ -100,6 +100,7 @@ CLI（`@mem0/cli`）**不是替代品**：原始碼 `cli/node/src/plugin-sync.ts
 - Plugin 的自動捕捉正是 #4573 垃圾來源前三名（system prompt／cron／架構 dump）的成因；MCP-only 手動叫則不產生這三類
 - 兩者不爭權威，層級不同——有內容值得長期保存再手動搬進 wiki，同 cards/topics 的人工撿選模式
 - 現有 `ask-vault` 已解決「跨專案查詢累積知識」且已 cross-CLI；mem0 補的真缺口只有兩個：**寫入**（ask-vault 唯讀）與**沒有 vault 的機器**
+  - **此條前提已變（2026-08-14）**：`ask-vault` 已撤銷（見 [[跨專案第二大腦整合模式]]），「跨專案查詢」不再有現成入口，故 mem0 的相對缺口比當初拍板時大。拍板結論本身未重新評估——它主要靠上面兩條（垃圾來源、層級不爭權威）成立，這條只是佐證
 
 已接受的代價：`infer:true` 的抽取可能扭曲原文（見上 `endymi0n` 條）。因屬隨手記、vault 才是權威，此代價可接受。
 
