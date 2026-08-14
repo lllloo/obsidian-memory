@@ -85,9 +85,15 @@
 <div class="wrap">
 
 <h1>docs/architecture</h1>
-<p class="lede">這個 vault 的 <code>wiki/</code> 是給 agent 讀的：高密度、逐條證據標註、一段就是好幾百字。這裡放的是同一批知識改寫成人讀的版本，以及不是 markdown 的產出（架構圖、報告）。每頁都是<strong>某個時點的快照</strong>——來源 wiki 頁之後改了不會回頭同步，要更新就整頁重跑。</p>
+<p class="lede">這個 vault 的 <code>wiki/</code> 是給 agent 讀的：高密度、逐條證據標註、一段就是好幾百字。這裡放的是同一批知識改寫成人讀的版本，以及不是 markdown 的產出（架構圖、報告）。每頁都是<strong>某個時點的快照</strong>——來源（wiki 頁或程式碼本身）之後改了不會回頭同步，要更新就整頁重跑。</p>
 
 <ul class="list">
+
+  <li>
+    <a class="ttl" href="vault-outline.html">obsidian-memory — 專案大綱</a>
+    <p class="desc">接手這個 repo 該先看的一頁：Context（vault 與外界，唯一入站方向是 <code>ask-vault</code>）、Container（本機行程／檔案／外部服務三區，沒有任何服務對外監聽）、寫入邊界矩陣（三動作＋兩類 skill × 六個目錄層）。第三張是這 repo 真正的功能地圖——沒有路由檔，權限矩陣才是骨架。附入口一覽表與五個核心概念。與下一頁的差別：這頁是<strong>核對檔案系統得出的現況大綱</strong>，下一頁是同一套系統的<strong>敘事讀本</strong>；兩頁在權限邊界上重疊，其餘互補。頁內另列出核對時發現的三處文件與實作不一致。</p>
+    <p class="meta">2026-08-14 ｜ 來源：<code>CLAUDE.md</code>、<code>schema/</code> ＋ 檔案系統實際核對</p>
+  </li>
 
   <li>
     <a class="ttl" href="vault-architecture.html">obsidian-memory 的架構</a>
@@ -125,7 +131,7 @@
 
 </ul>
 
-<p class="foot"><b>這一層不參與系統。</b><code>docs/architecture/</code> 是呈現層，不屬於 vault 的三層架構——不進 Ingest／Query／Lint，也不能當 <code>raw/</code> 或 <code>wiki/</code> 的來源。知識本身仍住在 <code>wiki/</code>，這裡的頁面畫得再好也不取代它。新頁由 <code>/vault-page</code> 產出並在此登錄。</p>
+<p class="foot"><b>這一層不參與系統。</b><code>docs/architecture/</code> 是呈現層，不屬於 vault 的三層架構——不進 Ingest／Query／Lint，也不能當 <code>raw/</code> 或 <code>wiki/</code> 的來源。知識本身仍住在 <code>wiki/</code>，這裡的頁面畫得再好也不取代它。新頁由 <code>/vault-page</code>（wiki 讀本）或 <code>/map</code>（架構圖）產出並在此登錄。</p>
 
 </div>
 </body>

@@ -1,0 +1,391 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>obsidian-memory — 專案大綱</title>
+<style>
+:root{
+  --bg:#fbfaf8; --card:#ffffff; --fg:#1a1a1a; --muted:#5c5c5c;
+  --line:#b8b4ad; --rule:#e3ded6;
+  --wiki:#e6f4ea; --wiki-s:#2f8a4f;
+  --raw:#fdf3dc; --raw-s:#b98407;
+  --schema:#e6efFB; --schema-s:#3a72c4;
+  --off:#f0f0ee; --off-s:#98948d;
+  --exec:#f4ecfb; --exec-s:#8256b5;
+  --ext:#fdeeee; --ext-s:#c2554f;
+}
+@media (prefers-color-scheme:dark){
+  :root{
+    --bg:#16171a; --card:#1f2126; --fg:#eceae6; --muted:#a5a29c;
+    --line:#5a5d66; --rule:#33363d;
+    --wiki:#1c3326; --wiki-s:#57a877;
+    --raw:#332913; --raw-s:#d3a53f;
+    --schema:#1a2740; --schema-s:#6d9ee0;
+    --off:#26282d; --off-s:#7d8089;
+    --exec:#2a2038; --exec-s:#a983d8;
+    --ext:#3a2020; --ext-s:#d97b74;
+  }
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0; background:var(--bg); color:var(--fg);
+  font-family:-apple-system,"Segoe UI","Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;
+  font-size:16px; line-height:1.7;
+}
+.wrap{max-width:1080px; margin:0 auto; padding:48px 24px 96px}
+header{border-bottom:2px solid var(--fg); padding-bottom:20px; margin-bottom:40px}
+h1{font-size:30px; margin:0 0 8px; letter-spacing:-.01em}
+.sub{color:var(--muted); font-size:15px; margin:0}
+h2{font-size:22px; margin:56px 0 6px; padding-top:24px; border-top:1px solid var(--rule)}
+h2:first-of-type{border-top:none; padding-top:0}
+h2 .num{color:var(--muted); font-weight:400; margin-right:10px}
+.lead{color:var(--muted); font-size:15px; margin:0 0 24px}
+figure{margin:0 0 8px; overflow-x:auto}
+svg{display:block; width:100%; height:auto; min-width:640px}
+figcaption{font-size:14px; color:var(--muted); margin-top:10px; padding-left:2px}
+.nbox{fill:var(--card); stroke:var(--line); stroke-width:1.5}
+.nwiki{fill:var(--wiki); stroke:var(--wiki-s)}
+.nraw{fill:var(--raw); stroke:var(--raw-s)}
+.nschema{fill:var(--schema); stroke:var(--schema-s)}
+.noff{fill:var(--off); stroke:var(--off-s); stroke-dasharray:5 3}
+.nexec{fill:var(--exec); stroke:var(--exec-s)}
+.next{fill:var(--ext); stroke:var(--ext-s)}
+.zone{fill:none; stroke:var(--line); stroke-width:1; stroke-dasharray:3 4}
+.t{fill:var(--fg); font-size:14px; font-family:inherit}
+.tb{fill:var(--fg); font-size:15px; font-weight:600; font-family:inherit}
+.ts{fill:var(--muted); font-size:12.5px; font-family:inherit}
+.tz{fill:var(--muted); font-size:12.5px; font-weight:600; letter-spacing:.06em; font-family:inherit}
+.ln{stroke:var(--line); stroke-width:1.6; fill:none}
+.ln-x{stroke:var(--ext-s); stroke-width:1.6; fill:none; stroke-dasharray:6 4}
+.lbl{fill:var(--muted); font-size:12.5px; font-family:inherit}
+table{border-collapse:collapse; width:100%; font-size:15px; margin:4px 0 8px}
+th,td{text-align:left; padding:10px 12px; border-bottom:1px solid var(--rule); vertical-align:top}
+th{font-size:13.5px; letter-spacing:.04em; color:var(--muted); font-weight:600; text-transform:uppercase; border-bottom:1.5px solid var(--line)}
+code{font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace; font-size:.92em;
+  background:var(--off); padding:1.5px 5px; border-radius:3px}
+ul{padding-left:22px; margin:8px 0}
+li{margin:6px 0}
+.flags{background:var(--card); border:1px solid var(--rule); border-left:3px solid var(--ext-s);
+  border-radius:4px; padding:16px 20px; margin-top:16px}
+.flags h3{margin:0 0 10px; font-size:15px}
+.flags ul{margin:0; padding-left:20px}
+.flags li{font-size:14.5px; margin:8px 0}
+.tag{display:inline-block; font-size:12px; padding:1px 7px; border-radius:3px;
+  border:1px solid var(--line); color:var(--muted); margin-right:6px; vertical-align:1px}
+.na{border-color:var(--ext-s); color:var(--ext-s)}
+.nav{font-size:14px; color:var(--muted); margin-bottom:24px}
+.nav a{color:var(--muted); text-decoration:none; border-bottom:1px solid var(--rule)}
+.nav a:hover{color:var(--fg)}
+.scope{font-size:14.5px; color:var(--muted); border-top:1px solid var(--rule); margin-top:48px; padding-top:20px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<p class="nav"><a href="01.index.html">← 索引</a></p>
+
+<header>
+  <h1>obsidian-memory — 專案大綱</h1>
+  <p class="sub">Karpathy LLM Wiki 實作。快照 2026-08-14 · 依據 <code>CLAUDE.md</code>／<code>schema/</code>／實際檔案系統核對</p>
+</header>
+
+<h2><span class="num">1</span>Context — 系統與外界</h2>
+<p class="lead">vault 是一份 markdown 的 git repo，本身不跑服務。所有動作由外部的人與程式對同一份檔案讀寫。</p>
+<figure>
+<svg viewBox="0 0 980 580" role="img" aria-label="Context 圖">
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="var(--line)"/>
+    </marker>
+    <marker id="ax" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="var(--ext-s)"/>
+    </marker>
+  </defs>
+
+  <!-- 中心 -->
+  <rect class="nbox nwiki" x="370" y="235" width="240" height="110" rx="8"/>
+  <text class="tb" x="490" y="268" text-anchor="middle">obsidian-memory</text>
+  <text class="ts" x="490" y="290" text-anchor="middle">git repo · 純 markdown ＋ skill 腳本</text>
+  <text class="ts" x="490" y="310" text-anchor="middle">42 wiki 頁 · 18 raw 來源 · 9 呈現頁</text>
+  <text class="ts" x="490" y="330" text-anchor="middle">沒有 server、沒有 build、沒有資料庫</text>
+
+  <!-- 使用者 -->
+  <rect class="nbox" x="40" y="70" width="200" height="72" rx="8"/>
+  <text class="tb" x="140" y="100" text-anchor="middle">使用者</text>
+  <text class="ts" x="140" y="122" text-anchor="middle">策劃來源·問問題·撿選公開</text>
+
+  <!-- 外部來源 -->
+  <rect class="nbox next" x="380" y="40" width="220" height="86" rx="8"/>
+  <text class="tb" x="490" y="68" text-anchor="middle">外部來源</text>
+  <text class="ts" x="490" y="89" text-anchor="middle">網頁 URL · Web Clipper 剪藏</text>
+  <text class="ts" x="490" y="108" text-anchor="middle">YouTube 頻道 · GitHub issue/PR</text>
+
+  <!-- GitHub -->
+  <rect class="nbox" x="750" y="70" width="200" height="72" rx="8"/>
+  <text class="tb" x="850" y="100" text-anchor="middle">GitHub origin</text>
+  <text class="ts" x="850" y="122" text-anchor="middle">lllloo/obsidian-memory</text>
+
+  <!-- Agent CLI -->
+  <rect class="nbox nexec" x="40" y="255" width="200" height="72" rx="8"/>
+  <text class="tb" x="140" y="284" text-anchor="middle">AI Agent CLI</text>
+  <text class="ts" x="140" y="306" text-anchor="middle">Claude Code／Codex／OpenCode</text>
+
+  <!-- Obsidian -->
+  <rect class="nbox" x="40" y="440" width="200" height="72" rx="8"/>
+  <text class="tb" x="140" y="469" text-anchor="middle">Obsidian 桌面</text>
+  <text class="ts" x="140" y="491" text-anchor="middle">人的瀏覽介面（IDE 角色）</text>
+
+  <!-- Quartz -->
+  <rect class="nbox noff" x="750" y="255" width="200" height="72" rx="8"/>
+  <text class="tb" x="850" y="284" text-anchor="middle">Quartz 發佈</text>
+  <text class="ts" x="850" y="306" text-anchor="middle">bugloop.com · 設定在本 repo 外</text>
+
+  <!-- Discord -->
+  <rect class="nbox noff" x="750" y="440" width="200" height="72" rx="8"/>
+  <text class="tb" x="850" y="469" text-anchor="middle">Discord</text>
+  <text class="ts" x="850" y="491" text-anchor="middle">PR merged 通知</text>
+
+  <!-- 其他專案 -->
+  <rect class="nbox next" x="380" y="470" width="220" height="72" rx="8"/>
+  <text class="tb" x="490" y="499" text-anchor="middle">其他專案 repo</text>
+  <text class="ts" x="490" y="521" text-anchor="middle">在別的 cwd 工作的 agent</text>
+
+  <!-- 連線 -->
+  <path class="ln" d="M140,142 L140,255" marker-end="url(#a)"/>
+  <text class="lbl" x="150" y="205">下指令</text>
+
+  <path class="ln" d="M140,327 L140,440" marker-end="url(#a)"/>
+  <text class="lbl" x="150" y="390">改動即時可見</text>
+
+  <path class="ln" d="M240,470 L370,330" marker-end="url(#a)"/>
+  <text class="lbl" x="250" y="424">本地檔案讀寫</text>
+
+  <path class="ln" d="M240,285 L370,285" marker-end="url(#a)"/>
+  <text class="lbl" x="248" y="277">讀寫（三動作）</text>
+
+  <path class="ln" d="M490,126 L490,235" marker-end="url(#a)"/>
+  <text class="lbl" x="500" y="185">擷取落地 raw/（write-once）</text>
+
+  <path class="ln" d="M610,265 L750,142" marker-end="url(#a)"/>
+  <text class="lbl" x="622" y="215">git push（agent 自主）</text>
+
+  <path class="ln" d="M850,142 L850,255" marker-end="url(#a)"/>
+  <text class="lbl" x="700" y="200"> </text>
+  <text class="lbl" x="860" y="205">只發佈 cards/topics</text>
+
+  <path class="ln" d="M850,327 L850,440" marker-end="url(#a)"/>
+  <text class="lbl" x="860" y="390">webhook</text>
+
+  <path class="ln-x" d="M600,506 L750,506 L750,512" marker-end="url(#ax)"/>
+  <path class="ln-x" d="M610,315 L700,315 L700,506 L600,506" marker-start="url(#ax)"/>
+  <text class="lbl" x="618" y="345">ask-vault 唯讀查詢</text>
+  <text class="lbl" x="618" y="363">（單向：vault 不外伸）</text>
+</svg>
+</figure>
+<figcaption>紅色虛線＝跨 repo 唯讀查詢，只有進來這一個方向。灰色虛線框＝不屬三層系統的外部消費端。</figcaption>
+
+<h2><span class="num">2</span>Container — 分別開的程式與通訊邊界</h2>
+<p class="lead">「container」在這裡不是 Docker，而是各自獨立啟動的行程。vault 的六個目錄是被它們讀寫的檔案，不是行程。</p>
+<figure>
+<svg viewBox="0 0 980 700" role="img" aria-label="Container 圖">
+  <defs>
+    <marker id="b" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="var(--line)"/>
+    </marker>
+  </defs>
+
+  <!-- 執行區 -->
+  <rect class="zone" x="20" y="30" width="560" height="330" rx="6"/>
+  <text class="tz" x="36" y="52">本機行程</text>
+
+  <rect class="nbox nexec" x="40" y="70" width="240" height="60" rx="8"/>
+  <text class="tb" x="160" y="95" text-anchor="middle">Agent CLI（harness）</text>
+  <text class="ts" x="160" y="115" text-anchor="middle">Read／Write／Grep + Bash</text>
+
+  <rect class="nbox" x="320" y="70" width="240" height="60" rx="8"/>
+  <text class="tb" x="440" y="95" text-anchor="middle">Obsidian 桌面 app</text>
+  <text class="ts" x="440" y="115" text-anchor="middle">獨立行程，與 agent 無互動</text>
+
+  <rect class="nbox nexec" x="40" y="170" width="520" height="170" rx="8"/>
+  <text class="tb" x="60" y="196">6 個 repo-local／全域 skill（agent 依 SKILL.md 執行）</text>
+  <text class="t" x="60" y="222">vault-lint → <tspan class="ts">lint_scan.py · semantic_select.py</tspan></text>
+  <text class="t" x="60" y="246">vault-watch → <tspan class="ts">watch.py</tspan></text>
+  <text class="t" x="60" y="270">vault-youtube-sync → <tspan class="ts">fetch_videos · transcript · 5 支腳本</tspan></text>
+  <text class="t" x="60" y="294">vault-page <tspan class="ts">（無腳本，純流程）</tspan></text>
+  <text class="t" x="60" y="318">ask-vault → <tspan class="ts">ask_vault.py（全域，供他 repo 呼叫）</tspan></text>
+
+  <!-- 檔案區 -->
+  <rect class="zone" x="620" y="30" width="340" height="330" rx="6"/>
+  <text class="tz" x="636" y="52">vault 檔案（同一顆磁碟）</text>
+
+  <rect class="nbox nschema" x="640" y="70" width="300" height="46" rx="6"/>
+  <text class="t" x="655" y="99">schema/ ＋ root CLAUDE.md<tspan class="ts"> — 規範層</tspan></text>
+
+  <rect class="nbox nraw" x="640" y="126" width="300" height="46" rx="6"/>
+  <text class="t" x="655" y="155">raw/<tspan class="ts"> — fetched 11 ／ clippings 7，write-once</tspan></text>
+
+  <rect class="nbox nwiki" x="640" y="182" width="300" height="46" rx="6"/>
+  <text class="t" x="655" y="211">wiki/<tspan class="ts"> — 42 頁，agent 全權</tspan></text>
+
+  <rect class="nbox noff" x="640" y="238" width="300" height="46" rx="6"/>
+  <text class="t" x="655" y="267">feeds/<tspan class="ts"> — youtube 5 頻道／watch 看板</tspan></text>
+
+  <rect class="nbox noff" x="640" y="294" width="300" height="46" rx="6"/>
+  <text class="t" x="655" y="323">docs/ 9 ／ cards/ ／ topics/</text>
+
+  <!-- 外部服務 -->
+  <rect class="zone" x="20" y="400" width="940" height="180" rx="6"/>
+  <text class="tz" x="36" y="422">外部服務（皆 HTTPS 出站，無入站）</text>
+
+  <rect class="nbox next" x="40" y="440" width="200" height="56" rx="8"/>
+  <text class="tb" x="140" y="464" text-anchor="middle">defuddle CLI</text>
+  <text class="ts" x="140" y="484" text-anchor="middle">網頁 → 乾淨 markdown</text>
+
+  <rect class="nbox next" x="260" y="440" width="200" height="56" rx="8"/>
+  <text class="tb" x="360" y="464" text-anchor="middle">gh CLI</text>
+  <text class="ts" x="360" y="484" text-anchor="middle">GitHub REST（issue/PR）</text>
+
+  <rect class="nbox next" x="480" y="440" width="220" height="56" rx="8"/>
+  <text class="tb" x="590" y="464" text-anchor="middle">youtube.com ＋ transcript API</text>
+  <text class="ts" x="590" y="484" text-anchor="middle">影片清單與逐字稿</text>
+
+  <rect class="nbox next" x="720" y="440" width="220" height="56" rx="8"/>
+  <text class="tb" x="830" y="464" text-anchor="middle">headless CLI</text>
+  <text class="ts" x="830" y="484" text-anchor="middle">claude -p ／ codex exec ／ opencode run</text>
+
+  <rect class="nbox noff" x="40" y="516" width="420" height="48" rx="8"/>
+  <text class="t" x="60" y="546">GitHub Actions <tspan class="ts">discord-notify.yml — on: pull_request closed＋merged</tspan></text>
+
+  <rect class="nbox noff" x="480" y="516" width="460" height="48" rx="8"/>
+  <text class="t" x="500" y="546">git <tspan class="ts">push over SSH — agent 自主，force push 除外</tspan></text>
+
+  <!-- 邊界線 -->
+  <path class="ln" d="M280,100 L640,93" marker-end="url(#b)"/>
+  <text class="lbl" x="360" y="60">檔案系統讀寫</text>
+  <path class="ln" d="M440,130 L440,150 L620,150 L640,150" marker-end="url(#b)"/>
+  <text class="lbl" x="452" y="145">檔案系統（人）</text>
+
+  <path class="ln" d="M160,130 L160,170" marker-end="url(#b)"/>
+  <text class="lbl" x="170" y="155">subprocess（python3）</text>
+
+  <path class="ln" d="M140,340 L140,440" marker-end="url(#b)"/>
+  <path class="ln" d="M300,340 L360,440" marker-end="url(#b)"/>
+  <path class="ln" d="M480,340 L560,440" marker-end="url(#b)"/>
+  <path class="ln" d="M540,335 L820,435" marker-end="url(#b)"/>
+  <text class="lbl" x="700" y="392">cwd 固定為 vault root，唯讀模式</text>
+</svg>
+</figure>
+<figcaption>沒有任何服務對外監聽；每條外部線都是本機主動出站。<code>ask_vault.py</code> 是唯一被<strong>別的</strong> repo 觸發的入口，它自己起一個 headless CLI 子行程，並把 cwd 釘在 vault root、檢查哨兵檔 <code>schema/vault-map.md</code>。</figcaption>
+
+<h2><span class="num">3</span>寫入邊界 — 誰能動哪一層</h2>
+<p class="lead">這個 repo 沒有路由檔，取而代之的「功能地圖」就是三個動作與六個 skill 對五個目錄層的權限矩陣。這是整份大綱裡最該記住的一張。</p>
+<figure>
+<svg viewBox="0 0 980 420" role="img" aria-label="寫入權限矩陣">
+  <!-- 欄標 -->
+  <text class="tz" x="255" y="34" text-anchor="middle">schema/</text>
+  <text class="tz" x="395" y="34" text-anchor="middle">raw/</text>
+  <text class="tz" x="535" y="34" text-anchor="middle">wiki/</text>
+  <text class="tz" x="675" y="34" text-anchor="middle">feeds/</text>
+  <text class="tz" x="815" y="34" text-anchor="middle">docs/</text>
+  <text class="tz" x="925" y="34" text-anchor="middle">cards·topics</text>
+
+  <line x1="20" y1="46" x2="960" y2="46" stroke="var(--line)" stroke-width="1.5"/>
+
+  <!-- 列 -->
+  <g>
+    <text class="tb" x="24" y="80">Ingest</text>
+    <text class="ts" x="24" y="98">貼 URL／剪藏進料</text>
+    <rect class="nbox" x="195" y="60" width="120" height="46" rx="5"/><text class="t" x="255" y="88" text-anchor="middle">不動</text>
+    <rect class="nbox nraw" x="335" y="60" width="120" height="46" rx="5"/><text class="t" x="395" y="88" text-anchor="middle">只新增</text>
+    <rect class="nbox nwiki" x="475" y="60" width="120" height="46" rx="5"/><text class="t" x="535" y="88" text-anchor="middle">建·改·刪</text>
+    <rect class="nbox noff" x="615" y="60" width="120" height="46" rx="5"/><text class="ts" x="675" y="88" text-anchor="middle">跳過</text>
+    <rect class="nbox noff" x="755" y="60" width="120" height="46" rx="5"/><text class="ts" x="815" y="88" text-anchor="middle">跳過</text>
+    <rect class="nbox noff" x="880" y="60" width="90" height="46" rx="5"/><text class="ts" x="925" y="88" text-anchor="middle">跳過</text>
+  </g>
+  <g>
+    <text class="tb" x="24" y="146">Query</text>
+    <text class="ts" x="24" y="164">先讀 01.index</text>
+    <rect class="nbox" x="195" y="126" width="120" height="46" rx="5"/><text class="ts" x="255" y="154" text-anchor="middle">讀</text>
+    <rect class="nbox nraw" x="335" y="126" width="120" height="46" rx="5"/><text class="ts" x="395" y="154" text-anchor="middle">讀</text>
+    <rect class="nbox nwiki" x="475" y="126" width="120" height="46" rx="5"/><text class="t" x="535" y="154" text-anchor="middle">讀＋回存好答案</text>
+    <rect class="nbox noff" x="615" y="126" width="120" height="46" rx="5"/><text class="ts" x="675" y="154" text-anchor="middle">跳過</text>
+    <rect class="nbox noff" x="755" y="126" width="120" height="46" rx="5"/><text class="ts" x="815" y="154" text-anchor="middle">跳過</text>
+    <rect class="nbox" x="880" y="126" width="90" height="46" rx="5"/><text class="ts" x="925" y="148" text-anchor="middle">唯讀例外</text><text class="ts" x="925" y="164" text-anchor="middle">topics 查筆記</text>
+  </g>
+  <g>
+    <text class="tb" x="24" y="212">Lint</text>
+    <text class="ts" x="24" y="230">機械層＋語意層</text>
+    <rect class="nbox nschema" x="195" y="192" width="120" height="46" rx="5"/><text class="t" x="255" y="214" text-anchor="middle">掃描＋維護</text><text class="ts" x="255" y="230" text-anchor="middle">BACKLOG.md</text>
+    <rect class="nbox nraw" x="335" y="192" width="120" height="46" rx="5"/><text class="t" x="395" y="214" text-anchor="middle">只掃描</text><text class="ts" x="395" y="230" text-anchor="middle">fetched 缺口</text>
+    <rect class="nbox nwiki" x="475" y="192" width="120" height="46" rx="5"/><text class="t" x="535" y="220" text-anchor="middle">自主修補</text>
+    <rect class="nbox noff" x="615" y="192" width="120" height="46" rx="5"/><text class="ts" x="675" y="220" text-anchor="middle">跳過</text>
+    <rect class="nbox noff" x="755" y="192" width="120" height="46" rx="5"/><text class="ts" x="815" y="220" text-anchor="middle">跳過</text>
+    <rect class="nbox noff" x="880" y="192" width="90" height="46" rx="5"/><text class="ts" x="925" y="220" text-anchor="middle">跳過</text>
+  </g>
+
+  <line x1="20" y1="256" x2="960" y2="256" stroke="var(--rule)" stroke-width="1"/>
+
+  <g>
+    <text class="tb" x="24" y="290">feeds 類 skill</text>
+    <text class="ts" x="24" y="308">youtube-sync·watch</text>
+    <rect class="nbox" x="195" y="270" width="260" height="46" rx="5"/><text class="ts" x="325" y="298" text-anchor="middle">不讀不寫</text>
+    <rect class="nbox" x="475" y="270" width="120" height="46" rx="5"/><text class="ts" x="535" y="298" text-anchor="middle">不寫</text>
+    <rect class="nbox noff" x="615" y="270" width="120" height="46" rx="5" style="stroke-dasharray:none"/><text class="t" x="675" y="298" text-anchor="middle">唯一寫入者</text>
+    <rect class="nbox" x="755" y="270" width="215" height="46" rx="5"/><text class="ts" x="862" y="298" text-anchor="middle">不動</text>
+  </g>
+  <g>
+    <text class="tb" x="24" y="352">vault-page</text>
+    <text class="ts" x="24" y="370">產 HTML 讀本</text>
+    <rect class="nbox" x="195" y="332" width="260" height="46" rx="5"/><text class="ts" x="325" y="360" text-anchor="middle">不動</text>
+    <rect class="nbox nwiki" x="475" y="332" width="120" height="46" rx="5"/><text class="ts" x="535" y="360" text-anchor="middle">讀（來源）</text>
+    <rect class="nbox" x="615" y="332" width="120" height="46" rx="5"/><text class="ts" x="675" y="360" text-anchor="middle">不動</text>
+    <rect class="nbox noff" x="755" y="332" width="120" height="46" rx="5" style="stroke-dasharray:none"/><text class="t" x="815" y="360" text-anchor="middle">寫入</text>
+    <rect class="nbox" x="880" y="332" width="90" height="46" rx="5"/><text class="ts" x="925" y="360" text-anchor="middle">不動</text>
+  </g>
+</svg>
+</figure>
+<figcaption>三個硬約束：<strong>raw/ 只增不改</strong>（落地即凍結）、<strong>cards/topics 對系統完全不存在</strong>（唯一例外是回答問題時可讀 topics）、<strong>feeds/ 只有產出它的 skill 能碰</strong>。這三條是 schema 層規定、由 agent 遵守，沒有機械強制。</figcaption>
+
+<h2><span class="num">4</span>入口一覽</h2>
+<table>
+<thead><tr><th style="width:22%">入口</th><th style="width:20%">觸發</th><th>做什麼</th></tr></thead>
+<tbody>
+<tr><td>Ingest</td><td>使用者貼 URL／放檔</td><td>先 Grep <code>raw/</code> 的 <code>source:</code> 去重 → defuddle 抓取存 <code>raw/fetched/</code> → 寫／更新 wiki 頁 → 更新 <code>01.index</code>（最近更新滾 5 筆）→ 補交叉引用 → 只檢當輪頁的輕量 lint。單次超過 15 頁先問。</td></tr>
+<tr><td>Query</td><td>直接提問</td><td>讀 <code>wiki/01.index.md</code> → 讀相關頁 → 附引用作答。好答案回存成新 wiki 頁。</td></tr>
+<tr><td><code>/vault-lint</code></td><td>手動</td><td>機械層掃死連結／孤立頁／frontmatter／tag 漂移／raw 消化缺口；語意層依日期輪替審近 7 天變動頁（上限 10 頁）的矛盾與事實錯誤。全部自主修補，skill 本身不碰 git。</td></tr>
+<tr><td><code>/vault-watch</code></td><td>手動</td><td><code>gh</code> 抓追蹤中的 issue/PR 現況、與快照比對，精選訊號有變才寫 digest 進 <code>feeds/watch/</code>。</td></tr>
+<tr><td><code>/vault-youtube-sync</code></td><td>手動</td><td>頻道影片清單＋逐字稿 → <code>feeds/youtube/</code>，靠 <code>last_sync_id</code> 增量、<code>draft: true</code> 占位重試。</td></tr>
+<tr><td><code>/vault-page</code></td><td>手動</td><td>把一組 wiki 頁改寫成人類好讀的自包含 HTML，落 <code>docs/architecture/</code>，動筆前先確認涵蓋範圍。</td></tr>
+<tr><td><code>/ask-vault</code></td><td>他 repo 呼叫</td><td>依呼叫端環境變數分派 claude／codex／opencode headless，唯讀 Query 後即退。</td></tr>
+</tbody>
+</table>
+
+<h2><span class="num">5</span>核心概念</h2>
+<table>
+<thead><tr><th style="width:22%">名詞</th><th>在這個 repo 裡的意思</th></tr></thead>
+<tbody>
+<tr><td>三層</td><td>治理分層：<code>raw/</code> 可增不可改、<code>wiki/</code> 全權、schema 依規則維護。<code>feeds/</code>、<code>docs/architecture/</code>、<code>cards/topics</code> 都在三層之外。</td></tr>
+<tr><td>write-once</td><td>約束的是<strong>修改</strong>，不是新增。抓到殘缺內容就不落地，改請使用者用 Web Clipper。</td></tr>
+<tr><td>CWD 契約</td><td>repo-local skill 一律要求 cwd 是 vault root，用 <code>Read schema/vault-map.md</code> 驗證——這個路徑只存在於本 vault，能同時擋「不在 root」與「跑錯 repo」。</td></tr>
+<tr><td>操作記憶</td><td><code>schema/MEMORY.md</code>（40 行上限，跨 session 該延續的操作狀態）＋<code>schema/BACKLOG.md</code>（lint 的待決／已判／已婉拒三區）。checked-in 是為了跨工具可攜。</td></tr>
+<tr><td>無守門</td><td>agent 可自主改頁、刪頁、commit、push。只有兩個確認節奏：單次 ingest 超過 15 頁、以及動 skill。force push 仍需明確要求。</td></tr>
+</tbody>
+</table>
+
+<div class="flags">
+<h3>核對時發現的三處不一致</h3>
+<ul>
+<li><span class="tag na">文件 ≠ 實作</span><code>CLAUDE.md</code> 描述 <code>ask-vault</code> 的 symlink 是兩跳（repo → <code>~/.agents/skills/ask-vault</code> → <code>~/.claude/skills/ask-vault</code>），實況只有一跳：<code>~/.agents/skills/</code> 底下<strong>沒有</strong> ask-vault，<code>~/.claude/skills/ask-vault</code> 直接指向 repo 絕對路徑。功能不受影響，是描述過時。</li>
+<li><span class="tag na">設定懸空</span><code>schema/MEMORY.md:34</code> 仍寫著 <code>vault-lint</code> 走雲端 routine <code>trig_018QPWmi5K8hiV7ghMvKnTU9</code>，該 routine 已不存在。讀到的 session 會以為排程還在跑而不主動 lint。</li>
+<li><span class="tag">索引不全</span><code>schema/vault-map.md</code> 的資料夾索引未列 root <code>index.md</code>（Quartz 首頁，指向 topics/，已 tracked）與 <code>.clipper/</code>、<code>.github/</code>。不影響運作。</li>
+</ul>
+</div>
+
+<p class="scope"><strong>本頁未涵蓋：</strong>wiki 42 頁的內容關係（那是知識層，不是架構）、各 python 腳本的內部流程、Quartz 發佈設定（在本 repo 外）、<code>.obsidian/</code> plugin 組態。<code>cards/</code> 與 <code>topics/</code> 只以「系統跳過」的身分出現，未展開內容。<br>
+本頁是 2026-08-14 的快照，來源檔日後變動不回頭同步。</p>
+
+</div>
+</body>
+</html>
