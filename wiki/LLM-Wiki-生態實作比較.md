@@ -2,7 +2,7 @@
 title: LLM Wiki 生態實作比較
 description: nvk、Hermes、Astro-Han 等 Karpathy LLM Wiki 實作與 Letta MemFS 等相鄰記憶系統的收斂設計、分歧點與實證證據對照
 created: 2026-07-10
-updated: 2026-08-11
+updated: 2026-08-14
 parent: "[[wiki/01.index]]"
 tags:
   - wiki
@@ -75,7 +75,7 @@ tags:
 |---|---|---|
 | 收回 wiki（產物即 wiki 頁，原文路線） | Karpathy 原文、Maury、Hermes、wiki-garden | Maury 直接存 `wiki/domains/<domain>/queries/`；Hermes Query 第 ⑤ 步「File valuable answers back — create a page in `queries/` or `comparisons/`」（只收難以重推導的答案，瑣碎查詢不存）；wiki-garden 的 `nurture` 產物是「reviewable knowledge change」回存 wiki |
 | 獨立 output 層＝wiki **前置沙盒** | arturseo-geo | 「All generated content is written to `output/` by default. Promotion to `wiki/` requires explicit human instruction or the agent meeting the quality rules」；並明訂「**Output ≠ wiki.** Files in `output/` are query artifacts. They are not wiki articles」 |
-| 獨立 output 層＝wiki **後置產出** | nvk、本 vault | nvk：`/wiki:output` 產七類（summary／report／study-guide／slides／timeline／glossary／comparison），`output/projects/<slug>/`＋`WHY.md` 分組，且 `/wiki:audit --artifact` 會**追產出的證據鏈**（生態唯一把產出納健檢的）；本 vault：`artifacts/` 是**手寫快照終點**——不進三動作、來源 wiki 頁變動不回頭同步、按需產出非固定一站 |
+| 獨立 output 層＝wiki **後置產出** | nvk、本 vault | nvk：`/wiki:output` 產七類（summary／report／study-guide／slides／timeline／glossary／comparison），`output/projects/<slug>/`＋`WHY.md` 分組，且 `/wiki:audit --artifact` 會**追產出的證據鏈**（生態唯一把產出納健檢的）；本 vault：`docs/architecture/` 是**手寫快照終點**——不進三動作、來源 wiki 頁變動不回頭同步、按需產出非固定一站 |
 | 自動衍生視圖（可重生，嚴格說不是「層」） | SamurAIGPT | `graph/` 每次重生成（SHA256-cached）、與 wiki 恆同步、刪除可重建——與快照式產出本質不同：快照不可重生、過時是設計內行為；衍生視圖永遠新鮮、但也裝不下手寫論述 |
 
 未提及產出層（文件未載，非證實不存在）：Astro-Han（Query 只說「Grounded answers linking to markdown pages」）、Wuphf（notebook 是 wiki **前置**暫存、非產出）、llm-wiki-kit（v0.1 roadmap 的 out-of-scope 清單亦未列此維度）。

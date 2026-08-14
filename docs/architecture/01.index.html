@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>artifacts 索引</title>
+<title>docs/architecture 索引</title>
 <style>
   *, *::before, *::after { box-sizing: border-box; }
   html { -webkit-text-size-adjust: 100%; }
@@ -84,14 +84,14 @@
 <body>
 <div class="wrap">
 
-<h1>artifacts</h1>
+<h1>docs/architecture</h1>
 <p class="lede">這個 vault 的 <code>wiki/</code> 是給 agent 讀的：高密度、逐條證據標註、一段就是好幾百字。這裡放的是同一批知識改寫成人讀的版本，以及不是 markdown 的產出（架構圖、報告）。每頁都是<strong>某個時點的快照</strong>——來源 wiki 頁之後改了不會回頭同步，要更新就整頁重跑。</p>
 
 <ul class="list">
 
   <li>
     <a class="ttl" href="vault-architecture.html">obsidian-memory 的架構</a>
-    <p class="desc">這個 vault 不是「一堆 markdown」，而是一套用資料夾編碼 agent 權限的系統：同一個 agent 在不同資料夾裡能做的事完全不同。三張圖畫權限邊界、三個動作（Ingest／Query／Lint），以及對外的唯一入口 ask-vault。第一張圖也標出 <code>artifacts/</code> 自己在系統中的位置——<code>wiki/</code> 往下的兩個出口方向相反，一個是你手挑且對外，一個是 agent 產出且不對外。</p>
+    <p class="desc">這個 vault 不是「一堆 markdown」，而是一套用資料夾編碼 agent 權限的系統：同一個 agent 在不同資料夾裡能做的事完全不同。三張圖畫權限邊界、三個動作（Ingest／Query／Lint），以及對外的唯一入口 ask-vault。第一張圖也標出 這一層自己在系統中的位置（圖上仍標舊名 <code>artifacts/</code>，該頁是快照）——<code>wiki/</code> 往下的兩個出口方向相反，一個是你手挑且對外，一個是 agent 產出且不對外。</p>
     <p class="meta">2026-08-10 ｜ 來源：<code>CLAUDE.md</code>、<code>schema/SYSTEM-DESIGN.md</code></p>
   </li>
 
@@ -125,7 +125,7 @@
 
 </ul>
 
-<p class="foot"><b>這一層不參與系統。</b><code>artifacts/</code> 是呈現層，不屬於 vault 的三層架構——不進 Ingest／Query／Lint，也不能當 <code>raw/</code> 或 <code>wiki/</code> 的來源。知識本身仍住在 <code>wiki/</code>，這裡的頁面畫得再好也不取代它。新頁由 <code>/vault-page</code> 產出並在此登錄。</p>
+<p class="foot"><b>這一層不參與系統。</b><code>docs/architecture/</code> 是呈現層，不屬於 vault 的三層架構——不進 Ingest／Query／Lint，也不能當 <code>raw/</code> 或 <code>wiki/</code> 的來源。知識本身仍住在 <code>wiki/</code>，這裡的頁面畫得再好也不取代它。新頁由 <code>/vault-page</code> 產出並在此登錄。</p>
 
 </div>
 </body>
