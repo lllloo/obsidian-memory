@@ -1,8 +1,8 @@
 ---
 title: 取得 ER 圖的快速途徑
-description: 只想要一張 ER 圖而不想碰 diagram 語法時的三條路：GUI 直開、tbls 產 svg、Azimutt 互動切片，與 PlantText 類工具的正確定位
+description: 只想要一張 ER 圖又不想碰 diagram 語法時的三條路：GUI 直開、tbls 產 svg、Azimutt 互動切片，兼談 PlantText 的定位
 created: 2026-08-11
-updated: 2026-08-11
+updated: 2026-08-17
 parent: "[[wiki/01.index]]"
 tags:
   - diagram-as-code

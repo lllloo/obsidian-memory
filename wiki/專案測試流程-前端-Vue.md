@@ -2,7 +2,7 @@
 title: 專案測試流程 前端 Vue
 description: Vue 端單元測試落地：判斷從 script setup 抽到 utils 與 composable、需不需掛載的分界、Vitest 檔案落點
 created: 2026-08-08
-updated: 2026-08-11
+updated: 2026-08-17
 parent: "[[wiki/01.index]]"
 tags:
   - testing
@@ -153,14 +153,14 @@ src/
       CartSummary.spec.js      ◀ 第 2 層：需要 mount()
 ```
 
-**訊號**：測試檔裡出現 `mount()` 或 `shallowMount()`，它就不屬於第一層。這是個好用的 grep 判準——`grep -rl "mount(" src/utils src/composables` 應該永遠是空的。
+**訊號**：測試檔裡出現 `mount()` 或 `shallowMount()`，它就不屬於第一層。這是個好用的 grep 判準——`grep -rli "mount(" src/utils src/composables` 應該永遠是空的。`-i` 不可省，否則 `shallowMount(` 這一半漏掉；加了也不會誤傷 `onMounted(`（它後面接的是 `ed(` 而非 `(`）。
 
 ### 這一層完成的樣子
 
 1. 業務規則已從 `script setup` 抽成不 import Vue 元件 API 的函式
 2. 每個純計算型 composable 至少有一條測試，且沒有用到 `mount()`
 3. `npm run test:unit` 一個指令跑完、全綠，並寫進 `README.md`
-4. `src/utils` 與 `src/composables` 底下的測試 grep 不到 `mount(`
+4. `src/utils` 與 `src/composables` 底下的測試以 `grep -i` 找不到 `mount(`
 
 ### 什麼時候該停
 

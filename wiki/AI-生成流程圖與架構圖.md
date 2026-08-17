@@ -2,7 +2,7 @@
 title: AI 生成流程圖與架構圖
 description: 以 Mermaid 為核心，整理程式架構逆向、流程文字轉圖與筆記視覺化的工具選型、工作流及準確度風險
 created: 2026-07-16
-updated: 2026-08-11
+updated: 2026-08-17
 parent: "[[wiki/01.index]]"
 tags:
   - diagram-as-code
@@ -16,7 +16,9 @@ tags:
 
 > 本頁為 2026-07-16 deep-research 回存（26 來源 → 123 主張 → 對抗查證 25 條，23 確認、2 否決）。每條主張就地標**證據強度**；被否決主張列於「六、勿引用」節。
 
-全景：三用途各有生圖路徑，幾乎全部收斂到 Mermaid，經 GitHub／Obsidian 原生渲染後仍需人眼把關（本圖本身即以 Mermaid 文字碼直接落地、無匯出圖片，自我印證此收斂）。
+全景：三用途各有生圖路徑，幾乎全部收斂到 Mermaid，經 GitHub／Obsidian 原生渲染後仍需人眼把關。
+
+> ⚠️ **下方全景圖為 2026-07-16 撰寫時的做法產物，已被取代（2026-08-06）**：使用者當日表態全面停用 Mermaid（含語法與 fenced block，見下方「四、接進本 vault 的工作流」），本 vault 此後不再新增任何 mermaid 區塊，現行呈現載體為本地 HTML。原圖原樣保留供回看，其「以 Mermaid 文字碼直接落地、無需匯出圖片」的自我印證只對撤銷前的做法成立。本節談的**生態收斂事實**（工具幾乎全吐 Mermaid、GitHub／Obsidian 原生渲染）不受影響。
 
 ```mermaid
 graph TD
