@@ -2,7 +2,7 @@
 title: Uncle Bob 的不讀碼約束閘門
 description: 逐項解剖「不讀 agent 產碼、改用測試與度量包圍它」這套主張——每道閘門實際擋住什麼、他自己寫的工具怎麼實作、以及這套方案撐不住的三個地方
 created: 2026-08-09
-updated: 2026-08-14
+updated: 2026-08-19
 parent: "[[wiki/01.index]]"
 tags:
   - coding-agent
@@ -331,7 +331,7 @@ blocked="$(printf '%s\n' "$changed" \
 | **鎖住規格檔的 CI guard** | ✅ **與語言完全無關、當天可做**：一個 workflow 跑 `git diff --name-only` 比對受保護路徑即可，見第四節第 1 點的腳本。這是本頁性價比最高的一項 |
 | **對抗式 reviewer agent** | ✅ 概念可直接搬：獨立 worktree、只能寫 `review/`、審查判準寫成固定清單、產出序號遞增的 recommendations 檔 |
 
-**建議的採用順序**（沿用 [[用測試約束-AI-產碼]] 第六節的「先量基線」原則）：**鎖住規格檔的 CI guard 先做**（成本一小時、與語言無關、擋掉最陰險的那類繞過）→ CRAP 一行公式算一次找出最該補測試的函式 → 已排定的 mutation 基線 → 若那時仍覺得測試在說謊，再考慮手寫 introverted test 偵測。Gherkin 那一整套除非專案規模到了他說的「larger projects」，否則按他自己的話就是 overloading。
+**建議的採用順序**（依成本效益重新排序，非沿用 [[用測試約束-AI-產碼]] 第六節「先量 mutation 基線」的順序——該頁把防繞過層排在 mutation 之後，這裡故意提前，理由見下）：**鎖住規格檔的 CI guard 先做**（成本一小時、與語言無關、擋掉最陰險的那類繞過，且不像 mutation 需要先有一批測試才量得出基線）→ CRAP 一行公式算一次找出最該補測試的函式 → 已排定的 mutation 基線 → 若那時仍覺得測試在說謊，再考慮手寫 introverted test 偵測。Gherkin 那一整套除非專案規模到了他說的「larger projects」，否則按他自己的話就是 overloading。
 
 ## 證據強度總表
 

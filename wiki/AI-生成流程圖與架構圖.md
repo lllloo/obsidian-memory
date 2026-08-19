@@ -2,7 +2,7 @@
 title: AI 生成流程圖與架構圖
 description: 以 Mermaid 為核心，整理程式架構逆向、流程文字轉圖與筆記視覺化的工具選型、工作流及準確度風險
 created: 2026-07-16
-updated: 2026-08-17
+updated: 2026-08-19
 parent: "[[wiki/01.index]]"
 tags:
   - diagram-as-code
@@ -95,13 +95,13 @@ GitHub 自 **2022-02** 起原生渲染 Mermaid（涵蓋 README/issue/PR/comment/
 
 貼合本 vault（Obsidian ＋ Claude Code）的三條固化管道，對應開頭三用途：
 
-1. **理解程式專案**：Claude Code 內用 `oh-my-mermaid` 或 `walkthrough` skill 掃 codebase → 生多視角 Mermaid → 貼進該專案 wiki/README；快速釐清依賴則用 `Madge`/`dependency-cruiser`（可掛 CI 守門）。
-2. **理解業務流程**：把 SOP/決策邏輯文字丟 AI，要它產 Mermaid `flowchart`/`sequenceDiagram`/`stateDiagram` → 貼進 Obsidian 原生渲染。
-3. **知識筆記視覺化**：vault 內用 `obsidian-mermaid-flow` 的 AI assist 從文字 prompt 生概念關係圖，或手動微調。
+1. **理解程式專案**：Claude Code 內用 `oh-my-mermaid` 或 `walkthrough` skill 掃 codebase → 生多視角 Mermaid → 貼進**該專案**（被掃描的外部專案，非本 vault）wiki/README；快速釐清依賴則用 `Madge`/`dependency-cruiser`（可掛 CI 守門）。
+2. ~~**理解業務流程**：把 SOP/決策邏輯文字丟 AI，要它產 Mermaid `flowchart`/`sequenceDiagram`/`stateDiagram` → 貼進 Obsidian 原生渲染。~~ **已於 2026-08-06 撤銷**：「貼進 Obsidian」等於在本 vault 新增 mermaid 區塊，與下方禁令直接衝突。現行做法改為文字足夠表達時用箭頭／縮排清單呈現，或寫成本地 HTML。
+3. ~~**知識筆記視覺化**：vault 內用 `obsidian-mermaid-flow` 的 AI assist 從文字 prompt 生概念關係圖，或手動微調。~~ **已於 2026-08-06 撤銷**，理由同上——`obsidian-mermaid-flow` 產出即 Mermaid 語法，vault 內已不再新增。
 
 **呈現與討論：mermaid.live 連結（此做法已於 2026-08-06 撤銷）**
 
-⚠️ **使用者於 2026-08-06 表態往後不再使用 Mermaid**——含 mermaid 語法、` ```mermaid ` fenced block 與 mermaid.live 連結，已寫入全域規則。下段描述的固化做法連同 5 步 SOP 的 Present→Iterate 兩步一併退場；現行做法改為寫成可獨立開啟的本地 HTML，或在文字足夠表達時直接用箭頭／縮排清單呈現。原文保留於下，供理解該做法當初為何成立。
+⚠️ **使用者於 2026-08-06 表態往後不再使用 Mermaid**——含 mermaid 語法、` ```mermaid ` fenced block 與 mermaid.live 連結，已寫入全域規則。上方管道 2、3 與下段描述的固化做法連同 5 步 SOP 的 Present→Iterate 兩步一併退場；現行做法改為寫成可獨立開啟的本地 HTML，或在文字足夠表達時直接用箭頭／縮排清單呈現。原文保留於下，供理解該做法當初為何成立。
 
 
 

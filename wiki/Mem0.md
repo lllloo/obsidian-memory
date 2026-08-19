@@ -2,7 +2,7 @@
 title: Mem0
 description: AI agent 記憶層工具的整合路徑（plugin／MCP／CLI）、hook 實測消耗與失效模式證據，含本 vault 採 MCP-only 的拍板理由
 created: 2026-07-20
-updated: 2026-08-14
+updated: 2026-08-19
 source: https://github.com/mem0ai/mem0
 parent: "[[wiki/01.index]]"
 tags:
@@ -48,6 +48,7 @@ CLI（`@mem0/cli`）**不是替代品**：原始碼 `cli/node/src/plugin-sync.ts
 | `PostToolUse`/`Bash` | 輸出含錯誤時 | 2 search |
 | `SessionStart` | 啟動／resume／compact 後 | 1 count＋背景 import＋誘發 agent 2 次 search |
 | `PreCompact` | 壓縮前 | 1 add |
+| `Setup` | 見下段 Codex 對照——Claude Code 側存在但時機／消耗細節本輪未查證 | 未查證 |
 
 **「task completion」＝ `Stop`，即每輪回應**，不是粗粒度的任務完成。綁死額度的是 **retrieval 而非 add**，因為 agent 讀檔頻率遠高於使用者發話——查證當時免費層為 retrieval 1,000／月、add 10,000/月（2026-07-20 快照，廠商額度隨方案調整，實際數字回官方定價頁查；此處要記的是**兩者數量級差一個級距**這個結構，不是具體數字）。可關的旋鈕只有 `MEM0_AUTO_SAVE=false`、`MEM0_PREFETCH=false`；**Read 與 Bash 兩條無開關**，只能改 `hooks.json`。
 
