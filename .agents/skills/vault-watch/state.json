@@ -1,16 +1,16 @@
 {
   "anthropics/claude-code#6235": {
     "type": "issue",
-    "state": "open",
+    "state": "closed",
     "labels": [
       "area:core",
       "enhancement",
       "memory"
     ],
     "title": "Feature Request: Support AGENTS.md.",
-    "last_official_id": null,
-    "last_official_at": null,
-    "checked_ts": "2026-07-16T01:30:37Z"
+    "last_official_id": 5311479502,
+    "last_official_at": "2026-08-17T03:37:36Z",
+    "checked_ts": "2026-08-21T04:29:40Z"
   },
   "anthropics/claude-code#31005": {
     "type": "issue",
@@ -66,9 +66,9 @@
       "platform:wsl"
     ],
     "title": "[BUG] Image paste (Ctrl+V) does not work in native WSL2 terminal on Windows 11",
-    "last_official_id": null,
-    "last_official_at": null,
-    "checked_ts": "2026-08-03T04:09:25Z"
+    "last_official_id": 5362760252,
+    "last_official_at": "2026-08-20T22:24:41Z",
+    "checked_ts": "2026-08-21T04:29:40Z"
   },
   "vercel-labs/skills#743": {
     "type": "pr",
