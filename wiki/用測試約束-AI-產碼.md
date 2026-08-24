@@ -2,7 +2,7 @@
 title: 用測試約束 AI 產碼
 description: AI 寫的測試為何驗證不到東西、判準的權威來源為何才是分類軸，以及 mutation、property-based 等手段的定位差異與防繞過分層
 created: 2026-08-06
-updated: 2026-08-19
+updated: 2026-08-24
 parent: "[[wiki/01.index]]"
 tags:
   - coding-agent
@@ -200,7 +200,6 @@ PBT 不寫「輸入 A 應得 B」，而寫「**對所有合法輸入，這個不
 | metamorphic testing 適合驗 AI 產碼 | **medium**：93 篇 survey 的學術厚度，但無 AI-coding 場景的直接效果量測，且未進 Radar |
 | differential testing 可驗 AI 重構的行為保持 | **low-medium**：機制成立、有零散提及，無系統性研究 |
 | contract／golden／fuzzing 用於約束 AI 產碼 | **low**：僅從業者與廠商層文章，無研究或 Radar 級背書 |
-| mutation score 門檻建議（關鍵路徑 70／一般 50／實驗 30） | **low**：二手部落格慣例，非實證 |
 | MSI 作為品質權威指標 | **不成立**：待測碼本身可能有 bug 時，mutation 分析方法論上不適用（arXiv 2607.22880） |
 
 **勿引用**：
