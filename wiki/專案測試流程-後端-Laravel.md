@@ -2,7 +2,7 @@
 title: 專案測試流程 後端 Laravel
 description: Laravel 端單元測試落地：判斷從 Controller 抽到 Service、Unit 與 Feature 的真正分界、繼承錯 TestCase 的陷阱
 created: 2026-08-08
-updated: 2026-08-11
+updated: 2026-08-28
 parent: "[[wiki/01.index]]"
 tags:
   - testing
@@ -150,4 +150,5 @@ tests/
 
 - [[專案測試流程]] — 總頁：四層射程、一個測試該歸哪一層的判準，以及兩端共通的斷言紀律與停止條件。本頁只補 Laravel 專屬的部分。
 - [[專案測試流程-前端-Vue]] — 對照組。兩端卡的是同一個坑（判斷長在框架內部），但訊號不同：這裡是 `--testsuite=Unit` 跑起來很慢，那邊是測試檔出現 `mount()`。
+- [[E2E-測試的資料庫隔離]] — 本頁第 2 層靠 `RefreshDatabase` 的交易回滾做隔離，那個機制到第 4 層就失效（請求由另一個進程處理，包不進測試端的交易），因此 E2E 得改用獨立 database 加固定 fixture。
 - [[用測試約束-AI-產碼]] — 上面「繼承錯 TestCase」屬於該頁講的一類病徵：測試看起來是綠的，但綠的理由不對。同節並記錄 AI 產測試最高頻的弱斷言問題，對應本頁 `assertSame` 與 `assertEquals` 的取捨。
