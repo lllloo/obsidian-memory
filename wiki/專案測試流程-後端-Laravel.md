@@ -1,6 +1,6 @@
 ---
 title: 專案測試流程 後端 Laravel
-description: Laravel 端單元測試落地：判斷從 Controller 抽到 Service、Unit 與 Feature 的真正分界、繼承錯 TestCase 的陷阱
+description: Laravel 端測試落地：判斷從 Controller 抽到 Service、Unit／Feature 兩個 testsuite 的分界與陷阱、整合測試該覆蓋到哪
 created: 2026-08-08
 updated: 2026-08-28
 parent: "[[wiki/01.index]]"
@@ -146,9 +146,70 @@ tests/
 
 停止條件見 [[專案測試流程]] 的「不追覆蓋率數字」。Laravel 端有一個特有的過度工程紅線：**不要為了覆蓋率去測 Model 的 `$fillable`、關聯宣告或 accessor 的直接回傳**。那些是設定不是邏輯，測了只會在改欄位時多一批要跟著改的檔案。
 
+## 第二層：整合測試
+
+**尚未實作，以下為做法設計**（2026-08-28 談定，未在本專案驗證）。
+
+對外一律叫 **integration test**。Laravel 的 `Feature` 是框架專有命名，跟別的生態溝通時說 Feature 多半會被理解成 BDD 的驗收測試。
+
+### 射程：判斷被接進框架之後還對不對
+
+同一條「滿 1000 打九折」，第一層問「算得對嗎」，第二層問「打 API 進來、走完 middleware 與驗證、經過 Model，回出去的還是那個數字嗎」。
+
+```php
+// tests/Feature/OrderApiTest.php
+class OrderApiTest extends TestCase   // ← Tests\TestCase，不是 PHPUnit 的
+{
+    use RefreshDatabase;
+
+    public function test_滿門檻的訂單回九折後金額(): void
+    {
+        $user = User::factory()->create();
+
+        $this->actingAs($user)
+            ->postJson('/api/orders', ['items' => [['price' => 500, 'qty' => 2]]])
+            ->assertCreated()
+            ->assertJsonPath('data.total', 900);
+    }
+}
+```
+
+這層才碰得到的四種東西，第一層全部射不到：
+
+| | 為什麼第一層射不到 |
+|---|---|
+| route 與 middleware | 需要真的發請求 |
+| `FormRequest` 驗證規則 | 需要框架容器解析 |
+| 權限與登入態 | `actingAs` 是框架能力 |
+| Eloquent 持久化與關聯 | 需要 DB |
+
+`RefreshDatabase` 把每條測試包在交易裡跑完退回——**這招到第三層就失效**，因為請求由另一個進程處理，測試端的交易包不住它（見 [[E2E-測試的資料庫隔離]]）。
+
+### 紅線：不要重測第一層測過的規則
+
+最常見的浪費：Service 已有 20 條測試釘死折扣規則，Feature 測試再把 20 種金額組合打一遍。**第二層只需要一條確認「規則有被正確接上」**，剩下的組合留在毫秒級的第一層跑。
+
+判準：如果一條 Feature 測試改的是輸入的**數值**而不是**路徑或狀態**，它多半該退回第一層。
+
+### 這一層完成的樣子
+
+1. **每個 endpoint 至少兩條**：成功路徑（200/201，資料結構與關鍵欄位對）+ 驗證失敗（422，錯誤結構對）
+2. 有權限控制的 endpoint 再加一條 403
+3. `php artisan test --testsuite=Feature` 一個指令跑完、全綠
+4. 測試用 database 獨立於開發用的
+
+30 個 endpoint 大約 60–90 條測試、分鐘級跑完，是合理規模。執行時間從第一層的秒級掉到分鐘級是**正常的，不是訊號**。
+
+### 這一層的職責邊界
+
+**後端 API 本身對不對，完全由這層負責，而且要全覆蓋。** E2E 不承擔這件事——它只驗少數關鍵路徑的串接，用它來「多驗幾個 endpoint」是把便宜的事做貴了。
+
+這層做紮實之後，後端唯一剩下的缺口是「前端以為的形狀跟實際回的一不一致」，那不是測試層的問題，處置見 [[專案測試流程]] 的契約測試一節。
+
 ## 關聯
 
-- [[專案測試流程]] — 總頁：四層射程、一個測試該歸哪一層的判準，以及兩端共通的斷言紀律與停止條件。本頁只補 Laravel 專屬的部分。
+- [[專案測試流程]] — 總頁：三層射程（2026-08-28 由四層改制，契約層不採）、一個測試該歸哪一層的判準，以及兩端共通的斷言紀律與停止條件。本頁只補 Laravel 專屬的部分。
 - [[專案測試流程-前端-Vue]] — 對照組。兩端卡的是同一個坑（判斷長在框架內部），但訊號不同：這裡是 `--testsuite=Unit` 跑起來很慢，那邊是測試檔出現 `mount()`。
-- [[E2E-測試的資料庫隔離]] — 本頁第 2 層靠 `RefreshDatabase` 的交易回滾做隔離，那個機制到第 4 層就失效（請求由另一個進程處理，包不進測試端的交易），因此 E2E 得改用獨立 database 加固定 fixture。
+- [[E2E-測試的資料庫隔離]] — 本頁第 2 層靠 `RefreshDatabase` 的交易回滾做隔離，那個機制到第 3 層就失效（請求由另一個進程處理，包不進測試端的交易），因此 E2E 得改用獨立 database 加固定 fixture。
+- [[測試手段的優先序與成本]] — 本頁第一層完成後的下一件事在該頁：對 `app/Services` 跑一次 mutation 基線（Pest `--mutate` 或 Infection），以及為何後端值得深挖 mutation 而前端不值得。
 - [[用測試約束-AI-產碼]] — 上面「繼承錯 TestCase」屬於該頁講的一類病徵：測試看起來是綠的，但綠的理由不對。同節並記錄 AI 產測試最高頻的弱斷言問題，對應本頁 `assertSame` 與 `assertEquals` 的取捨。
