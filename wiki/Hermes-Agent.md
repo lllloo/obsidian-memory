@@ -2,7 +2,7 @@
 title: Hermes Agent
 description: Nous Research 開源的自我進化 AI agent：學習迴路自動生成並改良 skill，跨 session 累積記憶與使用者模型
 created: 2026-07-08
-updated: 2026-07-17
+updated: 2026-09-02
 parent: "[[wiki/01.index]]"
 tags:
   - ai-agent
@@ -83,6 +83,7 @@ Hermes 24/7 長駐（有別於跑完即停的 Claude Code），背景任務、se
 - 原始資料：[[Hermes-Agent-NousResearch]]、[[Hermes-Agent-Kanban]]（任務佇列技術細節）；token 成本拆解與設定細節目前尚未落地 raw／wiki，暫以官方文件為準
 - 同源哲學：[[LLM-Wiki-知識管理模式]]（知識複利 vs. Hermes 的技能複利）
 - `llm-wiki` skill 治理細節與其他實作對照：[[LLM-Wiki-生態實作比較]]——sha256 漂移偵測、封閉 tag taxonomy、矛盾交使用者複核等機制在生態中的定位。
+- 直接競品對照：[[OpenClaw-與-Hermes-Agent-比較]]——與 OpenClaw 2.0 的逐軸比較。關鍵分歧是 skill 自我改良的把關形狀：Hermes 預設免人工核准即寫入，OpenClaw 的 Skill Workshop 走提案—審查—套用；兩者互有遷移路徑（`hermes claw migrate` 與 OpenClaw 的 Hermes 記憶匯入）。
 - 記憶架構對照：[[Claude-Code-記憶系統六層比較]]——Hermes 屬「agent 自策展記憶 + skill」路線，且與其中 Level 3 的 OpenClaw 血緣相關（`hermes claw migrate` 自 OpenClaw 匯入）。
 - 路線定位：[[Agent-記憶兩大路線-知識庫與-memory-bank]]——Hermes 的記憶子系統橫跨該頁兩條路線：`llm-wiki` skill 是路線 A（知識資產複利）的產品化代表，有界核心記憶則偏路線 B 的工作記憶性質。
 - 人類 PKM 對照：[[第二大腦方法論比較]]——Hermes 的「有界核心記憶 vs. 外接 llm-wiki／provider」雙軸結構，與 BASB（資源/專案管理）vs. Zettelkasten（深度連結）的互補分工邏輯同構（中等信心，2026-07-09 對抗式驗證）。
