@@ -77,5 +77,5 @@ OpenClaw 的安全預設一直是它最被詬病之處（The Register 對 2.0 �
 - 原始資料：[[OpenClaw-2.0-Release-Notes]]（一手）；Hermes 側見 [[Hermes-Agent-NousResearch]]、[[Hermes-Agent-Kanban]]
 - 實體頁：[[Hermes-Agent]]——本頁的 Hermes 側全部取自該頁，機制細節不在此重述
 - 記憶架構光譜：[[Claude-Code-記憶系統六層比較]]——OpenClaw 的記憶模式即該頁 Level 3 的來源；[[Agent-記憶兩大路線-知識庫與-memory-bank]] 提供「知識資產複利 vs. 工作記憶」的分軸，OpenClaw 的 built-in Memory 偏後者、Memory Wiki 偏前者
-- 抽取式記憶的失效證詞：[[Mem0]] 頁記有一則 OpenClaw 圈內人棄用 Mem0、回到 markdown 與 prose 摘要的經驗——與本頁 OpenClaw 記憶走 markdown-first 的取向一致（該頁把該證人記為「OpenClaw 作者」，但 OpenClaw 的作者是 Peter Steinberger，身分歸屬待查，引用前回查 HN 原串）
+- 抽取式記憶的失效證詞：[[Mem0]] 頁記有一名 OpenClaw 使用者棄用 Mem0、回到 QMD 與 prose 摘要的經驗——與本頁 OpenClaw 記憶走 markdown-first 的取向一致（該頁原記為「OpenClaw 作者」，2026-09-02 回查 HN 原留言後更正為使用者）
 - harness 框架脈絡：[[Agent-Harness-Engineering-框架綜述]]
