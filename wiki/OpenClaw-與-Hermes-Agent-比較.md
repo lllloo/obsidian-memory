@@ -74,6 +74,7 @@ OpenClaw 的安全預設一直是它最被詬病之處（The Register 對 2.0 �
 
 ## 關聯
 
+- 實跑證詞：[[OpenClaw-與-Hermes-的實地使用心得]]——本頁講官方文件宣稱的能力，該頁講使用者實際跑起來如何（HN 第一手自陳，強度較低故分頁）。最值得對讀的一點：本頁記 OpenClaw 靠 16,977 個 PR 的功能堆積、Hermes 靠 skill 自動累積，該頁顯示這兩條路各自都被使用者抱怨拖慢到維護成本吃掉價值。
 - 原始資料：[[OpenClaw-2.0-Release-Notes]]（一手）；Hermes 側見 [[Hermes-Agent-NousResearch]]、[[Hermes-Agent-Kanban]]
 - 實體頁：[[Hermes-Agent]]——本頁的 Hermes 側全部取自該頁，機制細節不在此重述
 - 記憶架構光譜：[[Claude-Code-記憶系統六層比較]]——OpenClaw 的記憶模式即該頁 Level 3 的來源；[[Agent-記憶兩大路線-知識庫與-memory-bank]] 提供「知識資產複利 vs. 工作記憶」的分軸，OpenClaw 的 built-in Memory 偏後者、Memory Wiki 偏前者
