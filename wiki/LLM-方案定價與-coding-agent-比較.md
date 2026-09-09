@@ -68,7 +68,21 @@ tags:
 |---|---|---|
 | ChatGPT Plus／Pro（Codex） | **允許** | 官方推「Sign in with ChatGPT」供第三方工具登入，另有「Codex for Open Source」計畫點名支援 OpenCode、Cline、pi、OpenClaw；額度受 Codex 本身用量上限約束。**強度**：部落格與計畫聲明，非契約條款，報導本身也如此提醒（[Manifest](https://manifest.build/blog/chatgpt-plus-tokens-third-party-harnesses/)、[explainx](https://explainx.ai/blog/openclaw-chatgpt-plus-pro-openai-anthropic-subscription-2026)、[OpenClaw OAuth 文件](https://docs.openclaw.ai/concepts/oauth)） |
 | Claude Pro／Max／Team | **禁止** | 2026-01-09 伺服器端先擋掉 OpenCode／Cline 的 OAuth；02-19 條款新增「Free/Pro/Max 的 OAuth token 不得用於第三方工具或 Agent SDK」；04-04 起訂閱額度正式不涵蓋第三方工具。要用得開 extra usage 按量計費或改 API key。**強度**：多家科技媒體轉述，條款原文本頁未直接核對（[DEV](https://dev.to/mcrolly/anthropic-kills-claude-subscription-access-for-third-party-tools-like-openclaw-what-it-means-for-3ipc)、[MLQ](https://mlq.ai/news/anthropic-ends-paid-access-for-claude-in-third-party-tools-like-openclaw/)、[Shareuhack](https://www.shareuhack.com/en/posts/opencode-anthropic-legal-controversy-2026)） |
-| Google AI Pro／Ultra（Gemini CLI OAuth） | **禁止** | 2026-02 列為違反條款、03-25 起偵測強制執行，有付費 Ultra 用戶因此被停權；Gemini CLI 對 AI Pro／Ultra 的 Google 登入路徑已移除。**強度**：官方 gemini-cli 討論串為一手，其餘為媒體轉述（[gemini-cli #22970](https://github.com/google-gemini/gemini-cli/discussions/22970)、[Trending Topics](https://www.trendingtopics.eu/google-blocks-paying-ai-subscribers-using-third-party-openclaw-tool/)、[Syntackle](https://syntackle.com/blog/google-gemini-ai-subscription-with-opencode/)） |
+| Google AI Pro／Ultra（Gemini CLI OAuth；入口已由 agy 接手，見下節） | **禁止** | 2026-02 列為違反條款、03-25 起偵測強制執行，有付費 Ultra 用戶因此被停權；Gemini CLI 對 AI Pro／Ultra 的 Google 登入路徑已移除。**強度**：官方 gemini-cli 討論串為一手，其餘為媒體轉述（[gemini-cli #22970](https://github.com/google-gemini/gemini-cli/discussions/22970)、[Trending Topics](https://www.trendingtopics.eu/google-blocks-paying-ai-subscribers-using-third-party-openclaw-tool/)、[Syntackle](https://syntackle.com/blog/google-gemini-ai-subscription-with-opencode/)） |
+
+## 2026-09-09 補記：Gemini CLI 退場，入口改為 Antigravity CLI（agy）
+
+上表 Google 那列的「Gemini CLI」已非現行入口。Google 於 I/O 2026 宣布退休開源的 Gemini CLI，**2026-06-18 起對個人／免費層停止服務**，改由 **Antigravity CLI**（指令名 `agy`）接手——閉源 Go 單一 binary，主打多 agent 工作流，企業授權另有緩衝期。禁止第三方 harness 借用訂閱額度的政策未因換入口而改變：Google 池的唯一入口仍是官方 CLI 本身。（強度：科技媒體轉述為主，Google 官方公告原文未逐字核對——[The Register](https://www.theregister.com/ai-ml/2026/05/20/bye-bye-gemini-cli-google-nudges-devs-toward-antigravity/5243605)、[OSTechNix](https://ostechnix.com/google-is-replacing-gemini-cli-with-google-antigravity/)。）
+
+agy 本身內建 subagent、`/schedule` 排程、`/boost` 三層編排，並可在同一份額度下切換 Gemini、Claude Sonnet／Opus 與 GPT-OSS 等模型（2026-09-09 於本機 v1.1.25 以 `agy models` 實測列出）。headless 模式 `agy -p` 在 pipe 下輸出正常（同日實測）——社群 issue #76 回報的 non-TTY 空輸出在此版本未重現，故專為繞過該 bug 的橋接工具未必需要。
+
+## 2026-09-09 補記：agy 生態的主流用法是「被派工」，不是「當調度中心」
+
+盤點 GitHub 上 agy 相關專案（按 star 排序）後的一致訊號：**熱度最高的都是「從別的 agent 委派給 agy」**，把它當便宜快手用——[antigravity-for-claude-code](https://github.com/yuting0624/antigravity-for-claude-code)（319★）、[agy-staff](https://github.com/keli-wen/agy-staff)（123★，是這批裡少數明確支援 Codex 而非只支援 Claude Code 的）、[claude-antigravity-agents](https://github.com/markfulton/claude-antigravity-agents)（120★）。反之，把 agy 或其他 harness 當統一調度中心的專案，星數天花板約在 300 上下，且不少已數月未動。
+
+**判讀**：真正的高星集中在**跨 harness 的技能庫**而非調度層——[wshobson/agents](https://github.com/wshobson/agents)（39.5k★，同一份 Markdown 供 Claude Code／Codex／Cursor／OpenCode／Copilot／Antigravity 消費）、[conductor](https://github.com/gemini-cli-extensions/conductor)（3.7k★，SDD）、[google/mantis](https://github.com/google/mantis)（1.1k★，安全 review）。這與 [[pi-workflow-編排-harness-與本-vault-分野]] 的定性一致：**編排職能持續被 harness 自身吸收，獨立編排層長不大**；決定「做什麼」的技能層才是生態實際累積的地方。（強度：GitHub star 與 push 日期為 2026-09-09 一手查得，但關鍵字檢索不可能窮盡；「主流用法」是分布觀察，非抽樣調查。）
+
+**選型含意**：若目標只是消耗閒置的 Google 池額度，直接開官方 `agy` 即可，委派層、MCP bridge 與外部排程器多為不必要的中介——agy 自帶排程，worker 端本身就有「規律」能力。
 
 **對推薦的影響**：OpenCode Go 是 OpenCode 自家託管方案、本來就不借別家訂閱，「跑量選 OpenCode Go」不受影響。但「Claude Pro 綁第三方 harness」這條路已關，Claude 訂閱只能在 Claude Code／官方 app 內用；想在 OpenCode 裡跑 Claude 得走 API 按量。GitHub Copilot、xAI 等其他家未查。
 
