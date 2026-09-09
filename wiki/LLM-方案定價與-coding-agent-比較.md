@@ -1,8 +1,8 @@
 ---
 title: LLM 方案定價與 coding agent 比較
-description: 主流 LLM 訂閱月費與 coding agent 三方案定價對照，依用途給經濟實惠推薦，含台幣概算與 2026-09 覆核
+description: 主流 LLM 訂閱月費與 coding agent 三方案定價對照，依用途給經濟實惠推薦，含台幣概算、2026-09 覆核與第三方工具可用性
 created: 2026-07-08
-updated: 2026-09-02
+updated: 2026-09-09
 parent: "[[wiki/01.index]]"
 tags:
   - llm-pricing
@@ -59,6 +59,18 @@ tags:
 - **ChatGPT 訂閱價格未動**，但 Go 層在 8 月加入無限文字對話、Business 新增 Premium 層（約 $100/席年繳、$125 月繳）——皆為聚合站摘要，中信心，未見官方頁一手佐證。
 
 **對推薦的影響**：主推薦不變（寫程式仍首選 Claude Pro，跑量仍是 OpenCode Go CP 值最高）。唯一該調的是「Go 只能用開源模型、所以只適合跑量」這個前提已鬆動，併用玩法的必要性略降。
+
+## 2026-09-09 補記：訂閱額度能否給第三方工具用
+
+使用者問「是不是只有 Codex 能把訂閱額度給第三方用」，答案是**三大家裡目前只有 OpenAI 明確允許，Anthropic 與 Google 都已明文禁止**。這條直接影響「併用玩法」：想用 OpenCode／OpenClaw 這類第三方 harness 吃訂閱額度，現在只剩 ChatGPT 一條路。
+
+| 訂閱 | 給第三方 harness（OpenCode／OpenClaw 等）用 | 現況與依據 |
+|---|---|---|
+| ChatGPT Plus／Pro（Codex） | **允許** | 官方推「Sign in with ChatGPT」供第三方工具登入，另有「Codex for Open Source」計畫點名支援 OpenCode、Cline、pi、OpenClaw；額度受 Codex 本身用量上限約束。**強度**：部落格與計畫聲明，非契約條款，報導本身也如此提醒（[Manifest](https://manifest.build/blog/chatgpt-plus-tokens-third-party-harnesses/)、[explainx](https://explainx.ai/blog/openclaw-chatgpt-plus-pro-openai-anthropic-subscription-2026)、[OpenClaw OAuth 文件](https://docs.openclaw.ai/concepts/oauth)） |
+| Claude Pro／Max／Team | **禁止** | 2026-01-09 伺服器端先擋掉 OpenCode／Cline 的 OAuth；02-19 條款新增「Free/Pro/Max 的 OAuth token 不得用於第三方工具或 Agent SDK」；04-04 起訂閱額度正式不涵蓋第三方工具。要用得開 extra usage 按量計費或改 API key。**強度**：多家科技媒體轉述，條款原文本頁未直接核對（[DEV](https://dev.to/mcrolly/anthropic-kills-claude-subscription-access-for-third-party-tools-like-openclaw-what-it-means-for-3ipc)、[MLQ](https://mlq.ai/news/anthropic-ends-paid-access-for-claude-in-third-party-tools-like-openclaw/)、[Shareuhack](https://www.shareuhack.com/en/posts/opencode-anthropic-legal-controversy-2026)） |
+| Google AI Pro／Ultra（Gemini CLI OAuth） | **禁止** | 2026-02 列為違反條款、03-25 起偵測強制執行，有付費 Ultra 用戶因此被停權；Gemini CLI 對 AI Pro／Ultra 的 Google 登入路徑已移除。**強度**：官方 gemini-cli 討論串為一手，其餘為媒體轉述（[gemini-cli #22970](https://github.com/google-gemini/gemini-cli/discussions/22970)、[Trending Topics](https://www.trendingtopics.eu/google-blocks-paying-ai-subscribers-using-third-party-openclaw-tool/)、[Syntackle](https://syntackle.com/blog/google-gemini-ai-subscription-with-opencode/)） |
+
+**對推薦的影響**：OpenCode Go 是 OpenCode 自家託管方案、本來就不借別家訂閱，「跑量選 OpenCode Go」不受影響。但「Claude Pro 綁第三方 harness」這條路已關，Claude 訂閱只能在 Claude Code／官方 app 內用；想在 OpenCode 裡跑 Claude 得走 API 按量。GitHub Copilot、xAI 等其他家未查。
 
 ## 三、依用途的經濟實惠推薦
 
