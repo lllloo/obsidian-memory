@@ -131,4 +131,5 @@ agent 另外沒有 inbox，也收不到 `@all`；對 agent 的 @mention 是執�
 - 審查瓶頸：[[AI-產碼加速下的-review-瓶頸]]——`in_review` 人工合併這個把關點，正是該頁說 AI 產碼加速後會積壓的位置。
 - 同類判斷：[[pi-workflow-編排-harness-與本-vault-分野]]——同樣評估「要不要引入一整套編排機制」，結論方向一致。
 - 成本與額度：[[LLM-方案定價與-coding-agent-比較]]——混用多家模型商的動機（額度平衡）與各家訂閱能否給第三方 harness 用。
+- 替代方案：[[平行跑多個-coding-agent-的工具選型]]——看板以外的本機平行方案（終端 TUI、GUI app、Claude Code 內建）與其 agent／平台支援度。
 - 同步對照：[[Herdr-使用方法]]——herdr 是終端層的常駐 agent 多工，人類即時盯狀態插手；與本頁非同步看板、run 結束即走的模型互為兩端。
