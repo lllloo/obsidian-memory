@@ -2,7 +2,7 @@
 title: Herdr 按鍵設定
 description: 把 agent 面板導覽提升為一等公民的 herdr keys 設定，含官方預設未綁 agent 導覽、改設定必須 reload 兩個踩雷點
 created: 2026-09-02
-updated: 2026-09-02
+updated: 2026-09-15
 parent: "[[wiki/01.index]]"
 tags:
   - ai-agent
@@ -40,3 +40,4 @@ Herdr 是專為 agent 設計的終端多工器（相對於 tmux／zellij），�
 ## 關聯
 
 - [[Agent-Harness-Engineering-框架綜述]]——herdr 屬於 harness **之外**的一層：它不介入 agent 的 loop、tools 或 memory，只解決「同時盯著多個 harness 實例」的操作面問題，因此該頁的 harness 定義範疇不涵蓋它。
+- [[Herdr-使用方法]]——本頁只管按鍵；層級、持久化邊界、狀態偵測與 CLI 委派原語等整體用法在該頁。
