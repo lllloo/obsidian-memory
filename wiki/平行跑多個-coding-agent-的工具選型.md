@@ -2,7 +2,7 @@
 title: 平行跑多個 coding agent 的工具選型
 description: Herdr、Multica 以外本機平行跑 coding agent 的四類方案，標明對 Claude Code、Codex、agy 與 Linux 的支援度、維護狀態，以及值不值得的第一手經驗
 created: 2026-09-15
-updated: 2026-09-15
+updated: 2026-09-16
 parent: "[[wiki/01.index]]"
 tags:
   - ai-agent
@@ -76,7 +76,7 @@ deep-research 這兩面向零條通過驗證，以下由主 agent 回原文核�
 - 保留：會同時開 Claude 與 Codex，但**很少讓它們做真正不同的任務**，大 bug 得先完成測試合併（kevinsync）；靠前後端 hot-reload 看結果時，worktree 的依賴與 port 處理太麻煩，改在 main 上切開範圍（sprobertson）；有人追問「5+ agent 各自在做什麼」未見具體回答（ex-aws-dude）。
 - 共通前提：**先規劃再並行**，把人的介入壓到回答簡單問題（the_robvb）。
 
-**合併衝突的量化訊號**：[AgenticFlict](https://arxiv.org/abs/2604.03551)（arXiv 2604.03551，2026-04，**preprint 未同儕審查**）模擬合併 107K+ 個 AI agent PR，textual merge conflict 率 27.67%，且各 agent 差異明顯。注意這是 GitHub 上 agent PR 與目標分支的衝突，**不是**本機多 agent 互相衝突的量測，只能當「agent 產出整合成本不低」的旁證。
+**合併衝突的量化訊號**：[AgenticFlict](https://arxiv.org/abs/2604.03551)（arXiv 2604.03551，2026-04，~~preprint 未同儕審查~~ **已被取代（2026-09-16）**：arXiv 頁註明已獲 AIware 2026 接受、有 ACM DOI，屬同儕審查）模擬合併 107K+ 個 AI agent PR，textual merge conflict 率 27.67%，且各 agent 差異明顯。注意這是 GitHub 上 agent PR 與目標分支的衝突，**不是**本機多 agent 互相衝突的量測，只能當「agent 產出整合成本不低」的旁證。跨 agent 與同 agent 的衝突率對比、切分與合併做法見 [[平行-agent-產出的合併與-review]]。
 
 綜合判準與 [[Context-優先與多-agent-的適用邊界]] 一致：平行的收益落在**讀重、可切割、規格先定**的任務；寫重、需一致決策、互相依賴的改動，瓶頸在人的 review 與合併，多開不會變快。
 
@@ -99,4 +99,5 @@ deep-research 這兩面向零條通過驗證，以下由主 agent 回原文核�
 - 看板層對照：[[Multica-與-agent-看板的用法與適用邊界]]——該頁附的 Vibe Kanban 已 sunsetting，本頁的 GUI app 類是看板以外的另一條視覺化路線。
 - 判準上游：[[Context-優先與多-agent-的適用邊界]]——「讀重可平行、寫重慎用」的適用域劃分，本頁第一手經驗是它在本機工具層的印證。
 - 瓶頸：[[AI-產碼加速下的-review-瓶頸]]——Simon Willison 懷疑平行的理由正是 review 瓶頸。
+- 下游：[[平行-agent-產出的合併與-review]]——本頁選完工具之後，多份產出怎麼合併、review、挑選的實證與做法。
 - 額度：[[LLM-方案定價與-coding-agent-比較]]——三家混用的動機與 agy 生態「被派工為主」的分布。
