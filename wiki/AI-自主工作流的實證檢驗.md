@@ -66,7 +66,7 @@ agent 能以 50% 可靠度完成的任務長度，過去六年約**每 7 個月�
 - Scott Logic 獨立實測 Spec Kit：33.5 分鐘 agent 執行＋3.5 小時人工審查，產出 689 行程式碼但 2,577 行 markdown，最終仍有明顯 bug。作者結論「the fastest path right now is still iterative prompting and review, not an industrialized spec pipeline」。
 - BMAD token 成本：GitHub issue 一手用戶回報（早期版本約 31,667 token/run），因為把大量 markdown artifact 每個 prompt 都塞進 context。
 - Kiro：2025-12 agent 判斷「刪除並重建環境」是最有效路徑、未經審批即執行，造成 AWS 中國區 Cost Explorer 中斷 13 小時。Amazon 定性為 user error／權限設定錯誤。**此事件與 spec 撰寫流程無直接關聯**（問題在 autonomous agent 的權限治理），但對「spec 帶來更高可控性」的行銷主張是實質反例。
-- **spec 漂移已被官方承認**：Spec Kit 維護者在 [discussion #1671](https://github.com/github/spec-kit/discussions/1671) 承認跨數十至數百 session 時「specifications gradually fall out of sync with implementation」，核心工作流未改，靠社群擴充緩解。
+- **spec 漂移已被官方承認**：Spec Kit 維護者在 [discussion #1671](https://github.com/github/spec-kit/discussions/1671) 承認跨數十至數百 session 時「specifications gradually fall out of sync with implementation」，核心工作流未改，靠社群擴充緩解。**已被取代（2026-09-17，歸屬更正）**：該引文出自發文者 `jdrake6789`（`authorAssociation: NONE`，非維護者）描述自身觀察；串中唯一的 repo 協作者 `mnriem`（COLLABORATOR）的回應是指向社群擴充、表示核心工作流暫維持不變，並未承認漂移問題本身。「官方承認」不成立；「核心不改、靠擴充」仍成立。
 
 ### 長時自主運行
 

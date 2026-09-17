@@ -185,7 +185,7 @@ GitHub star 數，2026-07-30 以 `gh api`／`gh search` 直查核實（**star �
 | 25,839 | `OthmanAdi/planning-with-files` | 2026-07-24 | 計畫落盤＋每 turn 重新注入＋完工 gate |
 | 21,318 | `snarktank/ralph` | — | Ralph loop 的 `prd.json` 狀態機實作 |
 
-**GSD 生態有分裂訊號**：本體 `gsd-build/get-shit-done`（64,798）已兩個月未推送，另有 `gsd-build/gsd-2`（7,752、2026-05-22）與 `open-gsd/gsd-pi`（977、2026-07-28）分頭活動。押上去前先確認哪個是活的。
+**GSD 生態有分裂訊號**：本體 `gsd-build/get-shit-done`（64,798）已兩個月未推送，另有 `gsd-build/gsd-2`（7,752、2026-05-22）與 `open-gsd/gsd-pi`（977、2026-07-28）分頭活動。押上去前先確認哪個是活的。（2026-09-17 回查：本體 `gsd-build/get-shit-done` 已正式封存，archived，最後推送仍為 2026-05-31。）
 
 ### 選擇判準
 

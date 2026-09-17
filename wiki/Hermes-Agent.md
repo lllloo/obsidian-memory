@@ -2,7 +2,7 @@
 title: Hermes Agent
 description: Nous Research 開源的自我進化 AI agent：學習迴路自動生成並改良 skill，跨 session 累積記憶與使用者模型
 created: 2026-07-08
-updated: 2026-09-02
+updated: 2026-09-17
 parent: "[[wiki/01.index]]"
 tags:
   - ai-agent
@@ -61,7 +61,7 @@ Nous Research 開源、MIT 授權的**自我進化 AI agent**，標語 *The agen
 
 ## 部署與 Model
 
-- **Terminal backends**：Local、Docker、SSH、Singularity、**Modal**（serverless、閒置近零成本）、**Daytona**（serverless、閒置休眠）——serverless 後端讓 agent 長駐又省錢。
+- **Terminal backends**：Local、Docker、SSH、Singularity、**Modal**（serverless、閒置近零成本）、**Daytona**（serverless、閒置休眠）——serverless 後端讓 agent 長駐又省錢。（2026-09-17 回查官方 README：已增為七種，新增 Vercel Sandbox。）
 - **Model-agnostic**：Nous Portal（自帶 web search／生圖／TTS／browser）、OpenRouter、OpenAI、任意 custom endpoint，`/model` 切換宣稱 300+ models。
 
 ## 成本控制
@@ -71,7 +71,7 @@ Hermes 24/7 長駐（有別於跑完即停的 Claude Code），背景任務、se
 - **模型路由是帳單最大槓桿**：auxiliary tasks 與 subagents 預設 fallback 到主模型，改指便宜模型；effort level 依任務調，簡單任務關 thinking。
 - **Context 瘦身**：調低壓縮門檻與 target ratio、精簡 memory/agent files、一次性指令用 ephemeral system prompt 不寫進 context files。
 - **削減常駐 context**：每則訊息都附帶全部已啟用的 tools/skills/MCP，不用的直接關；MCP 用 tool search 按需載入單一工具。
-- **Hard limits 防空轉**：max tokens、max turns（來源快照時預設 150，屬版本可變預設值，可下修）、hard stop、cron job 回合上限，避免卡住時燒光額度。
+- **Hard limits 防空轉**：max tokens、max turns（來源快照時預設 150，屬版本可變預設值，可下修；**已被取代（2026-09-17）**：官方 `hermes_cli/config_defaults.py` 現行 `agent.max_turns` 預設為 `None` 即無上限，註解說明回合上限曾造成任務中途無聲截斷，要防空轉須自行設正整數）、hard stop、cron job 回合上限，避免卡住時燒光額度。
 - 用量追蹤：token 使用記錄存 root database，`insights` 指令看近 30 天成本分解。
 
 ## 周邊

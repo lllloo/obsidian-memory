@@ -2,7 +2,7 @@
 title: Uncle Bob 的不讀碼約束閘門
 description: 逐項解剖「不讀 agent 產碼、改用測試與度量包圍它」這套主張——每道閘門實際擋住什麼、他自己寫的工具怎麼實作、以及這套方案撐不住的三個地方
 created: 2026-08-09
-updated: 2026-08-14
+updated: 2026-09-17
 parent: "[[wiki/01.index]]"
 tags:
   - coding-agent
@@ -173,7 +173,7 @@ QA 在 `six-pack` 裡是一條完整的鏈，兩份角色檔講得很明白。`s
 >
 > Do not commit or notify coder **until the user explicitly approves the handoff**. […] When QA notifies you that the job is complete, merge the changes and **ask the user for the next feature**.
 
-所以整條流水線的人工控制點有兩個：**開頭核准規格、結尾決定下一個功能**，中間全自動。這把先前只有二手轉述的說法（他 review Gherkin 與 QA procedures、不 review 單元測試）換成了一手依據——不是他在推特上怎麼講，而是他的系統實際上留了哪些洞給人。
+所以整條流水線的人工控制點有兩個：**開頭核准規格、結尾決定下一個功能**，中間全自動。**已被取代（2026-09-17）**：上引第 6 步已於 2026-08-22 的 commit「Tell specifier to queue git_handoff without asking in the pane」改為「Commit the specification changes and queue a `git_handoff` to `coder`. **Do not ask for approval in the pane; the operator uses Attention.**」——規格交手不再是阻斷式核准，改成 commit 後直接排入交手、由操作者透過 Attention 通知關注。開頭的人工核准點已從系統中移除；人仍可在 Attention 介入，但那是非阻斷的旁觀，不是閘門。下段「Gherkin 他核准」的推論須依此打折。這把先前只有二手轉述的說法（他 review Gherkin 與 QA procedures、不 review 單元測試）換成了一手依據——不是他在推特上怎麼講，而是他的系統實際上留了哪些洞給人。
 
 **「不讀 AI 產的程式碼」這個標題是準確的，但推論成「他不看 agent 的產出」是錯的。** 他把人類注意力從**實作層**整個搬到**規格層**：Gherkin 他核准，QA 程序他核准，成品他親手玩。省下來的是讀函式本體的時間，不是驗證的時間。這與 [[AI-產碼加速下的-review-瓶頸]] 的四條路線是同一件事的兩種說法——他選了「約束前移」而非「改善 review」，而前移到的位置精確地說就是**規格**。
 
@@ -351,7 +351,7 @@ blocked="$(printf '%s\n' "$changed" \
 | gherkin mutator 的變異規則為型別推斷式值擾動、不含領域語意 | **high**：`mutator-spec.md` 直讀，含規則順序與範例 |
 | `--level soft` 可能沿用實作已變更之 scenario 的舊結論 | **medium-high**：三檔定義與 hardender 用法皆直讀，此推論依定義導出、未實測 |
 | empire-2025 屬規格封閉、行為可決定的領域 | **high**：README 與 AGENTS.md 直接可讀 |
-| 人的閘門在規格邊界（核准 Gherkin 與 QA 程序），不在程式碼邊界 | **high**：`specifier.prompt` 明文「Ask the user for approval to hand off to the coder」「Do not commit or notify coder until the user explicitly approves」。**2026-08-09 第二輪從 low-medium 的二手轉述升為一手**——依據不再是他推特上怎麼說，而是他的系統留了哪些控制點給人 |
+| 人的閘門在規格邊界（核准 Gherkin 與 QA 程序），不在程式碼邊界 | **high**：`specifier.prompt` 明文「Ask the user for approval to hand off to the coder」「Do not commit or notify coder until the user explicitly approves」。**2026-08-09 第二輪從 low-medium 的二手轉述升為一手**——依據不再是他推特上怎麼說，而是他的系統留了哪些控制點給人。**已被取代（2026-09-17）**：兩句原文已於 2026-08-22 從 `specifier.prompt` 移除，改為「Do not ask for approval in the pane; the operator uses Attention」；「規格邊界有阻斷式人工核准」不再有一手依據，見第 6 步引文後的標註 |
 | 「他把 TDD 從規則檔搬成角色定義是有意識回應 TDD 指示無效」 | **low**：本頁推論，非他本人陳述；角色檔只支持「coder 明寫 TDD 且要求測試須能因合理錯誤實作而失敗」這個事實 |
 | 這套方案能給出 very high confidence | **不可引用為效果證據**：自評，無缺陷逃逸率、無對照組、無外部量測 |
 
