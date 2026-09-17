@@ -2,7 +2,7 @@
 title: LLM Wiki 生態實作比較
 description: nvk、Hermes、Astro-Han 等 Karpathy LLM Wiki 實作與 Letta MemFS 等相鄰記憶系統的收斂設計、分歧點與實證證據對照
 created: 2026-07-10
-updated: 2026-08-14
+updated: 2026-09-17
 parent: "[[wiki/01.index]]"
 tags:
   - wiki
@@ -22,7 +22,7 @@ tags:
 | [nvk/llm-wiki](https://github.com/nvk/llm-wiki) | 跨工具 skill | raw 不可變＋wiki 編譯＋index，**另有獨立 `output/` 產出層**（本欄先前漏記，2026-08-11 補；見下「產出層的生態路線」） | 雙連結（wikilink＋markdown 連結並寫）、structural guardian（操作後自動修瑣碎結構問題）、四層查詢深度、token 成本 benchmark |
 | [[Hermes-Agent]] 內建 `llm-wiki` skill | 官方 bundled skill | 逐字複刻三層 | raw 記 sha256 偵測來源漂移、每頁至少 2 條 outbound link、封閉 tag taxonomy、矛盾入 frontmatter 交使用者複核、10+ 頁大改動先問 |
 | [Astro-Han/karpathy-llm-wiki](https://github.com/Astro-Han/karpathy-llm-wiki) | Agent Skills 標準單一 skill | raw 不可變＋wiki＋index，三動作定義一致 | 跨四工具安裝（Claude Code／Cursor／Codex CLI／OpenCode，自述未獨立驗證）、Lint 含自動修復、維護 log.md |
-| [Wuphf](https://github.com/nex-crm/wuphf)（Nex.ai，YC S26） | 本地 git repo＋MCP 工具 | raw markdown＋wiki，另加私有 notebook 暫存層 | git-native 為 canonical、Bleve BM25＋SQLite 為可重建 cache；per-entity append-only fact log（JSONL、deterministic id）與敘述性頁並存；notebook→wiki 的 promotion gate |
+| [Wuphf](https://github.com/nex-crm/wuphf)（Nex.ai，YC S26） | 本地 git repo＋MCP 工具 | raw markdown＋wiki，另加私有 notebook 暫存層 | git-native 為 canonical、Bleve BM25＋SQLite 為可重建 cache；per-entity append-only fact log（JSONL、deterministic id）與敘述性頁並存；notebook→wiki 的 promotion gate。**已被取代（2026-09-17）**：原 URL 現轉址到 `najmuzzaman-mohammad/gawkbot`，repo 已轉型為工作流自動化 bot（自述「open source grok bot」），上述 wiki 架構在現行 README 查無對應；本列與下方 Wuphf 相關論述僅為 2026-07 的歷史快照 |
 | [llm-wiki-kit](https://github.com/MauricioPerera/llm-wiki-kit) | git-native、Obsidian 相容 | 三層對應 | **explicit supersession chains**（矛盾不靜默覆寫，留取代鏈）；每次 ingest 為單一 atomic commit 可整筆 revert；三層檢索 grep→BM25→embeddings |
 | [wiki-garden](https://github.com/hachiware-labs/wiki-garden) | 分層知識庫 | raw 不可變＋sources／global／projects | 知識**作用域切分**（global 跨專案可重用 vs projects 僅該專案為真）；兩個主動成長動作 `nurture`（挑主題深化）與 `what's up`（點出發育不良的區域）；lint 唯讀只回報 |
 | [arturseo-geo/llm-knowledge-base](https://github.com/arturseo-geo/llm-knowledge-base)（2026-08-11 收錄） | AGENTS.md schema 標準＋範本 | raw＋wiki，另加 `output/` 沙盒層與 `learning/` 學習層 | **sandbox-first promotion**（生成內容預設落 `output/`，升格進 wiki 需人明示或達品質規則——方向與本 vault 相反，見下「產出層」節）；learning 層 FSRS 間隔複習＋自動 flashcards＋缺口追蹤（生態唯一「知識庫兼學習系統」設計）；`insights/` 人寫區 agent 依 schema 不碰 |

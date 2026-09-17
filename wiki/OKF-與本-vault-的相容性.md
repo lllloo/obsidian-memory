@@ -2,7 +2,7 @@
 title: OKF 與本 vault 的相容性
 description: Open Knowledge Format 對本 vault 的適用邊界：內部維持 Obsidian LLM Wiki，未來需要交換時再建立 OKF 匯出層
 created: 2026-07-11
-updated: 2026-07-17
+updated: 2026-09-17
 source: https://github.com/GoogleCloudPlatform/knowledge-catalog/blob/main/okf/SPEC.md
 parent: "[[wiki/01.index]]"
 tags:
@@ -13,7 +13,7 @@ tags:
 
 # OKF 與本 vault 的相容性
 
-[Open Knowledge Format（OKF）草案](https://github.com/GoogleCloudPlatform/knowledge-catalog/blob/main/okf/SPEC.md)（2026-07 查證時為 0.1、仍處 draft，確切版本回查上游 spec）定義可供人與 agent 讀寫、交換的 Markdown 知識 bundle。它與本 vault 的 [[LLM-Wiki-知識管理模式]] 在 Markdown、YAML frontmatter、Git、索引與交叉連結上方向一致；但它面向跨組織的知識目錄交換，不是持續綜合原始來源的私有 LLM Wiki。
+[Open Knowledge Format（OKF）草案](https://github.com/GoogleCloudPlatform/knowledge-catalog/blob/main/okf/SPEC.md)（2026-07 查證時為 0.1、仍處 draft，確切版本回查上游 spec；**已被取代（2026-09-17）**：上游已為 v0.2 並自述取代 v0.1，標題不再帶 Draft 字樣，但未見明確宣告脫離 draft）定義可供人與 agent 讀寫、交換的 Markdown 知識 bundle。它與本 vault 的 [[LLM-Wiki-知識管理模式]] 在 Markdown、YAML frontmatter、Git、索引與交叉連結上方向一致；但它面向跨組織的知識目錄交換，不是持續綜合原始來源的私有 LLM Wiki。
 
 ## 對照
 
@@ -36,7 +36,7 @@ tags:
 
 - 要公開或交付一組 wiki 知識給非 Obsidian 消費者。
 - 外部 agent 或工具要求可驗證的標準 bundle。
-- OKF 結束 draft，且出現實際的消費工具或交換案例。
+- OKF 結束 draft，且出現實際的消費工具或交換案例。（2026-09-17：前半疑似接近觸發——v0.2 標題已無 Draft；後半「實際消費工具或交換案例」未查，條件尚不算滿足，本頁決定不變。）
 
 ## Citations
 

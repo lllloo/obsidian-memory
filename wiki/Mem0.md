@@ -2,7 +2,7 @@
 title: Mem0
 description: AI agent 記憶層工具的整合路徑（plugin／MCP／CLI）、hook 實測消耗與失效模式證據，含本 vault 採 MCP-only 的拍板理由
 created: 2026-07-20
-updated: 2026-09-02
+updated: 2026-09-17
 source: https://github.com/mem0ai/mem0
 parent: "[[wiki/01.index]]"
 tags:
@@ -83,7 +83,7 @@ CLI（`@mem0/cli`）**不是替代品**：原始碼 `cli/node/src/plugin-sync.ts
 1. **換更強的模型救不了**——「A better model follows the extraction prompt more faithfully, which means it extracts more indiscriminately. **The extraction prompt is the bottleneck, not the model.**」
 2. **幻覺會自我複製**——召回的記憶被當成新輸入再抽一次，形成放大迴圈：808 筆「User prefers Vim」（191 筆逐字重複），系統裡沒人用 Vim，源頭是一次幻覺。「Any hallucination that gets stored once will be re-extracted indefinitely.」
 
-其他結構性缺陷〔GitHub issue 實證〕：[#4956](https://github.com/mem0ai/mem0/issues/4956) v3 變 ADD-only 不再發 UPDATE/DELETE，矛盾事實共存且檢索不含 recency；[#5330](https://github.com/mem0ai/mem0/issues/5330) 原生無 TTL／decay（2024 Show HN 就有人問，至今無解）；[#4926](https://github.com/mem0ai/mem0/issues/4926) 必須永遠生效的約束走 cosine 排名可能擠不進 top_k，那些該進 system prompt；[#3695](https://github.com/mem0ai/mem0/issues/3695) **託管版** `delete_all()` 從 dashboard 移除但 search 仍撈得到；[#2813](https://github.com/mem0ai/mem0/issues/2813) 每次 add 都等 LLM 抽取，20 秒以上是設計非 bug。
+其他結構性缺陷〔GitHub issue 實證〕：[#4956](https://github.com/mem0ai/mem0/issues/4956) v3 變 ADD-only 不再發 UPDATE/DELETE，矛盾事實共存且檢索不含 recency；[#5330](https://github.com/mem0ai/mem0/issues/5330) 原生無 TTL／decay（2024 Show HN 就有人問，至今無解；**已被取代（2026-09-17）**：該 issue 已於 2026-06-17 以 completed 關閉，官方文件 [memory expiration](https://docs.mem0.ai/platform/features/memory-expiration) 提供 `expiration_date`，標明 Platform 與 Open Source 皆可用，過期記憶從 search／get_all 隱藏而非刪除——TTL 有了，依存取頻率的 decay 仍非內建）；[#4926](https://github.com/mem0ai/mem0/issues/4926) 必須永遠生效的約束走 cosine 排名可能擠不進 top_k，那些該進 system prompt；[#3695](https://github.com/mem0ai/mem0/issues/3695) **託管版** `delete_all()` 從 dashboard 移除但 search 仍撈得到；[#2813](https://github.com/mem0ai/mem0/issues/2813) 每次 add 都等 LLM 抽取，20 秒以上是設計非 bug。
 
 唯一乾淨的棄用證詞是 OpenClaw 使用者 `endymi0n`〔[HN](https://news.ycombinator.com/item?id=47770220)，單一開發者經驗、非實證〕（**更正 2026-09-02**：原記為「OpenClaw 作者」有誤——回查 HN 原留言，該句是 "I've experimented quite a bit with mem0... for my OpenClaw"，指他自己那台 OpenClaw 實例；OpenClaw 的作者是 Peter Steinberger）：「stopped using it very soon... after the third injected wrong fact I went back to QMD and prose / summarization」。其失敗模式對「只記簡單內容」的用法特別重要——**內容簡單不等於抽取不出錯**：反諷被字面抽取（跟胖朋友開六塊肌玩笑 →「interested in achieving an athletic form」）、連抽一個明確日期都常錯。
 

@@ -2,7 +2,7 @@
 title: Memory Atlas
 description: 廠商中立的 agent memory 框架目錄，每條事實附來源與日期；本 vault 用它取代重複搜尋同一批 markdown 記憶工具
 created: 2026-07-21
-updated: 2026-07-21
+updated: 2026-09-17
 source: https://www.memoryatlas.dev/families/filesystem-markdown
 parent: "[[wiki/01.index]]"
 tags:
@@ -19,7 +19,7 @@ agent memory 框架的**廠商中立目錄站**，自述規範是「每個事實
 
 ## filesystem / markdown 家族收錄
 
-九個系統，每條附 GitHub star 數、授權（AGPL-3.0／Apache-2.0／MIT／ELv2 等）、自建部署難度（trivial／moderate／heavy）、付費選項與適用情景：
+九個系統（2026-07-21 快照；2026-09-17 回查已增為 11 個，新增 GBrain 與 Acontext，原九個仍在列，下表未擴充），每條附 GitHub star 數、授權（AGPL-3.0／Apache-2.0／MIT／ELv2 等）、自建部署難度（trivial／moderate／heavy）、付費選項與適用情景：
 
 | 系統 | 出處 | 本 vault 既有涵蓋 |
 |---|---|---|

@@ -2,7 +2,7 @@
 title: OpenSpec
 description: 說明 Fission-AI 輕量規格工具的安裝、目錄、delta spec 與五步工作流，並標示流程可信但效果未實證
 created: 2026-07-16
-updated: 2026-07-30
+updated: 2026-09-17
 source: https://github.com/Fission-AI/OpenSpec
 published: ""
 parent: "[[wiki/01.index]]"
@@ -16,7 +16,7 @@ tags:
 
 [Fission-AI 的 OpenSpec](https://github.com/Fission-AI/OpenSpec) 是一套輕量的 **spec 層工具**，核心主張是**在寫任何程式碼前，先讓開發者與 AI coding agent 就「要建什麼」達成共識**（README 原話：*"agree on what to build before any code is written"*）。它不是 RAG、不是重型流程框架，而是把「規格」變成一組 checked-in 的 markdown，夾在你與 AI 之間當作實作契約。
 
-在 [[AI-自主工作流的實證檢驗]] 的 spec-driven 光譜裡，OpenSpec 定位為 **Spec Kit 的輕量替代**——比 Spec Kit 的七步（`constitution → specify → clarify → plan → tasks → analyze → implement`）精簡，也比 BMAD 的多角色鏈輕。**注意該頁的核心結論**：整個 SDD 領域「流程描述清楚，但『這樣做讓 agent 做得更好』幾乎沒有夠格的獨立效果證據」——OpenSpec 的**流程可信、效果未經實證**，採用前請把它當「協作結構」而非「已證明的提效方案」。
+在 [[AI-自主工作流的實證檢驗]] 的 spec-driven 光譜裡，OpenSpec 定位為 **Spec Kit 的輕量替代**——比 Spec Kit 的多步流程（2026-07 記載為七步 `constitution → specify → clarify → plan → tasks → analyze → implement`，現行版本見該頁更新）精簡，也比 BMAD 的多角色鏈輕。**注意該頁的核心結論**：整個 SDD 領域「流程描述清楚，但『這樣做讓 agent 做得更好』幾乎沒有夠格的獨立效果證據」——OpenSpec 的**流程可信、效果未經實證**，採用前請把它當「協作結構」而非「已證明的提效方案」。
 
 本頁基礎內容來自 deep-research（2026-07-16，5 路平行搜尋＋每條主張 3 票對抗式查證）。除另註明外，各條皆 **3-0 通過驗證、強度 high**，且來自一手來源（官方 GitHub docs 的 main 分支、openspec.dev、npm registry）。
 
@@ -24,7 +24,7 @@ tags:
 
 ## 版本現況（2026-07-21，high）
 
-npm `@fission-ai/openspec` 最新為 **1.6.0**（2026-07-10 發佈）。**本頁早期內容寫於 0.x 時代，1.x 後最重要的變化是 OPSX 從實驗選項變成標準工作流**，舊的 `/openspec:*` 指令降級為 legacy 對照組。版本號會續動，具體以官方 changelog 為準。
+npm `@fission-ai/openspec` 最新為 **1.6.0**（2026-07-10 發佈）。**已被取代（2026-09-17）**：`npm view` 已到 1.13.1，本頁以下 1.6.0 的實測與描述未針對新版重驗，1.7–1.13 的變化見官方 changelog。**本頁早期內容寫於 0.x 時代，1.x 後最重要的變化是 OPSX 從實驗選項變成標準工作流**，舊的 `/openspec:*` 指令降級為 legacy 對照組。版本號會續動，具體以官方 changelog 為準。
 
 ## 安裝與初始化（high）
 
@@ -233,7 +233,7 @@ OpenSpec 原生整合 **30+ 種 AI 助理**（2026-07-21 清點官方 [supported
 | **Claude Code** | `.claude/skills/openspec-*/`（skill 檔）與 `.claude/commands/opsx/<id>.md` |
 | **Cursor** | `.cursor/commands/opsx-*`（部分用 `.cursor/rules`） |
 
-（工具數字在官方各頁面浮動：README 同時出現「25+」與「30+」，歷次查證看過 20+/31/40 等說法。**以 supported-tools.md 表格逐列清點才是可靠做法**——2026-07-16 為 31 個，2026-07-21 已成 34 個，1.4–1.6 陸續補進 Kimi CLI、Mistral Vibe、TRAE、Oh My Pi。總數仍在長，引用時標日期。）
+（工具數字在官方各頁面浮動：README 同時出現「25+」與「30+」，歷次查證看過 20+/31/40 等說法。**以 supported-tools.md 表格逐列清點才是可靠做法**——2026-07-16 為 31 個，2026-07-21 已成 34 個，1.4–1.6 陸續補進 Kimi CLI、Mistral Vibe、TRAE、Oh My Pi。總數仍在長，引用時標日期。2026-09-17 據審核清點為 40 個。）
 
 **1.6.0 起 CLI 呼叫免逐次授權**：所有產生的 `SKILL.md` 與 Claude Code 的 `/opsx:*` 指令檔，frontmatter 都帶 `allowed-tools: Bash(openspec:*)`。遵循 [Agent Skills](https://agentskills.io) 標準的 agent 會據此自動放行 `openspec` 指令，不再每次跳授權；不認得這個欄位的工具則忽略。**範圍僅限 `openspec` CLI**——該欄位是預先核准而非限制，skill 用到的其他工具仍走你原本的權限設定。
 

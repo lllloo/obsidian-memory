@@ -2,7 +2,7 @@
 title: 長跑 Agent 的目標定義與計畫工具
 description: 讓自主迭代 agent 持續推進而不走偏的目標檔機制（分層、驗收判準、停止條件、防漂移措辭）與 SDD 工具生態的採用度實據
 created: 2026-07-30
-updated: 2026-07-30
+updated: 2026-09-17
 parent: "[[wiki/01.index]]"
 tags:
   - ai-agent
@@ -39,7 +39,7 @@ spec-kit 與 Kiro 是彼此獨立的生態，結構同構：
 
 **抄用注意**：寫成「三個固定分層」而非固定檔名——spec-kit 現行有 7 個 core command（`constitution`／`specify`／`clarify`／`plan`／`tasks`／`analyze`／`implement` 之外還有 `checklist`、`converge`、`taskstoissues`），Kiro 第一層檔名隨模式變。
 
-⚠️ **這一層有生態內反證**：spec-kit 社群把三份 artifact 描述為**會互相分歧的 peers**（artifact drift），提議 `/speckit.reconcile`（issue #1063）與 constitution-aware 的最終 gate（#1323）。對長跑 agent 而言，**多一層文件就是多一個漂移源**。
+⚠️ **這一層有生態內反證**：spec-kit 社群把三份 artifact 描述為**會互相分歧的 peers**（artifact drift），提議 `/speckit.reconcile`（issue #1063）與 constitution-aware 的最終 gate（#1323）。對長跑 agent 而言，**多一層文件就是多一個漂移源**。**已被取代（2026-09-17）**：兩張 issue 其實早在 2026-03-19 就以 completed 關閉（早於本頁研究日）——#1063 經 PR #1844 以社群擴充形式落地 `/speckit.reconcile`，#1323 接續 PR #1925；故「提議中」不成立。漂移風險本身的論點不受影響，但生態已有對應工具，不宜再當「自承缺實作」引用。
 
 ### 驗收判準用結構化記法 ＋ 機器可掃描的未決標記（3-0）
 
@@ -226,7 +226,7 @@ GitHub star 數，2026-07-30 以 `gh api`／`gh search` 直查核實（**star �
 ## 開放問題
 
 - **尺規隔離只有宣告、沒有機制**：測試／計分腳本與被改的程式碼同 repo 時，五個來源全部只做到「在 goal 檔標成不可編輯」，無一實作強制隔離（獨立 repo／唯讀 mount／分離 CI 身分）。這是整個機制群最大的單點失效。
-- **分層 goal 檔自身的漂移如何對帳**：spec-kit 生態自承缺實作後複檢（issue #1063、#1323），而長跑 agent 最需要這一段。現行 `/speckit.analyze` 與 `/speckit.converge` 是否真能對帳未經核實。
+- **分層 goal 檔自身的漂移如何對帳**：spec-kit 生態自承缺實作後複檢（issue #1063、#1323；**已被取代（2026-09-17）**：兩者已於 2026-03-19 關閉，reconcile 以社群擴充落地，見上文），而長跑 agent 最需要這一段。現行 `/speckit.analyze` 與 `/speckit.converge` 是否真能對帳未經核實。
 - **「連續 N 輪無改善即停」的 N 該取多少**、多維度指標下「無進展」如何定義？goal-md 的 5、Ralph 的 10、Pi 的 3 皆為未調校預設。
 - **散文約束在什麼條件下能自動編譯成可執行 oracle**？Kiro 為 unchanged behavior 生成 property-based tests 是唯一前例，其可靠性、覆蓋率與失效模式無任何來源說明；而 AgentSpec（[arXiv 2503.18666](https://arxiv.org/abs/2503.18666)）發現文字約束**累積後表現退化**，暗示純文字路線有上限。
 - superpowers、GSD 的實際機制均未核實（僅 README 層），與本頁機制清單的對應關係不明。

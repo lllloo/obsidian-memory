@@ -2,7 +2,7 @@
 title: WSL 剪貼簿貼圖到 Claude Code
 description: WSL2 按 Alt+V 貼圖「閃一下沒反應」的根因在解碼層而非按鍵，附把 BMP 換成 PNG 的 daemon 解法與實測數據
 created: 2026-07-30
-updated: 2026-08-11
+updated: 2026-09-17
 parent: "[[wiki/01.index]]"
 tags:
   - claude-code
@@ -37,7 +37,7 @@ tags:
 
 **勿引用**：網路搜尋摘要流傳「WSL 貼圖已在 v2.1.157 修好並新增專屬 `Alt+V` 鍵」——官方 CHANGELOG 查無任何 `Alt+V` 條目，此版本號無依據；且若真已修好，2.1.220 不會仍在解碼層失敗。
 
-官方文件的「Work with images」章節至今只列拖曳、`Ctrl+V`、給路徑三種通用方法，**完全沒有 WSL 相關說明**——這正是 [#57440](https://github.com/anthropics/claude-code/issues/57440) 在告的事（該 issue 已 closed，但文件缺口經查證仍在）。
+官方文件的「Work with images」章節至今只列拖曳、`Ctrl+V`、給路徑三種通用方法，**完全沒有 WSL 相關說明**——這正是 [#57440](https://github.com/anthropics/claude-code/issues/57440) 在告的事（該 issue 已 closed，但文件缺口經查證仍在）。**已被取代（2026-09-17）**：[common-workflows](https://code.claude.com/docs/en/common-workflows) 的 Work with images 步驟已寫「paste it into the CLI with `Ctrl+V`, or with `Alt+V` on Windows and WSL」，文件有 WSL 提及了，但只到按鍵，仍未談 BMP 解碼問題。
 
 ## 解法：把 BMP 換成 PNG 的背景 daemon
 
@@ -58,6 +58,12 @@ tags:
 - **落地的是完整 PNG。** 取圖鏈產出的檔案與來源 PNG 逐位元一致。
 
 成本（輪詢間隔 2 秒）：平均每秒約 2.8 ms CPU、記憶體 2.4 MB。間隔 1 秒時約 5.4 ms/秒，成本與間隔近似成反比。
+
+## 更簡單的替代解法：移除 wl-clipboard
+
+#61609 在 2026-08-20 有留言（Claude Code 2.1.238 實測，單一使用者、非 maintainer）提出不需 daemon 的做法：`sudo apt remove wl-clipboard`。`wl-paste` 不存在後，取圖鏈的 BMP 分支全部失敗，`||` 串自然落到 PowerShell 分支，直接拿到有效 PNG。它的根因描述與本頁一致（BMP 分支短路擋住 PowerShell fallback），並補充 X11 端 `xclip` 在 WSLg 下完全不曝露圖片 target。
+
+取捨：代價是失去 `wl-copy`／`wl-paste`——**本頁 daemon 依賴 `wl-copy` 回填，兩種解法互斥**；留言者稱 `xclip -selection clipboard` 仍可與 Windows 剪貼簿雙向同步，唯一損失是 Pillow 的 `ImageGrab.grabclipboard()`。本 vault 未實測此解法（強度：單一留言自述，但機制與本頁根因鏈吻合）。
 
 ## 為什麼只能輪詢
 
