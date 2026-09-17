@@ -167,13 +167,21 @@ QA 在 `six-pack` 裡是一條完整的鏈，兩份角色檔講得很明白。`s
 
 這條規則順帶解釋了一個先前看不懂的細節：`empire-2025` 的 `--headless=N`、`--seed=N`、`--log`、`--debug-dump` 不是隨手加的除錯旗標，而是**刻意設計的可測性 affordance**——`QA.prompt` 明文允許「新增命令列參數或 UI 指令來曝露難測的邏輯，只要那些 affordance 位於使用者介面、且不構成給 QA 的私有 API」。
 
-**人的閘門在規格邊界，不在程式碼邊界。** `specifier.prompt` 的六階段工作流最後一步與交手規則寫死了這件事：
+**人的閘門在規格邊界，不在程式碼邊界。** 這條結論的一手依據經過一次搬家，兩個版本都要知道。
+
+2026-08-09 查證時，閘門寫在 `specifier.prompt` 的六階段工作流最後一步：
 
 > 6. **Ask the user for approval to hand off to the coder.**
 >
 > Do not commit or notify coder **until the user explicitly approves the handoff**. […] When QA notifies you that the job is complete, merge the changes and **ask the user for the next feature**.
 
-所以整條流水線的人工控制點有兩個：**開頭核准規格、結尾決定下一個功能**，中間全自動。**已被取代（2026-09-17）**：上引第 6 步已於 2026-08-22 的 commit「Tell specifier to queue git_handoff without asking in the pane」改為「Commit the specification changes and queue a `git_handoff` to `coder`. **Do not ask for approval in the pane; the operator uses Attention.**」——規格交手不再是阻斷式核准，改成 commit 後直接排入交手、由操作者透過 Attention 通知關注。開頭的人工核准點已從系統中移除；人仍可在 Attention 介入，但那是非阻斷的旁觀，不是閘門。下段「Gherkin 他核准」的推論須依此打折。這把先前只有二手轉述的說法（他 review Gherkin 與 QA procedures、不 review 單元測試）換成了一手依據——不是他在推特上怎麼講，而是他的系統實際上留了哪些洞給人。
+2026-08-22 的 commit「Tell specifier to queue git_handoff without asking in the pane」把第 6 步改成「Commit the specification changes and queue a `git_handoff` to `coder`. Do not ask for approval in the pane; the operator uses Attention.」。**這不是拿掉閘門**——`six-pack` 分支 README（2026-09-04）明寫：specifier 是 project-root role，它的往前交手會「held in **Attention** for operator approval before delivery to the coder」，**Attention 處理 specification gate 與 clarifications**；之後各角色的交手才自動推進看板。（強度 high：角色檔與 README 皆直讀，2026-09-17；未實際跑過 swarm 驗證 UI 行為。）
+
+所以變的是**閘門的實作層**，不是位置：從「prompt 要求 agent 自己停下來問」變成「編排層把交手扣住、等操作者在 Attention 放行」。後者比前者硬——前者靠 agent 遵守指示，後者 agent 想跳也跳不過。這正好是本頁反覆出現的主題（prompt 層約束 vs 機械約束）在他自己工具裡的一次實際遷移。
+
+人工控制點仍是兩個：**開頭在 Attention 核准規格、結尾在 `ready_for_next.sh` 合併後決定下一個功能**，中間全自動。這把先前只有二手轉述的說法（他 review Gherkin 與 QA procedures、不 review 單元測試）換成了一手依據——不是他在推特上怎麼講，而是他的系統實際上留了哪些洞給人。
+
+**更正（2026-09-17）**：同日稍早本段曾標註「開頭的人工核准點已從系統中移除、Attention 只是非阻斷旁觀」，那是只讀角色檔、沒讀 README 的誤判，已依 README 原文撤回。
 
 **「不讀 AI 產的程式碼」這個標題是準確的，但推論成「他不看 agent 的產出」是錯的。** 他把人類注意力從**實作層**整個搬到**規格層**：Gherkin 他核准，QA 程序他核准，成品他親手玩。省下來的是讀函式本體的時間，不是驗證的時間。這與 [[AI-產碼加速下的-review-瓶頸]] 的四條路線是同一件事的兩種說法——他選了「約束前移」而非「改善 review」，而前移到的位置精確地說就是**規格**。
 
@@ -351,7 +359,7 @@ blocked="$(printf '%s\n' "$changed" \
 | gherkin mutator 的變異規則為型別推斷式值擾動、不含領域語意 | **high**：`mutator-spec.md` 直讀，含規則順序與範例 |
 | `--level soft` 可能沿用實作已變更之 scenario 的舊結論 | **medium-high**：三檔定義與 hardender 用法皆直讀，此推論依定義導出、未實測 |
 | empire-2025 屬規格封閉、行為可決定的領域 | **high**：README 與 AGENTS.md 直接可讀 |
-| 人的閘門在規格邊界（核准 Gherkin 與 QA 程序），不在程式碼邊界 | **high**：`specifier.prompt` 明文「Ask the user for approval to hand off to the coder」「Do not commit or notify coder until the user explicitly approves」。**2026-08-09 第二輪從 low-medium 的二手轉述升為一手**——依據不再是他推特上怎麼說，而是他的系統留了哪些控制點給人。**已被取代（2026-09-17）**：兩句原文已於 2026-08-22 從 `specifier.prompt` 移除，改為「Do not ask for approval in the pane; the operator uses Attention」；「規格邊界有阻斷式人工核准」不再有一手依據，見第 6 步引文後的標註 |
+| 人的閘門在規格邊界（核准 Gherkin 與 QA 程序），不在程式碼邊界 | **high**：2026-08-09 依 `specifier.prompt` 明文「Ask the user for approval to hand off to the coder」從 low-medium 二手轉述升為一手；2026-08-22 起該句移出角色檔，閘門改由編排層實作——`six-pack` README 明寫 specifier 的交手「held in Attention for operator approval before delivery to the coder」（2026-09-17 直讀）。位置不變、實作從 prompt 層變機械層 |
 | 「他把 TDD 從規則檔搬成角色定義是有意識回應 TDD 指示無效」 | **low**：本頁推論，非他本人陳述；角色檔只支持「coder 明寫 TDD 且要求測試須能因合理錯誤實作而失敗」這個事實 |
 | 這套方案能給出 very high confidence | **不可引用為效果證據**：自評，無缺陷逃逸率、無對照組、無外部量測 |
 

@@ -317,7 +317,7 @@
       <text class="s dim" x="30" y="410">agent 說「全綠」與「真的全綠」之間，在這套設定裡沒有機械上的區別。這是第 06 節的主題。</text>
     </svg>
     </div>
-    <figcaption><b>人的閘門在規格邊界，不在程式碼邊界。</b><code>specifier.prompt</code> 的工作流最後一步寫死「Ask the user for approval to hand off to the coder」，且「Do not commit or notify coder until the user explicitly approves the handoff」。所以整條流水線的人工控制點有兩個：<b>開頭核准規格、結尾決定下一個功能，中間全自動</b>。「不讀 AI 產的程式碼」這個標題是準確的，但推論成「他不看 agent 的產出」是錯的——他把人類注意力從實作層整個搬到規格層。省下來的是讀函式本體的時間，不是驗證的時間。</figcaption>
+    <figcaption><b>人的閘門在規格邊界，不在程式碼邊界。</b><code>specifier.prompt</code> 的工作流最後一步寫死「Ask the user for approval to hand off to the coder」，且「Do not commit or notify coder until the user explicitly approves the handoff」。所以整條流水線的人工控制點有兩個：<b>開頭核准規格、結尾決定下一個功能，中間全自動</b>。「不讀 AI 產的程式碼」這個標題是準確的，但推論成「他不看 agent 的產出」是錯的——他把人類注意力從實作層整個搬到規格層。省下來的是讀函式本體的時間，不是驗證的時間。<br><span class="warn">⚠️</span> <b>2026-09-17 補註：依據已變，結論不變。</b>上引兩句已於 2026-08-22 從 <code>specifier.prompt</code> 移除，改為「Do not ask for approval in the pane; the operator uses Attention」；six-pack README 說明規格交手會 held in Attention for operator approval，核准改由編排層扣留執行，不再靠 agent 自律。詳見 wiki 頁。</figcaption>
   </figure>
 
   <div class="col">
