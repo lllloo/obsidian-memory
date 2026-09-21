@@ -10,7 +10,7 @@ description: vault 健檢:掃 wiki+raw 的死連結、孤立頁、frontmatter �
 **語意層只抓「壞了」、不抓「能更好」**(2026-07-22 使用者拍板):只報矛盾與明確事實錯誤;交叉引用缺口(含單向斷鏈)、過時主張(除非構成矛盾)、措辭一律不報。理由是「能更好」永遠找得到,報了就永遠改不完——判準見 `references/semantic-review.md`。交叉引用改在 ingest 新頁時建立,不靠例行健檢回頭挖。
 
 - 需要使用者才有的資訊(原始記錄、當時意圖)才能核實的項;
-- 正解會動到 `raw/` write-once、schema 憲法檔(`CLAUDE.md`／`SYSTEM-DESIGN.md`)或 skill 本身的項;
+- 正解會動到 `raw/` write-once、schema 憲法檔(`AGENTS.md`／`SYSTEM-DESIGN.md`)或 skill 本身的項;
 - 使用者曾表態過方向、再動會推翻其決定的項。
 
 清單放 `schema/`(agent 每輪讀回來約束自身行為的操作狀態),不放 `feeds/`(agent 不讀區)。

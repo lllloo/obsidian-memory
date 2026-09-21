@@ -117,7 +117,7 @@ def extract_links(text: str) -> list:
 def extract_md_targets(text: str) -> list:
     """抽 markdown 式內部 .md/.base 連結目標；剝 code 後濾外部 URL 與純錨點。
 
-    治理層（CLAUDE.md、schema/*）的互連按慣例是 markdown 式而非 wikilink，
+    治理層（AGENTS.md、schema/*）的互連按慣例是 markdown 式而非 wikilink，
     這些連結不在 extract_links 的偵測面內，故另抽並以相對路徑解析。
     """
     body = FENCE_RE.sub("", text)
@@ -186,10 +186,10 @@ def main() -> int:
         """wiki 知識圖譜中的內容頁；目錄頁只負責導航，不算知識互連。"""
         return top_of(p) == "wiki" and p.name != "01.index.md"
 
-    # ---- DEADLINK：wiki/raw/schema + root CLAUDE.md 內指向不存在檔案的連結 ----
+    # ---- DEADLINK：wiki/raw/schema + root AGENTS.md 內指向不存在檔案的連結 ----
     # wikilink 用 basename 解析（Obsidian 慣例）；markdown 式內部連結用相對 containing file 的路徑解析。
     def is_linkcheck_target(p: Path) -> bool:
-        return top_of(p) in ("wiki", "raw", "schema") or rel[p] == "CLAUDE.md"
+        return top_of(p) in ("wiki", "raw", "schema") or rel[p] == "AGENTS.md"
 
     for p in texts:
         if not is_linkcheck_target(p):
