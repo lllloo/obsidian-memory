@@ -2,7 +2,7 @@
 title: Hermes Agent
 description: Nous Research 開源的自我進化 AI agent：學習迴路自動生成並改良 skill，跨 session 累積記憶與使用者模型
 created: 2026-07-08
-updated: 2026-09-17
+updated: 2026-09-21
 parent: "[[wiki/01.index]]"
 tags:
   - ai-agent
@@ -33,7 +33,7 @@ Nous Research 開源、MIT 授權的**自我進化 AI agent**，標語 *The agen
 
 > ⚠️ **更正**（2026-07-09 deep-research 對抗式驗證）：先前版本描述的「agent 靠週期性 nudge 記憶」與「FTS5 全文檢索過往對話＋LLM 摘要做跨 session 回憶」查無官方文件依據，已被驗證駁回（0–3 票），改以上表「有界核心記憶」的官方逐字描述取代。
 
-其中 **skill 相容 agentskills.io 開放標準**——與本 repo `CLAUDE.md` 遵循的同一標準，理論上 skill 可跨 Hermes / Claude Code / Cursor 等工具移植；但「skill 目錄結構與本 vault `.agents/skills` 慣例高度同構」一說同樣查無依據，已被驗證駁回，勿引用。
+其中 **skill 相容 agentskills.io 開放標準**——與本 repo `AGENTS.md` 遵循的同一標準，理論上 skill 可跨 Hermes / Claude Code / Cursor 等工具移植；但「skill 目錄結構與本 vault `.agents/skills` 慣例高度同構」一說同樣查無依據，已被驗證駁回，勿引用。
 
 > ⚠️ **待查風險**：背景 skill-review agent 曾有產生非預期副作用的案例，Autonomous skill creation／Autonomous Curator 的品質把關機制尚待確認失敗模式再借鑑（未解問題見 [[第二大腦方法論比較]]）。
 

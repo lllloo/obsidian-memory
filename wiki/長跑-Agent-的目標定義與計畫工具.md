@@ -2,7 +2,7 @@
 title: 長跑 Agent 的目標定義與計畫工具
 description: 讓自主迭代 agent 持續推進而不走偏的目標檔機制（分層、驗收判準、停止條件、防漂移措辭）與 SDD 工具生態的採用度實據
 created: 2026-07-30
-updated: 2026-09-17
+updated: 2026-09-21
 parent: "[[wiki/01.index]]"
 tags:
   - ai-agent
@@ -197,7 +197,7 @@ GitHub star 數，2026-07-30 以 `gh api`／`gh search` 直查核實（**star �
 
 ## 勿引用清單
 
-依 CLAUDE.md 寫入慣例第 6 條，被查證否決者明列，不無聲丟棄。
+依憲法檔（`AGENTS.md`）寫入慣例第 6 條，被查證否決者明列，不無聲丟棄。
 
 | 主張 | 票數 | 裁決 |
 |---|---|---|

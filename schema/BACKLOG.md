@@ -1,7 +1,7 @@
 ---
 title: Vault Lint Backlog
 created: 2026-07-13
-updated: 2026-08-14
+updated: 2026-09-21
 tags:
   - meta
   - lint
@@ -41,7 +41,7 @@ _(目前無項目)_
 
 **frontmatter／一致性——agent 判維持現狀**(動既有 raw 反違反 write-once;此註記為錨點,防機械層重複洗版):
 
-- FRONTMATTER | `sha256`(白名單外,見兩個 `raw/fetched/` cookbook 檔)、fetched 檔 `tags: clippings`(語意與資料夾矛盾)、clippings 回連不對稱(6 clippings 僅 1 有 wiki 回連)——三者同受 raw write-once 約束,正解是接受現狀;唯 `sha256` 若要正式納 `CLAUDE.md` 白名單(當內容指紋)才需使用者動憲法檔,不納亦無妨
+- FRONTMATTER | `sha256`(白名單外,見兩個 `raw/fetched/` cookbook 檔)、fetched 檔 `tags: clippings`(語意與資料夾矛盾)、clippings 回連不對稱(6 clippings 僅 1 有 wiki 回連)——三者同受 raw write-once 約束,正解是接受現狀;唯 `sha256` 若要正式納 `AGENTS.md` 白名單(當內容指紋)才需使用者動憲法檔,不納亦無妨
 
 **其餘 agent 判斷不動**:
 
@@ -57,7 +57,7 @@ _(目前無項目)_
 - _(2026-07-18 deep-research 統計待回查項退場：保留有 commit 佐證的 2026-07-10「22 來源、25 主張」；2026-07-14 頁因現有 repo／commit 無法回查來源數、主張總數與確認數，已標「待考」，並保留頁面明列的 1 條否決主張。)_
 - _(2026-07-16 全專案改進審視語意層 13 項——2 過時、9 交叉引用缺口、2 低優先群組——經「全都修」指示全數落地退場。)_
 - _(2026-07-17「修問題」批次:全專案改進審視的 3 條 XREF、07-16 語意層的 3 矛盾 + 6 XREF + 4 過時、07-17 的 4 條低信心新發現,均已修補落地;`feeds/watch/` 漏登已補進 `schema/vault-map.md`、`schema/SYSTEM-DESIGN.md`;`published` 空值統一為 `""`。低信心「AI-自主 相關頁 pi-workflow 措辭」與「OpenSpec 31 工具」覆核後判定原敘述已足、退場。)_
-- _(2026-07-17 逐件問診:MEMORY「貼 URL ingest 全流程」升級訊號候選經使用者核可退場(已於 `schema/MEMORY.md` 劃線註記);跨工具可攜縫補丁已落地——`AGENTS.md` 為 `CLAUDE.md` 的 symlink,故該句寫在 `CLAUDE.md` 的 `@import` 行旁。)_
+- _(2026-07-17 逐件問診:MEMORY「貼 URL ingest 全流程」升級訊號候選經使用者核可退場(已於 `schema/MEMORY.md` 劃線註記);跨工具可攜縫補丁已落地——該句寫在憲法檔的 `@import` 行旁(當時憲法檔為 `CLAUDE.md`+`AGENTS.md` symlink,2026-09-21 起單一 `AGENTS.md`)。)_
 - _(2026-07-17 治理改制:使用者拍板 vault-lint 語意項改**全面自動修**(不加對抗驗證),「語意項只報告」制退場;原「維持現狀:vault-lint 第二段刻意延遲」條目隨之結案。STALE `wiki/第二大腦方法論比較.md` 缺 Hermes Kanban 補充,依新制當場修補退場。)_
 - _(2026-07-17 第二輪語意層(上輪欠審 9 頁＋第二大腦方法論比較):subagent 平行審出約 22 項獨立發現(1 高、8 中、13 低——指向錯誤、歸屬錯誤、方向倒置、措辭過寬、版本釘死、回連缺口等),全數當輪自主修補落地,動 12 個 wiki 頁;無新增待決項。)_
 - _(2026-08-03 `vault-updates-daily` 整體退場:使用者拍板移除 skill、`feeds/updates/` 與全部文件引用。依據為近 7 篇日報實測——最大宗來源 GitHub Copilot 多為企業治理條目、OpenCode 多為版本 bump、主力工具 Claude Code 近 7 天 0 筆,且 08-03 兩筆全是 08-02 重報。此前的 starred 停用與雲端排程條目一併作廢,勿據以重開。)_

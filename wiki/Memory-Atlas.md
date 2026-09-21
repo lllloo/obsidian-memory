@@ -2,7 +2,7 @@
 title: Memory Atlas
 description: 廠商中立的 agent memory 框架目錄，每條事實附來源與日期；本 vault 用它取代重複搜尋同一批 markdown 記憶工具
 created: 2026-07-21
-updated: 2026-09-17
+updated: 2026-09-21
 source: https://www.memoryatlas.dev/families/filesystem-markdown
 parent: "[[wiki/01.index]]"
 tags:
@@ -40,7 +40,7 @@ agent memory 框架的**廠商中立目錄站**，自述規範是「每個事實
 以下機制描述來自各專案官方 README、**無實測**，記錄用途是「日後若真要深挖從哪裡開始」：
 
 - **ReMe**（AgentScope，Alibaba）——這批裡與本 vault 形態最接近的：同樣 wikilink 圖譜、同樣檔案為真相。差異在**時間分層與固化**：`session`／`resource` → `daily`（輕量處理）→ `digest`（長期記憶節點），多了「daily 暫存、之後才固化進長期」的緩衝層，本 vault 則是 raw → wiki 兩層一次到位。是否值得引入，取決於是否真的發生「ingest 當下寫進 wiki 的內容後來發現不該進」——目前無此痛點。
-- **Basic Memory**——markdown 檔即 Entity，檔內用**結構化語法**編碼知識圖譜：Observations 帶類別（`[method]`、`[tip]`、`[fact]`）、Relations 帶關係型別（`requires [[Burr Grinder]]`）。相對地本 vault 的 wikilink 是**無型別**的——`CLAUDE.md` 要求用相鄰文字說明關係，但那是給人讀的散文、機器無法解析。型別化關係是真正的能力差異，代價是寫作負擔與可讀性下降；**不建議現在引入**（無「按關係型別查詢」的實際場景），記錄供日後參考。
+- **Basic Memory**——markdown 檔即 Entity，檔內用**結構化語法**編碼知識圖譜：Observations 帶類別（`[method]`、`[tip]`、`[fact]`）、Relations 帶關係型別（`requires [[Burr Grinder]]`）。相對地本 vault 的 wikilink 是**無型別**的——`AGENTS.md` 要求用相鄰文字說明關係，但那是給人讀的散文、機器無法解析。型別化關係是真正的能力差異，代價是寫作負擔與可讀性下降；**不建議現在引入**（無「按關係型別查詢」的實際場景），記錄供日後參考。
 
 ## 關聯
 

@@ -1,7 +1,7 @@
 ---
 title: Vault Map
 created: 2026-04-15
-updated: 2026-08-14
+updated: 2026-09-21
 tags:
   - index
 ---
@@ -9,13 +9,13 @@ tags:
 
 ## schema 層治理檔
 
-> `CLAUDE.md`（+ `AGENTS.md` symlink）因 harness 從 repo root 自動載入而留在 root；敘述文件 `SYSTEM-DESIGN.md` 與本檔已移入 `schema/`。CWD 契約的哨兵檔是 `schema/vault-map.md`（本檔）——此路徑只存在於本 vault，能同時擋「不在 root」與「跑錯 repo」。
+> `AGENTS.md` 因 harness 從 repo root 自動載入而留在 root；敘述文件 `SYSTEM-DESIGN.md` 與本檔已移入 `schema/`。CWD 契約的哨兵檔是 `schema/vault-map.md`（本檔）——此路徑只存在於本 vault，能同時擋「不在 root」與「跑錯 repo」。
 >
-> **本表是 schema 各檔職責的單一權威清單。** 新增／移除 schema 檔只改這裡；`CLAUDE.md`、`SYSTEM-DESIGN.md` 概念性提及即可，不重列檔案清單（避免像過去 `BACKLOG.md` 那樣一處新增、他處漏同步的漂移）。
+> **本表是 schema 各檔職責的單一權威清單。** 新增／移除 schema 檔只改這裡；`AGENTS.md`、`SYSTEM-DESIGN.md` 概念性提及即可，不重列檔案清單（避免像過去 `BACKLOG.md` 那樣一處新增、他處漏同步的漂移）。
 
 | 檔案 | 職責 |
 |---|---|
-| `CLAUDE.md`（root） | schema：agent 維護規則、三層架構、Ingest/Query/Lint、寫入慣例（`AGENTS.md` 為其 symlink）；`@` 匯入 `MEMORY.md` |
+| `AGENTS.md`（root） | schema：agent 維護規則、三層架構、Ingest/Query/Lint、寫入慣例；`@` 匯入 `MEMORY.md`。本 repo **刻意不設 `CLAUDE.md`**——Claude Code 自 v2.1.277 起在沒有 `CLAUDE.md` 時原生讀 `AGENTS.md`，而任何位於本目錄或上層的 `CLAUDE.md`／`CLAUDE.local.md` 都會把本檔整份擋掉（2026-09-21 使用者拍板，原 `AGENTS.md`→`CLAUDE.md` symlink 一併移除） |
 | `schema/SYSTEM-DESIGN.md` | 運作總綱：Karpathy LLM Wiki 心智模型、人/AI 分工、刻意不做的事、skill 升級判準 |
 | `schema/vault-map.md` | 本檔：全局導航與 tag 查詢地圖 |
 | `schema/MEMORY.md` | 有界跨 session 操作記憶：skill 升級訊號追蹤、待辦開放問題（非治理規則、非 wiki 內容；checked-in 進 repo，是 vault 唯一跨工具可攜的操作記憶載體） |
@@ -27,7 +27,7 @@ tags:
 
 ```
 .
-├── schema/      — schema 層：SYSTEM-DESIGN.md（運作總綱）、vault-map.md（本檔，導航）、MEMORY.md（跨 session 操作記憶）、BACKLOG.md（lint 待處理清單，agent 每輪讀回來約束自身行為）；CLAUDE.md/AGENTS.md 因 harness 自動載入留 root
+├── schema/      — schema 層：SYSTEM-DESIGN.md（運作總綱）、vault-map.md（本檔，導航）、MEMORY.md（跨 session 操作記憶）、BACKLOG.md（lint 待處理清單，agent 每輪讀回來約束自身行為）；AGENTS.md 因 harness 自動載入留 root
 ├── raw/         — 原始來源，write-once。agent 可新增、不可修改，事實來源
 │   ├── clippings/ — 使用者以 Web Clipper 或手動放入的來源（01.index.md + 清單.base 索引；agent 不主動消化，使用者明指才處理）
 │   └── fetched/   — agent 依使用者提供 URL 擷取的來源（01.index.md + 清單.base 索引；落地後直接 ingest）

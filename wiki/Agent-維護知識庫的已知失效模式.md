@@ -2,7 +2,7 @@
 title: Agent 維護知識庫的已知失效模式
 description: 長期由 agent 自主維護的 markdown 知識庫會怎麼壞：機制成立的三種退化、判定不適用的類比、無法驗證的盲點，逐條標證據強度
 created: 2026-07-21
-updated: 2026-07-21
+updated: 2026-09-21
 parent: "[[wiki/01.index]]"
 tags:
   - wiki
@@ -13,7 +13,7 @@ tags:
 
 # Agent 維護知識庫的已知失效模式
 
-本 vault 走的是「agent 全權維護、無硬守門、事後 diff review」路線（見 [`CLAUDE.md`](../CLAUDE.md) 與 [`SYSTEM-DESIGN.md`](../schema/SYSTEM-DESIGN.md)）。這個選擇有對立論述與已知失效模式，依寫入慣例第 6 條**應明列而非丟棄**。本頁收攏 2026-07-21 一輪四路平行搜尋的結果，逐條標**證據強度與場景差距**——多數來源的實驗場景與「23 頁個人 vault」差距很大，方向可借鏡、速率不可直接套用。
+本 vault 走的是「agent 全權維護、無硬守門、事後 diff review」路線（見 [`AGENTS.md`](../AGENTS.md) 與 [`SYSTEM-DESIGN.md`](../schema/SYSTEM-DESIGN.md)）。這個選擇有對立論述與已知失效模式，依寫入慣例第 6 條**應明列而非丟棄**。本頁收攏 2026-07-21 一輪四路平行搜尋的結果，逐條標**證據強度與場景差距**——多數來源的實驗場景與「23 頁個人 vault」差距很大，方向可借鏡、速率不可直接套用。
 
 與 [[LLM-Wiki-生態實作比較]] 的分工：那頁比各實作**怎麼做**，本頁記這條路線**怎麼壞**。
 

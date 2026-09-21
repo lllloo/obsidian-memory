@@ -57,7 +57,7 @@ flowchart TD
 
 圖 2 的顏色即 agent 權限，三層權限刻意不同：
 
-- 🟦 **schema/（規範層）** — 定義 agent 怎麼維護這個 vault 的規則層。它**約束** agent、不是 agent 的產出物；agent 只在規則允許下維護其中的操作狀態（`MEMORY.md`、`BACKLOG.md`），治理文件（`CLAUDE.md`、`SYSTEM-DESIGN.md`）由使用者定調。箭頭朝下＝schema 管 raw／wiki，不是反過來。
+- 🟦 **schema/（規範層）** — 定義 agent 怎麼維護這個 vault 的規則層。它**約束** agent、不是 agent 的產出物；agent 只在規則允許下維護其中的操作狀態（`MEMORY.md`、`BACKLOG.md`），治理文件（`AGENTS.md`、`SYSTEM-DESIGN.md`）由使用者定調。箭頭朝下＝schema 管 raw／wiki，不是反過來。
 - 🟨 **raw/（write-once）** — 事實來源，agent 可新增、落地後凍結不改。
 - 🟩 **wiki/（全權）** — 活知識庫，agent 自由建改刪，是唯一被 agent 完全掌管的層。
 - ⬜ **cards・topics・feeds** — 三動作全部跳過：cards／topics 是使用者私人策展＋唯一對外發佈層（agent 只在回答時可唯讀查 topics），feeds 由各 skill 自維護。
@@ -78,7 +78,7 @@ git clone https://github.com/lllloo/obsidian-memory.git
 - [GitHub CLI](https://cli.github.com/)（`vault-watch`）— 建議先執行 `gh auth login`，可提高 API rate limit
 - [Obsidian CLI](https://help.obsidian.md/cli)（選用）— 本地開檔輔助，不影響任何流程
 
-在 Obsidian 直接「Open folder as vault」開啟本 repo 即可閱讀編輯。支援 [Agent Skills](https://agentskills.io) 的 AI 工具可載入 `.agents/skills/`；Claude Code 也可用 `/<skill>` 喚起。全部 skill 都在 repo 根目錄執行。**WSL 使用者請從 WSL 端執行維護型 skill**——從 Windows PowerShell 走 UNC 路徑（`\\wsl$\...`）呼叫 Windows Python 會因 `AGENTS.md` symlink 讀取失敗，同一份掃描在 WSL 端正常完成，此類失敗易被誤判為 skill 壞掉。
+在 Obsidian 直接「Open folder as vault」開啟本 repo 即可閱讀編輯。支援 [Agent Skills](https://agentskills.io) 的 AI 工具可載入 `.agents/skills/`；Claude Code 也可用 `/<skill>` 喚起。全部 skill 都在 repo 根目錄執行。**WSL 使用者請從 WSL 端執行維護型 skill**——從 Windows PowerShell 走 UNC 路徑（`\\wsl$\...`）呼叫 Windows Python 曾因 root `AGENTS.md` symlink 讀取失敗（該 symlink 已於 2026-09-21 移除，此特定成因不再存在），同一份掃描在 WSL 端正常完成；跨檔案系統呼叫仍建議留在 WSL 端執行，此類失敗易被誤判為 skill 壞掉。
 
 > **目前沒有跨專案查詢入口。** 早期的全域 `ob-write`／`ob-read` 已移除，其「從其他專案查詢 vault」的情境曾由 `ask-vault`（headless 唯讀 Query，可依環境選用 `claude`／`codex`／`opencode`）承接，但該 skill 於 2026-08-14 移除——建成後實際未使用，跨專案取知識的做法待重新構想。在新做法落地前，要查本 vault 就直接在本 repo 開 session 走 Query。
 
@@ -90,7 +90,7 @@ git clone https://github.com/lllloo/obsidian-memory.git
   - `clippings/` — 使用者以 Web Clipper 或手動放入的來源
   - `fetched/` — agent 依使用者提供 URL 擷取的來源
 - `wiki/` — 活知識庫（agent 綜合 raw 維護的摘要/實體/概念/綜合頁，含內容目錄 `01.index.md`）
-- `CLAUDE.md` + `schema/` — 治理規範與操作狀態層；各檔案的權威職責清單見 `schema/vault-map.md`
+- `AGENTS.md` + `schema/` — 治理規範與操作狀態層；各檔案的權威職責清單見 `schema/vault-map.md`
 
 三層之外：
 
@@ -103,9 +103,9 @@ git clone https://github.com/lllloo/obsidian-memory.git
 
 ## 規則與工作流
 
-先看 [`schema/SYSTEM-DESIGN.md`](./schema/SYSTEM-DESIGN.md)——系統全貌：Karpathy LLM Wiki 心智模型、人/AI 分工、刻意不做的事。可執行規則（agent 維護規則、Ingest/Query/Lint、寫入慣例、流程級確認點）見 [`CLAUDE.md`](./CLAUDE.md)，導航見 [`schema/vault-map.md`](./schema/vault-map.md)。
+先看 [`schema/SYSTEM-DESIGN.md`](./schema/SYSTEM-DESIGN.md)——系統全貌：Karpathy LLM Wiki 心智模型、人/AI 分工、刻意不做的事。可執行規則（agent 維護規則、Ingest/Query/Lint、寫入慣例、流程級確認點）見 [`AGENTS.md`](./AGENTS.md)，導航見 [`schema/vault-map.md`](./schema/vault-map.md)。
 
-**非 Claude Code 的 AI 工具**（Cursor、Codex 等）從 `AGENTS.md` 進入——它是 `CLAUDE.md` 的 symlink，內容完全相同（checkout 需 git 支援 symlink；Windows 請開 `core.symlinks`，否則會退化成只含檔名字串的純文字檔）。跨 session 操作記憶在 `schema/MEMORY.md`，checked-in 進 repo，任何工具打開 vault 都讀得到。
+規範檔是 root 的 `AGENTS.md`，**所有 AI 工具（含 Claude Code）共用同一份實體檔**，不再有 symlink 或第二份副本——Claude Code 自 v2.1.277 起在專案沒有 `CLAUDE.md` 時原生讀取它。注意反面：只要本目錄或任何上層目錄出現 `CLAUDE.md`／`CLAUDE.local.md`，Claude Code 就改讀那個、完全不看 `AGENTS.md`，所以本 repo 刻意不建 `CLAUDE.md`。跨 session 操作記憶在 `schema/MEMORY.md`，checked-in 進 repo，任何工具打開 vault 都讀得到。
 
 ## Skills
 
