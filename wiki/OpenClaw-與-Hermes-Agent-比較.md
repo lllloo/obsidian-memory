@@ -1,8 +1,8 @@
 ---
 title: OpenClaw 與 Hermes Agent 比較
-description: 兩套自架常駐 personal agent 的路線對照：OpenClaw 2.0 的 Gateway 分離架構與審查式 skill 演進，對上 Hermes 的單體架構與放手式自我進化
+description: 兩套自架常駐 personal agent 的對照：OpenClaw 的 Gateway 分離與審查式 skill 演進，對上 Hermes 的放手式進化
 created: 2026-09-02
-updated: 2026-09-02
+updated: 2026-09-21
 parent: "[[wiki/01.index]]"
 tags:
   - ai-agent

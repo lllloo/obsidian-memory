@@ -1,8 +1,8 @@
 ---
 title: 專案測試流程 後端 Laravel
-description: Laravel 端測試落地：判斷從 Controller 抽到 Service、Unit／Feature 兩個 testsuite 的分界與陷阱、整合測試該覆蓋到哪
+description: Laravel 測試落地：Controller 抽 Service 的判準、Unit／Feature 兩個 testsuite 的分界與陷阱、整合測試的覆蓋範圍
 created: 2026-08-08
-updated: 2026-08-28
+updated: 2026-09-21
 parent: "[[wiki/01.index]]"
 tags:
   - testing

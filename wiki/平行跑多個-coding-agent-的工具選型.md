@@ -1,8 +1,8 @@
 ---
 title: 平行跑多個 coding agent 的工具選型
-description: Herdr、Multica 以外本機平行跑 coding agent 的四類方案，標明對 Claude Code、Codex、agy 與 Linux 的支援度、維護狀態，以及值不值得的第一手經驗
+description: Herdr、Multica 以外本機平行跑 coding agent 的四類方案，逐項標各 agent 與 Linux 的支援度、維護狀態
 created: 2026-09-15
-updated: 2026-09-16
+updated: 2026-09-21
 parent: "[[wiki/01.index]]"
 tags:
   - ai-agent

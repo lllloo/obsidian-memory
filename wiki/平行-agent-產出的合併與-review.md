@@ -1,8 +1,8 @@
 ---
 title: 平行 agent 產出的合併與 review
-description: 多個 coding agent 各在 worktree 平行產出後的整合面：衝突率實證、切分與合併順序做法、LLM 解衝突與 best-of-N 挑選的上限、review 變薄的觀測
+description: 多個 coding agent 平行產出後的整合面：衝突率實證、切分與合併順序、LLM 解衝突與 best-of-N 的上限、人工 review 變薄
 created: 2026-09-16
-updated: 2026-09-16
+updated: 2026-09-21
 parent: "[[wiki/01.index]]"
 tags:
   - coding-agent

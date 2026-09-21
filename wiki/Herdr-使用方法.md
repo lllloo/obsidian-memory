@@ -1,8 +1,8 @@
 ---
 title: Herdr 使用方法
-description: herdr 的 session／workspace 層級、持久化邊界、agent 狀態偵測、CLI 委派原語、worktree 與 SSH 遠端用法，含偵測盲點與強度標註
+description: herdr 的 session／workspace 層級、持久化邊界、狀態偵測、CLI 委派原語、worktree 與 SSH 遠端用法，含偵測盲點
 created: 2026-09-15
-updated: 2026-09-15
+updated: 2026-09-21
 source: https://herdr.dev/docs/
 parent: "[[wiki/01.index]]"
 tags:
