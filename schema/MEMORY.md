@@ -31,7 +31,7 @@ tags:
 - 待辦：後續新增資料夾時路徑一律全小寫；目前不新增資料夾。
 - **勿重複提議**（已拍板不動）：`.gitignore` 不補 `.env`/金鑰規則、`.obsidian/plugins/obsidian-git/` bundle 維持 tracked（換機開箱即用優先）。
 - **勿再提議**為 lint/BACKLOG 加「上次執行／心跳」欄（已拍板移除）：與「安靜的一輪零變更、不開雜訊 PR」天生不相容；routine 存活靠 claude.ai 執行紀錄判斷，不靠 in-repo 紀錄。
-- `vault-lint` 語意層已改**全面自動修**（2026-07-17 使用者拍板：agent 自主修、真需使用者的決策才進 BACKLOG）。**勿再提議**加獨立 refuter 對抗驗證——選項已擺出，使用者選了不加，review 靠排程端 PR diff。
-- `vault-lint` **skill 本身不碰 git**；排程走雲端 routine（`trig_018QPWmi5K8hiV7ghMvKnTU9`，每天台北 05:00，claude-sonnet-5），其 prompt 自帶 commit+push+開 PR 且不依賴 Skill 工具（改讀 `SKILL.md`）。
+- `vault-lint` 語意層已改**全面自動修**（2026-07-17 使用者拍板：agent 自主修、真需使用者的決策才進 BACKLOG）。**勿再提議**加獨立 refuter 對抗驗證——選項已擺出，使用者選了不加，review 靠事後 GitHub diff（原「排程端 PR diff」已隨 routine 停用而不成立）。
+- `vault-lint` **skill 本身不碰 git**。雲端排程 routine（`trig_018QPWmi5K8hiV7ghMvKnTU9`，原每天台北 05:00、claude-sonnet-5，prompt 自帶 commit+push+開 PR）**使用者已停用（2026-09-21 告知）**：目前健檢只在手動觸發時跑，該輪 agent 自行 commit/push。trigger id 留作日後重啟參照。
 - **跨 repo 的實作一律回該 repo 做**（2026-08-06 拍板，通則）：vault 只沉澱可跨專案重複使用的方法論，他 repo 的實作細節與專案狀態既不寫進 vault，實作動作也不在 vault session 內進行——要動就到該 repo 開 session、走它自己的流程（如 `cloud-memory` 走 OpenSpec）。
 - `vault-updates-daily` 已於 2026-08-03 使用者拍板**完整退場**（skill、`feeds/updates/`、文件引用皆移除）：訊號密度過低。**勿再提議重建或做輕量版**。雲端 routine 由使用者自行停用（agent 無 trigger id）。
