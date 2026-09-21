@@ -14,7 +14,7 @@
   },
   "anthropics/claude-code#31005": {
     "type": "issue",
-    "state": "open",
+    "state": "closed",
     "labels": [
       "area:core",
       "duplicate",
@@ -24,7 +24,7 @@
     "title": "Support for AGENTS.md and .agents/skills/, the community has been asking since August 2025",
     "last_official_id": null,
     "last_official_at": null,
-    "checked_ts": "2026-07-16T01:30:37Z"
+    "checked_ts": "2026-09-21T01:17:25Z"
   },
   "anomalyco/opencode#15617": {
     "type": "issue",
