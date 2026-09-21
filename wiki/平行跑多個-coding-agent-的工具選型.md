@@ -96,6 +96,7 @@ deep-research 這兩面向零條通過驗證，以下由主 agent 回原文核�
 ## 交叉引用
 
 - 終端層對照：[[Herdr-使用方法]]——herdr 以 agent 狀態偵測為核心，Claude Squad 以預設 worktree 流程為核心；兩者都能經通用指令跑 Codex／agy。
+- 終端層的檢視補件：[[Yazi-設定與踩雷]]——本表的終端方案都沒有 GUI 型 ADE 的檔案總管與 diff 檢視，該頁記三條補法與所選方案的設定、WSL2 邊界與踩雷。
 - 看板層對照：[[Multica-與-agent-看板的用法與適用邊界]]——該頁附的 Vibe Kanban 已 sunsetting，本頁的 GUI app 類是看板以外的另一條視覺化路線。
 - 判準上游：[[Context-優先與多-agent-的適用邊界]]——「讀重可平行、寫重慎用」的適用域劃分，本頁第一手經驗是它在本機工具層的印證。
 - 瓶頸：[[AI-產碼加速下的-review-瓶頸]]——Simon Willison 懷疑平行的理由正是 review 瓶頸。

@@ -115,6 +115,7 @@ herdr 內建 worktree 指令（官方 cli-reference 原始檔＋本機 `--help`�
 
 - 對 [[Multica-與-agent-看板的用法與適用邊界]]（agent 判斷，非查證結論）：Multica 是非同步看板，agent 是身分、run 結束即走，人類在卡片把關點介入；herdr 是同步的終端層，agent 是常駐程序，人類即時盯側欄狀態。前者適合佇列化派工，後者適合同時跑幾個互動 session 並隨時插手。
 - 同層替代方案見 [[平行跑多個-coding-agent-的工具選型]]：Claude Squad 同屬終端層但以預設 worktree 流程為核心，Emdash 等 GUI app 是另一條路線。
+- 檔案與 diff 檢視是 herdr 相對 GUI 型 ADE 的明顯缺口，補法（plugin／通用終端 TUI／旁開編輯器三條路線）與所選方案的設定見 [[Yazi-設定與踩雷]]；該頁也記了在多工器背景 pane 裡的卡頓踩雷，機制上可能波及 herdr 但尚未驗證。
 - herdr 不介入 agent 的 loop／tools／memory，屬 harness 之外的操作層（見 [[Herdr-按鍵設定]] 對 [[Agent-Harness-Engineering-框架綜述]] 的定位）；它的委派原語也印證 [[pi-workflow-編排-harness-與本-vault-分野]] 所述「編排職能被 harness 與周邊工具吸收」的走向。
 
 ## 勿引用與未解問題
