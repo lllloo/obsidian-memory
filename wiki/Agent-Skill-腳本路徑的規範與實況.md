@@ -2,7 +2,7 @@
 title: Agent Skill 腳本路徑的規範與實況
 description: SKILL.md 呼叫 bundled 腳本該怎麼寫路徑：規範明訂裸相對路徑、主流集合一致照做，但規範內部對誰負責解析自相矛盾，實測會找不到檔
 created: 2026-08-13
-updated: 2026-08-14
+updated: 2026-09-22
 parent: "[[wiki/01.index]]"
 tags:
   - claude-code
@@ -134,4 +134,5 @@ Agent Skills 規範（agentskills.io）`skill-creation/using-scripts` L98 逐字
 ## 關聯
 
 - [[Claude-Code-Hook-能力邊界]] — 同屬「Claude Code 機制的實測邊界」：該頁的結論是能力上限由輸出契約決定，本頁的結論是路徑可靠性由 harness 有沒有實作 client 端改寫決定，兩者都指向「規範寫得到 ≠ 實作做得到」
+- [[Coding-agent-指示檔與規則載入機制對照]] — 本頁講 skill 腳本路徑的跨 harness 可攜；該頁講指示檔與規則檔的跨 harness 可攜，結論同向：純 skill 搬得動，rules 與 hook 搬不動
 - [[跨專案第二大腦整合模式]] — 已撤銷的 `ask-vault` 的跨 CLI 定位與撤銷紀錄在該頁，本頁記的是它在路徑寫法上為何曾必須是例外

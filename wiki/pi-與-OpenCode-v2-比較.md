@@ -50,4 +50,5 @@ Composio 2026-08-21 基準：30 題硬任務、同用 DeepSeek V4 Pro。pi 21/30
 - [[LLM-方案定價與-coding-agent-比較]]——訂閱額度能否給第三方 harness 用：OpenAI「Codex for Open Source」明列支援 OpenCode 與 pi，兩者都吃得到 ChatGPT 訂閱；Claude 訂閱兩者都不能用。本頁是能力取捨，該頁是錢從哪來。
 - [[OpenClaw-與-Hermes-的實地使用心得]]——該頁引用的 `sshine` 試過含 pi 與 opencode 在內五套 harness，批的是 Hermes 過度工程；與本頁「pi 極簡、OpenCode 電池全含」的光譜合看，Hermes 落在比 OpenCode 更重的一端。
 - [[pi-workflow-編排-harness-與本-vault-分野]]——pi-workflow 是給 pi 用的編排 CLI，正是 pi「無內建 subagent、自己用 extension 組」哲學的第三方產物。
+- [[Coding-agent-指示檔與規則載入機制對照]]——本頁的「擴充方式」列只點到 extension 與 plugin；該頁把「指示檔與規則能否依路徑條件載入」單獨挖開，pi 靠 `tool_call`／`tool_result` 自製、OpenCode `instructions` 只能全載，兩者都沒有 Claude Code rules 的等價物。
 - [[Agent-Harness-Engineering-框架綜述]]——該頁的 13 套 scaffold 原始碼比較含 OpenCode；本頁補 pi 這個「極簡到不進比較清單」的對照端點。
