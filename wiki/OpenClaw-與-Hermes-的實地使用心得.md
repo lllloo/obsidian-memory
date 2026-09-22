@@ -2,7 +2,7 @@
 title: OpenClaw 與 Hermes 的實地使用心得
 description: HN 使用者對兩套常駐 agent 的第一手證詞：熱度崩落、維護成本吃掉價值、自我進化的複利同時是負債，與少數撐住的日常用例
 created: 2026-09-02
-updated: 2026-09-02
+updated: 2026-09-22
 parent: "[[wiki/01.index]]"
 tags:
   - ai-agent
@@ -95,3 +95,4 @@ tags:
 - 實體頁：[[Hermes-Agent]]
 - 失效機制：[[Agent-維護知識庫的已知失效模式]]——本頁「自主生長壓垮自己」的機制層對照
 - 記憶路線：[[Agent-記憶兩大路線-知識庫與-memory-bank]]、[[LLM-Wiki-知識管理模式]]
+- 輕量端對照：[[pi-與-OpenCode-v2-比較]]——`sshine` 試過的五套中，pi 與 opencode 落在比 Hermes 輕得多的一端

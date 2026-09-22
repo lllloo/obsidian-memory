@@ -2,7 +2,7 @@
 title: pi-workflow 編排 harness 與本 vault 的分野
 description: 把命名工作流 CLI 定位為編排層，對照知識組織層的職責，評估既有工具覆蓋、可借鑑處與不引入理由
 created: 2026-07-15
-updated: 2026-09-15
+updated: 2026-09-22
 source: "https://github.com/AgwaB/pi-workflow"
 published: ""
 parent: "[[wiki/01.index]]"
@@ -59,3 +59,4 @@ tags:
 - [[LLM-方案定價與-coding-agent-比較]]——該頁 2026-09-09 的 agy 生態盤點為本頁「編排職能被 harness 吸收、獨立編排層長不大」提供一次分布層面的旁證：跨 harness 技能庫（wshobson/agents 39.5k★）與統一調度層（天花板約 300★）的星數差了兩個量級。
 - [[Agent-工作流-Pattern-藍本庫]]——該頁第二層把 workflow／agent 的分野定在「branches 與 stop conditions 在執行前是否靜態可知」，與本頁用來定位 pi-workflow 的「路徑預先定義」是同一判準的兩種表述；本頁把該判準套到單一工具上，該頁則給出跨來源的 pattern 挑選清單與各自失效邊界。
 - [[Multica-與-agent-看板的用法與適用邊界]]——另一個「要不要引入一整套編排機制」的工具評估：Multica Squad 的角色分工結構上是互不共享 context 的獨立 run，結論方向與本頁一致。
+- [[pi-與-OpenCode-v2-比較]]——pi 本體的定位與取捨；pi-workflow 是其「無內建 subagent」哲學下的第三方編排層。
