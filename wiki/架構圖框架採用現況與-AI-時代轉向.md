@@ -2,7 +2,7 @@
 title: 架構圖框架採用現況與 AI 時代轉向
 description: C4／arc42／4+1／UML 誰是主流查無可信數據，唯一產物計數顯示框架本身就不是主流；並記 2026 年 C4 專用工具鏈封存與架構約束機構化的轉向
 created: 2026-08-10
-updated: 2026-08-10
+updated: 2026-09-22
 source: https://robertoverdecchia.github.io/papers/ECSA_2024.pdf
 parent: "[[wiki/01.index]]"
 tags:
@@ -118,6 +118,8 @@ harness 的對抗查證把「Structurizr 官方工具鏈於 2026 年 2 月封存
 | `structurizr/lite` | `true` | 2026-02-01T14:25:09Z | 384 |
 
 **封存屬實，全票否決是誤判。** 此案例的方法論意義大於內容：N-0 否決不等於事實為假，核心事實可能被周邊細節（如「使用者被導向 Patreon 資助產品」這類無法複現的敘述）連坐。同輪另一個同型錯誤是最終 summary 宣稱「架構約束用於 AI 產碼在所有一手來源中命中為零」——實際上搜尋階段已抓到 Thoughtworks Radar 與 Codesai 兩個直接命中，只是其 claim 落在 `budgetDropped: 6` 未進驗證階段。**驗證取樣的缺席被寫成了事實的缺席**，這是本輪最需要記住的失效模式。
+
+> 此模式後於 [[Jev-與-System-One-模型]] 再次重現（三條否決經一手複核全部成立），與 [[長跑-Agent-的目標定義與計畫工具]] 合計三次，已不是單一輪的偶發。
 
 ## 勿引用
 

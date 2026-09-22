@@ -2,7 +2,7 @@
 title: 長跑 Agent 的目標定義與計畫工具
 description: 讓自主迭代 agent 持續推進而不走偏的目標檔機制（分層、驗收判準、停止條件、防漂移措辭）與 SDD 工具生態的採用度實據
 created: 2026-07-30
-updated: 2026-09-21
+updated: 2026-09-22
 parent: "[[wiki/01.index]]"
 tags:
   - ai-agent
@@ -218,6 +218,8 @@ GitHub star 數，2026-07-30 以 `gh api`／`gh search` 直查核實（**star �
 本輪 verifier 把 planning-with-files 的「三檔案 ＋ hook 每 turn 重新注入」整條判 **0-3 否決**，但該 repo README 逐字寫著 `task_plan.md`／`findings.md`／`progress.md` 與「re-injects them every turn」、注入格式為 `===BEGIN PLAN DATA===`、由 `UserPromptSubmit` hook 寫入。**真正不可靠的只有周邊細節**（各家 hook 數量、attention window 的歸因），verifier 連同核心一起殺掉。
 
 含意：**3 票制的否決不等於「該事實為假」，只表示「該條主張的表述無法整體成立」**。回存時應把可核實的核心與未經核實的細節拆開判，不要整條丟棄——這是本 vault 使用 deep-research 產出時的已知偏誤方向（與 [[Agent-維護知識庫的已知失效模式]] 的壓縮丟限定詞屬同族問題：一個丟限定詞、一個因限定詞為假而丟主體）。
+
+**同一失效模式已第三次獨立重現**：[[架構圖框架採用現況與-AI-時代轉向]] 的 Structurizr 封存（0-3 誤殺，GitHub API 複驗為真）、[[Jev-與-System-One-模型]] 的三條否決（一手複核後全部成立，且同一組數字「官方原文 0-3 否決、Wikipedia 轉述 3-0 通過」自相矛盾）。三次之後可視為**穩定的 harness 行為而非偶發**，refuted 清單一律要回查一手才能採信。
 
 ### 二手比較文的數字不可信
 

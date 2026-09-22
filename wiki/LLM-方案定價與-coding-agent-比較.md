@@ -2,7 +2,7 @@
 title: LLM 方案定價與 coding agent 比較
 description: 主流 LLM 訂閱月費與 coding agent 三方案定價對照，依用途給經濟實惠推薦，含台幣概算、2026-09 覆核與第三方工具可用性
 created: 2026-07-08
-updated: 2026-09-09
+updated: 2026-09-22
 parent: "[[wiki/01.index]]"
 tags:
   - llm-pricing
@@ -108,3 +108,4 @@ agy 本身內建 subagent、`/schedule` 排程、`/boost` 三層編排，並可�
 - [[Claude-Code-記憶系統六層比較]] ——同屬 coding agent 生態；該頁比較 Claude Code 等記憶方案，本頁比較其訂閱定價與競品，合看能同時掌握「選哪個 agent」與「選哪套記憶方案」兩個決策軸
 - [[Context-優先與多-agent-的適用邊界]] ——該頁的「多 agent 約 15 倍 token」是相對成本判準，本頁提供訂閱月費與 API 按量單價的絕對數字，兩頁合成「要不要堆 agent／這樣花多少錢」的完整成本決策
 - [[AI-自主工作流的實證檢驗]] ——該頁 token 經濟性一節承認多 agent 的成本倍率，本頁把倍率換算成實際可付的訂閱與 API 價格
+- [[Jev-與-System-One-模型]] ——本頁是「訂閱制與 coding agent 怎麼買」，該頁是應用內決策點的 per-token 單價（input $0.042/M、output 免費）；兩頁共通的警告是官方定價為快照、變動極快，且掛牌價不等於帳單（該頁另記 alpha 端點計費未明與平台手續費）

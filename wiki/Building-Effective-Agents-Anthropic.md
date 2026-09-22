@@ -2,7 +2,7 @@
 title: Building Effective Agents（Anthropic）
 description: 整理 workflows 與 agents 的架構分界、五種編排模式、augmented LLM 基石，以及由簡入繁的實作原則
 created: 2026-07-14
-updated: 2026-07-17
+updated: 2026-09-22
 source: "https://www.anthropic.com/engineering/building-effective-agents"
 published: 2024-12-19
 parent: "[[wiki/01.index]]"
@@ -44,7 +44,7 @@ agentic system 的基本建構塊是一個被 **retrieval、tools、memory** 增
 由簡入繁，每種都附「何時用」：
 
 1. **Prompt chaining**：把任務拆成一連串步驟，每次 LLM 呼叫處理前一次的輸出；可在中間步插入程式化 **gate**（檢查點）確保仍在軌道上。**何時用**：任務能乾淨拆成固定子任務時；用延遲換更高準確度（每次呼叫更簡單）。例：先寫行銷文案再翻譯；先寫大綱、檢查大綱達標、再依大綱寫全文。
-2. **Routing**：分類輸入並導向專門的後續任務，達成關注點分離、建更專門的 prompt。**何時用**：有明確類別、各自分開處理更好、且分類能被準確執行時。例：客服分流（一般問題／退款／技術支援）；簡單常見問題導向便宜小模型、困難罕見問題導向更強模型。
+2. **Routing**：分類輸入並導向專門的後續任務，達成關注點分離、建更專門的 prompt。**何時用**：有明確類別、各自分開處理更好、且分類能被準確執行時。例：客服分流（一般問題／退款／技術支援）；簡單常見問題導向便宜小模型、困難罕見問題導向更強模型。**此格的極端化落地**見 [[Jev-與-System-One-模型]]：把「分類並導向」這個動作抽成不生成文字、只回型別化判斷的專用模型，代價是適用域窄到只剩高頻短 state 的決策點。
 3. **Parallelization**：LLM 同時處理任務、輸出以程式聚合，兩變體——**Sectioning**（拆成獨立子任務平行跑）、**Voting**（同任務多次跑取多元輸出）。**何時用**：子任務可平行加速，或需多視角／多次嘗試提高信心時。例（sectioning）：一個實例處理查詢、另一個篩不當內容；一次評測跑多個面向。例（voting）：多個 prompt 各查程式漏洞；不同投票門檻平衡誤報漏報。
 4. **Orchestrator-workers**：中央 LLM 動態拆解任務、委派給 worker LLM、綜合其結果。**與 parallelization 的關鍵差異**：子任務**非預先定義**，而由 orchestrator 依具體輸入決定。**何時用**：無法預測需要哪些子任務時（如 coding：要改幾個檔、各檔怎麼改視任務而定）。例：對多檔做複雜變更的 coding 產品；多來源蒐集分析的搜尋任務。
 5. **Evaluator-optimizer**：一個 LLM 生成回應、另一個在 loop 中評估並給回饋（即 generator-evaluator 迴路原型）。**何時用**：有明確評測準則、且迭代精煉帶來可衡量價值時——徵兆是「人能articulate回饋讓回應變好」且「LLM 能給這種回饋」。例：文學翻譯的細膩度；需多輪搜尋分析的複雜檢索（由 evaluator 決定是否再搜）。

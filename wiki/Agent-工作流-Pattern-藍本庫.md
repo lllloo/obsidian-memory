@@ -2,7 +2,7 @@
 title: Agent 工作流 Pattern 藍本庫
 description: 設計 agent skill 時的 pattern 挑選清單：每項附定義、適用、失效條件、出處與強度，並收錄選用決策樹與被查證否決的組合宣稱
 created: 2026-07-17
-updated: 2026-07-30
+updated: 2026-09-22
 parent: "[[wiki/01.index]]"
 tags:
   - ai-agent
@@ -43,7 +43,7 @@ tags:
 
 ### A. Anthropic 骨架
 
-五種 workflow pattern——prompt chaining、routing、parallelization（含 **sectioning** 與 **voting** 兩變體）、orchestrator-workers、evaluator-optimizer——加上 autonomous agents，另有 **augmented LLM**（LLM＋retrieval／tools／memory）作為**先於五者呈現的獨立基礎元件**，藍本庫應單獨收錄為第六元素、不可折進五項內。各項的完整適用時機見 [[Building-Effective-Agents-Anthropic]]，此處不重述。
+五種 workflow pattern——prompt chaining、routing、parallelization（含 **sectioning** 與 **voting** 兩變體）、orchestrator-workers、evaluator-optimizer——加上 autonomous agents，另有 **augmented LLM**（LLM＋retrieval／tools／memory）作為**先於五者呈現的獨立基礎元件**，藍本庫應單獨收錄為第六元素、不可折進五項內。各項的完整適用時機見 [[Building-Effective-Agents-Anthropic]]，此處不重述。routing 一格另有專用模型路線（[[Jev-與-System-One-模型]]），但換用前仍受本頁選用 gate 約束——該頁第四節「無人拿它對上 fine-tuned encoder」正是「複雜度為最後手段」的具體缺口。
 
 **這是骨架，不是完整分類法。** 原文明言「These building blocks aren't prescriptive」「common patterns... we've seen in production」。直接後果：**ReAct、plan-act-reflect、human-in-the-loop、adversarial verification、loop-until-dry 都不在這五項內**，須另行溯源（見下）。可寫「權威骨架」，不可寫「權威完整分類法」。
 
