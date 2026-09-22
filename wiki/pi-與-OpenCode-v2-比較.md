@@ -19,10 +19,10 @@ tags:
 | 面向 | pi（badlogic／earendil-works） | OpenCode v2（anomalyco，前 sst） |
 |---|---|---|
 | 定位 | 單進程極簡 agent，官方口號「Adapt Pi to your workflows, not the other way around」 | client-server：一個常駐 server 同時餵 TUI、Desktop、Web 與自訂 client |
-| 內建工具 | 只有 read／write／edit／bash（grep／find／ls 可啟用） | 12+ 內建工具、LSP 診斷、Plan mode、subagents、MCP、permissions（allow/ask/deny） |
+| 內建工具 | 只有 read／write／edit／bash（grep／find／ls 可啟用） | 12+ 內建工具、Plan mode、subagents、MCP、permissions（v2 改為有序 `{action, resource, effect}` 陣列）。~~LSP 診斷~~——已被取代（2026-09-22）：v2 文件明載接受 `lsp` 設定但不跑 language server、無診斷，見 [[四套-coding-agent-能力差異對照]] |
 | 明確不做 | 無內建 MCP、無 subagent、無權限彈窗、無 plan mode、無 todo、無背景 bash；官方回答一律是「寫 extension 或跑容器」 | 幾乎都內建 |
 | 擴充方式 | TypeScript extension **在 agent 進程內跑**，25+ 個 hook（含 `input`、`before_agent_start`、context 修剪、session 分支事件），TUI 任何區塊可改 | JSON config＋plugin＋skill＋MCP，約 20 個事件；TUI 封閉，不能塞自訂 UI |
-| Session | JSONL 存成樹，`/tree`／`/fork`／`/clone` 就地分支；compaction 有損但全史保留在 JSONL | 多分頁平行 session、跨裝置同步（v2 新增） |
+| Session | JSONL 存成樹，`/tree`／`/fork`／`/clone` 就地分支；compaction 有損但全史保留在 JSONL | 多分頁平行 session（共用背景 service 持有）。~~跨裝置同步（v2 新增）~~——已被取代（2026-09-22）：v2 文件查無同步機制，且明寫尚不支援 session sharing，見 [[四套-coding-agent-能力差異對照]] |
 | 執行模式 | interactive／print-JSON／RPC／SDK 四種 | TUI／Desktop（Electron）／HTTP API＋生成的 TypeScript client |
 | Provider | 約 15–20 家；本機模型（MLX／GGUF）支援受好評 | 75+ 家，含 Ollama／LM Studio／llama.cpp |
 | 資源 | 單進程；system prompt＋tool 定義不到 1k tokens | 常駐服務，RAM 1GB+；prompt 約 6.9k tokens |
@@ -43,12 +43,13 @@ Composio 2026-08-21 基準：30 題硬任務、同用 DeepSeek V4 Pro。pi 21/30
 ## 怎麼選
 
 - **選 pi**：想自己控制 agent loop、要極省 token、常換本機模型、需要 session 樹分支來除錯。代價是 MCP／permission／subagent 都要自己接。
-- **選 OpenCode v2**：要 Claude Code 等級的開箱功能、團隊要權限控管、要 LSP 診斷、想從 Desktop／Web 多端接同一個 server。代價是更重，且 v2 剛出、plugin 生態要重來。
+- **選 OpenCode v2**：要 Claude Code 等級的開箱功能、團隊要權限控管、想從 Desktop／Web 多端接同一個 server（LSP 診斷 v2 暫無，見上表更正）。代價是更重，且 v2 剛出、plugin 生態要重來。
 
 ## 關聯
 
 - [[LLM-方案定價與-coding-agent-比較]]——訂閱額度能否給第三方 harness 用：OpenAI「Codex for Open Source」明列支援 OpenCode 與 pi，兩者都吃得到 ChatGPT 訂閱；Claude 訂閱兩者都不能用。本頁是能力取捨，該頁是錢從哪來。
 - [[OpenClaw-與-Hermes-的實地使用心得]]——該頁引用的 `sshine` 試過含 pi 與 opencode 在內五套 harness，批的是 Hermes 過度工程；與本頁「pi 極簡、OpenCode 電池全含」的光譜合看，Hermes 落在比 OpenCode 更重的一端。
 - [[pi-workflow-編排-harness-與本-vault-分野]]——pi-workflow 是給 pi 用的編排 CLI，正是 pi「無內建 subagent、自己用 extension 組」哲學的第三方產物。
+- [[四套-coding-agent-能力差異對照]]——本頁兩家對照的四家擴展版，十五維度；本頁兩處主張（LSP 診斷、跨裝置同步）經該輪查證標為已被取代。
 - [[Coding-agent-指示檔與規則載入機制對照]]——本頁的「擴充方式」列只點到 extension 與 plugin；該頁把「指示檔與規則能否依路徑條件載入」單獨挖開，pi 靠 `tool_call`／`tool_result` 自製、OpenCode `instructions` 只能全載，兩者都沒有 Claude Code rules 的等價物。
 - [[Agent-Harness-Engineering-框架綜述]]——該頁的 13 套 scaffold 原始碼比較含 OpenCode；本頁補 pi 這個「極簡到不進比較清單」的對照端點。

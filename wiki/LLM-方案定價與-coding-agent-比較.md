@@ -109,5 +109,6 @@ agy 本身內建 subagent、`/schedule` 排程、`/boost` 三層編排，並可�
 - [[Context-優先與多-agent-的適用邊界]] ——該頁的「多 agent 約 15 倍 token」是相對成本判準，本頁提供訂閱月費與 API 按量單價的絕對數字，兩頁合成「要不要堆 agent／這樣花多少錢」的完整成本決策
 - [[AI-自主工作流的實證檢驗]] ——該頁 token 經濟性一節承認多 agent 的成本倍率，本頁把倍率換算成實際可付的訂閱與 API 價格
 - [[Jev-與-System-One-模型]] ——本頁是「訂閱制與 coding agent 怎麼買」，該頁是應用內決策點的 per-token 單價（input $0.042/M、output 免費）；兩頁共通的警告是官方定價為快照、變動極快，且掛牌價不等於帳單（該頁另記 alpha 端點計費未明與平台手續費）
+- [[四套-coding-agent-能力差異對照]]——四家能力矩陣；其「訂閱／登入」列補了一個本頁該注意的細節：pi 文件稱 Claude Pro／Max 可登入但走 extra usage 按 token 計費、不吃 plan 額度，OpenCode 文件則直接引 Anthropic 禁止條款下架該 plugin。
 - [[Coding-agent-指示檔與規則載入機制對照]]——本頁算錢與額度能否帶到第三方 harness；該頁是換 harness 時 `~/.claude/rules/` 這類規則檔能不能帶走的機制面（Codex／OpenCode／pi 都沒有 glob 條件載入）。
 - [[pi-與-OpenCode-v2-比較]] ——本頁只算錢，該頁比 OpenCode 與 pi 兩套第三方 harness 的能力取捨；「Codex for Open Source」支援清單兩頁共用

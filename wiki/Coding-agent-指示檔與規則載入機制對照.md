@@ -20,7 +20,7 @@ tags:
 |---|---|---|---|---|
 | Claude Code | `~/.claude/CLAUDE.md`＋專案 `CLAUDE.md`／`AGENTS.md`，`@` 匯入 | `.claude/rules/*.md` | 原生 frontmatter `paths` | 啟動載全域與專案檔；rules 在 session 中途依接觸檔案注入 |
 | Codex | `~/.codex/AGENTS.md`＋git root 到 cwd 每層一檔 | 無（每目錄只取一檔） | 無 | 啟動時一次建鏈 |
-| OpenCode | `~/.config/opencode/AGENTS.md`＋從 cwd 往上找 | `opencode.json` 的 `instructions` glob 陣列 | 無，全部載入 | 啟動時一次載入 |
+| OpenCode | `~/.config/opencode/AGENTS.md`＋每層 `AGENTS.md`（v2 不再 fallback `CLAUDE.md`） | v1：`instructions` glob 陣列；**v2 接受但不解析** | 無 glob；v2 子目錄 `AGENTS.md` 在 agent 讀到該區時延遲載入（目錄層級按需） | v1 啟動一次載入；v2 子目錄檔延遲載入、session 中編輯下一請求生效 |
 | pi | `~/.pi/agent/AGENTS.md`＋從 cwd 往上每層串接 | 無原生 | 無原生；extension 可自製 | 啟動時載入；extension 可在工具呼叫時介入 |
 | Cursor | `AGENTS.md`（純 markdown） | `.cursor/rules/*.mdc` | frontmatter `globs`＋`alwaysApply`＋`description` 三模式 | 依編輯器開啟檔案觸發 |
 | GitHub Copilot | `.github/copilot-instructions.md`＋就近 `AGENTS.md` | `.github/instructions/*.instructions.md` | frontmatter `applyTo` glob | 依接觸檔案觸發 |
@@ -37,7 +37,9 @@ Codex CLI 本體變動極快（2026-09 約每週一個 minor、alpha 每天數�
 
 ### OpenCode
 
-官方 rules 文件：`instructions` 陣列接受檔名、glob（範例含 `.cursor/rules/*.md`、`packages/*/AGENTS.md`）與遠端 URL（5 秒 timeout），**全部在啟動時載入並與 AGENTS.md 串接**，不解析 frontmatter、不依接觸檔案決定。相容層會讀 Claude Code 的 `CLAUDE.md`、`~/.claude/CLAUDE.md`、`~/.claude/skills/` 當 fallback（可用 `OPENCODE_DISABLE_CLAUDE_CODE*` 環境變數關閉），但文件**未提 `.claude/rules/`**。官方對「按需載入」的建議是在 AGENTS.md 寫散文叫模型「看到 `@rules/x.md` 引用時再用 Read 讀」，靠模型自律而非機制。
+**v1／v2 分歧（2026-09-22 補）**：下段描述的是 v1 文件（opencode.ai/docs/rules）。v2 文件（opencode.ai/v2/docs/instructions）改為只認 `AGENTS.md`、不再 fallback `CLAUDE.md`；`instructions` 陣列 schema 仍接受但**目前不解析**（檔案、glob、URL 都不生效）；子目錄的 `AGENTS.md` 改成 agent 讀到該區域時才延遲載入，session 中編輯會在下一次請求前注入——這是四家 CLI 裡唯一「目錄層級、session 中途按需」的機制，仍不是 glob 條件，但比 Codex 的啟動時一次建鏈更接近 rules。
+
+v1 官方 rules 文件：`instructions` 陣列接受檔名、glob（範例含 `.cursor/rules/*.md`、`packages/*/AGENTS.md`）與遠端 URL（5 秒 timeout），**全部在啟動時載入並與 AGENTS.md 串接**，不解析 frontmatter、不依接觸檔案決定。相容層會讀 Claude Code 的 `CLAUDE.md`、`~/.claude/CLAUDE.md`、`~/.claude/skills/` 當 fallback（可用 `OPENCODE_DISABLE_CLAUDE_CODE*` 環境變數關閉），但文件**未提 `.claude/rules/`**。官方對「按需載入」的建議是在 AGENTS.md 寫散文叫模型「看到 `@rules/x.md` 引用時再用 Read 讀」，靠模型自律而非機制。
 
 ### pi
 
@@ -55,10 +57,11 @@ IDE 隨時知道使用者開著哪個檔，路徑條件是自然的觸發點；�
 
 ## Plugin 分發層的對應現象
 
-大多數 plugin 只做 `.claude-plugin/`＋`.codex-plugin/` 兩份 manifest 就收手，因為 pi 與 OpenCode 各用自己的機制：pi 是 `package.json` 宣告 `"pi": { "extensions": [...], "skills": [...] }`、`pi install git:...` 安裝；OpenCode 是 `opencode.json` 的 `plugin` 陣列接 npm／git spec，且 v1 plugin 在 v2 不相容。本機實查（2026-09-22）：superpowers 6.3.0 做了 `.claude-plugin`、`.codex-plugin`、`.cursor-plugin`、`.devin-plugin`、`.hermes-plugin`、`.kimi-plugin`、`.opencode`、`.pi` 全套；diagram-design 只有 claude＋codex；`openai-codex` 的 codex plugin 只有 `.claude-plugin`。純 skill 型 plugin 把 `skills/` 目錄丟進 pi／OpenCode 的 skills 路徑即可用，前提是 skill 內不用 `${CLAUDE_PLUGIN_ROOT}` 這類 Claude 專屬替換字串（見 [[Agent-Skill-腳本路徑的規範與實況]]）；有 hook 的 plugin 則要各自改寫，沒有自動轉換。
+大多數 plugin 只做 `.claude-plugin/`＋`.codex-plugin/` 兩份 manifest 就收手，因為 pi 與 OpenCode 各用自己的機制：pi 是 `package.json` 宣告 `"pi": { "extensions": [...], "skills": [...] }`、`pi install git:...` 安裝；OpenCode 是 `opencode.json` 的 `plugin`（v2 改名 `plugins`）陣列接 npm／git spec，且 v1 plugin 在 v2 不相容。Codex 端 2026-09 文件已改推 agent-plugins.org 的可攜 `plugin.json`（舊 `.codex-plugin/` 仍相容），並有 `.agents/plugins/marketplace.json` 目錄格式。本機實查（2026-09-22）：superpowers 6.3.0 做了 `.claude-plugin`、`.codex-plugin`、`.cursor-plugin`、`.devin-plugin`、`.hermes-plugin`、`.kimi-plugin`、`.opencode`、`.pi` 全套；diagram-design 只有 claude＋codex；`openai-codex` 的 codex plugin 只有 `.claude-plugin`。純 skill 型 plugin 把 `skills/` 目錄丟進 pi／OpenCode 的 skills 路徑即可用，前提是 skill 內不用 `${CLAUDE_PLUGIN_ROOT}` 這類 Claude 專屬替換字串（見 [[Agent-Skill-腳本路徑的規範與實況]]）；有 hook 的 plugin 則要各自改寫，沒有自動轉換。
 
 ## 關聯
 
+- [[四套-coding-agent-能力差異對照]]——本頁是該頁「指示檔」一列的展開；其餘十四個維度在該頁。
 - [[pi-與-OpenCode-v2-比較]]——該頁比兩套 harness 的整體能力取捨；本頁只切「指示檔與規則」這一個面向往下挖，pi「寫 extension 補一切」的哲學在此有具體實例。
 - [[LLM-方案定價與-coding-agent-比較]]——該頁算錢與訂閱額度能否給第三方 harness；本頁是換 harness 時規則檔能不能帶走的機制面。
 - [[Agent-Skill-腳本路徑的規範與實況]]——skill 跨 harness 可攜的前提（裸相對路徑），是本頁「純 skill 型 plugin 可直接搬」的依據。
