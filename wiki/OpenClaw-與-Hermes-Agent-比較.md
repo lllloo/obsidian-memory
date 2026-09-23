@@ -2,7 +2,7 @@
 title: OpenClaw 與 Hermes Agent 比較
 description: 兩套自架常駐 personal agent 的對照：OpenClaw 的 Gateway 分離與審查式 skill 演進，對上 Hermes 的放手式進化
 created: 2026-09-02
-updated: 2026-09-21
+updated: 2026-09-23
 parent: "[[wiki/01.index]]"
 tags:
   - ai-agent
@@ -23,7 +23,7 @@ tags:
 |---|---|---|
 | 出身 | Peter Steinberger（PSPDFKit 創辦人）個人專案，後移入 **OpenClaw Foundation** 非營利；作者 2026-02 加入 OpenAI 主持 personal-agent 方向，但**專案本身未併入 OpenAI**（OpenAI 只是夥伴之一，另有 Microsoft、GitHub、Nvidia、Atlassian、Tencent） | Nous Research 開源，MIT 授權 |
 | 主軸 | 自架 personal agent：常駐本機、自有排程醒來，從 WhatsApp／Telegram／Discord／Signal 主動找你 | 自我進化 agent（coding + personal），標語 *The agent that grows with you* |
-| 架構形狀 | **Gateway daemon 與 agent 分離**：Gateway 是通道橋接與安全邊界，agent 掛在其後 | **單體**：對話迴圈、工具派發、記憶收在同一個 agent class〔以上兩格出自 Decrypt 綜述，記者評語為「難擴展但好推理」〕 |
+| 架構形狀 | **Gateway daemon 與 agent 分離**：Gateway 是通道橋接與安全邊界，agent 掛在其後 | **單體**：對話迴圈、工具派發、記憶收在同一個 agent class〔以上兩格出自 Decrypt 綜述，記者評語為「難擴展但好推理」〕。注意 Hermes 也有獨立的 messaging gateway process（`hermes gateway start`，橋接 Telegram／Discord 等，見 [[Hermes-Agent]]）；「單體」指 agent 內部結構，不是沒有 gateway——差別在 OpenClaw 把 Gateway 設計成信任域與憑證隔離邊界，Hermes 的只是入口（2026-09-23 補） |
 | 社群規模 | 極大：2.0 單次發布併入 16,977 個 PR | 小得多 |
 
 貢獻者人數有**來源衝突**：官方 release notes 寫 **987 位**，Decrypt 與 InfoQ 寫 **933 位**（其中 569 位首次貢獻）。引用時擇一並標來源，勿當定論。
