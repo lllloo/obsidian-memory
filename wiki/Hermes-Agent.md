@@ -2,7 +2,7 @@
 title: Hermes Agent
 description: Nous Research 開源的自我進化 AI agent：學習迴路自動生成並改良 skill，跨 session 累積記憶與使用者模型
 created: 2026-07-08
-updated: 2026-09-21
+updated: 2026-09-23
 parent: "[[wiki/01.index]]"
 tags:
   - ai-agent
@@ -88,3 +88,4 @@ Hermes 24/7 長駐（有別於跑完即停的 Claude Code），背景任務、se
 - 路線定位：[[Agent-記憶兩大路線-知識庫與-memory-bank]]——Hermes 的記憶子系統橫跨該頁兩條路線：`llm-wiki` skill 是路線 A（知識資產複利）的產品化代表，有界核心記憶則偏路線 B 的工作記憶性質。
 - 人類 PKM 對照：[[第二大腦方法論比較]]——Hermes 的「有界核心記憶 vs. 外接 llm-wiki／provider」雙軸結構，與 BASB（資源/專案管理）vs. Zettelkasten（深度連結）的互補分工邏輯同構（中等信心，2026-07-09 對抗式驗證）。
 - harness 工程脈絡：[[Agent-Harness-Engineering-框架綜述]]——Hermes 的 loop、skill 生成與有界記憶等構件可對照該頁的 harness 定義範疇（tools／memory／guardrails）。
+- [[訊息平台到-coding-agent-的獨立-gateway]]——本頁 Gateway 組件的「拆出來」替代品盤點：不綁 Hermes、可前置 Claude Code／Codex／pi 的訊息橋（2026-09-23）。

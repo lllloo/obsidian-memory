@@ -2,7 +2,7 @@
 title: 四套 coding agent 能力差異對照
 description: Claude Code、Codex、OpenCode v2、pi 在指示檔、skill、hook、MCP、subagent、plugin、沙箱、session、worktree、SDK、provider、授權、client、壓縮、訂閱十五個維度的差異
 created: 2026-09-22
-updated: 2026-09-22
+updated: 2026-09-23
 parent: "[[wiki/01.index]]"
 tags:
   - coding-agent
@@ -48,3 +48,4 @@ tags:
 - [[pi-與-OpenCode-v2-比較]]——該頁是兩家的取捨摘要；本頁把兩家放進四家矩陣，並更正該頁「OpenCode 有 LSP 診斷、跨裝置同步」兩項（v2 文件查無）。
 - [[Coding-agent-指示檔與規則載入機制對照]]——本頁「指示檔」列的展開版，含 Cursor 與 Copilot。
 - [[LLM-方案定價與-coding-agent-比較]]——本頁「訂閱／登入」列只記能否登入；額度規則與價格在該頁。
+- [[訊息平台到-coding-agent-的獨立-gateway]]——四家 client 列之外的第三方訊息橋盤點，依與 agent 綁定的緊密度分層。

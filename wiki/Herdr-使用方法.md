@@ -2,7 +2,7 @@
 title: Herdr 使用方法
 description: herdr 的 session／workspace 層級、持久化邊界、狀態偵測、CLI 委派原語、worktree 與 SSH 遠端用法，含偵測盲點
 created: 2026-09-15
-updated: 2026-09-21
+updated: 2026-09-23
 source: https://herdr.dev/docs/
 parent: "[[wiki/01.index]]"
 tags:
@@ -127,3 +127,7 @@ herdr 內建 worktree 指令（官方 cli-reference 原始檔＋本機 `--help`�
 - 社群實際踩雷與 GitHub issues 回報（manifest 誤判、bracketed paste 相容性、Windows client 問題）——驗證名額耗盡，社群面向未送驗。
 - 與「tmux + hooks 通知」的實際取捨、長期使用心得。
 - 具名 session 之間能否跨 session 送 prompt。
+
+## 關聯
+
+- [[訊息平台到-coding-agent-的獨立-gateway]]——ccgram 可把 Telegram topic 對應到 herdr session，是 herdr 環境零改動可接的手機端入口。
