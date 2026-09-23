@@ -2,7 +2,7 @@
 title: 專案測試流程 後端 Laravel
 description: Laravel 測試落地：Controller 抽 Service 的判準、Unit／Feature 兩個 testsuite 的分界與陷阱、整合測試的覆蓋範圍
 created: 2026-08-08
-updated: 2026-09-21
+updated: 2026-09-23
 parent: "[[wiki/01.index]]"
 tags:
   - testing
@@ -213,3 +213,4 @@ class OrderApiTest extends TestCase   // ← Tests\TestCase，不是 PHPUnit 的
 - [[E2E-測試的資料庫隔離]] — 本頁第 2 層靠 `RefreshDatabase` 的交易回滾做隔離，那個機制到第 3 層就失效（請求由另一個進程處理，包不進測試端的交易），因此 E2E 得改用獨立 database 加固定 fixture。
 - [[測試手段的優先序與成本]] — 本頁第一層完成後的下一件事在該頁：對 `app/Services` 跑一次 mutation 基線（Pest `--mutate` 或 Infection），以及為何後端值得深挖 mutation 而前端不值得。
 - [[用測試約束-AI-產碼]] — 上面「繼承錯 TestCase」屬於該頁講的一類病徵：測試看起來是綠的，但綠的理由不對。同節並記錄 AI 產測試最高頻的弱斷言問題，對應本頁 `assertSame` 與 `assertEquals` 的取捨。
+- [[AI-時代的後端語言選擇]] — 回答「要不要為了 AI 離開 Laravel」：該頁查無語言優勢證據，建議留在 Laravel 並靠型別與測試閘門給 agent 快速回饋，本頁的分層測試即是那道閘門。
