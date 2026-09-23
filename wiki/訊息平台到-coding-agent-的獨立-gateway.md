@@ -33,9 +33,9 @@ tags:
 
 ### 第三層：綁單一 agent
 
-- **Claude Code Channels**（官方，research preview）：Telegram、Discord、iMessage 三個 plugin，需 Bun；`claude --channels plugin:telegram@claude-plugins-official` 啟動；配對碼加 sender 白名單；可轉發 permission prompt。Team／Enterprise 需管理員開 `channelsEnabled`。另有 Remote Control 從 claude.ai 或手機 app 接本機 session。
+- **Claude Code Channels**（官方，research preview；四家裡唯一把「第三方聊天平台推進本機 session」做成官方功能的）：Telegram、Discord、iMessage 三個 plugin，需 Bun；`claude --channels plugin:telegram@claude-plugins-official` 啟動；配對碼加 sender 白名單；可轉發 permission prompt。Team／Enterprise 需管理員開 `channelsEnabled`。另有 Remote Control 從 claude.ai 或手機 app 接本機 session。
 - **pi**：[pi-messenger-bridge](https://github.com/tintinweb/pi-messenger-bridge)（MIT，約 74 星，2026-05-09 後未動；Telegram、WhatsApp、Slack、Discord、Matrix）、[pi-chat](https://github.com/earendil-works/pi-chat)（官方組織，Apache-2.0，約 401 星，2026-06-05；Discord／Telegram 各頻道一個 Gondolin micro-VM）、pi-telegram、TelePi。
-- **Codex**：ChatGPT 手機 app 的 Remote 遙控桌機（見 [[四套-coding-agent-能力差異對照]] client 列）。
+- **Codex**（2026-09-23 補查）：**沒有對應 Claude Code Channels 的官方功能**。官方兩條路都不是「第三方平台推進本機 CLI session」：Codex Remote 是 ChatGPT 手機 app 掃 QR 碼配對桌機（文件寫的是 ChatGPT 桌面 app，未提純 CLI），可開任務、核准指令、看 diff；Codex in Slack／Linear 是 `@Codex` 開雲端 chat，不碰本機。社群橋全為個位數星：OpenAB（openai/codex 討論 #13144，2026-02，每則訊息跑 `codex exec resume --last`）、codex-telegram-bridge（MIT，4 星，走 `codex app-server` 共用後端，2026-05 後未動）、telegram-codex-bridge（1 星）。要接 Codex 實務上仍是第一、二層的 cc-connect 或 ccgram，兩者都明列支援 Codex。
 
 ## 判讀
 
