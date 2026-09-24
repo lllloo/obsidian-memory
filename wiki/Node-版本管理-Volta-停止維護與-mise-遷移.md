@@ -73,6 +73,14 @@ Volta 好用的地方與它難除錯的地方是同一件事（一手＋本機�
 
 pnpm 新版改以原生 binary 發佈，安裝時靠 postinstall 換掉占位檔。用 `"npm:pnpm"` 安裝時這步沒有跑，執行即 `SyntaxError`。改用 mise 內建的 `pnpm`（aqua backend，直接下載獨立 binary）即正常，而且不依賴當下的 Node 版本。
 
+**5. 原生 Windows 的做法（本機實測，2026-09-24，Windows 10）**
+
+- 安裝：`winget install jdx.mise`，執行檔落在 WinGet Links 目錄，不需另外設 PATH。
+- 啟用只用 **shims**：把 `%LOCALAPPDATA%\mise\shims` 加到**使用者 PATH 最前面**。IDE、Claude Code 這類工具的 shell 都是非互動的，拿不到 activate（同第 1 點）。shims 目錄裡是 `.exe`，每個全域 CLI 各有一個。
+- PATH 順序陷阱：Windows 組 PATH 時**系統層在使用者層前面**，Volta 的 MSI 把 `C:\Program Files\Volta\` 寫在系統層，所以 Volta 沒解除安裝前 `node` 還是會落到 Volta。另外有工具自帶 node 並寫進使用者 PATH 的，shims 要排在它前面。
+- 移除 Volta：它是全機 MSI，`winget uninstall Volta.Volta` 在非管理員 shell 會以 1603 失敗，要改在系統管理員終端機跑。
+- 驗證法：在當前 shell 把 PATH 組成「不含 Volta」的版本，再逐一跑 `Get-Command <指令>` 和 `--version`，確認都落在 shims，這樣不用先移除 Volta 就能驗證。
+
 ## 五、遷移清單：容易漏的隱藏依賴（本機實測）
 
 shell 設定檔之外，還有地方會把 `~/.volta` 寫死，刪 Volta 前要先搜：
