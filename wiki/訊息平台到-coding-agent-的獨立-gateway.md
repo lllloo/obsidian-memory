@@ -1,8 +1,8 @@
 ---
 title: 訊息平台到 coding agent 的獨立 gateway
-description: 不綁 Hermes／OpenClaw 的訊息橋接工具盤點：多 agent 通吃的 cc-connect、接 tmux／herdr 的 ccgram、各家官方 channel，依綁定緊密度分三層
+description: 不綁 Hermes／OpenClaw 的訊息橋接工具盤點：cc-connect、ccgram 與各家官方 channel，依綁定緊密度分三層
 created: 2026-09-23
-updated: 2026-09-23
+updated: 2026-09-24
 parent: "[[wiki/01.index]]"
 tags:
   - coding-agent

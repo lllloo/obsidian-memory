@@ -1,8 +1,8 @@
 ---
 title: 四套 coding agent 能力差異對照
-description: Claude Code、Codex、OpenCode v2、pi 在指示檔、skill、hook、MCP、subagent、plugin、沙箱、session、worktree、SDK、provider、授權、client、壓縮、訂閱十五個維度的差異
+description: Claude Code、Codex、OpenCode v2、pi 在指示檔、skill、hook、MCP、subagent、沙箱、SDK 等十五個維度的差異對照
 created: 2026-09-22
-updated: 2026-09-23
+updated: 2026-09-24
 parent: "[[wiki/01.index]]"
 tags:
   - coding-agent

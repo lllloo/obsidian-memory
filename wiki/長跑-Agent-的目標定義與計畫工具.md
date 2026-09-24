@@ -2,7 +2,7 @@
 title: 長跑 Agent 的目標定義與計畫工具
 description: 讓自主迭代 agent 持續推進而不走偏的目標檔機制（分層、驗收判準、停止條件、防漂移措辭）與 SDD 工具生態的採用度實據
 created: 2026-07-30
-updated: 2026-09-22
+updated: 2026-09-24
 parent: "[[wiki/01.index]]"
 tags:
   - ai-agent
@@ -37,7 +37,7 @@ spec-kit 與 Kiro 是彼此獨立的生態，結構同構：
 | 設計／計畫 | how，且「grounded by the constitution」 | `plan.md`／`design.md` |
 | 任務 | 離散可追蹤項，獨立者標 `[P]` 可平行 | `tasks.md` |
 
-**抄用注意**：寫成「三個固定分層」而非固定檔名——spec-kit 現行有 7 個 core command（`constitution`／`specify`／`clarify`／`plan`／`tasks`／`analyze`／`implement` 之外還有 `checklist`、`converge`、`taskstoissues`），Kiro 第一層檔名隨模式變。
+**抄用注意**：寫成「三個固定分層」而非固定檔名——spec-kit 現行有 7 個 core command（`constitution`／`specify`／`clarify`／`plan`／`tasks`／`analyze`／`implement` 之外還有 `checklist`、`converge`、`taskstoissues`；2026-09-24 以 GitHub API 複驗 `templates/commands/` 仍隨附全部 10 個模板——但官方 README 主流程敘述已改為 specify → plan → tasks → implement → converge，`clarify`／`analyze` 退出主流程敘述、指令本身仍在，見 [[AI-自主工作流的實證檢驗]] Spec-driven 節），Kiro 第一層檔名隨模式變。
 
 ⚠️ **這一層有生態內反證**：spec-kit 社群把三份 artifact 描述為**會互相分歧的 peers**（artifact drift），提議 `/speckit.reconcile`（issue #1063）與 constitution-aware 的最終 gate（#1323）。對長跑 agent 而言，**多一層文件就是多一個漂移源**。**已被取代（2026-09-17）**：兩張 issue 其實早在 2026-03-19 就以 completed 關閉（早於本頁研究日）——#1063 經 PR #1844 以社群擴充形式落地 `/speckit.reconcile`，#1323 接續 PR #1925；故「提議中」不成立。漂移風險本身的論點不受影響，但生態已有對應工具，不宜再當「自承缺實作」引用。
 
@@ -223,7 +223,7 @@ GitHub star 數，2026-07-30 以 `gh api`／`gh search` 直查核實（**star �
 
 ### 二手比較文的數字不可信
 
-本輪同時取得二手比較文與 `gh` API 實查，兩者對同一批 repo 的 star 數落差達 1.6–1.9 倍且方向一致偏低。**工具採用度一律直查 API 並標日期**，不引用聚合文章的數字。
+本輪同時取得二手比較文與 `gh` API 實查，兩者對同一批 repo 的 star 數落差約 1.4–1.6 倍且方向一致偏低（以上表兩組數字計：263,351／166k≈1.6、124,508／90k≈1.4）。**工具採用度一律直查 API 並標日期**，不引用聚合文章的數字。
 
 ## 開放問題
 

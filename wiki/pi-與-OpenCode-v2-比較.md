@@ -1,8 +1,8 @@
 ---
 title: pi 與 OpenCode v2 比較
-description: 兩套 MIT 開源終端 coding agent 的取捨：pi 極簡單進程、靠 TypeScript extension 自組；OpenCode v2 常駐 server 電池全含，plugin 生態重來
+description: 兩套 MIT 開源終端 coding agent 的取捨：pi 極簡單進程靠 extension 自組，OpenCode v2 常駐 server 電池全含
 created: 2026-09-22
-updated: 2026-09-22
+updated: 2026-09-24
 parent: "[[wiki/01.index]]"
 tags:
   - coding-agent

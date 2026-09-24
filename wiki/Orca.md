@@ -114,6 +114,6 @@ run-create ──> task-create ──> worker-start ──> check --wait
 ## 來源與強度標註
 
 - 本頁架構、原語與合約規範取自本機 CLI 官方 skill 規格（一手工具規格，未經第三方對抗查證）：
-  - `Orca-CLI-Skill.md`（落地於 `raw/fetched/Orca-CLI-Skill.md`）
-  - `Orca-Orchestration-Skill.md`（落地於 `raw/fetched/Orca-Orchestration-Skill.md`）
+  - [[Orca-CLI-Skill]]（落地於 `raw/fetched/Orca-CLI-Skill.md`）
+  - [[Orca-Orchestration-Skill]]（落地於 `raw/fetched/Orca-Orchestration-Skill.md`）
 - 本機執行檔解析與 GNOME 衝突為實際系統環境驗證之具體事實。

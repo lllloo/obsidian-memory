@@ -2,7 +2,7 @@
 title: AI 自主工作流的實證檢驗
 description: spec-driven、長時自主 loop、驗證迴路、狀態持久化四類做法的證據盤點——vendor 敘事與獨立實證的落差，以及必須停止引用的空氣數字
 created: 2026-07-10
-updated: 2026-09-21
+updated: 2026-09-24
 parent: "[[wiki/01.index]]"
 tags:
   - ai-agent
@@ -51,7 +51,7 @@ agent 能以 50% 可靠度完成的任務長度，過去六年約**每 7 個月�
 
 ### Spec-driven development
 
-流程結構（**high**，多來源一致）：Spec Kit 走 `constitution → specify → clarify → plan → tasks → analyze → implement`（**已被取代（2026-09-17）**：官方 [README](https://github.com/github/spec-kit/blob/main/README.md) 現把主流程寫成「constitution 每專案一次；每個 feature 走 specify → plan → tasks → implement → converge」，並反覆 implement → converge 直到回報 Converged；clarify／analyze 不再出現在主流程敘述中，指令模板是否仍隨附未查）；Kiro 三檔（需求／設計／任務）最輕量；[[OpenSpec]] 定位為 Spec Kit 的輕量替代（預設 core profile：explore（可選）→ propose → apply → sync（可選）→ archive；1.x 起改採「actions not phases」的 artifact DAG，依賴是 enabler 而非 phase gate，可隨時回頭改任一 artifact，見專屬頁）；Tessl 唯一朝 spec-as-source 走；BMAD 最重、最強調角色編排，走 Analyst→PM→PO→Architect→Scrum Master→Developer→QA 的多 agent 鏈（story files 在角色間交接），各角色是帶「互動指示」的 YAML 模板，靠 advanced elicitation（六頂帽子、五個 W、事後諸葛 hindsight-2020 等結構化提問法）逼 LLM 產出離開語料平均值，並把 PRD／架構大文件 shard 成小檔供下游 dev agent 按需載入、控 context 膨脹。
+流程結構（**high**，多來源一致）：Spec Kit 走 `constitution → specify → clarify → plan → tasks → analyze → implement`（**已被取代（2026-09-17）**：官方 [README](https://github.com/github/spec-kit/blob/main/README.md) 現把主流程寫成「constitution 每專案一次；每個 feature 走 specify → plan → tasks → implement → converge」，並反覆 implement → converge 直到回報 Converged；clarify／analyze 不再出現在主流程敘述中；2026-09-24 以 GitHub API 複驗 `templates/commands/` 仍隨附 10 個指令模板含 clarify／analyze，故是敘述改變、指令未移除）；Kiro 三檔（需求／設計／任務）最輕量；[[OpenSpec]] 定位為 Spec Kit 的輕量替代（預設 core profile：explore（可選）→ propose → apply → sync（可選）→ archive；1.x 起改採「actions not phases」的 artifact DAG，依賴是 enabler 而非 phase gate，可隨時回頭改任一 artifact，見專屬頁）；Tessl 唯一朝 spec-as-source 走；BMAD 最重、最強調角色編排，走 Analyst→PM→PO→Architect→Scrum Master→Developer→QA 的多 agent 鏈（story files 在角色間交接），各角色是帶「互動指示」的 YAML 模板，靠 advanced elicitation（六頂帽子、五個 W、事後諸葛 hindsight-2020 等結構化提問法）逼 LLM 產出離開語料平均值，並把 PRD／架構大文件 shard 成小檔供下游 dev agent 按需載入、控 context 膨脹。
 
 **Kiro 的流程細節**（2026-07-17 deep-research 補；**弱～中，廠商自述流程模型、無獨立採用佐證**，查證者對標「中」或「弱」有分歧，此處從嚴取弱）：三階段 **Requirements（或 Bug Analysis）→ Design → Tasks**，每階段**以一份具名 markdown 落地為推進界標**（`requirements.md`／`bugfix.md`、`design.md`、`tasks.md`），**階段間預設人為核准閘門**（3-0）。官方另明列適用／不適用條件（Specs vs Vibe）與 Requirements-First／Design-First 兩種順序變體（3-0）。這是本輪唯一拿到「何時該用、何時不該用、如何選路」三欄俱全的 spec-driven 實例，可當設計自家流程時的**參照藍本**——但它是 Kiro 一家的實例，**不是 spec-driven 的通用定義**；且 Kiro 是活產品文件，流程隨時可能變動。
 
@@ -114,7 +114,7 @@ agent 能以 50% 可靠度完成的任務長度，過去六年約**每 7 個月�
 | 「151 個 repo 的同儕審查研究反駁 GitClear churn 敘事」 | 僅搜尋摘要提及，取不到論文連結與作者 | **未證實，勿引用** |
 | Claude 3.7 Sonnet「寫死測試答案」出自 Anthropic system card | 僅二手轉述，未核實原文 | **未證實，勿引用** |
 | Cursor 稽核「63% 檢索已知修復」 | 本輪查原文裁決：正確數字為 **57% 公網 ＋ 9% .git** | **數字已更正** |
-| 「Spec Kit 走五階段序列（規格建立→實作計畫→任務產生→程式碼產生→回饋整合），由 `/speckit.specify`／`/speckit.plan`／`/speckit.tasks` 三指令驅動前三階段」 | 2026-07-17 查證 0-3 否決。本頁上方記載的**七步** `constitution → specify → clarify → plan → tasks → analyze → implement` 未被本輪動搖，仍為現行記載 | **五階段版勿引用** |
+| 「Spec Kit 走五階段序列（規格建立→實作計畫→任務產生→程式碼產生→回饋整合），由 `/speckit.specify`／`/speckit.plan`／`/speckit.tasks` 三指令驅動前三階段」 | 2026-07-17 查證 0-3 否決。本頁上方記載的**七步** `constitution → specify → clarify → plan → tasks → analyze → implement` 未被本輪動搖，為 2026-07-17 當時記載（2026-09-17 後七步亦已被官方 README 的 specify → plan → tasks → implement → converge 取代，見上方 Spec-driven 節；本列「五階段版勿引用」裁決不變） | **五階段版勿引用** |
 | 「Spec Kit 以 `memory/constitution.md` 九條 articles 治理，並強制三道 pre-implementation gates（Simplicity ≤3 projects／Anti-Abstraction／Integration-First）」 | 2026-07-17 查證 1-2 否決。**2026-07-30 已拆分裁決**（見 [[長跑-Agent-的目標定義與計畫工具]]）：憲法九條**成立**（3-0，路徑 `.specify/memory/constitution.md`，第三條 Test-First Imperative 明文 NON-NEGOTIABLE，Articles IV–VI 由各專案自定）；**三道可勾 gate 不成立**（1-2），本輪查明原因是**該內容已從現行 `plan-template.md` 移出**，現行機制為 Complexity Tracking 表 | 前半**已確立可引用**；三道 gate 版**仍勿引用** |
 
 另標註利益衝突來源：GitClear 的 code churn 研究（clone 比例 8.3%→12.3%、churn 3.3%→7.1%）核心指標 Diff Delta 是**商標黑盒方法論、外部無法稽核**，且 GitClear 賣的就是程式碼分析工具（**medium，利益衝突**）。Martinelli 的「spec-driven 在企業失敗」一文作者是競品創辦人、無數據，**不宜作為獨立證據**。

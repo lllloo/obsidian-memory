@@ -2,7 +2,7 @@
 title: 架構圖框架採用現況與 AI 時代轉向
 description: C4／arc42／4+1／UML 誰是主流查無可信數據，唯一產物計數顯示框架本身就不是主流；並記 2026 年 C4 專用工具鏈封存與架構約束機構化的轉向
 created: 2026-08-10
-updated: 2026-09-22
+updated: 2026-09-24
 source: https://robertoverdecchia.github.io/papers/ECSA_2024.pdf
 parent: "[[wiki/01.index]]"
 tags:
@@ -54,7 +54,7 @@ ECSA 2024（Migliorini、Verdecchia、Malavolta、Lago、Vicario，《Architectu
 
 **`structurizr/cli`、`structurizr/java`、`structurizr/lite` 三個核心 repo 已全部 archived，最後 push 同為 2026-02-01**（**high**；本頁作者以 GitHub API 一手複驗，見下方「被誤殺的主張」）。stars 分別為 567、1,135、384。
 
-**但它們是被整併，不是被放棄**（**high**，2026-08-10 補查，GitHub API 驗 `created_at` 與 release）：新 monorepo `structurizr/structurizr` 建立於 **2025-11-30**（早於舊 repo 封存三個月），未封存、Apache-2.0、最新 release `v2026.06.28`（2026-06-29）、332 stars，頂層模組含 `structurizr-dsl`／`structurizr-export`／`structurizr-inspection`／`structurizr-component`／`structurizr-annotation`／`structurizr-mcp`／`structurizr-autolayout`。封存 repo 的 README 掛有官方遷移公告，`structurizr/cli` 原句：「The Structurizr CLI will not receive any further updates - please migrate to the new consolidated tooling.」授權為 open core，只有 `server` 為閉源商業版。
+**但它們是被整併，不是被放棄**（**high**，2026-08-10 補查，GitHub API 驗 `created_at` 與 release）：新 monorepo `structurizr/structurizr` 建立於 **2025-11-30**（早於舊 repo 封存約兩個月），未封存、Apache-2.0、最新 release `v2026.06.28`（2026-06-29）、332 stars，頂層模組含 `structurizr-dsl`／`structurizr-export`／`structurizr-inspection`／`structurizr-component`／`structurizr-annotation`／`structurizr-mcp`／`structurizr-autolayout`。封存 repo 的 README 掛有官方遷移公告，`structurizr/cli` 原句：「The Structurizr CLI will not receive any further updates - please migrate to the new consolidated tooling.」授權為 open core，只有 `server` 為閉源商業版。
 
 **故正確命題是「工具鏈從多 repo 整併為單一 monorepo」，不是「C4 作為產品正在收縮」。** 引用舊 repo 連結會誤導；多數教學與整合仍指向已封存的舊 repo，遷移斷層是真實的，但那是文件滯後而非專案停擺。⚠️ 遷移的主要說明文只掛在 Patreon 貼文（付費牆），`docs.structurizr.com` 全站未出現 "vNext" 一詞，該詞的確切所指無法確認。
 
@@ -64,7 +64,7 @@ ECSA 2024（Migliorini、Verdecchia、Malavolta、Lago、Vicario，《Architectu
 
 另有一份受 Structurizr 啟發的全新 `c4-beta` 語法 RFC 原型（PR #7843，作者 filipsajdak），**C4 model 作者 Simon Brown 本人參與 RFC 討論並對 `external` 關鍵字提出異議**（**high，3-0**）。但它至 2026-08-10 仍是 open draft、reviews 為空、已發布版本不含此語法，且 issue 內文自陳「Prepared with assistance from Claude Code」——屬生態聲量，不入採用率。
 
-把兩邊放在一起看，這條線索指向一個值得追蹤的趨勢判斷：**C4 作為「規格」正在擴散，C4 作為「產品」正在收縮**。
+把兩邊放在一起看，這條線索指向一個值得追蹤的趨勢判斷：**C4 作為「規格」正在擴散（Mermaid 內建 C4、c4-beta RFC）；作為「產品」則是工具鏈整併為 `structurizr/structurizr` monorepo、不是收縮**（原「產品正在收縮」判斷已被 2026-08-10 補查撤回，見 ① 節）。
 
 ### ② 架構約束用於 AI 產碼已是機構級議題——但仍無實證
 

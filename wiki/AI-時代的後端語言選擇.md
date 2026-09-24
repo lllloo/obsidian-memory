@@ -1,8 +1,8 @@
 ---
 title: AI 時代的後端語言選擇
-description: PHP、Go、Node/TypeScript、Python 在產品接 AI 與讓 coding agent 寫後端兩面的證據盤點：生態差異明確，產碼品質的語言排名互相矛盾
+description: PHP、Go、Node/TypeScript、Python 在接 AI 與讓 agent 寫後端兩面的證據盤點：生態差異明確，產碼品質排名互相矛盾
 created: 2026-09-23
-updated: 2026-09-23
+updated: 2026-09-24
 parent: "[[wiki/01.index]]"
 tags:
   - ai-agent
