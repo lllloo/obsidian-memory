@@ -2,7 +2,7 @@
 title: Herdr 使用方法
 description: herdr 的 session／workspace 層級、持久化邊界、狀態偵測、CLI 委派原語、worktree 與 SSH 遠端用法，含偵測盲點
 created: 2026-09-15
-updated: 2026-09-23
+updated: 2026-09-24
 source: https://herdr.dev/docs/
 parent: "[[wiki/01.index]]"
 tags:
@@ -114,6 +114,7 @@ herdr 內建 worktree 指令（官方 cli-reference 原始檔＋本機 `--help`�
 ## 與相鄰工具的定位
 
 - 對 [[Multica-與-agent-看板的用法與適用邊界]]（agent 判斷，非查證結論）：Multica 是非同步看板，agent 是身分、run 結束即走，人類在卡片把關點介入；herdr 是同步的終端層，agent 是常駐程序，人類即時盯側欄狀態。前者適合佇列化派工，後者適合同時跑幾個互動 session 並隨時插手。
+- 對 [[Orca]]：herdr 聚焦在終端多工與 agent 狀態自動偵測（側欄同步監看），不介入任務生命週期或工作合約；Orca 則是面向多 agent 的整合開發環境（multi-agent IDE），除了整合 worktree 與 terminal 操作，更提供結構化的 Run/Task/Dispatch 狀態機、非同步信箱與嚴謹的 worker 監督迴圈（supervised loop）。
 - 同層替代方案見 [[平行跑多個-coding-agent-的工具選型]]：Claude Squad 同屬終端層但以預設 worktree 流程為核心，Emdash 等 GUI app 是另一條路線。
 - 檔案與 diff 檢視是 herdr 相對 GUI 型 ADE 的明顯缺口，補法（plugin／通用終端 TUI／旁開編輯器三條路線）與所選方案的設定見 [[Yazi-設定與踩雷]]；該頁也記了在多工器背景 pane 裡的卡頓踩雷，機制上可能波及 herdr 但尚未驗證。
 - herdr 不介入 agent 的 loop／tools／memory，屬 harness 之外的操作層（見 [[Herdr-按鍵設定]] 對 [[Agent-Harness-Engineering-框架綜述]] 的定位）；它的委派原語也印證 [[pi-workflow-編排-harness-與本-vault-分野]] 所述「編排職能被 harness 與周邊工具吸收」的走向。

@@ -2,7 +2,7 @@
 title: 平行跑多個 coding agent 的工具選型
 description: Herdr、Multica 以外本機平行跑 coding agent 的四類方案，逐項標各 agent 與 Linux 的支援度、維護狀態
 created: 2026-09-15
-updated: 2026-09-21
+updated: 2026-09-24
 parent: "[[wiki/01.index]]"
 tags:
   - ai-agent
@@ -10,7 +10,7 @@ tags:
   - agent-framework
 ---
 
-本頁回答：除了 [[Herdr-使用方法]]（終端多工）與 [[Multica-與-agent-看板的用法與適用邊界]]（看板派工），**在本機平行跑多個 coding agent** 還有哪些方案。選型條件以使用者環境為準：Claude Code、Codex CLI、Antigravity CLI（`agy`）三者並用，平台 Linux／WSL2。
+本頁回答：除了 [[Herdr-使用方法]]（終端多工）、[[Orca]]（具備 supervised loop 的 multi-agent IDE）與 [[Multica-與-agent-看板的用法與適用邊界]]（看板派工），**在本機平行跑多個 coding agent** 還有哪些方案。選型條件以使用者環境為準：Claude Code、Codex CLI、Antigravity CLI（`agy`）三者並用，平台 Linux／WSL2。
 
 證據來源分三層，強度逐條就地標：
 - **一手**：官方文件、GitHub repo 與 API、原始碼，經 deep-research 3 票對抗驗證（2026-09-15）。
@@ -95,6 +95,7 @@ deep-research 這兩面向零條通過驗證，以下由主 agent 回原文核�
 
 ## 交叉引用
 
+- 監督式協調對照：[[Orca]]——除本表方案外，Orca 提供了深度整合 CLI 與 GUI 運行時的 multi-agent IDE，以 Run/Task/Dispatch 狀態機與 worker contract 實作受監督的平行編排。
 - 終端層對照：[[Herdr-使用方法]]——herdr 以 agent 狀態偵測為核心，Claude Squad 以預設 worktree 流程為核心；兩者都能經通用指令跑 Codex／agy。
 - 終端層的檢視補件：[[Yazi-設定與踩雷]]——本表的終端方案都沒有 GUI 型 ADE 的檔案總管與 diff 檢視，該頁記三條補法與所選方案的設定、WSL2 邊界與踩雷。
 - 看板層對照：[[Multica-與-agent-看板的用法與適用邊界]]——該頁附的 Vibe Kanban 已 sunsetting，本頁的 GUI app 類是看板以外的另一條視覺化路線。
