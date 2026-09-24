@@ -2,7 +2,7 @@
 title: Yazi 設定與踩雷
 description: 在終端多工器 pane 裡補上檔案與 diff 檢視的三條路線，含 snap 安裝的 PATH 陷阱、圖示與隱藏檔設定、WSL2 三條邊界與背景 pane 卡頓
 created: 2026-09-21
-updated: 2026-09-21
+updated: 2026-09-24
 source: https://yazi-rs.github.io/docs/
 parent: "[[wiki/01.index]]"
 tags:
@@ -115,4 +115,5 @@ run  = 'shell -- ya emit cd "$(git rev-parse --show-toplevel)"'
 - 宿主工具：[[Herdr-使用方法]]——本頁補的正是它沒有的檔案與 diff 檢視；其 plugin 機制是本頁「路線一」的載體。
 - 鍵位對照：[[Herdr-按鍵設定]]——要在 Herdr 綁一鍵開 yazi pane 的話設定寫在那裡，兩層鍵位可能互搶。
 - 上游選型：[[平行跑多個-coding-agent-的工具選型]]——本頁是該頁「終端層」方案在檔案檢視面的補件；**該頁總表尚未收錄 Orca**（MIT、約 73.9k 星、有 Linux AppImage／deb／rpm），是已知缺口。
+- zsh 啟動檔規則：[[Node-版本管理-Volta-停止維護與-mise-遷移]]——第二節的 snap PATH 陷阱與該頁「非互動 shell 的 mise shims 要放 `.zshenv`」是同一套 zsh 讀檔範圍的兩個面。
 - 同源限制：[[WSL-剪貼簿貼圖到-Claude-Code]]——WSLg 剪貼簿橋接只做文字類格式，該頁是 Windows→WSL 方向，本頁第五節是 WSL→Windows 方向。
