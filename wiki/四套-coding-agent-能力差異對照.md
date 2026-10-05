@@ -2,7 +2,7 @@
 title: 四套 coding agent 能力差異對照
 description: Claude Code、Codex、OpenCode v2、pi 在指示檔、skill、hook、MCP、subagent、沙箱、SDK 等十五個維度的差異對照
 created: 2026-09-22
-updated: 2026-09-24
+updated: 2026-10-05
 parent: "[[wiki/01.index]]"
 tags:
   - coding-agent
@@ -12,7 +12,7 @@ tags:
 
 2026-09-22 回答「Claude Code、Codex、pi、OpenCode 有哪些差異」的 Query 回存。四家各由一個 subagent 只讀官方文件蒐集（Claude Code：code.claude.com；Codex：developers.openai.com/codex；OpenCode：opencode.ai/docs 與 /v2/docs；pi：earendil-works/pi 的 README 與 docs），主 agent 彙整並就已知錯誤修正。**強度**：文件層事實「高」；「文件未載」不等於「沒有」；本頁不含實測。Claude Code 那份 subagent 回報有兩處與官方文件相反（PreToolUse 可否阻擋、模型清單過時），已按主 agent 知識修正並標註。
 
-**一句話**：Codex 在 2026 年已把 Claude Code 的擴充面（hooks、subagent、plugin marketplace、skills）幾乎一比一補齊，兩者差在**閉源 vs Apache-2.0**與**訂閱能否借給第三方**；OpenCode 走 client-server 與 75+ provider，代價是 v2 剛重寫、plugin 生態歸零且暫失 LSP 與 sharing；pi 刻意六不做（MCP、subagent、permission、plan、todo、背景 bash），一切靠 in-process TypeScript extension。
+**一句話**：Codex 在 2026 年已把 Claude Code 的擴充面（hooks、subagent、plugin marketplace、skills）幾乎一比一補齊，兩者差在**閉源 vs Apache-2.0**與**訂閱能否借給第三方**；OpenCode 走 client-server 與 75+ provider，代價是 v2 剛重寫、plugin 生態歸零且暫失 LSP 與 sharing；pi 刻意六不做（MCP、subagent、permission、plan、todo、背景 bash），一切靠 in-process TypeScript extension——其中 MCP 已被取代（2026-10-05）：v0.99.0 起改為可停用的 built-in extension，見下表 MCP 列。
 
 ## 總表
 
@@ -21,7 +21,7 @@ tags:
 | 指示檔 | `CLAUDE.md`／`AGENTS.md` 階層、`@` 匯入、`.claude/rules/*.md` 的 `paths` glob | `AGENTS.md` 每目錄一檔、root→cwd 串接、32 KiB 靜默截斷、無 `@`、無 glob | 只認 `AGENTS.md`（v2 不再 fallback `CLAUDE.md`）；子目錄檔在 agent 讀到該區時**延遲載入**；`instructions` 陣列 v2 接受但**不解析** | `AGENTS.md`／`CLAUDE.md` cwd 往上串接；`SYSTEM.md` 整個取代 system prompt、`APPEND_SYSTEM.md` 附加 |
 | Skills | `SKILL.md`，personal／project／plugin 三層，`allowed-tools` 預核，`${CLAUDE_SKILL_DIR}` | `SKILL.md`，`.agents/skills` 每層＋`~/.agents/skills`＋`/etc/codex/skills`，自動偵測變更，`$skill` 顯式呼叫 | `SKILL.md` 六個來源（含 `.claude/skills`、`.agents/skills`），另可指 HTTP catalog；`permission.skill` 可 allow/ask/deny | `SKILL.md`（agentskills.io），`settings.json` 可指到 `~/.claude/skills`、`~/.codex/skills` 借用；`/reload` 熱重載 |
 | Hooks | PreToolUse／PostToolUse／UserPromptSubmit／Stop／SubagentStop／PreCompact／SessionStart／SessionEnd／Notification／PermissionRequest 等；`settings.json`；PreToolUse 可阻擋 | 事件名與 Claude Code 幾乎同名（SessionStart／UserPromptSubmit／PreToolUse／PostToolUse／PreCompact／PostCompact／SubagentStart／SubagentStop／Stop／Interrupt 等）；`hooks.json`；handler 可為 command 或 mcp_tool；非受管 hook 須先 `/hooks` 信任；相容 `CLAUDE_PLUGIN_ROOT` 環境變數 | plugin 的 `ctx.*.hook()`：session（prompt／context／compaction／generate）、permission evaluate、shell create.before、tool execute.before/after；事件走 `ctx.event.subscribe()`；**v1 plugin 在 v2 不能跑** | extension 40 個事件，`tool_call` 可擋、`tool_result` 可改、`context` 可改送模型內容、可改 TUI 任何區塊；jiti 直接載 `.ts` |
-| MCP | stdio／HTTP／SSE（棄用）／WebSocket，OAuth，local／project／user 三 scope | stdio／Streamable HTTP，OAuth 含 DCR，`codex mcp add`，每工具 `approval_mode` | `mcp.servers`，stdio／Streamable HTTP，remote 預設開 OAuth（PKCE、DCR） | **無內建**，官方立場「CLI＋README 取代 MCP」，要用裝社群 bridge package |
+| MCP | stdio／HTTP／SSE（棄用）／WebSocket，OAuth，local／project／user 三 scope | stdio／Streamable HTTP，OAuth 含 DCR，`codex mcp add`，每工具 `approval_mode` | `mcp.servers`，stdio／Streamable HTTP，remote 預設開 OAuth（PKCE、DCR） | ~~**無內建**，官方立場「CLI＋README 取代 MCP」，要用裝社群 bridge package~~——已被取代（2026-10-05）：v0.99.0 起 MCP 為 built-in extension，stdio／streamable HTTP＋OAuth，`mcp.json`（全域或信任後的專案層）或 `pi.registerMcpServer()`，`pi mcp add／login`；搭配 codemode（模型寫 JS 在 QuickJS 沙箱平行呼叫工具）與 `tool_search` 延遲宣告；可在 `pi config` 以 `-builtin:mcp` 關閉（[v0.99.0 release](https://github.com/earendil-works/pi/releases/tag/v0.99.0)） |
 | Subagent | `.claude/agents/*.md`，Agent 工具，內建 Explore／Plan／general-purpose，可背景 | 內建 default／worker／explorer，自訂 `~/.codex/agents/*.toml`，`/agents` 總覽，繼承父沙箱 | 內建 build／plan／general／explore（v2 無 scout），`subagent` tool 與同名 permission，`.opencode/agents/*.md` | **無內建**，官方建議 tmux 開多個 pi 或裝第三方 `pi-subagents` |
 | Plugin 分發 | `.claude-plugin/plugin.json`，官方與社群 marketplace，`/plugin install` | 可攜 `plugin.json`（agent-plugins.org schema），舊 `.codex-plugin/` 仍相容；marketplace 為 `.agents/plugins/marketplace.json`，與 ChatGPT 共用目錄；`codex plugin marketplace add` | `plugins` 陣列接 npm 名／版本／git spec／本機路徑，`opencode plugin add`；**無官方 marketplace**，只有 ecosystem 清單 | `package.json` 的 `pi` 欄位，`pi install npm:／git:`；無專屬 registry，pi.dev/packages 只是 npm keyword 目錄 |
 | 權限與沙箱 | permission mode（default／acceptEdits／plan／bypassPermissions／auto／dontAsk）、allow／deny 規則；沙箱 bwrap（Linux）／seatbelt（macOS） | approval `on-request`／`never`；sandbox `read-only`／`workspace-write`／`danger-full-access`；Seatbelt／bubblewrap／Windows 原生兩模式；**Guardian**：越界請求交另一個 Codex reviewer 依政策自動審 | `permissions` 有序陣列 `{action, resource, effect}`，shell 指令以 tree-sitter 解析；**OS 級沙箱文件未載** | **無 permission 提示、無沙箱**（明言 intentional）；官方要你跑容器（micro-VM／Docker／OpenShell）；project trust 只是載入守門 |

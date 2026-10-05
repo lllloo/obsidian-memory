@@ -2,7 +2,7 @@
 title: pi 與 OpenCode v2 比較
 description: 兩套 MIT 開源終端 coding agent 的取捨：pi 極簡單進程靠 extension 自組，OpenCode v2 常駐 server 電池全含
 created: 2026-09-22
-updated: 2026-09-24
+updated: 2026-10-05
 parent: "[[wiki/01.index]]"
 tags:
   - coding-agent
@@ -20,7 +20,7 @@ tags:
 |---|---|---|
 | 定位 | 單進程極簡 agent，官方口號「Adapt Pi to your workflows, not the other way around」 | client-server：一個常駐 server 同時餵 TUI、Desktop、Web 與自訂 client |
 | 內建工具 | 只有 read／write／edit／bash（grep／find／ls 可啟用） | 12+ 內建工具、Plan mode、subagents、MCP、permissions（v2 改為有序 `{action, resource, effect}` 陣列）。~~LSP 診斷~~——已被取代（2026-09-22）：v2 文件明載接受 `lsp` 設定但不跑 language server、無診斷，見 [[四套-coding-agent-能力差異對照]] |
-| 明確不做 | 無內建 MCP、無 subagent、無權限彈窗、無 plan mode、無 todo、無背景 bash；官方回答一律是「寫 extension 或跑容器」 | 幾乎都內建 |
+| 明確不做 | ~~無內建 MCP~~——已被取代（2026-10-05）：v0.99.0 起 MCP（stdio／streamable HTTP＋OAuth）、codemode、tool search 改為**可停用的 built-in extension**，見 [[四套-coding-agent-能力差異對照]] MCP 列；無 subagent、無權限彈窗、無 plan mode、無 todo、無背景 bash；官方回答一律是「寫 extension 或跑容器」 | 幾乎都內建 |
 | 擴充方式 | TypeScript extension **在 agent 進程內跑**，25+ 個 hook（含 `input`、`before_agent_start`、context 修剪、session 分支事件），TUI 任何區塊可改 | JSON config＋plugin＋skill＋MCP，約 20 個事件；TUI 封閉，不能塞自訂 UI |
 | Session | JSONL 存成樹，`/tree`／`/fork`／`/clone` 就地分支；compaction 有損但全史保留在 JSONL | 多分頁平行 session（共用背景 service 持有）。~~跨裝置同步（v2 新增）~~——已被取代（2026-09-22）：v2 文件查無同步機制，且明寫尚不支援 session sharing，見 [[四套-coding-agent-能力差異對照]] |
 | 執行模式 | interactive／print-JSON／RPC／SDK 四種 | TUI／Desktop（Electron）／HTTP API＋生成的 TypeScript client |
@@ -42,7 +42,7 @@ Composio 2026-08-21 基準：30 題硬任務、同用 DeepSeek V4 Pro。pi 21/30
 
 ## 怎麼選
 
-- **選 pi**：想自己控制 agent loop、要極省 token、常換本機模型、需要 session 樹分支來除錯。代價是 MCP／permission／subagent 都要自己接。
+- **選 pi**：想自己控制 agent loop、要極省 token、常換本機模型、需要 session 樹分支來除錯。代價是 permission／subagent 都要自己接（MCP 自 v0.99.0 起已內建為可停用的 built-in extension）。
 - **選 OpenCode v2**：要 Claude Code 等級的開箱功能、團隊要權限控管、想從 Desktop／Web 多端接同一個 server（LSP 診斷 v2 暫無，見上表更正）。代價是更重，且 v2 剛出、plugin 生態要重來。
 
 ## 關聯
