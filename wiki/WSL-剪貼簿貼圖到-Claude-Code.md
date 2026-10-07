@@ -2,7 +2,7 @@
 title: WSL 剪貼簿貼圖到 Claude Code
 description: WSL2 按 Alt+V 貼圖「閃一下沒反應」的根因在解碼層而非按鍵，附把 BMP 換成 PNG 的 daemon 解法與實測數據
 created: 2026-07-30
-updated: 2026-09-24
+updated: 2026-10-07
 parent: "[[wiki/01.index]]"
 tags:
   - claude-code
@@ -33,9 +33,9 @@ tags:
 | 偵測層已含 bmp、取圖鏈有四條 | `strings` 直接讀 Claude Code binary，取得完整 grep pattern 與 `xclip`／`wl-paste` 四條取圖指令 | **一手實測**（同上） |
 | 格式白名單為 png/jpeg/gif/webp | binary 內緊接 `processImage` 後的字串常數，與 Claude API 可接受的 media type 一致 | 一手實測；白名單用途為推斷 |
 | WSL 雙鍵預設綁定 | 官方 keybindings 文件 `chat:imagePaste` 欄 | 一手官方文件 |
-| PowerShell fallback 的引入版本 | [#57440](https://github.com/anthropics/claude-code/issues/57440) 作者稱 v2.1.136 | **單一 issue 作者說法**；官方 CHANGELOG 線上僅保留近百餘版，**無法獨立驗證版本號**。功能存在於 2.1.220 則已實測確認 |
+| PowerShell fallback 的引入版本 | [#57440](https://github.com/anthropics/claude-code/issues/57440) 作者稱 v2.1.136；[官方 CHANGELOG](https://github.com/anthropics/claude-code/blob/main/CHANGELOG.md) 2.1.136 有對應條目（WSL2 剪貼簿圖片在 xclip/wl-paste 讀不到時改走 PowerShell fallback） | **官方 CHANGELOG 一手佐證**（2026-10-07 回讀，撰寫當時的 CHANGELOG 版本已含此條）。功能存在於 2.1.220 則已實測確認 |
 
-**勿引用**：網路搜尋摘要流傳「WSL 貼圖已在 v2.1.157 修好並新增專屬 `Alt+V` 鍵」——官方 CHANGELOG 查無任何 `Alt+V` 條目，此版本號無依據；且若真已修好，2.1.220 不會仍在解碼層失敗。
+**勿引用**：網路搜尋摘要流傳「WSL 貼圖已在 v2.1.157 修好」。[官方 CHANGELOG](https://github.com/anthropics/claude-code/blob/main/CHANGELOG.md) 2.1.157 確有一條 WSL 貼圖修正（`alt+v` keybinding、Windows 11 截圖貼上、從檔案總管拖曳圖片），版本號本身有依據；被否決的是「已修好」——2.1.220 實測仍在解碼層失敗，且 2026-10 本機較新版 binary 的取圖鏈仍先跑 `wl-paste --type image/bmp`、之後才輪到 PowerShell 分支（`strings` 讀 binary 所見，未逐版實測）。
 
 官方文件的「Work with images」章節至今只列拖曳、`Ctrl+V`、給路徑三種通用方法，**完全沒有 WSL 相關說明**——這正是 [#57440](https://github.com/anthropics/claude-code/issues/57440) 在告的事（該 issue 已 closed，但文件缺口經查證仍在）。**已被取代（2026-09-17）**：[common-workflows](https://code.claude.com/docs/en/common-workflows) 的 Work with images 步驟已寫「paste it into the CLI with `Ctrl+V`, or with `Alt+V` on Windows and WSL」，文件有 WSL 提及了，但只到按鍵，仍未談 BMP 解碼問題。
 

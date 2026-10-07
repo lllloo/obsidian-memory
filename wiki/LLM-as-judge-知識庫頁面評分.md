@@ -2,7 +2,7 @@
 title: LLM-as-judge 知識庫頁面評分
 description: LLM-as-judge 給 wiki 頁評分的方案與方法學約束：rubric 決定信度、bias 匿名化擋不住、本 vault 實測分辨力不足
 created: 2026-07-21
-updated: 2026-08-03
+updated: 2026-10-07
 parent: "[[wiki/01.index]]"
 tags:
   - evaluation
@@ -84,7 +84,7 @@ BIGGEN-Bench，Krippendorff α（括號內為與人類相關）：
 
 **機制不是看到署名**：2404.13076 用 fine-tuning 建立 self-recognition 能力與 self-preference 強度的關聯（example-level Kendall tau：GPT-3.5 on XSUM 0.41→0.74）；Wataoka et al.（arXiv 2410.21819）則歸因於 perplexity／熟悉度，「regardless of whether the outputs were self-generated」。
 
-**匿名化實測擋不住**：CALM（arXiv 2410.02736）Appendix C 明載評分時「without prior knowledge of the authorship」，Table 5 六個模型中**五個仍自評較高**（self/other 分與 error rate）：
+**匿名化實測擋不住**：CALM（arXiv 2410.02736；同儕審查，[ICLR 2025](https://proceedings.iclr.cc/paper_files/paper/2025/hash/fdca08d371e4b6c031397909e20043bd-Abstract-Conference.html)）Appendix C 明載評分時「without prior knowledge of the authorship」，Table 5 六個模型中**五個仍自評較高**（self/other 分與 error rate）：
 
 | 模型 | 自評 | 他評 | error rate |
 |---|---|---|---|
@@ -107,7 +107,7 @@ BIGGEN-Bench，Krippendorff α（括號內為與人類相關）：
 
 ### 3. 別一次丟多頁排名
 
-*（強度：單一 preprint、單一資料集 439 樣本、2024-10 世代模型；3–4 選項的結果只有圖無逐模型表格，屬圖層讀數。arXiv 2410.02736，CALM）*
+*（強度：同儕審查（ICLR 2025）、單一資料集 439 樣本、2024-10 世代模型；3–4 選項的結果只有圖無逐模型表格，屬圖層讀數。arXiv 2410.02736，CALM）*
 
 CALM 定義 Robustness Rate `RR = (1/|D|) Σ 𝕀(y_i = ŷ_i)`，即注入偏誤擾動前後判決一致的比例；position bias 的擾動就是重排候選順序，故 **RR < 0.5 字面上就是過半判決會因順序翻轉**。
 
@@ -117,7 +117,7 @@ pairwise RR（Table 7）：Claude-3.5 0.832、GPT-4-Turbo 0.818、GLM-4 0.781、
 
 ### 附帶可搬：CALM 的 12 類偏誤清單
 
-*（強度：分類法與指標定義不隨模型世代腐化；逐模型 RR 數值已過時，不可當現況引用。應以 preprint 引用，peer-review 狀態未確認）*
+*（強度：分類法與指標定義不隨模型世代腐化；逐模型 RR 數值已過時，不可當現況引用。同儕審查（ICLR 2025），引用請用會議版）*
 
 position、verbosity、compassion-fade、bandwagon、distraction、fallacy-oversight、authority、sentiment、diversity、chain-of-thought、**self-enhancement**、refinement-aware。其中 self-enhancement 正是本 vault 場景關心的那一類。
 

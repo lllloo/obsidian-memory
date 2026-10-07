@@ -2,7 +2,7 @@
 title: Agent 維護知識庫的已知失效模式
 description: 長期由 agent 自主維護的 markdown 知識庫會怎麼壞：機制成立的三種退化、判定不適用的類比、無法驗證的盲點，逐條標證據強度
 created: 2026-07-21
-updated: 2026-09-24
+updated: 2026-10-07
 parent: "[[wiki/01.index]]"
 tags:
   - wiki
@@ -23,7 +23,7 @@ tags:
 
 模型反覆處理自己的輸出時，每輪都是一次有損重編碼，失真隨鏈長累積。作者結論是**退化不可避免，但可用 prompt 策略減緩**。
 
-**強度：同儕審查**（[LLM as a Broken Telephone, ACL 2025 長文](https://aclanthology.org/2025.acl-long.371.pdf) / [arXiv:2502.20258](https://arxiv.org/abs/2502.20258)，三資料集各 150 篇，指標含 BLEU/ROUGE/BERTScore 與 FActScore）。本輪唯一經同儕審查的直接證據。
+**強度：同儕審查**（[LLM as a Broken Telephone, ACL 2025 長文](https://aclanthology.org/2025.acl-long.371.pdf) / [arXiv:2502.20258](https://arxiv.org/abs/2502.20258)，三資料集各 150 篇，指標含 BLEU/ROUGE/BERTScore 與 FActScore）。本輪經同儕審查的直接證據之一（另一篇為第 3 條的 CLAIRE，EMNLP 2025 主會）。
 
 **場景差距（重要）**：其迭代載體是**翻譯往返鏈、每輪強制全文重生成**；本 vault 的 wiki 頁多為**局部編輯**且每輪有 `raw/` 原文可回錨，重寫壓力小得多。**方向成立，速率不可套用**（每輪衰減曲線未取得，PDF 文字層抽取失敗）。
 
@@ -35,7 +35,7 @@ LLM 壓縮**不是均勻丟資訊，而是偏食脈絡類事實**（caveat、適
 
 實測：naive 壓縮決策翻轉率 **33.0%**，對照「重讀原文」的雜訊底線 11.0%，超出兩倍以上。把被刪的脈絡事實補回可救回 37% 的翻轉案例（隨機補其他事實僅 16–19%）。**緩解實測**：只改 prompt（要求保留 decision-relevant 限定詞）即 33.0% → **21.3%**——純 prompt 級介入就吃掉最大一塊改善。
 
-**強度：preprint、非同儕審查**（[When Summaries Distort Decisions, arXiv:2606.29251](https://arxiv.org/html/2606.29251)，S&P 100 財報 MD&A n=300／法說 n=297），但對照設計紮實且有商用系統部署驗證。
+**強度：preprint、非同儕審查**（[When Summaries Distort Decisions, arXiv:2606.29251](https://arxiv.org/html/2606.29251)，S&P 100 財報 MD&A n=300／法說 n=297），但對照設計紮實且有商用系統部署驗證。**已被取代（2026-10-07）**：2026-09 上傳的 [v3](https://arxiv.org/abs/2606.29251) comment 標為「EMNLP 2026 Industry Track」錄取（作者自述、屬 industry track，非主會）；本節引用的數字在 v3 仍存在（一手 arXiv 原文已回讀）。
 
 **場景差距**：量測的是金融下游決策翻轉，wiki 無等價指標。但**機制**（壓縮偏食脈絡）與「摘要頁／綜合頁改寫」高度同構，類比成立。
 
@@ -57,7 +57,7 @@ Wikipedia Vital Articles 955 條標註事實的實測：**約 3.3% 的事實與�
 
 同篇的 agentic 偵測系統 CLAIRE **AUROC 僅 75.1%**（小勝 NLI pipeline 72.2%、retrieve-and-verify 73.0%），作者自承仍有大量改進空間。
 
-**強度：preprint，但屬人類維護的真實 wiki 實測、非模擬**（[arXiv:2509.23233](https://arxiv.org/html/2509.23233)）。
+**強度：同儕審查（EMNLP 2025 主會），屬人類維護的真實 wiki 實測、非模擬**（[arXiv:2509.23233](https://arxiv.org/html/2509.23233)）。
 
 **場景差距（2026-07-21 就地實測後修訂）**：Wikipedia 的數值矛盾之所以佔大宗，機制是**同一事實被大量獨立條目各自重述**——多人編輯、無交叉引用紀律。本 vault 不是這個模式：數字通常一頁展開、他頁連過去。當日對本 vault 的抽查結果：
 
@@ -86,7 +86,7 @@ automation bias：人把自動化輸出當認知捷徑，產生 commission error
 
 ## 無法驗證的盲點
 
-**沒有機制能證明 agent 真的在行動前搜尋過知識庫、真的用了取回的內容、真的因此改變了行為。** 這是 [Wuphf 第三方 review](https://zby.github.io/commonplace/agent-memory-systems/reviews/wuphf/) 對該專案的批評，明指找不到 with/without-memory 的 ablation——**本 vault 同樣暴露**，我們沒有任何機制驗證這批 wiki 頁真的改善了回答品質。
+**沒有機制能證明 agent 真的在行動前搜尋過知識庫、真的用了取回的內容、真的因此改變了行為。** 這是 [Wuphf 第三方 review](https://zby.github.io/commonplace/agent-memory-systems/reviews/wuphf.html) 對該專案的批評，明指找不到 with/without-memory 的 ablation——**本 vault 同樣暴露**，我們沒有任何機制驗證這批 wiki 頁真的改善了回答品質。
 
 目前無解法，記為已知盲點而非假裝不存在。相關但方法論最嚴謹的一篇是 [Progressive Disclosure for LLM-Maintained Wiki KBs, arXiv:2607.04576](https://arxiv.org/pdf/2607.04576)（**預註冊 ablation**，題目與本 vault 幾乎完全對口），但其 PDF 文字層抽取失敗、**未取得任何數字**，只取到方向性描述（progressive disclosure＋prompt caching 降成本、觀察到 drift/contradiction/orphan/bloat、建議週期性 garbage collection）。**值得日後專門讀原文**。
 

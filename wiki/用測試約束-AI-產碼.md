@@ -2,7 +2,7 @@
 title: 用測試約束 AI 產碼
 description: AI 寫的測試為何驗證不到東西、判準的權威來源為何才是分類軸，以及 mutation、property-based 等手段的定位差異與防繞過分層
 created: 2026-08-06
-updated: 2026-09-23
+updated: 2026-10-07
 parent: "[[wiki/01.index]]"
 tags:
   - coding-agent
@@ -94,7 +94,7 @@ coverage 問「這行有沒有被執行」，mutation 問「**把這行弄壞，
 
 工具與已知邊界：
 
-- **JS/TS**：Stryker（Jest、Mocha、Node 模式的 Vitest）。規模感：7 個檔、394 個 mutant、36 秒。⚠️ **不支援 Vitest 的 browser mode**——其 instrumentation 假設 Node 執行，而 browser mode 走真實 Chromium。（**medium**：單一作者實測，工具支援狀況會變，回查官方文件為準。）
+- **JS/TS**：Stryker（Jest、Mocha、Node 模式的 Vitest）。規模感：7 個檔、394 個 mutant、36 秒。⚠️ **不支援 Vitest 的 browser mode**——其 instrumentation 假設 Node 執行，而 browser mode 走真實 Chromium。（**medium**：單一作者實測，工具支援狀況會變，回查官方文件為準。）**已被取代（2026-10-07）**：[vitest-runner CHANGELOG](https://github.com/stryker-mutator/stryker-js/blob/master/packages/vitest-runner/CHANGELOG.md) 顯示經 [PR #4628](https://github.com/stryker-mutator/stryker-js/pull/4628) 起已支援 browser mode、後續跟進 Vitest 3；「instrumentation 假設 Node 執行」的機制解釋也不成立——runner [原始碼註解](https://github.com/stryker-mutator/stryker-js/blob/master/packages/vitest-runner/src/test-helpers.ts)明寫 setup 檔可能被載入瀏覽器（"when using vitest with browser mode"）。只有官方文件 Limitations 段還留著 "not supported" 舊句，以實測為準。（**medium-high**：CHANGELOG／PR／原始碼一手，未實測。）同項修正與選型影響見 [[測試手段的優先序與成本]]。
 - **PHP**：Pest 自 3.x 起內建 `--mutate`；PHPUnit 走 Infection。CI 門檻用 `--min-msi`，但 **`--min-covered-msi` 更可行動**——它只衡量「已經寫過測試的碼」的測試品質，不會被尚未測試的區塊稀釋。
 - **Python**：mutmut、mutpy。
 - **降級方案**：mutation 演算法簡單到 agent 可以手工執行（讀碼 → 套一個變異 → 跑測試 → 記錄生死 → **立刻還原** → 下一個）。Stryker 不支援你的 stack 時可用，也已有人寫成 Claude Code skill。
@@ -146,6 +146,8 @@ PBT 不寫「輸入 A 應得 B」，而寫「**對所有合法輸入，這個不
 
 > **spec-derived authority 是最常見的單一來源，佔約一半（28/54）；其餘 26 篇完全沒有規格就做出判決。**
 
+（上引 54 篇與 28/54、26/54 是 [v1（2026-07）](https://arxiv.org/abs/2607.05031v1)摘要的數字。補新狀態（2026-10-07）：v3（2026-09 更新）已刊登於 [IEEE Access](https://doi.org/10.1109/ACCESS.2026.3729738)，語料經 citation snowballing 擴至 83 篇，摘要改述為 "Just over half of the corpus reaches a verdict with no specification at all"——「無 spec 判決」現已過半，比例方向與 v1 相反，但下文論點不受削弱、反而更強。v3 摘要未再說 spec-derived 是否仍為最常見單一來源，全文未讀、不確定。強度：一手但僅讀摘要；已同儕審查，仍屬文獻分佈而非有效性量測。）
+
 這給了本頁第一節那句「AI 驗證的是碼做了什麼而非碼該做什麼」一個學術命名：**「沒有 spec 就下判決」本身就是文獻中的一個大類**，而不是實作疏失。挑測試手段時真正該問的不是「這是單元測試還是整合測試」，而是**這個判準的權威在實作之內還是之外**——權威在實作之內的，agent 一定能自己滿足。（**medium**：系統性文獻回顧、方法透明；但它盤點的是研究文獻的分佈，不是實務有效性的量測。）
 
 依這個軸，本頁三層之外還有幾類 oracle，外部證據厚度差很多：
@@ -196,7 +198,7 @@ PBT 不寫「輸入 A 應得 B」，而寫「**對所有合法輸入，這個不
 | mutation 能戳破覆蓋率表演 | **medium-high**：機制清楚、案例可複現，另有 Radar Vol.34 的業界定位與 Meta 生產規模佐證 |
 | mutation＋LLM 產測試可在生產規模落地並被工程師採用（73%） | **high**：Meta ACH，一手＋FSE 2025 同儕審查；局限於單一公司與 Kotlin 生態 |
 | LLM 對可提取性質只有 21% 能寫出正確 PBT | **medium-high**：同儕審查、方法明確，但為 GPT-4／Claude-3-Opus 世代，宜視為下界 |
-| 能約束 agent 的判準，其權威必須在實作之外 | **medium**：source-of-authority taxonomy 給出文獻分佈（spec-derived 28/54），非有效性量測；與本頁其餘證據同向 |
+| 能約束 agent 的判準，其權威必須在實作之外 | **medium**：source-of-authority taxonomy 給出文獻分佈（v1 為 spec-derived 28/54；IEEE Access 刊登版擴至 83 篇、無 spec 判決過半），已同儕審查但非有效性量測；與本頁其餘證據同向 |
 | metamorphic testing 適合驗 AI 產碼 | **medium**：93 篇 survey 的學術厚度，但無 AI-coding 場景的直接效果量測，且未進 Radar |
 | differential testing 可驗 AI 重構的行為保持 | **low-medium**：機制成立、有零散提及，無系統性研究 |
 | contract／golden／fuzzing 用於約束 AI 產碼 | **low**：僅從業者與廠商層文章，無研究或 Radar 級背書 |

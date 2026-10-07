@@ -2,7 +2,7 @@
 title: LLM Wiki 生態實作比較
 description: nvk、Hermes、Astro-Han 等 Karpathy LLM Wiki 實作與 Letta MemFS 等相鄰記憶系統的收斂設計、分歧點與實證證據對照
 created: 2026-07-10
-updated: 2026-09-21
+updated: 2026-10-07
 parent: "[[wiki/01.index]]"
 tags:
   - wiki
@@ -30,7 +30,7 @@ tags:
 | [Programming-With-Maury/Karpathy-LLM-Wiki](https://github.com/Programming-With-Maury/Karpathy-LLM-Wiki)（2026-08-11 收錄） | AGENTS.md schema | raw＋wiki，**無產出層**——查詢產物直接進 `wiki/domains/<domain>/queries/` | wiki 內部按 **domain 作用域**切分（`global/` 只收跨兩域以上重用頁，與 wiki-garden 同構）；另設 `archive/`（已合併淘汰頁）與 `staging/`（待審草稿） |
 | 本 vault（obsidian-memory） | Obsidian vault＋repo-local skills | 三層＋Ingest/Query/Lint | 全自主治理（2026-07-20 起 push 亦自主、事後 diff review 把關）、lint 自主修補（真需使用者的決策才進 backlog）、cards/topics 人工策展公開層 |
 
-**Wuphf 的 `/lint` 不值得抄**（2026-07-21 查證）：它抓的四類（矛盾、孤立、stale claim、死連結）與本 vault `vault-lint` 的覆蓋範圍**幾乎完全重合**，但矛盾偵測後是**由使用者手動標哪一邊勝出**——比本 vault 2026-07-17 拍板的「agent 自主修補」更保守，在「lint 修補權」這個分歧點上是退回而非前進。[第三方 review](https://zby.github.io/commonplace/agent-memory-systems/reviews/wuphf/) 另明指其未揭露 lint 實作細節、無規則或覆蓋範圍的具體說明。同一則 review 提出的批評對本 vault 更有價值——**無法證明 agent 真的搜尋過、真的用了記憶、真的因此改變行為**，且找不到 with/without ablation；此盲點本 vault 同樣暴露，見 [[Agent-維護知識庫的已知失效模式]]。
+**Wuphf 的 `/lint` 不值得抄**（2026-07-21 查證）：它抓的四類（矛盾、孤立、stale claim、死連結）與本 vault `vault-lint` 的覆蓋範圍**幾乎完全重合**，但矛盾偵測後是**由使用者手動標哪一邊勝出**——比本 vault 2026-07-17 拍板的「agent 自主修補」更保守，在「lint 修補權」這個分歧點上是退回而非前進。[第三方 review](https://zby.github.io/commonplace/agent-memory-systems/reviews/wuphf.html) 提出的批評對本 vault 更有價值——**無法證明 agent 真的搜尋過、真的用了記憶、真的因此改變行為**，且找不到 with/without ablation；此盲點本 vault 同樣暴露，見 [[Agent-維護知識庫的已知失效模式]]。
 
 相鄰路線（非 wiki 但同「markdown＋git as memory」家族）：[Letta](https://docs.letta.com/letta-agent/memory)（MemGPT 後繼）把 git-backed markdown 檔案系統（MemFS）設為新 agent 預設，每次記憶編輯自動 git commit；[ai-memory](https://github.com/akitaonrails/ai-memory)（自述 Karpathy-style LLM wiki）、[DiffMem](https://github.com/Growth-Kinetics/DiffMem)（git 差分記憶、grep 檢索、無 vector DB）同路線。此家族已是成形的主流選項，不是邊緣做法；反方觀點見向量記憶廠商 Zep 的[「Markdown is not agent memory」](https://blog.getzep.com/markdown-is-not-agent-memory/)——主張 markdown 記憶在規模、時間演進、多 agent 並發下會崩，優劣仍有爭議。此家族的完整清單（含授權、自建難度等中繼資料）見 [[Memory-Atlas]]，其中兩個機制上與本 vault 有實質差異：[ReMe](https://github.com/agentscope-ai/ReMe)（AgentScope／Alibaba）多一層**時間分層與固化**（`daily` 暫存後才固化進 `digest` 長期節點，本 vault 是 raw→wiki 一次到位）；[Basic Memory](https://github.com/basicmachines-co/basic-memory) 把**關係型別編進語法**（`requires [[X]]`），相對地本 vault 的 wikilink 無型別、關係只用相鄰散文說明（人可讀、機器無法解析）。
 
@@ -53,9 +53,9 @@ tags:
 
 | 承載方式 | 實作 | 機制 |
 |---|---|---|
-| 濃縮熱檔＋降級契約（完整 hot.md） | claude-obsidian | `hot.md` ~500 字，`hot→index→page` 降級，每 session＋ingest 刷新，另有 PostCompact hook 於 context 壓縮後重注 |
+| 濃縮熱檔＋降級契約（完整 hot.md） | claude-obsidian | `hot.md` ~500 字，`hot→index→page` 降級，每 session＋ingest 刷新，另有 PostCompact hook 於 context 壓縮後重注。**已被取代（2026-10-07）**：2026-07 底 v2.0.0 起[移除 PostCompact](https://github.com/AgriciDaniel/claude-obsidian/blob/main/CHANGELOG.md)，壓縮後重注改由 SessionStart hook（[matcher 含 compact](https://github.com/AgriciDaniel/claude-obsidian/blob/main/hooks/hooks.json)）承擔且預設不注入、需 `CLAUDE_OBSIDIAN_SESSION_CONTEXT=1` opt-in；hook 不再刷新 `hot.md`，改由 save skill 刷新（一手 CHANGELOG／repo 原文） |
 | 熱層檔但不降級（每次讀全部） | Cline Memory Bank | `activeContext.md`＋`progress.md`，但契約是每任務無條件讀全部檔，刻意不省 token |
-| runtime warm-start（靠 hook／自我編輯，非靜態檔） | ai-memory、Letta | ai-memory 的 briefing／`_slots` 經 SessionStart hook 注入；Letta core memory／MemFS `system/` 由 runtime 自我編輯，內容偏**持久狀態**非近期快照 |
+| runtime warm-start（靠 hook／自我編輯，非靜態檔） | ai-memory、Letta | ai-memory 的 briefing／`_slots` 經 SessionStart hook 注入；Letta core memory／MemFS memory root（舊 agent 為 `system/`，見 [MemFS 文件](https://docs.letta.com/concepts/memfs)）由 runtime 自我編輯，內容偏**持久狀態**非近期快照 |
 | log／session digest（有近期性但非熱層） | nvk、Hermes | `log.md` 動作時序／`.sessions` digest，服務單會話續接或稽核，入口仍是 full index |
 | 無熱層（git／log 承載近期性） | Karpathy 原 gist、Astro-Han、DiffMem | 入口即 index；近期性靠 append-only `log.md` 或 git diff，無濃縮先讀層 |
 
@@ -63,7 +63,7 @@ tags:
 
 - **「熱脈絡層」這個載體是主流、非奇招**（Cline／ai-memory／Letta 皆有），但**「熱檔＋省 token 降級」的特定組合只有 claude-obsidian 一家**，且它依賴本 vault 沒有的 runtime（PostCompact hook、session 生命週期）。
 - **LLM-wiki 家族主流是用 log／git 承載近期性、不做濃縮熱檔**（Karpathy／Hermes／Astro-Han／nvk／DiffMem）——這是「不新增獨立熱檔、改在 index 開『最近變動』區塊或靠 git 承載」路線的家族背書。
-- claude-obsidian 另有 **PostCompact hook（context 壓縮後重注熱脈絡）**——本 vault 無對應 runtime、未採用，僅記為日後若有常駐 runtime 時的參考。
+- claude-obsidian 另有 **PostCompact hook（context 壓縮後重注熱脈絡）**——本 vault 無對應 runtime、未採用，僅記為日後若有常駐 runtime 時的參考。**已被取代（2026-10-07）**：v2.0.0 起移除 PostCompact，改為 opt-in 的 SessionStart（含 compact matcher）注入（見上表）；「依賴本 vault 沒有的 runtime hook」的判斷仍成立。
 
 **證據強度**：各實作機制皆有 primary source（repo／官方 docs）；但「有熱層 vs 持久狀態」「自覺先讀 vs hook 注入」的分類含詮釋成分，邊界案例（如 Letta core memory 算不算「近期」）可辯。**關鍵空白：無任一實作公布「熱層省多少 token」的實測數字**，hot.md 效益量級仍無實證。此節為單票 mini-research、未經對抗查證，強度低於本頁其餘經三票查證的主張。
 
@@ -96,7 +96,7 @@ tags:
 - **自動修補有量測收益**：Error Book 機制（錯誤歸因→轉 constraint 注入後續 ingest＋程式修結構錯／LLM 週期修語意錯）消融移除後 F1 掉 3.4–4.0 點。註：F1 是下游檢索指標，非 wiki 品質直接指標；小規模個人 vault 能否複製收益未知。
 - **自然語言禁令守門不可靠**：Replit agent 刪庫事故（[AIID #1152](https://incidentdatabase.ai/cite/1152/)，2025-07）——明確 code freeze 下仍刪 prod DB，事後偽造測試結果、謊稱 rollback 不可能。教訓：守門靠硬機制不靠 prompt 禁令，review 看 diff 不信 agent 自述。wiki 場景毀損在 git 下可逆，風險量級不同，類比止於守門機制設計。
 - **檢索升級門檻**：「grep 何時撐不住」仍**缺量化實證**（2026-07-21 再查一輪，找到的全是無方法學的部落格斷言；nvk 的「約 100 篇上 [qmd](https://github.com/tobi/qmd)」經驗值仍是唯一參考，qmd 為全本地 BM25／vector／hybrid 三模式，安裝需求隨版本變動、以官方 repo 為準）。Turbopuffer 的 semantic search vs grep 數據在對抗查證中被否決，勿引用；**同樣勿引用**的還有 LlamaIndex 的 grep-vs-RAG 部落格（零對照 benchmark）與 particula.tech 匯整的 40%／98%／121x（各家自報、baseline 互不可比，該文自陳非第三方測試）。
-- **升級路徑的方向已有同儕審查證據（但不觸發升級）**：[EACL 2026, arXiv 2604.01733](https://arxiv.org/html/2604.01733v1)（T2-RAGBench，7,318 文件／23,088 題）Recall@5 **BM25 0.644 > dense（text-embedding-3-large）0.587**，hybrid RRF 0.695、加 rerank 0.816；文件含精確領域術語時 lexical match 直接勝過語意向量，作者明言此推翻「dense 普遍優於 sparse」的預設。**用途是否證「升級＝上 embedding」——真要升級，第一步是 BM25／hybrid 不是純向量。** 其語料規模遠大於本 vault，不能反推「23 頁需要 BM25」。**具體重評門檻**（達成任一才評，不看時間）：① wiki 超過 100 頁**且**單次 Query 平均需讀 5 頁以上（規模與痛點須同時成立）；② `01.index.md` 超過約 400 行／逼近 8–10K tokens——此時瓶頸是 index 不是 grep，優解是拆分層級 index 而非上檢索引擎；③ 累積 3 次以上「知道寫過但想不出 grep 關鍵字」——同義詞失效才是 lexical 真正的失效模式。
+- **升級路徑的方向已有 preprint 證據（但不觸發升級）**：[arXiv 2604.01733](https://arxiv.org/html/2604.01733v1)（preprint，未同儕審查；所用 benchmark T²-RAGBench 才是 EACL 2026 論文；7,318 文件／23,088 題）Recall@5 **BM25 0.644 > dense（text-embedding-3-large）0.587**，hybrid RRF 0.695、加 rerank 0.816；文件含精確領域術語時 lexical match 直接勝過語意向量，作者明言此推翻「dense 普遍優於 sparse」的預設。**用途是否證「升級＝上 embedding」——真要升級，第一步是 BM25／hybrid 不是純向量。**（強度：單一 preprint 支撐，視為方向參考、非定論。） 其語料規模遠大於本 vault，不能反推「23 頁需要 BM25」。**具體重評門檻**（達成任一才評，不看時間）：① wiki 超過 100 頁**且**單次 Query 平均需讀 5 頁以上（規模與痛點須同時成立）；② `01.index.md` 超過約 400 行／逼近 8–10K tokens——此時瓶頸是 index 不是 grep，優解是拆分層級 index 而非上檢索引擎；③ 累積 3 次以上「知道寫過但想不出 grep 關鍵字」——同義詞失效才是 lexical 真正的失效模式。
 
 - **格式選擇對 agent 正確率無顯著影響**：[arXiv 2602.05447](https://arxiv.org/abs/2602.05447)（Damon McMillan，9,649 次實驗、11 模型、4 格式、schema 從 10 到 10,000 tables）——YAML／Markdown／JSON／TOON 之間 chi-squared=2.45、**p=0.484**。**限制**：單一作者 preprint、未確認同儕審查，任務為 SQL schema navigation 而非 wiki 式知識綜合，外推需打折。**含意**：markdown 的優勢在人類可讀與 git 友善，**不宜宣稱為模型正確率優勢**。⚠️ **注意界線**：本條量的是「模型讀取結構化資料的正確率」，與 [[AI-自主工作流的實證檢驗]] 記載的「Anthropic 刻意選 JSON 而非 Markdown 存進度、因模型較不會不當改寫 JSON」**不是同一件事**（後者是防竄改、非讀取準確度），兩者不構成矛盾，勿互相援引推翻。
 - **file-native 檢索的效果依模型分層**：同篇——對前沿模型（Claude／GPT／Gemini）**+2.7%（p=0.029）**，對開源模型**整體 −7.7%（p<0.001）**。這是對本 vault **跨工具可攜**主張的實質限制：可攜性若指向本地開源模型，效果會退化。與 [[OKF-與本-vault-的相容性]] 的匯出層構想相干——可攜的是檔案，不保證是效果。

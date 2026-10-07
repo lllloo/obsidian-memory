@@ -2,7 +2,7 @@
 title: LLM 方案定價與 coding agent 比較
 description: 主流 LLM 訂閱月費與 coding agent 三方案定價對照，依用途給經濟實惠推薦，含台幣概算、2026-09 覆核與第三方工具可用性
 created: 2026-07-08
-updated: 2026-09-22
+updated: 2026-10-07
 parent: "[[wiki/01.index]]"
 tags:
   - llm-pricing
@@ -37,10 +37,10 @@ tags:
 
 | | **OpenCode Go** | **Claude Pro** | **ChatGPT Plus（Codex）** |
 |---|---|---|---|
-| 月費 | **$10**（首月 $5 的入手優惠已不見於官網） | **$20**（年繳 $17） | **$20** |
+| 月費 | **$10**（首月 $5 的入手優惠已不見於官網）；另有 Go Plus $40/月的高額度檔（2026-10-07 [官網](https://opencode.ai/go)一手） | **$20**（年繳 $17） | **$20** |
 | 綁的 agent | OpenCode（開源，MIT） | Claude Code | Codex（web/CLI/IDE/iOS） |
 | 能用的模型 | ~~**僅中國開源模型**：GLM、Kimi、Qwen、MiniMax、DeepSeek 等十餘個~~ **已被取代（2026-09-02）**：官網模型清單已納入 GPT 系列、Grok 與 Meta 系模型，不再只有中國實驗室，詳見下方覆核一節（版本輪替快，見 [官方模型清單](https://opencode.ai/go)） | Claude 自家 Sonnet / Opus / Haiku | GPT 系列 |
-| 用量限制 | 按金額計：約 $12/5hr、$30/週、$60/月 | 滾動 5 小時視窗 + 週額度雙層 | 短視窗（數小時）+ 週額度雙層 |
+| 用量限制 | ~~按金額計：約 $12/5hr、$30/週、$60/月~~ **已被取代（2026-10-07）**：改為按模型分別訂月額度，5 小時窗口為月額度 20%、週窗口 50%（[官方 docs](https://opencode.ai/docs/go/) 一手）；各模型額度差異大，具體數字回官網查 | 滾動 5 小時視窗 + 週額度雙層 | 短視窗（數小時）+ 週額度雙層 |
 | 省心度 | 要自己選模型/路由 | 開箱即用 | 開箱即用 |
 | 模型天花板 | 開源 SOTA（略遜頂級閉源） | 頂級（Opus/Sonnet） | 頂級（GPT 旗艦） |
 
@@ -53,7 +53,7 @@ tags:
 以官方定價頁重查一輪，記錄與上方 7 月快照的差異。**未變**：Claude Pro $20（年繳 $17）與 Max 從 $100 起、ChatGPT Go $8 / Plus $20 / Pro $100・$200、OpenCode Go 的金額計用量結構。變動如下：
 
 - **OpenCode Go 的模型清單不再限於中國開源模型**（官網一手，高信心）。2026-09-02 觀察到的 lineup 除 GLM、Kimi、Qwen、MiniMax、DeepSeek 外，另有 GPT 5.6 Luna、Grok 4.6、Hy4、LongCat、MiMo，以及 Meta 的 Muse Spark（限部分地區）。這推翻了上表原本「僅中國開源模型」的主張，連帶讓「模型天花板略遜頂級閉源」這條比 7 月時弱——但清單輪替極快，選型前務必回官網看當下版本，不要引用此處的具體型號。
-- **OpenCode Go 首月 $5 優惠已不見於官網**，現為單一 $10/月（可另行 top up credit）。
+- **OpenCode Go 首月 $5 優惠已不見於官網**，現為單一 $10/月（可另行 top up credit）。**已被取代（2026-10-07）**：[官網](https://opencode.ai/go)與 [docs](https://opencode.ai/docs/go/) 現列兩檔——Go $10/月與 Go Plus $40/月（higher limits），且用量改為按模型分別計月額度（5 小時 20%／週 50%／月 100%），原本一體適用的 $12／$30／$60 金額上限不再適用所有模型（官方一手；模型清單仍含 GPT 與 Grok、仍無 Claude）。
 - **Google AI Plus 由 $7.99 降至 $4.99**（中信心：來自聚合站摘要，我未取得官方公告一手佐證；台灣 Google One 頁面顯示的 AI Plus 為 NT$330／2TB，與美區數字對不起來，是區域差異或某一邊過時，未判定）。
 - **Google AI Pro 的附帶儲存由 2TB 升至 5TB**，月費未動（台灣區頁面一手確認 5TB／NT$650）。
 - **ChatGPT 訂閱價格未動**，但 Go 層在 8 月加入無限文字對話、Business 新增 Premium 層（約 $100/席年繳、$125 月繳）——皆為聚合站摘要，中信心，未見官方頁一手佐證。

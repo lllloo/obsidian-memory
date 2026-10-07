@@ -2,7 +2,7 @@
 title: OKF 與本 vault 的相容性
 description: Open Knowledge Format 對本 vault 的適用邊界：內部維持 Obsidian LLM Wiki，未來需要交換時再建立 OKF 匯出層
 created: 2026-07-11
-updated: 2026-09-17
+updated: 2026-10-07
 source: https://github.com/GoogleCloudPlatform/knowledge-catalog/blob/main/okf/SPEC.md
 parent: "[[wiki/01.index]]"
 tags:
@@ -23,14 +23,14 @@ tags:
 | directory index 供漸進揭露 | `wiki/01.index.md` | 保留；不改為保留檔名 `index.md` |
 | 標準 Markdown links | 內部以 Obsidian wikilink 為主 | 只在未來匯出時轉換 |
 | 每個 concept 必填 `type` | 以摘要、實體、概念、比較、綜合頁作慣例分類，未寫入 frontmatter | 現階段不補，避免沒有消費者的維護成本 |
-| `timestamp`（ISO 8601 datetime） | `updated`（日期） | 匯出時映射，不改內部 schema |
-| `# Citations` | 主來源放 frontmatter `source`，多來源可就地連結 | 重要外部主張可採用，非全庫遷移條件 |
+| `timestamp`（ISO 8601 datetime） | `updated`（日期） | 匯出時映射，不改內部 schema。**已被取代（2026-10-07）**：v0.2 以 `generated: { by, at }` 取代 `timestamp`（SPEC §13.1 列為 breaking change），且[上游 PR #323](https://github.com/GoogleCloudPlatform/knowledge-catalog/pull/323) 規定 timestamp 值須為帶 offset 的 ISO 8601 datetime、純日期會被 consumer 忽略（一手 SPEC／PR 原文） |
+| `# Citations` | 主來源放 frontmatter `source`，多來源可就地連結 | 重要外部主張可採用，非全庫遷移條件。**已被取代（2026-10-07）**：v0.2 改由 frontmatter `sources`（含 author、usage_count、last_modified 等 credibility signals）取代 body 的 `# Citations`（SPEC §13.1，一手）；v0.2 另新增 `status`、`stale_after`、`verified` 等欄位，`type` 仍是唯一必填 |
 
 ## 決定（2026-07-11）
 
 **不將 `wiki/` 遷移為 OKF bundle，也不全面加入 `type` 或雙寫連結。** 現有結構服務 Obsidian 圖譜、raw write-once 證據鏈與 agent 綜合流程，直接套用 OKF 的互通性成本目前沒有明確受益者。
 
-**保留 OKF 作為未來的匯出 profile。** 若需要讓外部 agent、工具或組織消費選定知識時，另建獨立 bundle（對應 [[跨專案第二大腦整合模式]] 的「模式 5：可攜知識 bundle」對外交換邊界層）：映射既有 `title`、`description`、`tags`、`updated`，補 `type`，將 wikilink 轉成 bundle-relative Markdown links，並保留來源 citation。這不改動內部 wiki，也不影響 [[LLM-Wiki-生態實作比較]] 已拍板的不採 nvk 雙連結決定。
+**保留 OKF 作為未來的匯出 profile。** 若需要讓外部 agent、工具或組織消費選定知識時，另建獨立 bundle（對應 [[跨專案第二大腦整合模式]] 的「模式 5：可攜知識 bundle」對外交換邊界層）：映射既有 `title`、`description`、`tags`、`updated`，補 `type`，將 wikilink 轉成 bundle-relative Markdown links，並保留來源 citation。（2026-10-07 補，對齊 v0.2：`updated` 是純日期，匯出時要轉成帶 offset 的 datetime 填進 `generated.at`；來源寫進 frontmatter `sources` 而非 body `# Citations`。不遷移的決定本身不變。）這不改動內部 wiki，也不影響 [[LLM-Wiki-生態實作比較]] 已拍板的不採 nvk 雙連結決定。
 
 ## 重新評估條件
 

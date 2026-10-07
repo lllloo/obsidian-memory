@@ -2,7 +2,7 @@
 title: pi 與 OpenCode v2 比較
 description: 兩套 MIT 開源終端 coding agent 的取捨：pi 極簡單進程靠 extension 自組，OpenCode v2 常駐 server 電池全含
 created: 2026-09-22
-updated: 2026-10-05
+updated: 2026-10-07
 parent: "[[wiki/01.index]]"
 tags:
   - coding-agent
@@ -24,7 +24,7 @@ tags:
 | 擴充方式 | TypeScript extension **在 agent 進程內跑**，25+ 個 hook（含 `input`、`before_agent_start`、context 修剪、session 分支事件），TUI 任何區塊可改 | JSON config＋plugin＋skill＋MCP，約 20 個事件；TUI 封閉，不能塞自訂 UI |
 | Session | JSONL 存成樹，`/tree`／`/fork`／`/clone` 就地分支；compaction 有損但全史保留在 JSONL | 多分頁平行 session（共用背景 service 持有）。~~跨裝置同步（v2 新增）~~——已被取代（2026-09-22）：v2 文件查無同步機制，且明寫尚不支援 session sharing，見 [[四套-coding-agent-能力差異對照]] |
 | 執行模式 | interactive／print-JSON／RPC／SDK 四種 | TUI／Desktop（Electron）／HTTP API＋生成的 TypeScript client |
-| Provider | 約 15–20 家；本機模型（MLX／GGUF）支援受好評 | 75+ 家，含 Ollama／LM Studio／llama.cpp |
+| Provider | ~~約 15–20 家~~ **已被取代（2026-10-07）**：[官方 providers 文件](https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/providers.md)列 30 餘個單一 API key provider，另有 Azure、Bedrock、Vertex 等數個需專屬設定的雲端 provider（官方文件一手，數量變動快、回文件查；與 [[四套-coding-agent-能力差異對照]] 的模型與 provider 列一致）；本機模型（MLX／GGUF）支援受好評 | 75+ 家，含 Ollama／LM Studio／llama.cpp |
 | 資源 | 單進程；system prompt＋tool 定義不到 1k tokens | 常駐服務，RAM 1GB+；prompt 約 6.9k tokens |
 | 授權／熱度 | MIT；約 108k★（2026-09-22），近月成長率明顯高於 OpenCode | MIT；約 209k★（2026-09-22） |
 

@@ -2,7 +2,7 @@
 title: Orca
 description: Orca multi-agent IDE 的架構與運作機制：worktree 隔離、terminal 管理、supervised loop 與協調合約
 created: 2026-09-24
-updated: 2026-09-24
+updated: 2026-10-07
 parent: "[[wiki/01.index]]"
 tags:
   - coding-agent
@@ -50,9 +50,12 @@ Run（協調作業容器）
 
 在 Orca 的命令規格與文件中，統一以 `ORCA` 作為執行檔佔位符。在實際操作與腳本撰寫時，必須注意以下解析規則與命名衝突：
 
-1. **實際執行檔名稱**：
-   - 本機安裝的正式發布版 CLI 執行檔為 `orca-ide`。
-   - 開發環境（dev build）下則為 `orca-dev`（或 `./config/scripts/orca-dev.mjs`）。
+1. **實際執行檔名稱**（依官方 [cli-resolution stub](https://github.com/stablyai/orca/blob/main/skill-stubs/_shared/cli-resolution.md) 的解析順序，一手）：
+   - 先看環境變數 `ORCA_CLI_COMMAND`，有設就用它。
+   - 開發環境（dev build）下用 `orca-dev`（或 `./config/scripts/orca-dev.mjs`）。
+   - Linux 上、在 Orca 管理的終端**之外**，用 `orca-ide`。
+   - 其餘情況（含 Orca 管理的終端內）用 `orca`。
+   - 本機 WSL2 上的 `orca-ide` 是 Orca 的 WSL managed CLI launcher（bash 腳本，經 `powershell.exe` 轉呼叫 Windows 端的 `orca.exe`）。
 2. **重大陷阱：GNOME 螢幕朗讀器衝突**：
    - 在標準 Linux 與 GNOME 桌面環境中，系統內建的 `/usr/bin/orca` 是 **GNOME 螢幕朗讀器（GNOME Screen Reader）**。
    - 若在 Orca 環境外或一般 bash shell 中直接裸打 `orca`，系統**不會**啟動 Orca IDE，而是會喚醒螢幕朗讀器語音合成程式。
@@ -116,4 +119,4 @@ run-create ──> task-create ──> worker-start ──> check --wait
 - 本頁架構、原語與合約規範取自本機 CLI 官方 skill 規格（一手工具規格，未經第三方對抗查證）：
   - [[Orca-CLI-Skill]]（落地於 `raw/fetched/Orca-CLI-Skill.md`）
   - [[Orca-Orchestration-Skill]]（落地於 `raw/fetched/Orca-Orchestration-Skill.md`）
-- 本機執行檔解析與 GNOME 衝突為實際系統環境驗證之具體事實。
+- GNOME 螢幕朗讀器衝突與 CLI 解析順序取自官方 [cli-resolution stub](https://github.com/stablyai/orca/blob/main/skill-stubs/_shared/cli-resolution.md)（一手）；本機 WSL2 的 `orca-ide` 是 managed WSL launcher，本機沒有 `/usr/bin/orca`，GNOME 衝突**未在本機重現**。

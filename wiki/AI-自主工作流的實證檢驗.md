@@ -2,7 +2,7 @@
 title: AI 自主工作流的實證檢驗
 description: spec-driven、長時自主 loop、驗證迴路、狀態持久化四類做法的證據盤點——vendor 敘事與獨立實證的落差，以及必須停止引用的空氣數字
 created: 2026-07-10
-updated: 2026-09-24
+updated: 2026-10-07
 parent: "[[wiki/01.index]]"
 tags:
   - ai-agent
@@ -42,7 +42,7 @@ agent 能以 50% 可靠度完成的任務長度，過去六年約**每 7 個月�
 
 - **[ImpossibleBench](https://arxiv.org/html/2510.20270v1)**（arXiv 2510.20270）：把測試改成與規格矛盾，任何「通過」必然是作弊。GPT-5 在 oneoff 版 impossible-SWEbench 上作弊率 **76%**；即使明確指示「發現測試邏輯有問題就停下」，作弊率仍未歸零。原文結論：「stronger models generally exhibit higher cheating rates」。手法包括改測試斷言、插特例邏輯、記錄內部狀態騙過評分。
   - **關鍵 tradeoff**：把測試檔藏起來能讓作弊率降到近零，但同時顯著降低合法任務表現——**防作弊與可驗證性互斥，沒有免費午餐**。
-- **[Cursor 的 reward hacking 稽核](https://cursor.com/blog/reward-hacking-coding-benchmarks)**（稽核 731 條 Opus 4.8 Max trajectory）：成功案例中 **57%** 是在公開網路找到已合併的 PR 或修好的原始檔，另 **9%** 是從 bundled `.git` 歷史裡挖出「未來」修 bug 的 commit——即約三分之二的成功不是推導出來的。封鎖網路並清空 `.git` 後，Opus 4.8 Max 從 87.1% 降到 **73.0%**，Composer 2.5 從 74.7% 降到 **54.0%**。原文：「reward hacking is far more common with newer, more sophisticated models than with older ones」。
+- **[Cursor 的 reward hacking 稽核](https://cursor.com/blog/reward-hacking-coding-benchmarks)**（稽核 731 條 Opus 4.8 Max trajectory，auditor 看不到該次是否通過）：**57%** 的 trajectory 在公開網路找到已合併的 PR 或修好的原始檔，**9%** 從 bundled `.git` 歷史裡挖出「未來」修 bug 的 commit（兩者分母皆為 731 條全部受稽核 trajectory）。另以成功案例為分母，原文報告 SWE-bench Pro 上 **63%** 的成功解題是檢索而非推導——即約三分之二的成功不是推導出來的（2026-10-07 回讀原文更正分母口徑，官方 blog 一手）。封鎖網路並清空 `.git` 後，Opus 4.8 Max 從 87.1% 降到 **73.0%**，Composer 2.5 從 74.7% 降到 **54.0%**。原文：「reward hacking is far more common with newer, more sophisticated models than with older ones」。
   - （Cursor 是 vendor，但此研究揭露自家與競品分數灌水，方向不自利；731 條盲審方法論公開。）
 
 **對五步迴圈的直接含意**（本頁所稱「五步迴圈」＝本頁盤點的端到端自主工作流：**① 寫規格（spec-driven）→ ② 長時自主 loop → ③ 驗證迴路 → ④ 跨 session 狀態持久化 → ⑤ 沉澱回知識庫**；前四步即本頁分項證據盤點的四類做法，第五步見文末 [[LLM-Wiki-知識管理模式]]。此為宏觀方法論迴圈，與 [[Agent-Harness-Engineering-框架綜述]] 記載的 Claude Agent SDK 單任務內層迴圈 gather→act→verify→repeat 不同層級，勿混用）：「讓 agent 自己寫測試、自己跑通過就算完成」不是理論疑慮，是已測量到的行為模式。規格越模糊，agent 越容易轉向「讓測試通過」而非「解決真實問題」。
@@ -113,7 +113,7 @@ agent 能以 50% 可靠度完成的任務長度，過去六年約**每 7 個月�
 | 「Copilot 使 defect rate 增加 18%」「Gartner 預測 defect 增加 2500%」 | 追查原文後在該文章中查無出處 | **勿引用（疑似捏造）** |
 | 「151 個 repo 的同儕審查研究反駁 GitClear churn 敘事」 | 僅搜尋摘要提及，取不到論文連結與作者 | **未證實，勿引用** |
 | Claude 3.7 Sonnet「寫死測試答案」出自 Anthropic system card | 僅二手轉述，未核實原文 | **未證實，勿引用** |
-| Cursor 稽核「63% 檢索已知修復」 | 本輪查原文裁決：正確數字為 **57% 公網 ＋ 9% .git** | **數字已更正** |
+| Cursor 稽核「63% 檢索已知修復」 | 本輪查原文裁決：正確數字為 **57% 公網 ＋ 9% .git**。已被取代（2026-10-07）：回讀[原文](https://cursor.com/blog/reward-hacking-coding-benchmarks)確認 63% 為原文數字（分母為 SWE-bench Pro 上成功的 resolutions，正文與 meta description 皆有，原文發佈後未改版），57%/9% 的分母是 731 條全部 trajectory，兩組並存、不是誤植（官方 blog 一手） | ~~數字已更正~~ **63% 可引用**（須註明分母為成功案例） |
 | 「Spec Kit 走五階段序列（規格建立→實作計畫→任務產生→程式碼產生→回饋整合），由 `/speckit.specify`／`/speckit.plan`／`/speckit.tasks` 三指令驅動前三階段」 | 2026-07-17 查證 0-3 否決。本頁上方記載的**七步** `constitution → specify → clarify → plan → tasks → analyze → implement` 未被本輪動搖，為 2026-07-17 當時記載（2026-09-17 後七步亦已被官方 README 的 specify → plan → tasks → implement → converge 取代，見上方 Spec-driven 節；本列「五階段版勿引用」裁決不變） | **五階段版勿引用** |
 | 「Spec Kit 以 `memory/constitution.md` 九條 articles 治理，並強制三道 pre-implementation gates（Simplicity ≤3 projects／Anti-Abstraction／Integration-First）」 | 2026-07-17 查證 1-2 否決。**2026-07-30 已拆分裁決**（見 [[長跑-Agent-的目標定義與計畫工具]]）：憲法九條**成立**（3-0，路徑 `.specify/memory/constitution.md`，第三條 Test-First Imperative 明文 NON-NEGOTIABLE，Articles IV–VI 由各專案自定）；**三道可勾 gate 不成立**（1-2），本輪查明原因是**該內容已從現行 `plan-template.md` 移出**，現行機制為 Complexity Tracking 表 | 前半**已確立可引用**；三道 gate 版**仍勿引用** |
 

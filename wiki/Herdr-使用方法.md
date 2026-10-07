@@ -2,7 +2,7 @@
 title: Herdr 使用方法
 description: herdr 的 session／workspace 層級、持久化邊界、狀態偵測、CLI 委派原語、worktree 與 SSH 遠端用法，含偵測盲點
 created: 2026-09-15
-updated: 2026-09-24
+updated: 2026-10-07
 source: https://herdr.dev/docs/
 parent: "[[wiki/01.index]]"
 tags:
@@ -37,7 +37,7 @@ herdr 是 client/server 架構的終端多工器，骨架與 tmux 相同：背�
 
 ### 原生 agent session 還原
 
-預設開啟（`[session] resume_agents_on_restore = false` 可關）。server 重啟後，支援的 agent 用自己的 resume 指令接回對話，如 `claude --resume <id>`、`codex resume`，agy、OpenCode、Copilot、Cursor、Devin 等亦在列。接回的是**新程序、舊對話**。前提是該 pane 已透過夠新的官方 integration 回報 session reference（`herdr integration status` 檢查；版本門檻指 integration 版本，不是 agent 本身版本）；reference 缺漏或過期就還原成普通 shell。（3-0）
+預設開啟（`[session] resume_agents_on_restore = false` 可關）。server 重啟後，支援的 agent 用自己的 resume 指令接回對話，如 `claude --resume <id>`、`codex resume`，agy、OpenCode、Copilot、Cursor、Devin 等亦在列。接回的是**新程序、舊對話**。前提是該 pane 已透過夠新的官方 integration 回報 session reference（`herdr integration status` 檢查；版本門檻指 integration 版本，不是 agent 本身版本）；reference 缺漏或過期就還原成普通 shell。（3-0）2026-09 底起多了一條路：agent 可自行向 herdr 回報 resume 指令，server 重啟後照該指令重開 session，不需內建 integration（官方指南〈[Add Herdr support to your agent](https://herdr.dev/docs/add-herdr-support/)〉）；還原時 agent 改為逐一啟動，預設間隔 100 ms，可用 `[session] startup_per_agent_delay_ms` 調整。（官方 [CHANGELOG](https://github.com/herdrdev/herdr/blob/master/CHANGELOG.md) 一手、僅讀摘要、未實測）
 
 ## agent 狀態偵測
 
@@ -109,7 +109,7 @@ herdr 內建 worktree 指令（官方 cli-reference 原始檔＋本機 `--help`�
 2. `herdr --remote workbox` 或 `herdr --remote ssh://you@server:2222`：pane 由遠端 server 持有，終端內容經 SSH 串流回來由本機繪製。
 3. 儲存的 SSH machines（`herdr machine`），在同一視窗切換本機與多台遠端。
 
-本機 client 可為 Linux、macOS、Windows；**遠端主機只能是 Linux 或 macOS**。
+本機 client 可為 Linux、macOS、Windows；**遠端主機只能是 Linux 或 macOS**。已被取代（2026-10-07）：herdr 自 2026-09 中起支援 Windows x86_64 遠端主機（Windows ARM64 走 x64 模擬，best-effort），舊文件「Windows is not supported as the remote host」一句已移除；確切版本以[官方 CHANGELOG](https://github.com/herdrdev/herdr/blob/master/CHANGELOG.md) 為準（官方 CHANGELOG 與 [persistence-remote 文件](https://github.com/herdrdev/herdr/blob/master/docs/versions/0.9.3/website/src/content/docs/persistence-remote.mdx)一手、未實測）。direct terminal attach 則仍只支援 Linux／macOS，原生 Windows 不行（官方文件所述、未實測）。
 
 ## 與相鄰工具的定位
 

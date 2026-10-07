@@ -2,7 +2,7 @@
 title: Jev 與 System One 模型
 description: 只回型別化判斷、不生成文字的決策模型：三項核心宣稱的可信度落差、兩個接入硬限制，以及對上 fine-tuned encoder 的缺口
 created: 2026-09-22
-updated: 2026-09-22
+updated: 2026-10-07
 source: https://typesafe.ai/blog/introducing-system-one-models-and-jev
 parent: "[[wiki/01.index]]"
 tags:
@@ -42,7 +42,7 @@ TypeSafe AI 於 2026-09 發布的 Jev 自稱「首個 System One Model」：不�
 
 input `$0.042/M` tokens、output `$0`。這不只是廠商自述：OpenRouter provider 頁內嵌的 pricing JSON 為 `prompt: 0.000000042, completion: 0`，且無 per-request fee 或最低消費欄位。
 
-> **但掛牌價不等於帳單**：Jev 走 alpha decisions endpoint，是否另有 per-decision 計費未見任何來源說明；OpenRouter 帳戶層級的儲值手續費不在 model pricing 內；第三方 SDK 另有成本歸因 bug（litellm issue #42200：經 OpenRouter 時成本追蹤列 $0，因 model ID namespacing），會影響自建成本監控。廠商 blog 拿來對比的「既有 LLM input $0.20–$10/MTok」是**自選基準、未指名比較對象**。
+> **但掛牌價不等於帳單**：Jev 走 alpha decisions endpoint，是否另有 per-decision 計費未見任何來源說明；OpenRouter 帳戶層級的儲值手續費不在 model pricing 內；第三方 SDK 另有成本歸因 bug（litellm issue #42200：經 OpenRouter 時成本追蹤列 $0，因 model ID namespacing），會影響自建成本監控——此 bug 已於 2026-09 由 [PR #42301](https://github.com/BerriAI/litellm/pull/42301) 修復並關閉 issue，修補隨 2026-10 初的穩定版釋出（[release](https://github.com/BerriAI/litellm/releases/tag/v1.104.0) 一手，比對 commit、未實測），仍用更舊版 litellm 才受影響。廠商 blog 拿來對比的「既有 LLM input $0.20–$10/MTok」是**自選基準、未指名比較對象**。
 
 ### 「數學上不會 hallucinate／type error」：定義式保證，非實測 ⚠️
 
@@ -86,7 +86,7 @@ ayautomate 明言原宣稱「did not show up against these baselines」。官方
 
 ### middleware 層還不能押
 
-把 Jev 真正插進 agent 決策點的三個 LangChain middleware（`ModelRouterMiddleware` 模型路由、`AutoModeMiddleware` 工具風險攔截、`SkillsMiddleware`）**官方明標 experimental**，需裝 `langchain-typesafe[experimental]`，文件寫「APIs may change without notice」，套件本身仍在 pre-release alpha（2026-09-22 查證時為 `0.0.1a3`，此版號會很快過期，回查官方 release 頁為準），且有多筆未結 bug。
+把 Jev 真正插進 agent 決策點的兩個 LangChain middleware（`ModelRouterMiddleware` 模型路由、`AutoModeMiddleware` 工具風險攔截）**官方明標 experimental**（[官方整合文件](https://docs.langchain.com/oss/python/integrations/providers/typesafe)逐字寫「The package includes two experimental middleware」，已發布 wheel 的 `experimental/middleware` 也只有這兩個；官方文件與套件一手），需裝 `langchain-typesafe[experimental]`，文件寫「APIs may change without notice」，套件本身仍在 pre-release alpha（2026-09-22 查證時為 `0.0.1a3`，此版號會很快過期，回查官方 release 頁為準），且有多筆未結 bug。`SkillsMiddleware` 屬於 deepagents、不在 TypeSafe 套件內；把它換成 Jev 判斷的作法目前只見第三方社群專案 [langchain-skill-router](https://github.com/deyna256/langchain-skill-router)（以 `JevJudge` 接 Jev），不是官方整合（repo 一手、未實測）。
 
 > **範圍要收窄**：`TypeSafeClassifier` 本身**不在** experimental 範圍，自行接線走 classifier 是受支援路徑。「不成熟」只適用於 middleware 層，不適用於整個整合。
 

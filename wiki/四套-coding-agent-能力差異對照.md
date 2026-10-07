@@ -2,7 +2,7 @@
 title: 四套 coding agent 能力差異對照
 description: Claude Code、Codex、OpenCode v2、pi 在指示檔、skill、hook、MCP、subagent、沙箱、SDK 等十五個維度的差異對照
 created: 2026-09-22
-updated: 2026-10-05
+updated: 2026-10-07
 parent: "[[wiki/01.index]]"
 tags:
   - coding-agent
@@ -26,7 +26,7 @@ tags:
 | Plugin 分發 | `.claude-plugin/plugin.json`，官方與社群 marketplace，`/plugin install` | 可攜 `plugin.json`（agent-plugins.org schema），舊 `.codex-plugin/` 仍相容；marketplace 為 `.agents/plugins/marketplace.json`，與 ChatGPT 共用目錄；`codex plugin marketplace add` | `plugins` 陣列接 npm 名／版本／git spec／本機路徑，`opencode plugin add`；**無官方 marketplace**，只有 ecosystem 清單 | `package.json` 的 `pi` 欄位，`pi install npm:／git:`；無專屬 registry，pi.dev/packages 只是 npm keyword 目錄 |
 | 權限與沙箱 | permission mode（default／acceptEdits／plan／bypassPermissions／auto／dontAsk）、allow／deny 規則；沙箱 bwrap（Linux）／seatbelt（macOS） | approval `on-request`／`never`；sandbox `read-only`／`workspace-write`／`danger-full-access`；Seatbelt／bubblewrap／Windows 原生兩模式；**Guardian**：越界請求交另一個 Codex reviewer 依政策自動審 | `permissions` 有序陣列 `{action, resource, effect}`，shell 指令以 tree-sitter 解析；**OS 級沙箱文件未載** | **無 permission 提示、無沙箱**（明言 intentional）；官方要你跑容器（micro-VM／Docker／OpenShell）；project trust 只是載入守門 |
 | Session | JSONL 存 `~/.claude/projects/`，`--resume`／`--continue`，`/branch`／`--fork-session` | JSONL rollout 存 `$CODEX_HOME/sessions/`，`codex resume`／`fork`／`archive`，`--ephemeral` 不落地 | 一個共用背景 service 持有全部 session，多分頁（`cli.json` `tabs`）；**v2 尚不支援 sharing**；跨裝置同步文件未載 | JSONL **單檔內樹狀分支**，`/tree`／`/fork`／`/clone`，`/export` HTML、`/share` gist |
-| Worktree | `--worktree <name>`、EnterWorktree 工具、`.worktreeinclude` | 桌面 app 有 Worktree 與 Handoff；CLI：0.154 release notes 稱實驗性 `--worktree`／`/worktree`，但文件站 CLI 指令表查無（兩說並列） | v2 內建，Git 為預設 strategy，API `/api/worktree`，plugin 可註冊自訂 strategy | **文件未載** |
+| Worktree | `--worktree <name>`、EnterWorktree 工具、`.worktreeinclude` | 桌面 app 有 Worktree 與 Handoff；CLI：0.154 release notes 稱實驗性 `--worktree`／`/worktree`，但文件站 CLI 指令表查無（兩說並列）。**已被取代（2026-10-07）**：2026-09 下旬起 worktree 轉 stable、預設開啟並移出 `/experimental`（[release notes](https://github.com/openai/codex/releases/tag/rust-v0.156.0)、[PR #44870](https://github.com/openai/codex/pull/44870) 一手），[slash commands 文件](https://developers.openai.com/codex/cli/slash-commands)已列 `/worktree`；`--worktree` flag 文件仍未載 | v2 內建，Git 為預設 strategy，API `/api/worktree`，plugin 可註冊自訂 strategy | **文件未載** |
 | Headless／SDK | `claude -p`、`--output-format json`／`stream-json`、`--bare`；Agent SDK（TS／Python） | `codex exec`（`--json`、`--output-schema`）；app-server JSON-RPC（stdio／WebSocket／Unix socket）；`@openai/codex-sdk`、Python `openai-codex` | `opencode run`／`mini`；共用 service（`--standalone`／`--server`）；`@opencode/client`（HTTP）與 `@opencode/sdk`（in-memory，不開 listener） | `-p` print、`--mode json`、`--mode rpc`（JSONL 協定）；SDK `createAgentSession`；OpenClaw 為 SDK 實例 |
 | 模型與 provider | Anthropic API、Bedrock、Vertex、Foundry；只跑 Claude | 內建 openai／ollama／lmstudio，`[model_providers]` 接任何 OpenAI 相容端點，Bedrock 走 AWS 認證 | catalog 來自 models.dev，自動探索 Ollama／LM Studio／vLLM；v1 稱 75+ | 訂閱 3 家＋API key 32 條；llama.cpp router 一等支援（`/llama` 下載 GGUF）；MLX 文件未載 |
 | 授權 | **閉源** | **Apache-2.0**（CLI、SDK、app-server；IDE extension 與 cloud 不開源） | **MIT** | **MIT**（Earendil Inc.） |

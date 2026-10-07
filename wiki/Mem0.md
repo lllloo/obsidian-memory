@@ -2,7 +2,7 @@
 title: Mem0
 description: AI agent 記憶層工具的整合路徑（plugin／MCP／CLI）、hook 實測消耗與失效模式證據，含本 vault 採 MCP-only 的拍板理由
 created: 2026-07-20
-updated: 2026-09-17
+updated: 2026-10-07
 source: https://github.com/mem0ai/mem0
 parent: "[[wiki/01.index]]"
 tags:
@@ -34,9 +34,13 @@ tags:
 
 9 個工具在兩端完全相同：`add_memory`、`search_memories`、`get_memories`、`get_memory`、`update_memory`、`delete_memory`、`delete_all_memories`、`delete_entities`、`list_entities`——**MCP-only 一個都不缺**，少的只有 hooks 與 SDK skill。
 
+> **已被取代（2026-10-07）**：上表與「9 個工具兩端相同」只適用 0.3 之前的舊 plugin。現行 Claude Code plugin 已搬到 `integrations/claude-code-plugin/`，其 [`.mcp.json`](https://github.com/mem0ai/mem0/blob/main/integrations/claude-code-plugin/.mcp.json) 只註冊一個本地 stdio server（`core/mcp_server.py`），且只提供 `search_memories` 一個工具，不再接託管端點的完整工具集；託管 MCP（`https://mcp.mem0.ai/mcp`）依官方 [mem0-mcp 頁](https://docs.mem0.ai/platform/mem0-mcp)現有 11 個工具，比上列多 `list_events`、`get_event_status`（一手來源已回讀原文）。官方 Claude Code 整合頁現在只寫 plugin 安裝，MCP-only 改放獨立的 mem0-mcp 頁。新 plugin 的本地 server 與託管 MCP 並裝是否仍會 tool collision 未查證，實裝時再驗。
+
 CLI（`@mem0/cli`）**不是替代品**：原始碼 `cli/node/src/plugin-sync.ts` 註解寫明設計假設是兩者同裝（CLI 管認證、MCP 管 agent 呼叫）。其 `src/backend/` 工廠函式無條件回傳 `PlatformBackend`，`MEM0_BASE_URL` 可改主機但改不了協定，**無法指向自架後端**〔repo 原始碼〕。
 
 ## Plugin hook 的實際消耗（原始碼實測）
+
+> **已被取代（2026-10-07）：本節僅適用 0.3 之前的舊 plugin。** 2026-08-31 的 [PR #7106](https://github.com/mem0ai/mem0/pull/7106) 把 plugin 搬到 `integrations/claude-code-plugin/` 並以 0.3.x 重寫，下文引用的 `integrations/mem0-plugin/hooks/hooks.json` 已 404。新版 [hooks.json](https://github.com/mem0ai/mem0/blob/main/integrations/claude-code-plugin/hooks/hooks.json) 有 9 個事件（SessionStart、UserPromptSubmit、PostToolUse、PostToolUseFailure、SubagentStart／Stop、Stop、PreCompact、SessionEnd），**無 `PreToolUse`(Read) hook、不擋 `MEMORY.md`**；[README](https://github.com/mem0ai/mem0/blob/main/integrations/claude-code-plugin/README.md) 寫明的新模型：capture 只在本地、不呼叫模型，**每 5 個 exchange 批次 flush 一次 add**，只在首則 ≥20 字的 prompt 自動 search 一次，且「does not... edit CLAUDE.md」；skill 剩 forget／pause／remember／resume／search／status，`onboard` 已移除（一手原始碼與 README 已回讀，消耗未實測）。下表與「綁死額度的是 retrieval」的推論只對舊版成立。
 
 官方文件把 hooks 描述成「session start／compaction／task completion／session end」四個觸發點。**原始碼是 7 個事件、9 個 handler**〔`integrations/mem0-plugin/hooks/hooks.json`〕，文件嚴重簡化：
 
@@ -51,11 +55,11 @@ CLI（`@mem0/cli`）**不是替代品**：原始碼 `cli/node/src/plugin-sync.ts
 
 **「task completion」＝ `Stop`，即每輪回應**，不是粗粒度的任務完成。綁死額度的是 **retrieval 而非 add**，因為 agent 讀檔頻率遠高於使用者發話——查證當時免費層為 retrieval 1,000／月、add 10,000/月（2026-07-20 快照，廠商額度隨方案調整，實際數字回官方定價頁查；此處要記的是**兩者數量級差一個級距**這個結構，不是具體數字）。可關的旋鈕只有 `MEM0_AUTO_SAVE=false`、`MEM0_PREFETCH=false`；**Read 與 Bash 兩條無開關**，只能改 `hooks.json`。
 
-另注意：`/mem0:onboard` 會「Detects and imports project files (`CLAUDE.md`, `AGENTS.md`, `.cursorrules`)」，且**在新專案首次 session 自動觸發**，不是只有手動才跑。
+另注意：`/mem0:onboard` 會「Detects and imports project files (`CLAUDE.md`, `AGENTS.md`, `.cursorrules`)」，且**在新專案首次 session 自動觸發**，不是只有手動才跑。**已被取代（2026-10-07）**：0.3.x 新 plugin 已移除 `onboard` skill（見本節開頭）。
 
-⚠️ **就地矛盾（Codex hooks 啟用方式）**：本頁 2026-07-20 依 repo README 記為「Codex hooks 不會自動生效，需另跑 `install_codex_hooks.py` 並開 `[features] codex_hooks = true`」；2026-07-21 回存的官方 Codex 整合頁則描述 `codex plugin marketplace add` → `codex plugin add mem0@mem0-plugins` 的 marketplace 流程，hooks 隨 plugin 一併裝、無額外腳本步驟，且列出 6 個 hook（較 Claude Code 少 `Setup`）。兩者未查證何者為現況（可能是 README 落後、也可能是文件簡化）。**本 vault 走 MCP-only，兩說皆不影響採用**；日後真要裝 plugin 再以 repo 原始碼為準。
+⚠️ **就地矛盾（Codex hooks 啟用方式）**：本頁 2026-07-20 依 repo README 記為「Codex hooks 不會自動生效，需另跑 `install_codex_hooks.py` 並開 `[features] codex_hooks = true`」；2026-07-21 回存的官方 Codex 整合頁則描述 `codex plugin marketplace add` → `codex plugin add mem0@mem0-plugins` 的 marketplace 流程，hooks 隨 plugin 一併裝、無額外腳本步驟，且列出 6 個 hook（較 Claude Code 少 `Setup`）。兩者未查證何者為現況（可能是 README 落後、也可能是文件簡化）。**本 vault 走 MCP-only，兩說皆不影響採用**；日後真要裝 plugin 再以 repo 原始碼為準。**已解（2026-10-07）**：repo 已改為原生 `integrations/codex-plugin/`（[hooks.json](https://github.com/mem0ai/mem0/blob/main/integrations/codex-plugin/hooks/hooks.json) 有 8 個事件），`install_codex_hooks.py` 已不在 repo，官方 Codex 頁亦寫 plugin／marketplace 流程（automatic capture、six memory skills、a search tool）——marketplace 那說為現況（一手 repo 原始碼與官方文件已回讀）。
 
-另一筆官方文件新增的行為值得記：hooks 會做**歸屬切分**——「What you type is stored as yours. What Claude produces — session summaries and compaction summaries — is stored as the assistant's, so its suggestions never become your stated preferences」，且 `PreToolUse` 其中一個 handler 直接**擋 `MEMORY.md` 寫入**〔官方文件逐字〕。後者對本 vault 是明確的排斥訊號：`schema/MEMORY.md` 正是這裡跨 session 記憶的載體，plugin 會與之爭權威。
+另一筆官方文件新增的行為值得記：hooks 會做**歸屬切分**——「What you type is stored as yours. What Claude produces — session summaries and compaction summaries — is stored as the assistant's, so its suggestions never become your stated preferences」，且 `PreToolUse` 其中一個 handler 直接**擋 `MEMORY.md` 寫入**〔官方文件逐字〕。後者對本 vault 是明確的排斥訊號：`schema/MEMORY.md` 正是這裡跨 session 記憶的載體，plugin 會與之爭權威。**已被取代（2026-10-07）：僅適用 0.3 之前的舊 plugin**——新版 hooks.json 已無 `PreToolUse` hook、不擋 `MEMORY.md`（見本節開頭），此排斥訊號不再成立。
 
 ## Benchmark 宣稱：不可引用
 
@@ -83,7 +87,7 @@ CLI（`@mem0/cli`）**不是替代品**：原始碼 `cli/node/src/plugin-sync.ts
 1. **換更強的模型救不了**——「A better model follows the extraction prompt more faithfully, which means it extracts more indiscriminately. **The extraction prompt is the bottleneck, not the model.**」
 2. **幻覺會自我複製**——召回的記憶被當成新輸入再抽一次，形成放大迴圈：808 筆「User prefers Vim」（191 筆逐字重複），系統裡沒人用 Vim，源頭是一次幻覺。「Any hallucination that gets stored once will be re-extracted indefinitely.」
 
-其他結構性缺陷〔GitHub issue 實證〕：[#4956](https://github.com/mem0ai/mem0/issues/4956) v3 變 ADD-only 不再發 UPDATE/DELETE，矛盾事實共存且檢索不含 recency；[#5330](https://github.com/mem0ai/mem0/issues/5330) 原生無 TTL／decay（2024 Show HN 就有人問，至今無解；**已被取代（2026-09-17）**：該 issue 已於 2026-06-17 以 completed 關閉，官方文件 [memory expiration](https://docs.mem0.ai/platform/features/memory-expiration) 提供 `expiration_date`，標明 Platform 與 Open Source 皆可用，過期記憶從 search／get_all 隱藏而非刪除——TTL 有了，依存取頻率的 decay 仍非內建）；[#4926](https://github.com/mem0ai/mem0/issues/4926) 必須永遠生效的約束走 cosine 排名可能擠不進 top_k，那些該進 system prompt；[#3695](https://github.com/mem0ai/mem0/issues/3695) **託管版** `delete_all()` 從 dashboard 移除但 search 仍撈得到；[#2813](https://github.com/mem0ai/mem0/issues/2813) 每次 add 都等 LLM 抽取，20 秒以上是設計非 bug。
+其他結構性缺陷〔GitHub issue 實證〕：[#4956](https://github.com/mem0ai/mem0/issues/4956) v3 變 ADD-only 不再發 UPDATE/DELETE，矛盾事實共存且檢索不含 recency；[#5330](https://github.com/mem0ai/mem0/issues/5330) 原生無 TTL／decay（2024 Show HN 就有人問，至今無解；**已被取代（2026-09-17）**：該 issue 已於 2026-06-17 以 completed 關閉，官方文件 [memory expiration](https://docs.mem0.ai/platform/features/memory-expiration) 提供 `expiration_date`，標明 Platform 與 Open Source 皆可用，過期記憶從 search／get_all 隱藏而非刪除——TTL 有了，依存取頻率的 decay 仍非內建）；[#4926](https://github.com/mem0ai/mem0/issues/4926) 必須永遠生效的約束走 cosine 排名可能擠不進 top_k，那些該進 system prompt；[#3695](https://github.com/mem0ai/mem0/issues/3695) **託管版** `delete_all()` 從 dashboard 移除但 search 仍撈得到（issue 已於 2026-03-20 以 completed 關閉，官方回覆指向 OSS 修補 #4349，但其描述的 root cause 是 OSS 版 `vector_store.reset()`，與回報的託管版症狀對不上，託管版是否修復未明）；[#2813](https://github.com/mem0ai/mem0/issues/2813) 每次 add 都等 LLM 抽取，20 秒以上是設計非 bug。
 
 唯一乾淨的棄用證詞是 OpenClaw 使用者 `endymi0n`〔[HN](https://news.ycombinator.com/item?id=47770220)，單一開發者經驗、非實證〕（**更正 2026-09-02**：原記為「OpenClaw 作者」有誤——回查 HN 原留言，該句是 "I've experimented quite a bit with mem0... for my OpenClaw"，指他自己那台 OpenClaw 實例；OpenClaw 的作者是 Peter Steinberger）：「stopped using it very soon... after the third injected wrong fact I went back to QMD and prose / summarization」。其失敗模式對「只記簡單內容」的用法特別重要——**內容簡單不等於抽取不出錯**：反諷被字面抽取（跟胖朋友開六塊肌玩笑 →「interested in achieving an athletic form」）、連抽一個明確日期都常錯。
 
@@ -97,7 +101,7 @@ CLI（`@mem0/cli`）**不是替代品**：原始碼 `cli/node/src/plugin-sync.ts
 
 採 **MCP-only、不裝 plugin**，定位為**全域隨手記的收件匣**（跨機器、簡單紀錄），嚴謹知識仍走本 vault。理由：
 
-- Plugin 的自動捕捉正是 #4573 垃圾來源前三名（system prompt／cron／架構 dump）的成因；MCP-only 手動叫則不產生這三類
+- Plugin 的自動捕捉正是 #4573 垃圾來源前三名（system prompt／cron／架構 dump）的成因；MCP-only 手動叫則不產生這三類（註 2026-10-07：此理由以舊 plugin 的每輪 add 為前提；0.3.x 改為本地 capture、每 5 輪批次 add，自動捕捉仍在但頻率與路徑已變，見「Plugin hook」節開頭。MCP-only 結論本身不受影響，未重新評估）
 - 兩者不爭權威，層級不同——有內容值得長期保存再手動搬進 wiki，同 cards/topics 的人工撿選模式
 - 現有 `ask-vault` 已解決「跨專案查詢累積知識」且已 cross-CLI；mem0 補的真缺口只有兩個：**寫入**（ask-vault 唯讀）與**沒有 vault 的機器**
   - **此條前提已變（2026-08-14）**：`ask-vault` 已撤銷（見 [[跨專案第二大腦整合模式]]），「跨專案查詢」不再有現成入口，故 mem0 的相對缺口比當初拍板時大。拍板結論本身未重新評估——它主要靠上面兩條（垃圾來源、層級不爭權威）成立，這條只是佐證

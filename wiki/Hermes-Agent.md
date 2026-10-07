@@ -2,7 +2,7 @@
 title: Hermes Agent
 description: Nous Research 開源的自我進化 AI agent：學習迴路自動生成並改良 skill，跨 session 累積記憶與使用者模型
 created: 2026-07-08
-updated: 2026-09-23
+updated: 2026-10-07
 parent: "[[wiki/01.index]]"
 tags:
   - ai-agent
@@ -29,9 +29,12 @@ Nous Research 開源、MIT 授權的**自我進化 AI agent**，標語 *The agen
 | Skill self-improvement | skill 在使用過程中自我修正 |
 | Autonomous Curator | 自主策展人：評分、合併重疊、封存過時、寫每輪報告、保護 pinned skill |
 | `llm-wiki` skill（官方內建） | **逐字複刻 Karpathy 的 LLM Wiki 模式**（raw/wiki/schema 三層），文件明言「Based on Andrej Karpathy's LLM Wiki pattern」——見 [[LLM-Wiki-知識管理模式]]；另維護 append-only `log.md`（超 500 條按年輪替，與 index 並列導航骨幹），在生態中的治理定位見 [[LLM-Wiki-生態實作比較]] |
+| Session search（FTS5） | 所有 session 存進 SQLite `~/.hermes/state.db`，agent 用 `session_search` 工具以 FTS5 全文檢索過往對話做跨 session 回憶（官方 [memory.md](https://github.com/NousResearch/hermes-agent/blob/main/website/docs/user-guide/features/memory.md) 一手）；是否經 LLM 摘要兩份官方文件說法相左，見下方更正框 |
 | 外接長期知識庫 | 多個 memory provider 外掛（來源快照時 8 個：Honcho、Mem0、Supermemory、ByteRover 等）可選接，提供知識圖譜、語意檢索、自動事實抽取等，對應核心記憶（大腦）之外的圖書館 |
 
 > ⚠️ **更正**（2026-07-09 deep-research 對抗式驗證）：先前版本描述的「agent 靠週期性 nudge 記憶」與「FTS5 全文檢索過往對話＋LLM 摘要做跨 session 回憶」查無官方文件依據，已被驗證駁回（0–3 票），改以上表「有界核心記憶」的官方逐字描述取代。
+>
+> **已被取代（2026-10-07）**：上述否決是 verifier 過度否決，兩項主張都有官方一手依據，且寫這條更正時就已存在。官方 README 在 2026-07-09 前的版本（[commit c6c1fd8](https://github.com/NousResearch/hermes-agent/blob/c6c1fd8b6b6828361bc117b532848537904ac562/README.md)）與[現行版](https://github.com/NousResearch/hermes-agent/blob/main/README.md)皆逐字寫「Agent-curated memory with periodic nudges... FTS5 session search with LLM summarization for cross-session recall」；設定另有 `memory.nudge_interval`／`skills.creation_nudge_interval` 控制 nudge 週期；官方 [memory.md](https://github.com/NousResearch/hermes-agent/blob/main/website/docs/user-guide/features/memory.md) 有整節講 `session_search`（SQLite `state.db` + FTS5），已補進上表。唯一出入是「LLM 摘要」：README 說有，memory.md 現行寫「Search queries return actual messages from the DB — no LLM summarization」，兩份官方文件互相矛盾，引用時以 memory.md 的「回傳原始訊息」為較具體描述、但仍屬未實測（一手來源已回讀原文）。
 
 其中 **skill 相容 agentskills.io 開放標準**——與本 repo `AGENTS.md` 遵循的同一標準，理論上 skill 可跨 Hermes / Claude Code / Cursor 等工具移植；但「skill 目錄結構與本 vault `.agents/skills` 慣例高度同構」一說同樣查無依據，已被驗證駁回，勿引用。
 

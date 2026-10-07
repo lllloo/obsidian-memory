@@ -1,8 +1,8 @@
 ---
 title: Yazi 設定與踩雷
-description: 在終端多工器 pane 裡補上檔案與 diff 檢視的三條路線，含 snap 安裝的 PATH 陷阱、圖示與隱藏檔設定、WSL2 三條邊界與背景 pane 卡頓
+description: 在終端多工器 pane 裡補上檔案與 diff 檢視的三條路線，含 snap 安裝的 PATH 陷阱、圖示與隱藏檔設定、WSL2 三條邊界與 pane 卡頓
 created: 2026-09-21
-updated: 2026-09-24
+updated: 2026-10-07
 source: https://yazi-rs.github.io/docs/
 parent: "[[wiki/01.index]]"
 tags:
@@ -69,7 +69,7 @@ run  = 'shell -- ya emit cd "$(git rev-parse --show-toplevel)"'
 
 ## 四、踩雷
 
-**背景 pane 卡 5 秒（一手，開啟中）**。[issue #4331](https://github.com/sxyazi/yazi/issues/4331)：在 tmux 之類的多工器裡，進 yazi、開檔、按 `q` 離開時各卡約 5 秒。一位使用者比對 commit 後指出是 #4271 引入的，**26.8.15 之後的版本才有**。機制是 yazi 啟動時送 DA1 探測終端能力，在多工器裡走 passthrough，pane 在背景時回應回不來，一路等到 timeout；pane 在前景則不卡。目前無官方修正，留言提到的 workaround 是降版到 26.5.6 或改用 Alacritty。**回報全部來自 tmux，Herdr 是否重現未驗證**——Herdr 自行以 Rust 實作，對 DA1 passthrough 的處理不一定相同。
+**背景 pane 卡 5 秒（一手，開啟中）**。[issue #4331](https://github.com/sxyazi/yazi/issues/4331)：在 tmux 之類的多工器裡，進 yazi、開檔、按 `q` 離開時各卡約 5 秒。一位使用者比對 commit 後指出是 #4271 引入的，**26.8.15 之後的版本才有**。機制是 yazi 啟動時送 DA1 探測終端能力，在多工器裡走 passthrough，pane 在背景時回應回不來，一路等到 timeout；pane 在前景則不卡。補充（2026-10-07，單一回報者附對照數據、未實測）：2026-09-22 有回報者在同一個 issue 比對，同一版 yazi 在 tmux 3.7 下**連前景 pane 的 quit 都卡約 5 秒**，在 tmux 3.6 下則幾乎無延遲——他的解釋是 tmux ≤3.6 會把查詢回應漏進 active pane、碰巧讓探測完成，3.7 修掉這個漏洞後每個 pane 都卡，所以「前景不卡」只在 tmux ≤3.6 成立。他也把問題拆成兩個症狀：quit 延遲是 26.9.1 才引入；啟動時吃掉輸入則 26.8.15 起就有。目前無官方修正，留言提到的 workaround 是降版到 26.5.6 或改用 Alacritty。**回報全部來自 tmux，Herdr 是否重現未驗證**——Herdr 自行以 Rust 實作，對 DA1 passthrough 的處理不一定相同。
 
 **flavor 舊 key 被無聲忽略（一手）**。[ayu-dark.yazi issue #6](https://github.com/kmlupreti/ayu-dark.yazi/issues/6)，**測試版本正是 26.9.1**：yazi 未用 `deny_unknown_fields` 也未定 serde alias，舊 key 不報錯、不警告，只是那幾個元件悄悄退回內建預設色。`[help] on`→`chord`、`[help] run`→`action`、`[help] footer` 移除（皆 26.8.15）、`[completion]`→`[cmp]`（25.2.26）、`[select]`→`[pick]`（v0.4.0）。症狀是「顏色怪怪的但說不上哪裡」。
 
@@ -114,6 +114,6 @@ run  = 'shell -- ya emit cd "$(git rev-parse --show-toplevel)"'
 
 - 宿主工具：[[Herdr-使用方法]]——本頁補的正是它沒有的檔案與 diff 檢視；其 plugin 機制是本頁「路線一」的載體。
 - 鍵位對照：[[Herdr-按鍵設定]]——要在 Herdr 綁一鍵開 yazi pane 的話設定寫在那裡，兩層鍵位可能互搶。
-- 上游選型：[[平行跑多個-coding-agent-的工具選型]]——本頁是該頁「終端層」方案在檔案檢視面的補件；**該頁總表尚未收錄 Orca**（MIT、約 73.9k 星、有 Linux AppImage／deb／rpm），是已知缺口。
+- 上游選型：[[平行跑多個-coding-agent-的工具選型]]——本頁是該頁「終端層」方案在檔案檢視面的補件；該頁把 Orca 與 Herdr／Multica 並列為總表外的既有方案，詳見 [[Orca]]。
 - zsh 啟動檔規則：[[Node-版本管理-Volta-停止維護與-mise-遷移]]——第二節的 snap PATH 陷阱與該頁「非互動 shell 的 mise shims 要放 `.zshenv`」是同一套 zsh 讀檔範圍的兩個面。
 - 同源限制：[[WSL-剪貼簿貼圖到-Claude-Code]]——WSLg 剪貼簿橋接只做文字類格式，該頁是 Windows→WSL 方向，本頁第五節是 WSL→Windows 方向。

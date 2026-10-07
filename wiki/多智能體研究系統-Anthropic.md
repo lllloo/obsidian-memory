@@ -2,7 +2,7 @@
 title: 多智能體研究系統（Anthropic）
 description: 拆解 Research 的 orchestrator-worker 架構、平行搜尋、CitationAgent、評測方法與生產可靠性
 created: 2026-07-14
-updated: 2026-07-21
+updated: 2026-10-07
 source: "https://www.anthropic.com/engineering/multi-agent-research-system"
 published: 2025-06-13
 parent: "[[wiki/01.index]]"
@@ -88,7 +88,7 @@ Anthropic 官方工程文章，拆解 Claude 的 **Research 功能**如何從原
 
 ## 實作層 prompt（cookbook）
 
-官方 [anthropic-cookbook](https://github.com/anthropics/anthropic-cookbook) 的 `patterns/agents/prompts/` 公開了這套系統的三個實際 prompt，補足部落格未寫的實作細節（逐字內容落地 [[Anthropic-Cookbook-Research-Prompts]]）。（強度：官方 cookbook 範例 prompt，可能與生產版本有出入，但為第一方公開的實作參考。）
+官方 [claude-cookbooks](https://github.com/anthropics/claude-cookbooks)（原名 anthropic-cookbook，舊網址目前由 GitHub 轉址；2026-10-07 回查三檔仍在、頁內數字與現行原文一致）的 `patterns/agents/prompts/` 公開了這套系統的三個實際 prompt，補足部落格未寫的實作細節（逐字內容落地 [[Anthropic-Cookbook-Research-Prompts]]）。（強度：官方 cookbook 範例 prompt，可能與生產版本有出入，但為第一方公開的實作參考。）
 
 **research_lead_agent（協調者）**——先判 query 類型再定計畫：
 - **query 三分類**：depth-first（單一問題多視角，平行探不同觀點／方法）、breadth-first（可拆成獨立子問題，平行各研究一塊）、straightforward（單一聚焦調查即可）。

@@ -2,7 +2,7 @@
 title: 平行跑多個 coding agent 的工具選型
 description: Herdr、Multica 以外本機平行跑 coding agent 的四類方案，逐項標各 agent 與 Linux 的支援度、維護狀態
 created: 2026-09-15
-updated: 2026-09-24
+updated: 2026-10-07
 parent: "[[wiki/01.index]]"
 tags:
   - ai-agent
@@ -33,14 +33,15 @@ tags:
 
 ## 一、Claude Code 內建（一手，3-0）
 
-依[官方文件](https://code.claude.com/docs/en/agents)，有四種平行方式：
+依[官方文件](https://code.claude.com/docs/en/agents)，有五種平行方式（原為四種，2026-10-07 回讀時官方已改寫為「five ways」、新增 Projects；官方文件一手）：
 
 - **subagents**：結果摘要回主 context；每個 subagent 可選擇各開一個 worktree。
 - **agent view**（`claude agents`，research preview）：在單一畫面派工並監看背景 session，session 動手改檔前自動移進自己的 worktree。
 - **agent teams**（實驗性、預設關閉，需 `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS`）：lead 管共享 task list，teammate 互傳訊息。**不做 worktree 隔離**，官方要求自行切分各人負責的檔案。
 - **dynamic workflows**：用腳本編排多個 subagent 並交叉比對。
+- **Projects**（public beta、Pro／Max 方案）：在 claude.ai/code 或桌面 app 開一個長期對話，由 Claude 啟動平行 thread；以雲端執行為主，也可經 Remote Control 跑在本機。（官方文件一手、未實測）
 
-**worker 限制（主 agent 補查）**：[agent teams 文件](https://code.claude.com/docs/en/agent-teams)寫明每個 teammate 是「a full, independent Claude Code session」。deep-research 以 0-3 否決了「非 Claude agent 只能經 MCP 接入」這條，否決點應在「只能經 MCP」過強（Claude session 本就能經 shell 呼叫 `codex`、`agy`），**「原生 worker 都是 Claude」這一半文件支持**。要混派 Codex／agy，仍得靠外部工具或 shell 委派（如 [[Herdr-使用方法]] 的 `agent start／prompt`）。
+**worker 限制（主 agent 補查）**：[agent teams 文件](https://code.claude.com/docs/en/agent-teams)寫明每個 teammate 是「a full, independent Claude Code session」。deep-research 以 0-3 否決了「非 Claude agent 只能經 MCP 接入」這條，否決點應在「只能經 MCP」過強（Claude session 本就能經 shell 呼叫 `codex`、`agy`），**「原生 worker 都是 Claude」這一半文件支持**，官方總覽頁也明寫「In every approach the workers are Claude sessions. To involve a different tool, expose it to Claude as an MCP server.」（官方文件一手）。要混派 Codex／agy，仍得靠外部工具或 shell 委派（如 [[Herdr-使用方法]] 的 `agent start／prompt`）。
 
 ## 二、Claude Squad：終端 TUI（一手，3-0）
 
@@ -62,7 +63,7 @@ tags:
 
 - **Conductor**（Melty Labs，YC S24）：[安裝文件](https://www.conductor.build/docs/installation)明寫「not available for Windows or Linux yet」。支援 Claude Code、Codex、Cursor、OpenCode 四種 harness。Free 只有 Mac 本機平行 workspace；Cloud workspace、協作、API、mobile 要 Pro $50／月或 Teams $60／人／月。「閉源」依據是找不到公開 repo，官方沒明講。
 - **Terragon**：已停止服務（官網標題「Terragon Shutdown」）。
-- **Vibe Kanban**（約 28k 星）、**opcode**（約 22.4k 星）：高星但活動停滯；opcode 最後 commit 2025-10-16，Vibe Kanban 已宣告 sunsetting。
+- **Vibe Kanban**（約 28k 星）、**opcode**（約 22.4k 星）：高星但不建議採用。opcode 活動停滯，最後實質 commit 2025-10-16（之後僅 README 修改）；Vibe Kanban 已宣告 sunsetting，但 main 分支 2026-09 中仍有維護性 commit 與版本 bump（[commit 紀錄](https://github.com/BloopAI/vibe-kanban/commits/main)一手）。
 - 單一廠商快照（CodeAgentSwarm 2026-08-31，自揭利益衝突，數據經 GitHub API 核實）：T3 Code、Superset、Pane、Paseo 在 2026-08 下旬仍有 commit。**這幾個工具對三種 agent 與 Linux 的支援度沒有可靠結論**——同文相關主張 0-3 否決。
 
 ## 值不值得平行跑：第一手經驗（主 agent 補查）

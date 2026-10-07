@@ -2,7 +2,7 @@
 title: 長跑 Agent 的目標定義與計畫工具
 description: 讓自主迭代 agent 持續推進而不走偏的目標檔機制（分層、驗收判準、停止條件、防漂移措辭）與 SDD 工具生態的採用度實據
 created: 2026-07-30
-updated: 2026-09-24
+updated: 2026-10-07
 parent: "[[wiki/01.index]]"
 tags:
   - ai-agent
@@ -185,7 +185,7 @@ GitHub star 數，2026-07-30 以 `gh api`／`gh search` 直查核實（**star �
 | 25,839 | `OthmanAdi/planning-with-files` | 2026-07-24 | 計畫落盤＋每 turn 重新注入＋完工 gate |
 | 21,318 | `snarktank/ralph` | — | Ralph loop 的 `prd.json` 狀態機實作 |
 
-**GSD 生態有分裂訊號**：本體 `gsd-build/get-shit-done`（64,798）已兩個月未推送，另有 `gsd-build/gsd-2`（7,752、2026-05-22）與 `open-gsd/gsd-pi`（977、2026-07-28）分頭活動。押上去前先確認哪個是活的。（2026-09-17 回查：本體 `gsd-build/get-shit-done` 已正式封存，archived，最後推送仍為 2026-05-31。）
+**GSD 生態有分裂訊號**：本體 `gsd-build/get-shit-done`（64,798）已兩個月未推送，另有 `gsd-build/gsd-2`（7,752、2026-05-22）與 `open-gsd/gsd-pi`（977、2026-07-28）分頭活動。押上去前先確認哪個是活的。（2026-09-17 回查：本體 `gsd-build/get-shit-done` 已正式封存，archived，最後推送仍為 2026-05-31。）已被取代（2026-10-07）：「分頭活動」不再成立——[`gsd-build/gsd-2`](https://github.com/gsd-build/gsd-2) 也已封存（最後推送仍為 2026-05-22），GSD 系目前只剩 [`open-gsd/gsd-pi`](https://github.com/open-gsd/gsd-pi) 在活動（未封存、當日仍有推送，repo description 與兩個封存 repo 相同；GitHub API 一手查證）。
 
 ### 選擇判準
 
@@ -201,8 +201,8 @@ GitHub star 數，2026-07-30 以 `gh api`／`gh search` 直查核實（**star �
 
 | 主張 | 票數 | 裁決 |
 |---|---|---|
-| planning-with-files 的「context window = RAM、filesystem = disk」類比、「三檔案 gitignored、不放其他 runtime state」 | 0-3 | **勿引用**（見下方更正：三檔案與 hook 注入本身為真，被否決的是這些周邊細節） |
-| 「lifecycle hook 數量為 Claude Code 5／Codex 7／Pi 8」、「goal drift 歸因於 50+ tool calls 後目標被擠出 attention window」 | 0-3 | **勿引用** |
+| planning-with-files 的「context window = RAM、filesystem = disk」類比、「三檔案 gitignored、不放其他 runtime state」 | 0-3 | **可引用為廠商自述**：2026-10-07 一手複核，兩項皆為 [README 原文](https://github.com/OthmanAdi/planning-with-files/blob/b04ffd9c8f9f93919649d197e5d4ec1bfc06fa14/README.md)逐字所寫（研究當時版本），[現行 README](https://github.com/OthmanAdi/planning-with-files/blob/main/README.md) 仍保留；原 0-3 否決屬 verifier 誤殺 |
+| 「lifecycle hook 數量為 Claude Code 5／Codex 7／Pi 8」、「goal drift 歸因於 50+ tool calls 後目標被擠出 attention window」 | 0-3 | **可引用為廠商自述**：2026-10-07 一手複核，兩項皆為研究當時 README 逐字原文（goal drift 一項現行 README 仍在），原否決屬 verifier 誤殺；但 goal drift 的**因果歸因是廠商自述、無實證支撐**，不可當成已證實的機制引用 |
 | spec-kit「單一階段只准動自己那層檔案」屬 diff 範圍限制 | 0-3 | **勿引用** |
 | 「同一份規格同時生成實作與測試」 | 1-2 | **勿引用** |
 | 「三道可勾 phase gate：Simplicity ≤3 projects／Anti-Abstraction／Integration-First」 | 1-2 | **勿引用**——本輪查明原因：**該內容已從現行 `plan-template.md` 移出** |
@@ -215,11 +215,11 @@ GitHub star 數，2026-07-30 以 `gh api`／`gh search` 直查核實（**star �
 
 ### 對抗式查證會過度否決
 
-本輪 verifier 把 planning-with-files 的「三檔案 ＋ hook 每 turn 重新注入」整條判 **0-3 否決**，但該 repo README 逐字寫著 `task_plan.md`／`findings.md`／`progress.md` 與「re-injects them every turn」、注入格式為 `===BEGIN PLAN DATA===`、由 `UserPromptSubmit` hook 寫入。**真正不可靠的只有周邊細節**（各家 hook 數量、attention window 的歸因），verifier 連同核心一起殺掉。
+本輪 verifier 把 planning-with-files 的「三檔案 ＋ hook 每 turn 重新注入」整條判 **0-3 否決**，但該 repo README 逐字寫著 `task_plan.md`／`findings.md`／`progress.md` 與「re-injects them every turn」、注入格式為 `===BEGIN PLAN DATA===`、由 `UserPromptSubmit` hook 寫入。verifier 連周邊細節一併判否決，但 2026-10-07 回讀研究當時的 README，連 RAM 類比、gitignored、各家 hook 數量、goal drift 這些周邊細節**也都是 README 逐字原文**——整條否決全屬誤殺；唯一站不住的是 goal drift 的因果歸因屬廠商自述、無實證支撐（一手 README 複核）。
 
 含意：**3 票制的否決不等於「該事實為假」，只表示「該條主張的表述無法整體成立」**。回存時應把可核實的核心與未經核實的細節拆開判，不要整條丟棄——這是本 vault 使用 deep-research 產出時的已知偏誤方向（與 [[Agent-維護知識庫的已知失效模式]] 的壓縮丟限定詞屬同族問題：一個丟限定詞、一個因限定詞為假而丟主體）。
 
-**同一失效模式已第三次獨立重現**：[[架構圖框架採用現況與-AI-時代轉向]] 的 Structurizr 封存（0-3 誤殺，GitHub API 複驗為真）、[[Jev-與-System-One-模型]] 的三條否決（一手複核後全部成立，且同一組數字「官方原文 0-3 否決、Wikipedia 轉述 3-0 通過」自相矛盾）。三次之後可視為**穩定的 harness 行為而非偶發**，refuted 清單一律要回查一手才能採信。
+**同一失效模式已第三次獨立重現**：[[架構圖框架採用現況與-AI-時代轉向]] 的 Structurizr 封存（0-3 誤殺，GitHub API 複驗為真）、[[Jev-與-System-One-模型]] 的三條否決（一手複核後全部成立，且同一組數字「官方原文 0-3 否決、Wikipedia 轉述 3-0 通過」自相矛盾）。2026-10-07 再補一筆：本頁勿引用清單前兩列（planning-with-files 的周邊細節）一手複核也全為 README 原文，算第四次。三次之後可視為**穩定的 harness 行為而非偶發**，refuted 清單一律要回查一手才能採信。
 
 ### 二手比較文的數字不可信
 

@@ -2,7 +2,7 @@
 title: pi-workflow 編排 harness 與本 vault 的分野
 description: 把命名工作流 CLI 定位為編排層，對照知識組織層的職責，評估既有工具覆蓋、可借鑑處與不引入理由
 created: 2026-07-15
-updated: 2026-09-22
+updated: 2026-10-07
 source: "https://github.com/AgwaB/pi-workflow"
 published: ""
 parent: "[[wiki/01.index]]"
@@ -24,7 +24,7 @@ tags:
 - **4 個內建命名流程**（同上，數量隨版本可增減）：deep-research（查證＋附引用建議）、deep-review（多視角 code/design 審查）、spec-review（需求可追溯）、impact-review（變更風險分析）。
 - run artifact 存 `.pi/workflows/`，可檢視可續跑；`workflow-guide` skill 供自建專案流程的 scaffold＋validate。安裝需 Node 22+（確切 minor/patch 版以官方 changelog 為準）。
 
-用 [[Building-Effective-Agents-Anthropic]] 的二分法定位：pi-workflow 屬 **workflow**（LLM 與工具走**預先定義的程式碼路徑**、路徑固定可預測），不是動態自主的 agent。其 stage pattern 直接對應該文五種編排模式：`foreach`＋`reduce` 是**路徑固定**的 parallelization（扇出項目預先定義、再綜合），而 [[多智能體研究系統-Anthropic]] 的 orchestrator-worker 關鍵在**子任務非預先定義、由主控動態委派**，較貼近 pi-workflow 的 `dynamic`（自適應編排）pattern，不是 `foreach`＋`reduce`。
+用 [[Building-Effective-Agents-Anthropic]] 的二分法定位：pi-workflow 屬 **workflow**（LLM 與工具走**預先定義的程式碼路徑**、路徑固定可預測），不是動態自主的 agent。其 stage pattern 直接對應該文五種編排模式：`foreach`＋`reduce` 是**路徑固定**的 parallelization（stage graph 形狀預先定義；扇出項目則由上游 control artifact 於執行時給出 JSON 陣列，[README](https://github.com/AgwaB/pi-workflow) 稱 dynamic fan-out，官方一手；「路徑固定」指 stage 結構而非扇出項目），而 [[多智能體研究系統-Anthropic]] 的 orchestrator-worker 關鍵在**子任務非預先定義、由主控動態委派**，較貼近 pi-workflow 的 `dynamic`（自適應編排）pattern，不是 `foreach`＋`reduce`。
 
 ## 兩層分野
 
@@ -51,7 +51,7 @@ tags:
 ## 交叉引用
 
 - [[Building-Effective-Agents-Anthropic]]——pi-workflow 在 workflows/agents 二分法中的定位與五種編排模式對應。
-- [[多智能體研究系統-Anthropic]]——orchestrator-worker 架構（子任務動態委派），對應 pi-workflow 的 `dynamic` pattern；其 `foreach`／`reduce` 則較接近路徑固定的 parallelization。
+- [[多智能體研究系統-Anthropic]]——orchestrator-worker 架構（子任務動態委派），對應 pi-workflow 的 `dynamic` pattern；其 `foreach`／`reduce` 則較接近路徑固定的 parallelization（固定的是 stage 結構，扇出項目由上游於執行時給出）。
 - [[LLM-Wiki-生態實作比較]]——本 vault 採用拍板的相鄰比較頁（那頁比的是知識層實作，本頁補的是編排層工具的分野）。
 - [[LLM-Wiki-知識管理模式]]——本 vault 知識層的設計原型，pi-workflow 不觸及的那一層。
 - [[Agent-Harness-Engineering-框架綜述]]——harness 工程的 workflows/agents 二分綜述，本頁「編排職能已被 harness 覆蓋」的定位即座落於此主軸。

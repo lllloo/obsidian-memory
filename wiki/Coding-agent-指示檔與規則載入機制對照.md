@@ -2,7 +2,7 @@
 title: Coding agent 指示檔與規則載入機制對照
 description: Claude Code、Codex、OpenCode、pi 與 Cursor、Copilot 的指示檔階層、多規則檔與 glob 條件載入支援度，附各家替代做法
 created: 2026-09-22
-updated: 2026-09-22
+updated: 2026-10-07
 parent: "[[wiki/01.index]]"
 tags:
   - coding-agent
@@ -33,7 +33,7 @@ tags:
 
 替代做法與缺口：子目錄放 `AGENTS.md` 只在該目錄啟動時載入（從 root 啟動不會載子目錄的檔，因為只走 root→cwd 路徑，不看實際改了哪個檔）；寫成 skill 可按需載入但觸發靠語意比對；全塞根檔最穩但吃 32 KiB 上限。
 
-Codex CLI 本體變動極快（2026-09 約每週一個 minor、alpha 每天數個），但近兩版 release notes 的改動集中在 app-server、daemon、Guardian 審核與 TUI，agent 看得到的指示檔介面沒有動。Claude Code 端的 `openai-codex` marketplace plugin 則自 2026-06-23（v1.0.5）起零提交。
+Codex CLI 本體變動極快（2026-09 約每週一個 minor、alpha 每天數個），但近兩版 release notes 的改動集中在 app-server、daemon、Guardian 審核與 TUI，agent 看得到的指示檔介面沒有動。Claude Code 端的 `openai-codex` marketplace plugin 則自 2026-06-23 bump 到 v1.0.5 後，僅 2026-07-08 一筆修正提交（移除 git 指令的 shell expansion），之後無動靜（[GitHub commits](https://github.com/openai/codex-plugin-cc/commits/main) 一手）。
 
 ### OpenCode
 
