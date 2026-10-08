@@ -2,7 +2,7 @@
 title: Node 版本管理：Volta 停止維護與 mise 遷移
 description: Volta 停止維護後的替代方案盤點（mise、proto、fnm、nvm 等），以及從 Volta 遷到 mise 的機制差異、限制與隱藏依賴
 created: 2026-09-24
-updated: 2026-09-24
+updated: 2026-10-08
 parent: "[[wiki/01.index]]"
 tags:
   - nodejs
@@ -73,7 +73,14 @@ Volta 好用的地方與它難除錯的地方是同一件事（一手＋本機�
 
 pnpm 新版改以原生 binary 發佈，安裝時靠 postinstall 換掉占位檔。用 `"npm:pnpm"` 安裝時這步沒有跑，執行即 `SyntaxError`。改用 mise 內建的 `pnpm`（aqua backend，直接下載獨立 binary）即正常，而且不依賴當下的 Node 版本。
 
-**5. 原生 Windows 的做法（本機實測，2026-09-24，Windows 10）**
+**5. 全域 CLI 的升級：`latest` 不會自己動，新版還有 24 小時延遲**
+
+- **`"latest"` 只在第一次安裝時解析**（本機實測，2026-10-08）：`"npm:@earendil-works/pi-coding-agent" = "latest"` 裝下去後就停在當時版本，三週後上游已出到 1.x，本機仍是 0.87.1，`mise ls` 照樣顯示 `latest`。要靠 `mise outdated` 查落後的工具，`mise upgrade <工具>` 才會換版。這跟 Volta 的 `volta install` 一樣不會自動追新版，只是設定檔寫著 `latest` 容易讓人誤以為會。
+- **`minimum_release_age` 預設 `24h`**（一手：[官方 settings 文件](https://mise.jdx.dev/configuration/settings.html)原文「Defaults to `24h`」）：解析 `latest`、`node@20` 這類模糊版本時，發佈未滿 24 小時的版本會被略過。`mise upgrade` 會印出 `ignored by minimum_release_age (24h)` 與何時可裝，並改裝前一個已滿 24 小時的版本（本機實測）。
+  - 範圍：有發佈時間戳的 backend 都套用，含 `npm:`、`aqua:`、`github:` 等；`npm:`／`pypi:` 還會把截止時間傳給相依套件解析。明確寫死的版本（如 `node@22.5.0`）與 `mise.lock` 鎖定的版本不受影響。
+  - 要立刻裝：單次加 `--minimum-release-age`，或對單一工具在設定裡覆寫 `minimum_release_age`；全域關閉是設成 `"0s"`，也可用 `minimum_release_age_excludes` 排除特定工具或 backend（環境變數 `MISE_MINIMUM_RELEASE_AGE`／`MISE_MINIMUM_RELEASE_AGE_EXCLUDES`）。這道延遲本身是防供應鏈攻擊的緩衝，沒有急需不必關。
+
+**6. 原生 Windows 的做法（本機實測，2026-09-24，Windows 10）**
 
 - 安裝：`winget install jdx.mise`，執行檔落在 WinGet Links 目錄，不需另外設 PATH。
 - 啟用只用 **shims**：把 `%LOCALAPPDATA%\mise\shims` 加到**使用者 PATH 最前面**。IDE、Claude Code 這類工具的 shell 都是非互動的，拿不到 activate（同第 1 點）。shims 目錄裡是 `.exe`，每個全域 CLI 各有一個。
