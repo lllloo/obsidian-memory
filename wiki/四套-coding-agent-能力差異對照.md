@@ -2,7 +2,7 @@
 title: 四套 coding agent 能力差異對照
 description: Claude Code、Codex、OpenCode v2、pi 在指示檔、skill、hook、MCP、subagent、沙箱、SDK 等十五個維度的差異對照
 created: 2026-09-22
-updated: 2026-10-07
+updated: 2026-10-13
 parent: "[[wiki/01.index]]"
 tags:
   - coding-agent
@@ -49,3 +49,5 @@ tags:
 - [[Coding-agent-指示檔與規則載入機制對照]]——本頁「指示檔」列的展開版，含 Cursor 與 Copilot。
 - [[LLM-方案定價與-coding-agent-比較]]——本頁「訂閱／登入」列只記能否登入；額度規則與價格在該頁。
 - [[訊息平台到-coding-agent-的獨立-gateway]]——四家 client 列之外的第三方訊息橋盤點，依與 agent 綁定的緊密度分層。
+
+- [[Codex-Windows-App-與-WSL-共用對話]]——Windows／WSL 之間共用 Codex 對話的設定與本機驗證，補充環境邊界的另一個案例。

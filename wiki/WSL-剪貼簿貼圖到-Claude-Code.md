@@ -95,3 +95,5 @@ WSLg 的 Weston 不實作 `wlr-data-control`。這條先前只有二手說法（
 該留言並指向更早的 [#50552](https://github.com/anthropics/claude-code/issues/50552)（2026-04-18 開），標題直接寫明 `BI_BITFIELDS BMP decode`——**根因早在四個月前就被準確報告過**。該 issue 現為 closed／`not_planned`，但**關閉者是 `github-actions[bot]`、理由是「inactive for too long」，不是官方的技術判斷**，之後並依自動規則鎖定。兩張 issue 全程**零 maintainer 回應**，所以現況是「無人處理」而非「官方已決定不修」，別把 `not_planned` 讀成後者。官方若補上 BMP 解碼（或讓取圖鏈在 BMP 命中後轉 PNG），本頁的 daemon 即可退場。原追蹤看板已於 2026-10-13 退場，可回查 [Git 永久快照](https://github.com/lllloo/obsidian-memory/blob/4451380c31878fd7aaeeae2efcbb4a55bdb59a08/feeds/watch/01.index.md)；目前狀態請回各 issue 查閱。
 
 **不主動回報上游**（2026-07-30 使用者決定）：本頁的根因鏈比 #61609 精確，但不整理成 issue 或留言送出，只被動追蹤該 issue 的狀態。本機已有 `clip2png` 可用，無須等官方修。
+
+- [[Codex-Windows-App-與-WSL-共用對話]]——Windows／WSL 之間共用 Codex 對話的設定與本機驗證，補充環境邊界的另一個案例。
