@@ -1,6 +1,6 @@
 # Obsidian Memory Vault
 
-個人 Obsidian vault，採 Karpathy [LLM Wiki](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f) 工作流：agent 讀不可變的 `raw/` 原料，漸進維護一套互聯的 `wiki/` 活知識庫。原 topics/cards 共 100 篇私人筆記已於 2026-10-13 搬至 [Notion「Obsidian 搬入筆記」](https://app.notion.com/p/3f888d8b63ed818aac70e7035b8ed7c5)，保留原文與原始 Markdown，核對後刪除本地原檔。核心知識庫與運作規範仍留在本 repo。
+個人 Obsidian vault，採 Karpathy [LLM Wiki](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f) 工作流：agent 讀不可變的 `raw/` 原料，漸進維護一套互聯的 `wiki/` 活知識庫。原 topics/cards 共 100 篇私人筆記已於 2026-10-13 搬至 Notion：新增 98 篇位於 [「Obsidian 搬入筆記」](https://app.notion.com/p/3f888d8b63ed818aac70e7035b8ed7c5)，原有 tmux、git archive 兩篇依使用者要求保留在 [「技術筆記」](https://app.notion.com/p/0b16cf656c334d859fa477a953078bda)。保留原文與原始 Markdown，核對後刪除本地原檔。核心知識庫與運作規範仍留在本 repo。
 
 ## 系統概覽
 
@@ -96,7 +96,7 @@ git clone https://github.com/lllloo/obsidian-memory.git
   - `youtube/` — 自動同步影片筆記
   - `watch/` — GitHub issue／PR 追蹤看板與變更 digest
 - `docs/architecture/` — HTML 架構圖與讀本快照；搬離目的地待決定。
-- Notion「Obsidian 搬入筆記」— 原 topics/cards 的新家；共用資料庫，以兩個子頁面分別瀏覽，入口與遷移對照見 `schema/vault-map.md`。
+- Notion「Obsidian 搬入筆記」— 本次新增 98 篇；共用資料庫，以 topics/cards 兩個子頁面分別瀏覽。原有兩篇留在「技術筆記」，入口與遷移對照見 `schema/vault-map.md`。
 - `index.md` — 真人讀者入口，連到核心知識庫、規範與外部私人筆記。
 - `.agents/skills/` — repo-local skills，遵循 [Agent Skills](https://agentskills.io) 開放標準（`.claude/skills` 為 symlink）
 

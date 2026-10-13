@@ -12,4 +12,5 @@ tags:
 - [運作模式](schema/SYSTEM-DESIGN.md) — Karpathy LLM Wiki 的心智模型。
 - [Vault Map](schema/vault-map.md) — 資料夾、規範職責與外部 Notion 入口。
 - [維護規則](AGENTS.md) — Ingest／Query／Lint 與寫入邊界。
-- [Obsidian 搬入筆記](https://app.notion.com/p/3f888d8b63ed818aac70e7035b8ed7c5) — 原 topics/cards 共 100 篇完整筆記。
+- [Obsidian 搬入筆記](https://app.notion.com/p/3f888d8b63ed818aac70e7035b8ed7c5) — 本次新增搬入的 98 篇完整筆記。
+- [技術筆記](https://app.notion.com/p/0b16cf656c334d859fa477a953078bda) — 原有 tmux、git archive 兩篇，保留原頁與連結。

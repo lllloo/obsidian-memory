@@ -20,7 +20,7 @@
 
 `schema/BACKLOG.md` 是 `vault-lint` 的健檢待處理清單:agent **每輪讀回來約束自身行為**的操作狀態(去重、跳過已婉拒、判斷退場),與 `MEMORY.md` 同層,不是給人瀏覽的 feed 產物。lint 發現由 agent 自主修補;**只有真正需要使用者的決策**(需使用者才有的資訊、動 raw write-once、動憲法檔／skill)才進「待你決定」,agent 判定維持現狀／待觸發者則進「Agent 已判」作去重錨點;使用者退回的修法記入「已婉拒」,agent 之後不再重提。寫入該檔時頁面引用一律用反引號、不得用 wikilink(`schema/` 在死連結掃描範圍內)。
 
-**私人筆記已移至 Notion。** 原 `topics/`、`cards/` 共 100 篇已於 2026-10-13 搬到「Obsidian 搬入筆記」，保留全文與原始 Markdown，逐篇核對後刪除本地原檔；入口見 `schema/vault-map.md`。不要在本 repo 重建這兩個資料夾。Notion 私人筆記不屬本系統，不納入 Ingest／Query／Lint，也不作為 `raw/`／`wiki/` 的來源；維護依使用者明指的 Notion 任務進行。
+**私人筆記已移至 Notion。** 原 `topics/`、`cards/` 共 100 篇已於 2026-10-13 搬至 Notion，保留全文與原始 Markdown，逐篇核對後刪除本地原檔；新增 98 篇放在「Obsidian 搬入筆記」，原有 tmux、git archive 兩篇依使用者要求保留在「技術筆記」。入口見 `schema/vault-map.md`。不要在本 repo 重建這兩個資料夾。Notion 私人筆記不屬本系統，不納入 Ingest／Query／Lint，也不作為 `raw/`／`wiki/` 的來源；維護依使用者明指的 Notion 任務進行。
 
 **讀取協助**：使用者在本 vault 專案內問技術問題時，agent 回答前可透過 Notion 連線按需讀私人筆記（連同 `wiki/`）查使用者自己記過的做法，找到就以其筆記為準再綜合。這沿用原 topics 的唯讀協助，不改變私人筆記不納入 vault 維護／索引／來源的界線。
 
