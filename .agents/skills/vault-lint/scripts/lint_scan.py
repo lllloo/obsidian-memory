@@ -8,7 +8,7 @@
   FM:<file>:<問題>           frontmatter 缺欄、wiki metadata 約束或 tags 格式錯誤
   TAG:<tag>:<count>          tag 盤點（同義異寫漂移由主 agent 判讀）
   RAWGAP:<file>              raw 檔未被任何 wiki 頁引用（待消化原料）
-  INDEXGAP:<dir>:<file>      index 漏登（raw 各資料夾 literal index；wiki 頁未登錄 wiki/01.index.md）
+  INDEXGAP:<dir>:<file>      index 漏登（wiki 索引缺失時另列 INDEXGAP:wiki:01.index.md）
   BASEIDX:<dir>              該 index 用 .base 動態清單，跳過漏登檢查
   CHANGED:<file>             近 N 天有 git 變動的 wiki 頁（語意層輸入）
   SUMMARY:<key>=<value>      各類計數
@@ -150,15 +150,23 @@ def main() -> int:
     ]
     rel = {p: p.relative_to(root).as_posix() for p in universe}
 
-    # 解析鍵：md 用 stem 與去副檔名相對路徑；.base 連結必須帶副檔名，用完整檔名
-    resolvable = set()
+    # 限定路徑精確比對 vault-relative 路徑；無路徑者沿用檔名解析。
+    # .base 必須帶副檔名，.md 則可省略。
+    by_path: dict = {}
+    by_name: dict = {}
     for p in universe:
         if p.suffix == ".md":
-            resolvable.add(p.stem)
-            resolvable.add(rel[p][:-3])
+            name, path = p.stem, rel[p][:-3]
         else:
-            resolvable.add(p.name)
-            resolvable.add(rel[p])
+            name, path = p.name, rel[p]
+        by_name.setdefault(name, set()).add(p)
+        by_path.setdefault(path, set()).add(p)
+
+    def resolve_wikilink(target: str) -> set:
+        """死連結與入連共用解析結果，無效路徑不降級為檔名。"""
+        key = target[:-3] if target.endswith(".md") else target
+        lookup = by_path if "/" in key else by_name
+        return lookup.get(key, set())
 
     # ---- 逐檔抽連結、frontmatter ----
     texts, fms, outlinks, mdlinks = {}, {}, {}, {}
@@ -173,9 +181,8 @@ def main() -> int:
     inbound: dict = {}
     for p, targets in outlinks.items():
         for t in targets:
-            key = t[:-3] if t.endswith(".md") else t
-            base = key.split("/")[-1]
-            inbound.setdefault(base, set()).add(p)
+            for target in resolve_wikilink(t):
+                inbound.setdefault(target, set()).add(p)
 
     findings = {k: [] for k in ("DEADLINK", "ORPHAN", "FM", "RAWGAP", "INDEXGAP", "BASEIDX", "CHANGED")}
 
@@ -187,7 +194,7 @@ def main() -> int:
         return top_of(p) == "wiki" and p.name != "01.index.md"
 
     # ---- DEADLINK：wiki/raw/schema + root AGENTS.md 內指向不存在檔案的連結 ----
-    # wikilink 用 basename 解析（Obsidian 慣例）；markdown 式內部連結用相對 containing file 的路徑解析。
+    # wikilink 用上述共用解析器；markdown 式連結用相對 containing file 的路徑解析。
     def is_linkcheck_target(p: Path) -> bool:
         return top_of(p) in ("wiki", "raw", "schema") or rel[p] == "AGENTS.md"
 
@@ -195,8 +202,7 @@ def main() -> int:
         if not is_linkcheck_target(p):
             continue
         for t in outlinks[p]:
-            key = t[:-3] if t.endswith(".md") else t
-            if key in resolvable or key.split("/")[-1] in resolvable:
+            if resolve_wikilink(t):
                 continue
             findings["DEADLINK"].append(f"DEADLINK:{rel[p]}:{t}")
         for t in mdlinks[p]:
@@ -210,7 +216,7 @@ def main() -> int:
         if not is_wiki_content_page(p):
             continue
         linkers = {
-            q for q in inbound.get(p.stem, set()) - {p}
+            q for q in inbound.get(p, set()) - {p}
             if is_wiki_content_page(q)
         }
         if not linkers:
@@ -266,7 +272,7 @@ def main() -> int:
             continue
         if rel[p].startswith("raw/clippings/"):
             continue
-        linkers = inbound.get(p.stem, set())
+        linkers = inbound.get(p, set())
         if not any(top_of(q) == "wiki" for q in linkers):
             findings["RAWGAP"].append(f"RAWGAP:{rel[p]}")
 
@@ -286,11 +292,13 @@ def main() -> int:
 
     # ---- INDEXGAP（wiki）：wiki 頁存在但未登錄 wiki/01.index.md ----
     # wiki 索引是查詢入口與去重防線,漏登的頁對 Query 形同不存在。
-    wiki_idx_text = next((texts[p] for p in texts if rel[p] == "wiki/01.index.md"), "")
-    if wiki_idx_text:
-        for p in texts:
-            if top_of(p) == "wiki" and p.name != "01.index.md" and p.stem not in wiki_idx_text:
-                findings["INDEXGAP"].append(f"INDEXGAP:wiki:{p.name}")
+    wiki_idx = root / "wiki" / "01.index.md"
+    wiki_idx_text = texts.get(wiki_idx, "")
+    if (root / "wiki").is_dir() and wiki_idx not in texts:
+        findings["INDEXGAP"].append("INDEXGAP:wiki:01.index.md")
+    for p in texts:
+        if is_wiki_content_page(p) and p.stem not in wiki_idx_text:
+            findings["INDEXGAP"].append(f"INDEXGAP:wiki:{p.name}")
 
     # ---- CHANGED：近 N 天 git 變動的 wiki 頁（語意層輸入）----
     try:

@@ -27,8 +27,7 @@ vault 健檢的**待處理清單**,由 `vault-lint` skill 每輪讀寫(手動或
 
 ## 待你決定(真正需要使用者,其餘見 `Agent 已判`)
 
-- LINT-DEADLINK | `.agents/skills/vault-lint/scripts/lint_scan.py:199` | 已重現：`[[不存在的資料夾/B]]` 會因 `wiki/B.md` 存在而通過 DEADLINK；建議限定路徑按路徑解析，只有無路徑的連結才以檔名解析，並讓入連判定沿用相同解析結果；修補涉及 skill，待使用者同意。首見 2026-10-13。
-- LINT-INDEXGAP | `.agents/skills/vault-lint/scripts/lint_scan.py:290` | 已重現：`wiki/01.index.md` 為空檔時跳過整段漏登檢查，兩個未登錄內容頁仍回報 `indexgap=0`；建議空索引照常檢查內容頁，另明確處理索引不存在的情況，補回歸測試；修補涉及 skill，待使用者同意。首見 2026-10-13。
+目前無待決項。
 
 ## Agent 已判(維持現狀／待觸發,不再每輪問)
 

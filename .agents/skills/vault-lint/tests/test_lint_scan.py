@@ -108,6 +108,93 @@ class LintScanTests(unittest.TestCase):
         self.assertNotIn("ORPHAN:wiki/相關頁.md", result.stdout)
         self.assertIn("SUMMARY:orphan=0", result.stdout)
 
+    def test_invalid_qualified_link_does_not_fall_back_to_basename(self) -> None:
+        self.write_note("wiki/01.index.md", "索引", "[[目標頁]]\n[[相關頁]]")
+        self.write_note("wiki/目標頁.md", "目標頁")
+        for target in ("不存在的資料夾/目標頁", "不存在的資料夾/目標頁.md"):
+            with self.subTest(target=target):
+                self.write_note("wiki/相關頁.md", "相關頁", f"[[{target}#章節|顯示名稱]]")
+
+                result = self.run_scan()
+
+                self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+                self.assertIn(f"DEADLINK:wiki/相關頁.md:{target}", result.stdout)
+                self.assertIn("ORPHAN:wiki/目標頁.md", result.stdout)
+
+    def test_qualified_links_credit_only_the_resolved_file(self) -> None:
+        self.write_note("wiki/01.index.md", "索引", "[[wiki/目標頁]]\n[[wiki/相關頁]]")
+        self.write_note("wiki/目標頁.md", "目標頁")
+        self.write_note("schema/目標頁.md", "規範")
+        self.write_note("raw/fetched/目標頁.md", "來源")
+        for target, wiki_orphan, raw_gap in (
+            ("wiki/目標頁", False, True),
+            ("wiki/目標頁.md", False, True),
+            ("schema/目標頁", True, True),
+            ("raw/fetched/目標頁", True, False),
+        ):
+            with self.subTest(target=target):
+                self.write_note("wiki/相關頁.md", "相關頁", f"[[{target}]]")
+
+                result = self.run_scan()
+
+                self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+                self.assertNotIn(f"DEADLINK:wiki/相關頁.md:{target}", result.stdout)
+                self.assertEqual("ORPHAN:wiki/目標頁.md" in result.stdout, wiki_orphan)
+                self.assertEqual("RAWGAP:raw/fetched/目標頁.md" in result.stdout, raw_gap)
+
+    def test_base_links_preserve_the_extension_and_qualified_path(self) -> None:
+        self.write_note("wiki/01.index.md", "索引", "[[相關頁]]")
+        self.write_text("wiki/清單.base", "views: []\n")
+        self.write_note(
+            "wiki/相關頁.md", "相關頁",
+            "![[wiki/清單.base]]\n[[清單.base]]\n[[不存在的資料夾/清單.base]]",
+        )
+
+        result = self.run_scan()
+
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertNotIn("DEADLINK:wiki/相關頁.md:wiki/清單.base", result.stdout)
+        self.assertNotIn("DEADLINK:wiki/相關頁.md:清單.base", result.stdout)
+        self.assertIn("DEADLINK:wiki/相關頁.md:不存在的資料夾/清單.base", result.stdout)
+
+    def test_empty_wiki_index_reports_all_unlisted_content_pages(self) -> None:
+        self.write_text("wiki/01.index.md", "")
+        self.write_note("wiki/甲頁.md", "甲頁", "[[乙頁]]")
+        self.write_note("wiki/乙頁.md", "乙頁", "[[甲頁]]")
+
+        result = self.run_scan()
+
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertIn("INDEXGAP:wiki:甲頁.md", result.stdout)
+        self.assertIn("INDEXGAP:wiki:乙頁.md", result.stdout)
+        self.assertIn("SUMMARY:indexgap=2", result.stdout)
+        self.assertIn("SCAN:complete", result.stdout)
+
+    def test_missing_wiki_index_reports_itself_and_unlisted_pages(self) -> None:
+        self.write_note("wiki/甲頁.md", "甲頁", "[[乙頁]]")
+        self.write_note("wiki/乙頁.md", "乙頁", "[[甲頁]]")
+
+        result = self.run_scan()
+
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertIn("INDEXGAP:wiki:01.index.md", result.stdout)
+        self.assertIn("INDEXGAP:wiki:甲頁.md", result.stdout)
+        self.assertIn("INDEXGAP:wiki:乙頁.md", result.stdout)
+        self.assertIn("SUMMARY:indexgap=3", result.stdout)
+        self.assertIn("SCAN:complete", result.stdout)
+
+    def test_populated_wiki_index_reports_only_unlisted_pages(self) -> None:
+        self.write_note("wiki/01.index.md", "索引", "[[甲頁]]")
+        self.write_note("wiki/甲頁.md", "甲頁", "[[乙頁]]")
+        self.write_note("wiki/乙頁.md", "乙頁", "[[甲頁]]")
+
+        result = self.run_scan()
+
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertNotIn("INDEXGAP:wiki:甲頁.md", result.stdout)
+        self.assertIn("INDEXGAP:wiki:乙頁.md", result.stdout)
+        self.assertIn("SUMMARY:indexgap=1", result.stdout)
+
     def test_wiki_description_and_parent_are_required(self) -> None:
         self.write_note("wiki/01.index.md", "索引", "[[缺欄頁]]")
         self.write_custom_note(
