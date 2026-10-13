@@ -16,7 +16,7 @@ tags:
 | 檔案 | 職責 |
 |---|---|
 | `AGENTS.md`（root） | schema：agent 維護規則、三層架構、Ingest/Query/Lint、寫入慣例；`@` 匯入 `MEMORY.md`。本 repo **刻意不設 `CLAUDE.md`**——Claude Code 自 v2.1.277 起在沒有 `CLAUDE.md` 時原生讀 `AGENTS.md`，而任何位於本目錄或上層的 `CLAUDE.md`／`CLAUDE.local.md` 都會把本檔整份擋掉（2026-09-21 使用者拍板，原 `AGENTS.md`→`CLAUDE.md` symlink 一併移除） |
-| `schema/SYSTEM-DESIGN.md` | 運作總綱：Karpathy LLM Wiki 心智模型、人/AI 分工、刻意不做的事、skill 升級判準 |
+| `schema/SYSTEM-DESIGN.md` | 設計取捨：Karpathy LLM Wiki 定位、刻意不做的事、skill 升級判準 |
 | `schema/vault-map.md` | 本檔：全局導航與 tag 查詢地圖 |
 | `schema/MEMORY.md` | 有界跨 session 操作記憶：skill 升級訊號追蹤、待辦開放問題（非治理規則、非 wiki 內容；checked-in 進 repo，是 vault 唯一跨工具可攜的操作記憶載體） |
 | `schema/BACKLOG.md` | `vault-lint` 待處理清單：只收真需使用者的決策（待你決定／Agent 已判／已婉拒三區），agent 每輪讀回來約束自身行為（去重、解決即移除；頁面引用一律反引號、不用 wikilink） |
@@ -36,7 +36,10 @@ tags:
 
 ## 外部私人筆記
 
-[Obsidian 搬入筆記](https://app.notion.com/p/3f888d8b63ed818aac70e7035b8ed7c5) 是原 topics/cards 的新家。2026-10-13 完成遷移：topics 87 篇、cards 13 篇，共 100 篇；新增 98 篇使用共用資料庫，topics/cards 子頁面目前分別顯示 86／12 篇。原有 tmux、git archive 兩篇依使用者要求移回 [技術筆記](https://app.notion.com/p/0b16cf656c334d859fa477a953078bda)，維持原頁與 URL；保留原文、標籤與原始 Markdown 附件，入口另附原始路徑與 Notion URL 的遷移對照表。逐篇回讀與附件比對後，本地原檔已刪除。
+私人筆記已於 2026-10-13 移出本 repo，本地 topics/cards 不重建。
+
+- [Obsidian 搬入筆記](https://app.notion.com/p/3f888d8b63ed818aac70e7035b8ed7c5) — 已遷移的私人筆記，入口附原始路徑與 Notion URL 對照。
+- [技術筆記](https://app.notion.com/p/0b16cf656c334d859fa477a953078bda) — tmux、git archive 保留原頁與 URL。
 
 Notion 私人筆記不參與本 vault 的 Ingest／Query／Lint，不重新建立本地 topics/cards。上述連結僅供使用者回看，agent 不預設讀寫 Notion；只有使用者重新明確指定 Notion 任務才操作。
 

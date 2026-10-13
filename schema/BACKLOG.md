@@ -13,7 +13,7 @@ vault 健檢的**待處理清單**,由 `vault-lint` skill 每輪讀寫(手動或
 
 放 `schema/`:這是 **agent 每輪讀回來、用來約束自己行為的跨 session 操作狀態**——與 [`MEMORY.md`](MEMORY.md) 同層,不是給人瀏覽的自動產物。
 
-- 修得掉的不進本清單——agent 當輪直接修(需查證就自己查),review 面在呼叫端的 commit／PR diff。
+- 修得掉的不進本清單——agent 當輪直接修(需查證就自己查),review 面在呼叫端的 commit／PR diff。已修結案不留紀錄區,歷史回查 git。
 - **真正需要使用者的決策**才進 `待你決定`:需你才有的資訊、正解動到 raw write-once／憲法檔／skill、或會推翻你已表態的方向。你退回的修法進 `已婉拒`,skill 之後不再重提。
 - **agent 自己判維持現狀／待觸發的**進 `Agent 已判`——去重錨點,不每輪浮上來問你,除非依據的頁／基礎實際變動才重新評估。
 - **頁面引用一律用反引號**(如 `` `wiki/某頁.md` ``),**不得用 wikilink**——`schema/` 在死連結掃描範圍內,用 wikilink 會被自己的 lint 掃成死連結。
@@ -52,18 +52,6 @@ vault 健檢的**待處理清單**,由 `vault-lint` skill 每輪讀寫(手動或
 - STALE | `wiki/LLM-方案定價與-coding-agent-比較.md` | 孤立已修(補 2 條反鏈);定價數字仍為 2026-05~07 快照,頁面已標「回官網查」,agent 判**不值得例行 re-fetch**(11+ 廠商即時價、月月再過期)——要新快照再指示
 - RAWGAP | `raw/fetched/OpenSpec-OPSX-Workflow.md` | opsx.md 已於 2026-07-21 消化進 `wiki/OpenSpec.md`(工作流／設定／schema 三節重寫,該頁第 23 行明載);機械層因該 wiki 頁 `source` 指主 repo 非 opsx.md 而續 flag,此為已消化錨點;首見 2026-07-22
 - 維持現狀:無 in-vault 全文搜尋(21 頁 Grep 夠用)、evals 覆蓋不均(邊際價值低)
-
-## 已修退場紀錄(精簡,細節見 git log)
-
-- _(2026-07-18 deep-research 統計待回查項退場：保留有 commit 佐證的 2026-07-10「22 來源、25 主張」；2026-07-14 頁因現有 repo／commit 無法回查來源數、主張總數與確認數，已標「待考」，並保留頁面明列的 1 條否決主張。)_
-- _(2026-07-16 全專案改進審視語意層 13 項——2 過時、9 交叉引用缺口、2 低優先群組——經「全都修」指示全數落地退場。)_
-- _(2026-07-17「修問題」批次:全專案改進審視的 3 條 XREF、07-16 語意層的 3 矛盾 + 6 XREF + 4 過時、07-17 的 4 條低信心新發現,均已修補落地;[原追蹤看板](https://github.com/lllloo/obsidian-memory/blob/4451380c31878fd7aaeeae2efcbb4a55bdb59a08/feeds/watch/01.index.md)漏登曾補進 `schema/vault-map.md`、`schema/SYSTEM-DESIGN.md`（該產物已於 2026-10-13 退場）;`published` 空值統一為 `""`。低信心「AI-自主 相關頁 pi-workflow 措辭」與「OpenSpec 31 工具」覆核後判定原敘述已足、退場。)_
-- _(2026-07-17 逐件問診:MEMORY「貼 URL ingest 全流程」升級訊號候選經使用者核可退場(已於 `schema/MEMORY.md` 劃線註記);跨工具可攜縫補丁已落地——該句寫在憲法檔的 `@import` 行旁(當時憲法檔為 `CLAUDE.md`+`AGENTS.md` symlink,2026-09-21 起單一 `AGENTS.md`)。)_
-- _(2026-07-17 治理改制:使用者拍板 vault-lint 語意項改**全面自動修**(不加對抗驗證),「語意項只報告」制退場;原「維持現狀:vault-lint 第二段刻意延遲」條目隨之結案。STALE `wiki/第二大腦方法論比較.md` 缺 Hermes Kanban 補充,依新制當場修補退場。)_
-- _(2026-07-17 第二輪語意層(上輪欠審 9 頁＋第二大腦方法論比較):subagent 平行審出約 22 項獨立發現(1 高、8 中、13 低——指向錯誤、歸屬錯誤、方向倒置、措辭過寬、版本釘死、回連缺口等),全數當輪自主修補落地,動 12 個 wiki 頁;無新增待決項。)_
-- _(2026-08-03 `vault-updates-daily` 整體退場:使用者拍板移除 skill、`feeds/updates/` 與全部文件引用。依據為近 7 篇日報實測——最大宗來源 GitHub Copilot 多為企業治理條目、OpenCode 多為版本 bump、主力工具 Claude Code 近 7 天 0 筆,且 08-03 兩筆全是 08-02 重報。此前的 starred 停用與雲端排程條目一併作廢,勿據以重開。)_
-- _(2026-07-20 SKILL-STALE 退場:使用者核可動 skill,`.agents/skills/vault-lint/SKILL.md` 第 16 行「該 prompt 即使用者對 push 的明確同意」括號已刪——push 守門於 2026-07-20 移除後該依據不存在;「本 skill 不碰 git、由呼叫端決定 commit／PR」的設計本身不變。)_
-- _(2026-07-18 語意層續審由 tracked carryover 改為日期驅動的無狀態輪替;避免無發現時游標不前進、相同頁面反覆占滿 cap,同時維持安靜輪零檔案變更。)_
 
 ## 已婉拒
 

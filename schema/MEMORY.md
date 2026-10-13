@@ -8,32 +8,27 @@ tags:
 
 # Agent 跨 Session 記憶
 
-有界、凍結快照式檔案，記錄 agent 跨 session 該延續的**操作狀態**——不是 wiki 內容（陳述性知識），也不是治理規則（那是 AGENTS.md／SYSTEM-DESIGN.md 的事）。**決策理由也不寫這裡**：settled 決策的 why 進 commit message 與相關 wiki/schema 頁就地記錄（`git log --grep` 可回溯）；本檔只留仍在約束當下行為的活狀態（勿重複提議的拍板、未實作項的重開觸發、排程/routine 的操作參照），不累積歷史沿革——反覆有損壓縮沿革正是記憶漂移的頭號來源。
-
-存在理由是**可攜性**：agent 自身的 harness 記憶（如 Claude Code 的全域 memory）是工具專屬、不進 repo，換到別的 AI 工具打開這個 vault 就失憶；本檔 checked-in 進 repo，任何 agent、任何工具打開 vault 都讀得到，是這裡**唯一跨工具可攜的操作記憶載體**。由 `AGENTS.md` `@` 匯入，session 開始自動載入。
-
-**有界、不自動摘要精簡**：40 行上限是唯一防線，寫爆時當場合併／刪除過時條目，逼自己維持精簡而非無限累積。**agent 自主、逐回合即時寫**——當下發現值得跨 session 延續的操作狀態就直接寫，不用等明確檢查點，不逐次拍板。
+只保留跨 session 仍有效的操作狀態、勿重複提議的決定與重開條件，不作例行摘要精簡。決策理由與已結案歷史回查 git；治理規則放 AGENTS.md／SYSTEM-DESIGN.md。此檔進 repo，供各 AI 工具共用；Claude Code 以 `@` 匯入，其餘工具手動讀取。
 
 ## 上限
 
-正文（不含本節與 frontmatter）**不超過 40 行**。超過時先合併/刪除過時條目，不是加大上限。
+正文（不含本節與 frontmatter）不超過 40 行。agent 發現需延續的狀態即時維護；超過上限時合併或刪除過時條目，不擴大上限。
 
 ## Skill 升級訊號候選
 
-判準見 [`SYSTEM-DESIGN.md`](SYSTEM-DESIGN.md) 的「Skill 升級訊號」一節：候選滿 3 次時，**主動提議使用者要不要寫成 skill，不擅自動筆**；使用者點頭才動手拆 `SKILL.md`／`references/*.md`。
+判準見 [SYSTEM-DESIGN.md](SYSTEM-DESIGN.md)「Skill 升級訊號」。目前無活躍候選；以下只留重開條件：
 
-- ~~Lint checklist~~——2026-07-10 已 codify 成 `vault-lint` skill（使用者主動提出，非滿 3 次觸發；`.base` 誤判排除已寫進掃描腳本 BASEIDX 邏輯），候選收掉
-- ~~deep-research 回存流程~~——2026-07-10 第 4 次（repo 方向研究）結案：主體流程與 AGENTS.md Ingest 重合，**不開 skill**；特有的「強度標註」寫法已 codify 進 AGENTS.md 寫入慣例第 6 條（使用者核可）。重開條件：回存變每週例行、或流程長出 AGENTS.md 沒有的專屬結構。價值判準沿用：先評該輪產出值不值得存
-- ~~貼 URL ingest 全流程~~——2026-07-17 退場（使用者核可）：手動 ingest 無具名入口可累積次數，結構上永遠踩不到「滿 3 次」；fetch 段已由全域 `defuddle` 覆蓋，其餘與 AGENTS.md Ingest 重合。重開條件：日後真的要做網頁版 ingest skill 時另起
+- deep-research 回存不另開 skill；僅在回存成為每週例行、或出現 AGENTS.md 未涵蓋的專屬流程時重評。
+- 貼 URL ingest 沿用 AGENTS.md 與全域 `defuddle`；日後明確要做網頁版 ingest skill 才重開。
 
-## 待追蹤的開放問題
+## 操作約束與待追蹤項
 
-- 待辦：後續新增資料夾時路徑一律全小寫；目前不新增資料夾。
-- **勿重複提議**（已拍板不動）：`.gitignore` 不補 `.env`/金鑰規則、`.obsidian/plugins/obsidian-git/` bundle 維持 tracked（換機開箱即用優先）。
-- **勿再提議**為 lint/BACKLOG 加「上次執行／心跳」欄（已拍板移除）：與「安靜的一輪零變更、不開雜訊 PR」天生不相容；routine 存活靠 claude.ai 執行紀錄判斷，不靠 in-repo 紀錄。
-- `vault-lint` 語意層已改**全面自動修**（2026-07-17 使用者拍板：agent 自主修、真需使用者的決策才進 BACKLOG）。**勿再提議**加獨立 refuter 對抗驗證——選項已擺出，使用者選了不加，review 靠事後 GitHub diff（原「排程端 PR diff」已隨 routine 停用而不成立）。
-- `vault-lint` **skill 本身不碰 git**。雲端排程 routine（`trig_018QPWmi5K8hiV7ghMvKnTU9`，原每天台北 05:00、claude-sonnet-5，prompt 自帶 commit+push+開 PR）**使用者已停用（2026-09-21 告知）**：目前健檢只在手動觸發時跑，該輪 agent 自行 commit/push。trigger id 留作日後重啟參照。
-- **跨 repo 的實作一律回該 repo 做**（2026-08-06 拍板，通則）：vault 只沉澱可跨專案重複使用的方法論，他 repo 的實作細節與專案狀態既不寫進 vault，實作動作也不在 vault session 內進行——要動就到該 repo 開 session、走它自己的流程（如 `cloud-memory` 走 OpenSpec）。
-- **跨專案取知識的新構想已定（2026-10-08 使用者拍板）**：獨立私人 repo `playbook`（使用者精選的踩坑／確定做法卡片，從零開始）＋ `lllloo/skills` 的 `/playbook` skill——查：當場掃檔名／`title`／`description`、不留索引檔；寫：AI 只能開分支送 PR，使用者審後才合。**只手動觸發，勿再提議全域規範自動查**。實作在那兩個 repo 進行；落地後更新 AGENTS.md「目前沒有任何跨專案入口」一句。原「cards/topics 不動」已由下列 2026-10-13 拍板取代；bugloop.com 的外部發佈專案本輪未修改。
-- **私人筆記已搬至 Notion（2026-10-13 使用者拍板並完成）**：topics 87 篇、cards 13 篇共 100 篇，新增 98 篇位於「Obsidian 搬入筆記」；tmux、git archive 兩篇依使用者要求移回原「技術筆記」，**勿再移入新資料庫**。保留原文與原始 Markdown；逐篇回讀、附件比對後刪除本地原檔。Notion 入口與遷移對照見 `schema/vault-map.md`，**不要重建本地 topics/cards**。**本 repo 不預設查讀或修改 Notion，只有使用者重新明確指定 Notion 任務才操作；既往遷移授權不延伸**。本 repo 已於同日完成本地清理，只保留核心知識庫、規範、`vault-lint` 與必要設定；**勿自行重建 `feeds/`、`docs/architecture/` 或退場的三個 skill**，歷史資料入口見 `schema/vault-map.md` 的 Git 永久快照。
-- `vault-updates-daily` 已於 2026-08-03 使用者拍板**完整退場**（skill、`feeds/updates/`、文件引用皆移除）：訊號密度過低。**勿再提議重建或做輕量版**。雲端 routine 由使用者自行停用（agent 無 trigger id）。
+- 新增資料夾一律全小寫；目前不新增。
+- **勿重複提議**：`.gitignore` 不補 `.env`／金鑰規則；Obsidian Git bundle 維持 tracked，供換機使用。
+- **勿再提議**：lint／BACKLOG 不加執行心跳或「上次執行」欄，無發現的一輪零檔案變更；語意層不加獨立 refuter，review 靠事後 GitHub diff。
+- `vault-lint` 本身不碰 git；雲端 routine 已停用，目前只手動觸發，由呼叫端 agent commit／push。原 trigger `trig_018QPWmi5K8hiV7ghMvKnTU9` 留作重啟參照。
+- **跨 repo 的實作回該 repo 做**：本 vault 只存跨專案通用知識，不寫他 repo 的實作細節或專案狀態。
+- **playbook**：獨立私人 repo＋`lllloo/skills` 的 `/playbook` skill；查時掃檔名／title／description，不建索引；寫時 AI 開分支送 PR，由使用者審後合。只手動觸發，勿提議全域規範自動查；實作在那兩個 repo，本 vault 無跨專案查詢入口。
+- **私人筆記在 Notion**：tmux／git archive 保留原「技術筆記」入口，勿移入新資料庫；不重建 topics/cards。日常流程不讀寫 Notion，只有重新明確指定的 Notion 任務才操作。
+- **本 repo 只供 AI 跑核心流程**（2026-10-13）：不重建真人入口、架構讀本或 PR 合併 Discord 通知；保留 raw／wiki、規範、`vault-lint` 與必要設定。歷史入口集中於 `schema/vault-map.md`。
+- **勿重建** `feeds/`、`docs/architecture/`、`vault-youtube-sync`、`vault-watch`、`vault-page`、`vault-updates-daily`（含輕量版）。

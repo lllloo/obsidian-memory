@@ -1,121 +1,15 @@
 # Obsidian Memory Vault
 
-個人 Obsidian vault，採 Karpathy [LLM Wiki](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f) 工作流：agent 讀不可變的 `raw/` 原料，漸進維護一套互聯的 `wiki/` 活知識庫。原 topics/cards 共 100 篇私人筆記已於 2026-10-13 搬至 Notion：新增 98 篇位於 [「Obsidian 搬入筆記」](https://app.notion.com/p/3f888d8b63ed818aac70e7035b8ed7c5)，原有 tmux、git archive 兩篇依使用者要求保留在 [「技術筆記」](https://app.notion.com/p/0b16cf656c334d859fa477a953078bda)。保留原文與原始 Markdown，核對後刪除本地原檔。核心知識庫與運作規範仍留在本 repo。
+由 AI 在本 repo 執行 Ingest／Query／Lint，維護 Karpathy LLM Wiki。只保留核心知識庫、流程規範、`vault-lint` 與必要設定（2026-10-13 使用者拍板）；查詢入口是 `wiki/01.index.md`。
 
-## 系統概覽
+## 執行入口
 
-vault 的維護就是三個動作（Ingest／Query／Lint），只在 `raw/`＋`wiki/` 上進行，不涵蓋 Notion 私人筆記。Notion 連結僅供使用者回看；agent 不預設讀寫 Notion，只有使用者重新明確指定 Notion 任務時才操作。`schema/` 不屬 raw／wiki 內容層；Lint 會額外掃描它並維護 `schema/BACKLOG.md`。可直接處理的 findings 由 agent 當場修補，只有真正需要使用者決策的項目才進「待你決定」；「Agent 已判」與「已婉拒」則保留為去重約束。
+在 repo 根目錄開啟 AI session，先讀 [AGENTS.md](AGENTS.md)、[MEMORY.md](schema/MEMORY.md) 與 [BACKLOG.md](schema/BACKLOG.md)。
 
-```mermaid
-%%{init: {"theme": "neutral", "flowchart": {"curve": "basis", "nodeSpacing": 40, "rankSpacing": 50}}}%%
-flowchart TD
-    URL[貼 URL] -->|defuddle 抓取| FE[raw/fetched/]
-    CLIP[Web Clipper 剪藏] --> CL[raw/clippings/]
-    MAN[手動放檔] --> CL
-    subgraph ING["① Ingest（agent 全自主）"]
-        direction TB
-        W[寫/更新 wiki 頁] --> IDX[更新 01.index<br/>最近更新滾 5 筆] --> XREF[補交叉引用] --> LT[收尾輕量 lint]
-    end
-    FE --> W
-    CL -->|使用者明確指示才 ingest| W
-    LT --> WIKI[("wiki/ · 活知識庫<br/>三動作的樞紐")]:::hub
-    WIKI --> RD["② Query<br/>讀 01.index → 讀頁"]
-    RD --> ANS[附引用綜合答案]
-    ANS -.->|好答案回存| WIKI
-    WIKI --> LINT["③ Lint 健檢<br/>掃 raw·wiki·schema"]
-    LINT -->|自主修補| WIKI
-    LINT -->|決策項與去重約束| BL["schema/BACKLOG.md<br/>待你決定·Agent 已判·已婉拒"]
-    classDef hub fill:#e6f4ea,stroke:#34a853,stroke-width:2px,color:#111
-```
+- **Ingest**：提供來源 URL，或明確指定處理既有 raw；AI 依規範更新 wiki。
+- **Query**：直接提問；AI 先讀 wiki 索引，再讀相關頁，附引用回答。
+- **Lint**：呼叫 `/vault-lint`；AI 自主修補，需使用者決策的項目留在 BACKLOG。
 
-三層架構與 agent 的寫入邊界——**無硬守門**；異常大面積 ingest 與 skill 變更另有流程級確認點：
+執行 skill 需要 Python 3；`.agents/skills/` 為實作位置，`.claude/skills` 為相容 symlink。
 
-```mermaid
-%%{init: {"theme": "neutral", "flowchart": {"curve": "basis", "nodeSpacing": 45, "rankSpacing": 60}}}%%
-flowchart TD
-    subgraph SYS["三層系統 · 各層 agent 權限不同"]
-        SCHN["schema/ · 規範層 — 依規則維護<br/>AGENTS·SYSTEM-DESIGN·MEMORY·BACKLOG"]:::rule
-        RAWN["raw/ — 可新增·不可改<br/>（write-once 事實來源）"]:::wo
-        WIKIN["wiki/ — 全權建改刪<br/>（活知識庫）"]:::full
-        SCHN -.->|約束 agent 行為| RAWN & WIKIN
-        RAWN -->|ingest| WIKIN
-    end
-    subgraph OUT["三層系統之外<br/>核心三動作跳過"]
-        NOTION["Notion · 私人筆記<br/>topics 87 篇・cards 13 篇"]:::off
-    end
-    GP[git push<br/>agent 自主·事後 diff review]
-    WIKIN & RAWN --> GP
-
-    classDef full fill:#e6f4ea,stroke:#34a853,color:#111
-    classDef wo fill:#fef7e0,stroke:#f9ab00,color:#111
-    classDef rule fill:#e8f0fe,stroke:#4285f4,color:#111
-    classDef off fill:#f1f3f4,stroke:#9aa0a6,color:#444
-```
-
-圖 2 的顏色即 agent 權限，三層權限刻意不同：
-
-- 🟦 **schema/（規範層）** — 定義 agent 怎麼維護這個 vault 的規則層。它**約束** agent、不是 agent 的產出物；agent 只在規則允許下維護其中的操作狀態（`MEMORY.md`、`BACKLOG.md`），治理文件（`AGENTS.md`、`SYSTEM-DESIGN.md`）由使用者定調。箭頭朝下＝schema 管 raw／wiki，不是反過來。
-- 🟨 **raw/（write-once）** — 事實來源，agent 可新增、落地後凍結不改。
-- 🟩 **wiki/（全權）** — 活知識庫，agent 自由建改刪，是唯一被 agent 完全掌管的層。
-- ⬜ **Notion** — 私人筆記由使用者管理，不參與核心三動作。
-
-**沒有硬守門**——`git push` 亦由 agent 自主執行（2026-07-20 拍板移除原「push 前須明確同意」守門）。它會把核心知識庫與規範的變更推上遠端，該次 diff 由使用者事後在 GitHub 把關；force push 不在此授權內，仍需明確要求。wiki 日常維護同樣由 agent 自主；另有兩個流程級確認點：單次 ingest 預計觸及超過 15 頁，以及新增或修改 skill。
-
-## 安裝與使用
-
-```bash
-git clone https://github.com/lllloo/obsidian-memory.git
-```
-
-**Prerequisites**：
-
-- [Obsidian](https://obsidian.md/) — 編輯與圖譜瀏覽
-- Python 3 — skill 腳本執行所需；Windows 建議先設機器級 `PYTHONUTF8=1`，避免 cp950 編碼問題
-- [Obsidian CLI](https://help.obsidian.md/cli)（選用）— 本地開檔輔助，不影響任何流程
-
-在 Obsidian 直接「Open folder as vault」開啟本 repo 即可閱讀編輯。支援 [Agent Skills](https://agentskills.io) 的 AI 工具可載入 `.agents/skills/`；Claude Code 也可用 `/<skill>` 喚起。全部 skill 都在 repo 根目錄執行。**WSL 使用者請從 WSL 端執行維護型 skill**——從 Windows PowerShell 走 UNC 路徑（`\\wsl$\...`）呼叫 Windows Python 曾因 root `AGENTS.md` symlink 讀取失敗（該 symlink 已於 2026-09-21 移除，此特定成因不再存在），同一份掃描在 WSL 端正常完成；跨檔案系統呼叫仍建議留在 WSL 端執行，此類失敗易被誤判為 skill 壞掉。
-
-> **目前沒有跨專案查詢入口。** 早期的全域 `ob-write`／`ob-read` 已移除，其「從其他專案查詢 vault」的情境曾由 `ask-vault`（headless 唯讀 Query，可依環境選用 `claude`／`codex`／`opencode`）承接，但該 skill 於 2026-08-14 移除——建成後實際未使用，跨專案取知識的做法待重新構想。在新做法落地前，要查本 vault 就直接在本 repo 開 session 走 Query。
-
-## 結構
-
-三層系統（資料夾完整索引見 [`schema/vault-map.md`](./schema/vault-map.md)）：
-
-- `raw/` — 原始來源，write-once（agent 可新增、不可修改，事實來源）
-  - `clippings/` — 使用者以 Web Clipper 或手動放入的來源
-  - `fetched/` — agent 依使用者提供 URL 擷取的來源
-- `wiki/` — 活知識庫（agent 綜合 raw 維護的摘要/實體/概念/綜合頁，含內容目錄 `01.index.md`）
-- `AGENTS.md` + `schema/` — 治理規範與操作狀態層；各檔案的權威職責清單見 `schema/vault-map.md`
-
-三層之外：
-
-- Notion「Obsidian 搬入筆記」— 本次新增 98 篇；共用資料庫，以 topics/cards 兩個子頁面分別瀏覽。原有兩篇留在「技術筆記」，入口與遷移對照見 `schema/vault-map.md`。
-- `index.md` — 真人讀者入口，連到核心知識庫、規範與外部私人筆記。
-- `.agents/skills/` — repo-local skills，遵循 [Agent Skills](https://agentskills.io) 開放標準（`.claude/skills` 為 symlink）
-
-2026-10-13 已完成本地清理，本 repo 只保留核心知識庫、運作規範與必要設定。原自動產物、HTML 架構圖與三個對應 skill 已刪除；歷史資料見 [自動產物永久快照](https://github.com/lllloo/obsidian-memory/tree/4451380c31878fd7aaeeae2efcbb4a55bdb59a08/feeds)、[HTML 永久快照](https://github.com/lllloo/obsidian-memory/tree/4451380c31878fd7aaeeae2efcbb4a55bdb59a08/docs/architecture) 與 [skill 永久快照](https://github.com/lllloo/obsidian-memory/tree/4451380c31878fd7aaeeae2efcbb4a55bdb59a08/.agents/skills)。原 topics/cards 曾是 [bugloop.com](https://bugloop.com) 的 Quartz 公開來源；本 repo 已移出公開筆記層，外部發佈專案另行管理。
-
-## 規則與工作流
-
-先看 [`schema/SYSTEM-DESIGN.md`](./schema/SYSTEM-DESIGN.md)——系統全貌：Karpathy LLM Wiki 心智模型、人/AI 分工、刻意不做的事。可執行規則（agent 維護規則、Ingest/Query/Lint、寫入慣例、流程級確認點）見 [`AGENTS.md`](./AGENTS.md)，導航見 [`schema/vault-map.md`](./schema/vault-map.md)。
-
-規範檔是 root 的 `AGENTS.md`，**所有 AI 工具（含 Claude Code）共用同一份實體檔**，不再有 symlink 或第二份副本——Claude Code 自 v2.1.277 起在專案沒有 `CLAUDE.md` 時原生讀取它。注意反面：只要本目錄或任何上層目錄出現 `CLAUDE.md`／`CLAUDE.local.md`，Claude Code 就改讀那個、完全不看 `AGENTS.md`，所以本 repo 刻意不建 `CLAUDE.md`。跨 session 操作記憶在 `schema/MEMORY.md`，checked-in 進 repo，任何工具打開 vault 都讀得到。
-
-## Skills
-
-`.agents/skills/` 內只保留 `vault-lint`，遵循 [Agent Skills](https://agentskills.io) 開放標準、可被支援該標準的其他 AI 工具載入；在 Claude Code 以 `/<skill>` 喚起：
-
-| 指令 | 用途 |
-|---|---|
-| `/vault-lint` | 健檢 raw／wiki／schema，機械項與語意項皆由 agent 自主修補；BACKLOG 的「待你決定」只收真正需要使用者決策的項目，「Agent 已判」與「已婉拒」保留去重約束；手動／排程共用同一流程，本身不碰 git |
-
-**使用契約**：全部 skill 的 cwd 必須是本 repo 根目錄，並以 `schema/vault-map.md` 為哨兵；所有 repo-local 路徑皆相對於 cwd。沒有從其他專案呼叫的入口。
-
-> 原核心 skill `ob-write`、`ob-read`（global）、`vault-wiki-build`、舊版 `vault-lint`，以及 `vault-updates-daily`（每日工具更新日報，2026-08-03 因訊號密度過低退場）、`ask-vault`（跨專案唯讀查詢，2026-08-14 因建成後未使用退場）已移除；Ingest（wiki 綜合）與 vault 內 Query 由 agent 依規則執行，Lint 已按需重建為「健檢即整理」的 `/vault-lint`（與同名舊版無血緣，是重寫的另一套）。
-
-## 兩個入口檔的差別
-
-| 檔案 | 給誰看 | 內容 |
-|---|---|---|
-| `index.md` | 真人讀者 | 核心知識庫與 Notion 私人筆記入口 |
-| `schema/vault-map.md` | AI / agent | Vault 結構地圖、tag 索引、查詢用地形圖 |
+資料夾與 tag 導航見 [vault-map.md](schema/vault-map.md)，設計取捨見 [SYSTEM-DESIGN.md](schema/SYSTEM-DESIGN.md)。私人筆記位於 Notion，不納入本 repo 的日常流程。

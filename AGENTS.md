@@ -20,13 +20,11 @@
 
 `schema/BACKLOG.md` 是 `vault-lint` 的健檢待處理清單:agent **每輪讀回來約束自身行為**的操作狀態(去重、跳過已婉拒、判斷退場),與 `MEMORY.md` 同層,不是給人瀏覽的 feed 產物。lint 發現由 agent 自主修補;**只有真正需要使用者的決策**(需使用者才有的資訊、動 raw write-once、動憲法檔／skill)才進「待你決定」,agent 判定維持現狀／待觸發者則進「Agent 已判」作去重錨點;使用者退回的修法記入「已婉拒」,agent 之後不再重提。寫入該檔時頁面引用一律用反引號、不得用 wikilink(`schema/` 在死連結掃描範圍內)。
 
-**私人筆記已移至 Notion。** 原 `topics/`、`cards/` 共 100 篇已於 2026-10-13 搬至 Notion，保留全文與原始 Markdown，逐篇核對後刪除本地原檔；新增 98 篇放在「Obsidian 搬入筆記」，原有 tmux、git archive 兩篇依使用者要求保留在「技術筆記」。入口見 `schema/vault-map.md`。不要在本 repo 重建這兩個資料夾。Notion 私人筆記不屬本系統，不納入 Ingest／Query／Lint，也不作為 `raw/`／`wiki/` 的來源。
+**私人筆記已移至 Notion。** 不重建 `topics/`、`cards/`；私人筆記不納入 Ingest／Query／Lint，也不作為 `raw/`／`wiki/` 的來源。外部入口見 `schema/vault-map.md`。
 
 **Notion 操作邊界（2026-10-13 使用者拍板）**：本 repo 的日常維護與技術查詢只使用本地核心知識庫與規範，不自動連線查讀或修改 Notion。文件中的 Notion 連結是供使用者回看的外部入口，不代表 agent 可自行存取。只有使用者重新明確指定 Notion 任務時，才在該任務授權範圍內操作；既往遷移的授權不延伸為後續操作許可。
 
-**公開發佈與核心知識庫分開。** 原 cards/topics 是 Quartz 的公開來源；它們移出後，本 repo 不再提供該公開筆記層。Quartz 與 bugloop.com 的發佈設定位於另一個 repo，本次遷移不修改外部發佈專案。
-
-**本地清理已完成（2026-10-13 使用者拍板）**：本 repo 只保留核心知識庫、規範與必要設定；自動產物層與 HTML 呈現層已刪除，對應三個 skill 同時退場。歷史資料可從 [自動產物快照](https://github.com/lllloo/obsidian-memory/tree/4451380c31878fd7aaeeae2efcbb4a55bdb59a08/feeds)、[HTML 快照](https://github.com/lllloo/obsidian-memory/tree/4451380c31878fd7aaeeae2efcbb4a55bdb59a08/docs/architecture) 與 [skill 快照](https://github.com/lllloo/obsidian-memory/tree/4451380c31878fd7aaeeae2efcbb4a55bdb59a08/.agents/skills) 回查；這些是 Git 永久快照，不是現行入口。未經使用者重新指定，不重建 `feeds/`、`docs/architecture/` 或 `vault-youtube-sync`、`vault-watch`、`vault-page`。
+**本 repo 只供 AI 執行核心流程（2026-10-13 使用者拍板）**：保留 raw／wiki、規範、`vault-lint` 與必要設定；不重建真人入口 `index.md`、架構讀本或 PR 合併 Discord 通知。公開發佈由外部 repo 管理。本地已移除自動產物與 HTML 呈現層；未經使用者重新指定，不重建 `feeds/`、`docs/architecture/`、`vault-youtube-sync`、`vault-watch`、`vault-page`。歷史快照入口集中於 `schema/vault-map.md`。
 
 ## 守門：無
 
@@ -145,7 +143,7 @@ deep-research 或其他對抗式查證的結果回存 wiki 時：每條主張就
 
 優先使用 skill，不新增平行流程。新增或修改 skill 時，盡量遵循 [Agent Skills](https://agentskills.io) 開放標準，讓內容可跨工具移植。
 
-> **已移除的核心 skill**：`ob-write`、`ob-read`、`vault-wiki-build`、舊版 `vault-lint`（含 `ob-write`／`ob-read` 兩個全域 symlink）已於重整時移除。`ask-vault`（跨專案唯讀查詢入口）於 2026-08-14 使用者拍板移除——建成後實際未使用，跨專案取知識的做法待使用者重新構想；**在新構想落地前不要重建同一套或做輕量版**。三動作（Ingest／Query／Lint）的模型仍是本 vault 的架構；Lint 於 2026-07-10 以 `vault-lint-daily` 之名重建、2026-07-13 改名回 `vault-lint`，目前由同一 skill 承載手動與排程健檢，並自主完成機械與語意修補。它與同名舊版無血緣；Ingest／Query 仍由 agent 依本檔流程執行。
+不重建已退場的 `ob-write`、`ob-read`、`vault-wiki-build`、`ask-vault` 或其輕量版；Ingest／Query 依本檔流程執行，Lint 使用現行 `vault-lint`。
 
 ### 新增 / 修改 skill 的本 repo 約束
 
