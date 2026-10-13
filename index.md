@@ -6,11 +6,11 @@ tags:
   - index
 ---
 
-本 repo 的閱讀入口；私人操作筆記已移至 Notion。
+本 repo 的核心知識庫閱讀入口；私人操作筆記已移至 Notion，自動產物與 HTML 呈現層已退場。
 
 - [知識目錄](wiki/01.index.md) — 活知識庫的主題與最近更新。
 - [運作模式](schema/SYSTEM-DESIGN.md) — Karpathy LLM Wiki 的心智模型。
-- [Vault Map](schema/vault-map.md) — 資料夾、規範職責與外部 Notion 入口。
+- [Vault Map](schema/vault-map.md) — 資料夾、規範職責、外部 Notion 入口與已移除資料的 Git 永久快照。
 - [維護規則](AGENTS.md) — Ingest／Query／Lint 與寫入邊界。
 - [Obsidian 搬入筆記](https://app.notion.com/p/3f888d8b63ed818aac70e7035b8ed7c5) — 本次新增搬入的 98 篇完整筆記。
 - [技術筆記](https://app.notion.com/p/0b16cf656c334d859fa477a953078bda) — 原有 tmux、git archive 兩篇，保留原頁與連結。

@@ -13,13 +13,13 @@ description: vault 健檢:掃 wiki+raw 的死連結、孤立頁、frontmatter �
 - 正解會動到 `raw/` write-once、schema 憲法檔(`AGENTS.md`／`SYSTEM-DESIGN.md`)或 skill 本身的項;
 - 使用者曾表態過方向、再動會推翻其決定的項。
 
-清單放 `schema/`(agent 每輪讀回來約束自身行為的操作狀態),不放 `feeds/`(agent 不讀區)。
+清單放 `schema/`(agent 每輪讀回來約束自身行為的操作狀態)。
 
 **手動與排程共用同一條流程,無模式分支、無參數差異。** 本 skill **不執行任何 git 動作**(不 commit、不 push、不開 PR),因此無人值守時不會卡在需要人拍板的守門上。跑完只留檔案變更;要不要落成 commit／PR 由呼叫端決定——手動時由使用者指示,排程時寫進該排程自己的 prompt,**不由本 skill 代行**。
 
 ## 產出
 
-- 待處理清單 + 設定:`schema/BACKLOG.md`(單一持久檔,去重後留未解決項,解決即移除)。**不產快照報告檔,不寫入 `feeds/`。**
+- 待處理清單 + 設定:`schema/BACKLOG.md`(單一持久檔,去重後留未解決項,解決即移除)。**不產快照報告檔。**
 
 `BACKLOG.md` 結構:
 
@@ -45,7 +45,7 @@ python3 scripts/semantic_select.py --days <semantic_days> --cap <semantic_page_c
 
 4. **熔斷檢查**:兩份輸出任一有 `ERROR:` 行、機械層缺 `SCAN:complete`、或選頁層缺 `SELECT:complete` → 本輪視為掃描異常:**不修補、只新增、不退場**(不依壞輸出動 wiki,也不移除 BACKLOG 既有項),在 `待你決定` 補一條高嚴重度項「掃描或語意選頁異常,本輪不修補不退場」(附錯誤摘要與首見日;去重規則同其他項,已在清單就不重複加)後結束本輪。異常排除後該項照常退場。正常則往下。
 5. 機械層修補(agent 自主判斷並修,逐項記錄):
-   - `DEADLINK`:目標檔存在、可**唯一對應**(漏資料夾限定、大小寫差異)→ 直接修(wikilink 或 markdown 式路徑,依原文語法修)。多候選 → 讀上下文判斷正確目標再修。目標不存在 → 依內容處置:改外部 URL、改純文字,或值得建頁就建(建頁屬語意修補,照第 8 步紀律)。目標在 `feeds/` 等範圍外(wiki 不得引用 feeds)→ 移除或改寫該引用。
+   - `DEADLINK`:目標檔存在、可**唯一對應**(漏資料夾限定、大小寫差異)→ 直接修(wikilink 或 markdown 式路徑,依原文語法修)。多候選 → 讀上下文判斷正確目標再修。目標不存在 → 依內容處置:改外部 URL、改純文字,或值得建頁就建(建頁屬語意修補,照第 8 步紀律)。
    - `INDEXGAP`:有 `description` 直接複製登錄 `wiki/01.index.md`;無 `description` → 讀頁寫一行摘要登錄,順手補該頁 `description`。
    - `ORPHAN`:只有其他 wiki 內容頁的入連才代表知識圖譜互連;`wiki/01.index.md`、raw、schema 與自連都不算。讀頁找 1–2 個相關既有頁補雙向引用;真的無處可連才記 `Agent 已判` 錨點。
    - `FM`:缺欄可補值者直接補(如缺 `updated` 取 git 最後變動日)。wiki 內容頁另須有 30–80 字 `description`、`parent: "[[wiki/01.index]]"`，且已出現的白名單欄位依 schema 固定順序排列；這些 wiki-only 檢查不套用 raw，避免違反 write-once 與 Web Clipper description 豁免。

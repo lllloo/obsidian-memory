@@ -26,13 +26,7 @@
 
 **公開發佈與核心知識庫分開。** 原 cards/topics 是 Quartz 的公開來源；它們移出後，本 repo 不再提供該公開筆記層。Quartz 與 bugloop.com 的發佈設定位於另一個 repo，本次遷移不修改外部發佈專案。
 
-**`feeds/` 也不屬於三層系統。** 它集中存放只供使用者瀏覽的自動產物；除各自的產出 skill 外，agent 一律不讀、不寫、不掃描、不索引。`feeds/` 不參與 Ingest／Query／Lint，不得作為 `raw/` 或 `wiki/` 的來源；`feeds/**` 不得公開；本 repo 已移出原 Quartz 公開筆記層。
-
-- `feeds/youtube/`：`vault-youtube-sync` 的自動同步筆記。完整影片筆記寫入後凍結；draft 占位可由 skill 覆寫重試，頻道 index、Base 與 checkpoint 可由 skill 維護。
-- `feeds/watch/`：`vault-watch` 的 GitHub issue/PR 追蹤看板（`01.index.md`）與變更 digest；追蹤清單以看板為準，不硬編碼。
-（`vault-lint` 不再產 feeds 產物：健檢的待處理清單改放 `schema/BACKLOG.md`，見下方 schema 一節。）
-
-**`docs/architecture/` 也不屬三層系統。** 它存放有長期回看價值、但不是 markdown 知識的產出（如架構圖、報告的單檔 HTML），納版控供日後回看。agent **可自主建立與更新**，一次性草稿則留在 scratchpad、不進這裡。它不參與 Ingest／Query／Lint，不得作為 `raw/`／`wiki/` 的來源；`docs/**` 不對外發佈。知識本身仍寫進 `wiki/`——`docs/architecture/` 是呈現層，不是知識層，頁面該講的內容不因為畫了圖就省略。**入口是 `docs/architecture/01.index.html`**：新增頁面時一併在該檔登錄（標題、一句摘要、快照日期），各頁導覽列只指回索引、不彼此互連（否則每新增一頁都要回頭改所有舊頁，而舊頁是快照）。此層 2026-08-14 由 `artifacts/` 更名遷入，對齊全域 `map` skill 的落點規範；git 歷史以 rename 保留。
+**本地清理已完成（2026-10-13 使用者拍板）**：本 repo 只保留核心知識庫、規範與必要設定；自動產物層與 HTML 呈現層已刪除，對應三個 skill 同時退場。歷史資料可從 [自動產物快照](https://github.com/lllloo/obsidian-memory/tree/4451380c31878fd7aaeeae2efcbb4a55bdb59a08/feeds)、[HTML 快照](https://github.com/lllloo/obsidian-memory/tree/4451380c31878fd7aaeeae2efcbb4a55bdb59a08/docs/architecture) 與 [skill 快照](https://github.com/lllloo/obsidian-memory/tree/4451380c31878fd7aaeeae2efcbb4a55bdb59a08/.agents/skills) 回查；這些是 Git 永久快照，不是現行入口。未經使用者重新指定，不重建 `feeds/`、`docs/architecture/` 或 `vault-youtube-sync`、`vault-watch`、`vault-page`。
 
 ## 守門：無
 
@@ -50,7 +44,7 @@ agent 自主維護 wiki（含改頁、刪頁），**不需逐步拍板**——�
 
 ## 三個動作：Ingest / Query / Lint
 
-wiki 的維護就是這三個動作，只在 `raw/` + `wiki/` 上進行；不涵蓋 Notion 私人筆記或 feeds。
+wiki 的維護就是這三個動作，只在 `raw/` + `wiki/` 上進行；不涵蓋 Notion 私人筆記。
 
 ### Ingest（擷取）
 
@@ -60,7 +54,6 @@ wiki 的維護就是這三個動作，只在 `raw/` + `wiki/` 上進行；不涵
 
 - **使用者貼 URL**：先 Grep `raw/` 的 `source:` 查同 URL 是否已落地。**已存在**：不重複建檔，直接更新對應 wiki 頁（重讀來源、與現有 wiki 內容對照，實質變了就在頁面就地更新——來源過時靠此處人眼＋lint 語意層兜底，不做雜湊比對）。**未存在**才抓內容（優先 defuddle）轉 markdown，按 frontmatter 慣例（含 `source`、`published`）存 `raw/fetched/`，再往下 ingest。抓到的內容明顯殘缺（登入牆、付費牆、重 JS 頁）時**不落地 raw**——write-once 塞進殘件即凍結——改請使用者用 Web Clipper 剪藏。
 - **Web Clipper 剪藏**、**使用者手動放檔**：存入 `raw/clippings/`，**落地即止、不自動往下 ingest**——這是使用者隨手剪存的原料，要不要進 wiki 由使用者明指。故 lint 的 raw 消化缺口掃描（`RAWGAP`）不涵蓋 `clippings/`，只掃 `fetched/`；clippings 未被 wiki 引用是正常狀態，不是缺口。
-- **YouTube 自動同步**：`vault-youtube-sync` 只寫入 `feeds/youtube/`，不進 raw 或 wiki。
 
 流程：
 
@@ -74,13 +67,13 @@ wiki 的維護就是這三個動作，只在 `raw/` + `wiki/` 上進行；不涵
 
 ### Query（查詢）
 
-向 wiki 提問 → agent 先讀 `wiki/01.index.md` 找相關頁 → 讀頁 → **附引用**綜合答案。Query 一律不掃 feeds。
+向 wiki 提問 → agent 先讀 `wiki/01.index.md` 找相關頁 → 讀頁 → **附引用**綜合答案。Query 只查本地核心知識庫。
 
 好答案（比較表、綜合分析、發現的關聯）**可回存成新 wiki 頁**，讓探索跟來源一樣複利累積，不要消失在對話裡。回存只在 wiki 內，不自動寫進 Notion 私人筆記。
 
 ### Lint（健檢）
 
-定期健檢只掃 raw/wiki/schema，不掃 feeds 或 Notion 私人筆記。機械層檢查死連結、孤立頁、frontmatter、tag 漂移、raw 消化與索引缺口；語意層依日期輪替審查近期變動 wiki 頁的**矛盾與明確事實錯誤**。**語意層只抓「真的壞了」、不抓「能更好」**（2026-07-22 使用者拍板）：交叉引用缺口（含單向斷鏈）、過時主張（除非構成矛盾）、可改可不改的措辭一律**不報**——這些「能更好」的項任何頁都找得到，報了就永遠改不完，正是使用者要避免的吹毛求疵。交叉引用是核心紀律，但它在 **ingest 新頁時建立**（見上 Ingest 流程第 4、5 步，成本趨近於零的時機），例行健檢不再回頭挖缺口。掃描由 `vault-lint` skill 承載，可手動跑亦可掛排程，行為一致且 skill 本身不碰 git。**健檢即整理：機械項與語意項一律由 agent 自主修補**（與 wiki 全權一致；需要查證就自己查，2026-07-17 拍板取代原「語意項只報告」制）。`schema/BACKLOG.md` 的「待你決定」**只收真正需要使用者決策的項目**——包括需使用者才有的資訊、動 raw write-once／憲法檔／skill，或會推翻使用者已表態方向的項；該節去重維護、解決即移除。「Agent 已判」保留自主判斷的去重錨點，只有所依據的頁／基礎實際變動時才重新評估；使用者退回的修法記入「已婉拒」不再重提。不產快照報告。死連結列機械層之首有實證依據：LLM wiki 的頭號結構錯誤，見 [`LLM-Wiki-生態實作比較`](wiki/LLM-Wiki-生態實作比較.md)。
+定期健檢只掃 raw/wiki/schema，不掃 Notion 私人筆記。機械層檢查死連結、孤立頁、frontmatter、tag 漂移、raw 消化與索引缺口；語意層依日期輪替審查近期變動 wiki 頁的**矛盾與明確事實錯誤**。**語意層只抓「真的壞了」、不抓「能更好」**（2026-07-22 使用者拍板）：交叉引用缺口（含單向斷鏈）、過時主張（除非構成矛盾）、可改可不改的措辭一律**不報**——這些「能更好」的項任何頁都找得到，報了就永遠改不完，正是使用者要避免的吹毛求疵。交叉引用是核心紀律，但它在 **ingest 新頁時建立**（見上 Ingest 流程第 4、5 步，成本趨近於零的時機），例行健檢不再回頭挖缺口。掃描由 `vault-lint` skill 承載，可手動跑亦可掛排程，行為一致且 skill 本身不碰 git。**健檢即整理：機械項與語意項一律由 agent 自主修補**（與 wiki 全權一致；需要查證就自己查，2026-07-17 拍板取代原「語意項只報告」制）。`schema/BACKLOG.md` 的「待你決定」**只收真正需要使用者決策的項目**——包括需使用者才有的資訊、動 raw write-once／憲法檔／skill，或會推翻使用者已表態方向的項；該節去重維護、解決即移除。「Agent 已判」保留自主判斷的去重錨點，只有所依據的頁／基礎實際變動時才重新評估；使用者退回的修法記入「已婉拒」不再重提。不產快照報告。死連結列機械層之首有實證依據：LLM wiki 的頭號結構錯誤，見 [`LLM-Wiki-生態實作比較`](wiki/LLM-Wiki-生態實作比較.md)。
 
 ## wiki 頁面與索引
 
@@ -88,9 +81,9 @@ wiki 的維護就是這三個動作，只在 `raw/` + `wiki/` 上進行；不涵
 - **`wiki/01.index.md`**：內容目錄——每頁一行摘要 + wikilink，按類別分組，每次 ingest 更新。查詢時先讀它再鑽細節（省 token，也避免重複建頁）。
 - **交叉引用是核心紀律**：wiki 的價值在互聯成網，不在單頁品質。
 
-## 寫入慣例（`raw/` + `wiki/`，以及各 skill 指定的 feeds 筆記）
+## 寫入慣例（`raw/` + `wiki/`）
 
-這些是「怎麼寫」的品質慣例，**不是守門煞車**（不需拍板、不擋流程）。適用 agent 會寫的 raw/wiki；feeds 筆記只由各自 skill 依自包含規則維護。不涵蓋 Notion 私人筆記。
+這些是「怎麼寫」的品質慣例，**不是守門煞車**（不需拍板、不擋流程）。適用 agent 會寫的 raw/wiki。不涵蓋 Notion 私人筆記。
 
 ### 1. 語言
 
@@ -112,15 +105,13 @@ wiki 的維護就是這三個動作，只在 `raw/` + `wiki/` 上進行；不涵
 
 | 欄位 | 用途 / 何時用 | 值格式 |
 |---|---|---|
-| `title` | 主題名，可含空格與中文；不加日期前綴（SKILL 範本可例外，如 `vault-watch` digest `"<YYYY-MM-DD> Watch"`） | 字串（檔名為其無空格、`-` 連接版） |
-| `description` | 一句話自我介紹，給 Obsidian Bases、AI 查詢用。**適用**：wiki 頁、feeds/youtube 影片摘要、raw 網頁剪藏；其餘筆記可省 | 字串，30–80 字；不重複 title，避免「這篇／本文」自我指涉 |
+| `title` | 主題名，可含空格與中文；不加日期前綴 | 字串（檔名為其無空格、`-` 連接版） |
+| `description` | 一句話自我介紹，給 Obsidian Bases、AI 查詢用。**適用**：wiki 頁、raw 網頁剪藏；其餘筆記可省 | 字串，30–80 字；不重複 title，避免「這篇／本文」自我指涉 |
 | `created` | 進 vault 日期 | `YYYY-MM-DD` |
 | `updated` | 最後修改日期 | `YYYY-MM-DD` |
-| `source` | 來源 URL（網頁／影片連結；YouTube `index` 為頻道 URL）；回查用，非證據本體 | URL |
+| `source` | 來源 URL（網頁／影片連結）；回查用，非證據本體 | URL |
 | `published` | 原始內容發佈／上傳日，與 `created`（進 vault 日）區分；不明可留空 | `YYYY-MM-DD` 或空 |
 | `parent` | Obsidian 圖譜用 wikilink，讓筆記出現在圖譜 | `"[[01.index]]"`；vault 內多個資料夾各有同名 `01.index.md`，重名歧義時用路徑限定（如 wiki 頁 `"[[wiki/01.index]]"`） |
-| `last_sync_id` | youtube-sync 增量同步 checkpoint，僅存於頻道 `01.index.md` | YouTube videoId |
-| `draft` | youtube-sync transcript 抓取失敗的占位待重抓標記；正常筆記不用 | `true`（省略 = 正常） |
 | `tags` | 主題分類 + 必要的功能性 tag | YAML list |
 
 一般筆記需有 `title`、`created`、`updated`、`tags`。`tags` 一律用 YAML list，不用 inline array 或字串。Clippings 中 **Web Clipper 產出**的 `description` 為自動帶入的外站文案，豁免 30–80 字與風格要求，agent 不回頭修；**agent 貼 URL 落地**的 `fetched/` 來源則照正常 `description` 規則寫。
@@ -148,12 +139,9 @@ deep-research 或其他對抗式查證的結果回存 wiki 時：每條主張就
 
 | Skill | 用途 |
 |---|---|
-| `vault-youtube-sync` | YouTube 影片摘要同步至 `feeds/youtube/` |
 | `vault-lint` | wiki+raw 健檢，機械項與語意項皆由 agent 自主修補；真需使用者決策的才進「待你決定」，「Agent 已判」與「已婉拒」保留去重約束；手動／排程共用同一流程，本身不執行 git 動作 |
-| `vault-watch` | 追蹤一批 GitHub issue/PR 狀態，`gh` 抓現況與快照比對並每輪更新看板；精選訊號（state 轉換、官方回應、label 變動）有變才寫 digest；本身不執行 git 動作 |
-| `vault-page` | 把 wiki 某主題（交叉引用密集的一組頁）改寫成人類好讀的自包含 HTML 讀本，產出 `docs/architecture/<主題>.html` 並更新 `docs/architecture/01.index.html`；動筆前先提涵蓋範圍給使用者確認，產物為快照、來源頁日後變動不回頭同步 |
 
-四者都只在 vault 內執行、需 cwd 在 vault root，適用上節 CWD 契約。**目前沒有任何跨專案入口**——別的專案要取本 vault 的知識，只能由使用者自行開 session 進來查。
+`vault-lint` 只在 vault 內執行、需 cwd 在 vault root，適用上節 CWD 契約。**目前沒有任何跨專案入口**——別的專案要取本 vault 的知識，只能由使用者自行開 session 進來查。
 
 優先使用 skill，不新增平行流程。新增或修改 skill 時，盡量遵循 [Agent Skills](https://agentskills.io) 開放標準，讓內容可跨工具移植。
 

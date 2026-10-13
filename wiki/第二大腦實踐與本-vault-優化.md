@@ -2,7 +2,7 @@
 title: 第二大腦實踐與本 vault 優化
 description: 比較 PARA、Zettelkasten、Evergreen notes、LYT 與 Digital Garden，將其轉成此 LLM Wiki 的最小可行優化
 created: 2026-07-11
-updated: 2026-07-17
+updated: 2026-10-13
 parent: "[[wiki/01.index]]"
 tags:
   - pkm
@@ -49,7 +49,7 @@ tags:
 
 [Mike Caulfield 的 Garden / Stream 比喻](https://hapgood.us/2015/10/17/the-garden-and-the-stream-a-technopastoral/)將 stream 視為按時間流過的對話，把 garden 視為可反覆重組的關聯空間；[Maggie Appleton 的整理](https://maggieappleton.com/garden-history)進一步強調脈絡導覽、持續修訂與對不確定性的揭示。
 
-本 vault 已選擇私有、版本化、可演進的 garden 路線。應沿用而非模仿公開發表：在綜合頁就地標示證據強度、未解問題與最後檢視日；`feeds/` 保持為時間性來源池，不把日報當知識頁。這也讓「新」不會取代「仍然正確且可用」。脈絡導覽之外，另有一個有界的時間性入口與之並存——`wiki/01.index.md` 頂部的「最近更新」滾動區塊（2026-07-15 拍板，取捨見 [[LLM-Wiki-生態實作比較]] 的近期／熱脈絡承載光譜）。
+本 vault 已選擇私有、版本化、可演進的 garden 路線。應沿用而非模仿公開發表：在綜合頁就地標示證據強度、未解問題與最後檢視日；時間性自動產物不作知識頁，原自動產物層已於 2026-10-13 退場。這也讓「新」不會取代「仍然正確且可用」。脈絡導覽之外，另有一個有界的時間性入口與之並存——`wiki/01.index.md` 頂部的「最近更新」滾動區塊（2026-07-15 拍板，取捨見 [[LLM-Wiki-生態實作比較]] 的近期／熱脈絡承載光譜）。
 
 ## 最小優化方案
 

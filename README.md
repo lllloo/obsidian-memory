@@ -4,7 +4,7 @@
 
 ## 系統概覽
 
-vault 的維護就是三個動作（Ingest／Query／Lint），只在 `raw/`＋`wiki/` 上進行，不涵蓋 Notion 私人筆記或 `feeds/`。Notion 連結僅供使用者回看；agent 不預設讀寫 Notion，只有使用者重新明確指定 Notion 任務時才操作。`schema/` 不屬 raw／wiki 內容層；Lint 會額外掃描它並維護 `schema/BACKLOG.md`。可直接處理的 findings 由 agent 當場修補，只有真正需要使用者決策的項目才進「待你決定」；「Agent 已判」與「已婉拒」則保留為去重約束。
+vault 的維護就是三個動作（Ingest／Query／Lint），只在 `raw/`＋`wiki/` 上進行，不涵蓋 Notion 私人筆記。Notion 連結僅供使用者回看；agent 不預設讀寫 Notion，只有使用者重新明確指定 Notion 任務時才操作。`schema/` 不屬 raw／wiki 內容層；Lint 會額外掃描它並維護 `schema/BACKLOG.md`。可直接處理的 findings 由 agent 當場修補，只有真正需要使用者決策的項目才進「待你決定」；「Agent 已判」與「已婉拒」則保留為去重約束。
 
 ```mermaid
 %%{init: {"theme": "neutral", "flowchart": {"curve": "basis", "nodeSpacing": 40, "rankSpacing": 50}}}%%
@@ -41,11 +41,9 @@ flowchart TD
     end
     subgraph OUT["三層系統之外<br/>核心三動作跳過"]
         NOTION["Notion · 私人筆記<br/>topics 87 篇・cards 13 篇"]:::off
-        FEEDS["feeds/ — 各 skill 自維護<br/>youtube·watch"]:::off
-        DOCS["docs/architecture/<br/>HTML 圖與讀本快照"]:::off
     end
     GP[git push<br/>agent 自主·事後 diff review]
-    WIKIN & RAWN & FEEDS --> GP
+    WIKIN & RAWN --> GP
 
     classDef full fill:#e6f4ea,stroke:#34a853,color:#111
     classDef wo fill:#fef7e0,stroke:#f9ab00,color:#111
@@ -58,9 +56,9 @@ flowchart TD
 - 🟦 **schema/（規範層）** — 定義 agent 怎麼維護這個 vault 的規則層。它**約束** agent、不是 agent 的產出物；agent 只在規則允許下維護其中的操作狀態（`MEMORY.md`、`BACKLOG.md`），治理文件（`AGENTS.md`、`SYSTEM-DESIGN.md`）由使用者定調。箭頭朝下＝schema 管 raw／wiki，不是反過來。
 - 🟨 **raw/（write-once）** — 事實來源，agent 可新增、落地後凍結不改。
 - 🟩 **wiki/（全權）** — 活知識庫，agent 自由建改刪，是唯一被 agent 完全掌管的層。
-- ⬜ **Notion・feeds・docs/architecture** — 三動作全部跳過：私人筆記在 Notion；feeds 由各 skill 自維護；docs/architecture 保存 HTML 快照。
+- ⬜ **Notion** — 私人筆記由使用者管理，不參與核心三動作。
 
-**沒有硬守門**——`git push` 亦由 agent 自主執行（2026-07-20 拍板移除原「push 前須明確同意」守門）。它會把 raw／wiki／feeds 一併推上遠端，該次 diff 由使用者事後在 GitHub 把關；force push 不在此授權內，仍需明確要求。wiki 日常維護同樣由 agent 自主；另有兩個流程級確認點：單次 ingest 預計觸及超過 15 頁，以及新增或修改 skill。
+**沒有硬守門**——`git push` 亦由 agent 自主執行（2026-07-20 拍板移除原「push 前須明確同意」守門）。它會把核心知識庫與規範的變更推上遠端，該次 diff 由使用者事後在 GitHub 把關；force push 不在此授權內，仍需明確要求。wiki 日常維護同樣由 agent 自主；另有兩個流程級確認點：單次 ingest 預計觸及超過 15 頁，以及新增或修改 skill。
 
 ## 安裝與使用
 
@@ -72,8 +70,6 @@ git clone https://github.com/lllloo/obsidian-memory.git
 
 - [Obsidian](https://obsidian.md/) — 編輯與圖譜瀏覽
 - Python 3 — skill 腳本執行所需；Windows 建議先設機器級 `PYTHONUTF8=1`，避免 cp950 編碼問題
-- `pip`（`vault-youtube-sync`）— 首次執行會自動安裝 `youtube-transcript-api`
-- [GitHub CLI](https://cli.github.com/)（`vault-watch`）— 建議先執行 `gh auth login`，可提高 API rate limit
 - [Obsidian CLI](https://help.obsidian.md/cli)（選用）— 本地開檔輔助，不影響任何流程
 
 在 Obsidian 直接「Open folder as vault」開啟本 repo 即可閱讀編輯。支援 [Agent Skills](https://agentskills.io) 的 AI 工具可載入 `.agents/skills/`；Claude Code 也可用 `/<skill>` 喚起。全部 skill 都在 repo 根目錄執行。**WSL 使用者請從 WSL 端執行維護型 skill**——從 Windows PowerShell 走 UNC 路徑（`\\wsl$\...`）呼叫 Windows Python 曾因 root `AGENTS.md` symlink 讀取失敗（該 symlink 已於 2026-09-21 移除，此特定成因不再存在），同一份掃描在 WSL 端正常完成；跨檔案系統呼叫仍建議留在 WSL 端執行，此類失敗易被誤判為 skill 壞掉。
@@ -92,15 +88,11 @@ git clone https://github.com/lllloo/obsidian-memory.git
 
 三層之外：
 
-- `feeds/` — 自動產物層，**不屬三層系統，只供使用者瀏覽，不進 raw 或 wiki**
-  - `youtube/` — 自動同步影片筆記
-  - `watch/` — GitHub issue／PR 追蹤看板與變更 digest
-- `docs/architecture/` — HTML 架構圖與讀本快照；搬離目的地待決定。
 - Notion「Obsidian 搬入筆記」— 本次新增 98 篇；共用資料庫，以 topics/cards 兩個子頁面分別瀏覽。原有兩篇留在「技術筆記」，入口與遷移對照見 `schema/vault-map.md`。
 - `index.md` — 真人讀者入口，連到核心知識庫、規範與外部私人筆記。
 - `.agents/skills/` — repo-local skills，遵循 [Agent Skills](https://agentskills.io) 開放標準（`.claude/skills` 為 symlink）
 
-長期方向是本 repo 只保留核心知識庫與運作規範。`feeds/`、`docs/architecture/` 本輪維持原處，等使用者決定目的地再搬離。原 topics/cards 曾是 [bugloop.com](https://bugloop.com) 的 Quartz 公開來源；本 repo 已移出公開筆記層，外部發佈專案另行管理。
+2026-10-13 已完成本地清理，本 repo 只保留核心知識庫、運作規範與必要設定。原自動產物、HTML 架構圖與三個對應 skill 已刪除；歷史資料見 [自動產物永久快照](https://github.com/lllloo/obsidian-memory/tree/4451380c31878fd7aaeeae2efcbb4a55bdb59a08/feeds)、[HTML 永久快照](https://github.com/lllloo/obsidian-memory/tree/4451380c31878fd7aaeeae2efcbb4a55bdb59a08/docs/architecture) 與 [skill 永久快照](https://github.com/lllloo/obsidian-memory/tree/4451380c31878fd7aaeeae2efcbb4a55bdb59a08/.agents/skills)。原 topics/cards 曾是 [bugloop.com](https://bugloop.com) 的 Quartz 公開來源；本 repo 已移出公開筆記層，外部發佈專案另行管理。
 
 ## 規則與工作流
 
@@ -110,14 +102,11 @@ git clone https://github.com/lllloo/obsidian-memory.git
 
 ## Skills
 
-`.agents/skills/` 內提供 vault 操作 skills，遵循 [Agent Skills](https://agentskills.io) 開放標準、可被支援該標準的其他 AI 工具載入；在 Claude Code 以 `/<skill>` 喚起：
+`.agents/skills/` 內只保留 `vault-lint`，遵循 [Agent Skills](https://agentskills.io) 開放標準、可被支援該標準的其他 AI 工具載入；在 Claude Code 以 `/<skill>` 喚起：
 
 | 指令 | 用途 |
 |---|---|
-| `/vault-youtube-sync` | 同步 YouTube 影片摘要至 `feeds/youtube/` |
 | `/vault-lint` | 健檢 raw／wiki／schema，機械項與語意項皆由 agent 自主修補；BACKLOG 的「待你決定」只收真正需要使用者決策的項目，「Agent 已判」與「已婉拒」保留去重約束；手動／排程共用同一流程，本身不碰 git |
-| `/vault-watch` | 追蹤 GitHub issue／PR，每輪更新看板；有狀態轉換、maintainer 回應或 label 變動時才寫 digest |
-| `/vault-page` | 把 wiki 某主題改寫成人類好讀的自包含 HTML 讀本，產出至 `docs/architecture/` |
 
 **使用契約**：全部 skill 的 cwd 必須是本 repo 根目錄，並以 `schema/vault-map.md` 為哨兵；所有 repo-local 路徑皆相對於 cwd。沒有從其他專案呼叫的入口。
 

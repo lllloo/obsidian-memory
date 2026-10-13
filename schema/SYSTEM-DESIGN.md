@@ -40,7 +40,7 @@ tags:
 
 本 vault 只吸收**跨專案通用**的知識——工具評測、方法論、AI 生態動態。**專案特定**的架構決策、bug 記錄、實作細節留在各自 repo 的 `CLAUDE.md`／`docs/`，不 ingest 進本 vault，避免 wiki 從「工具生態知識庫」稀釋成大雜燴。
 
-repo-local 維護型 skill（`vault-youtube-sync`、`vault-lint`、`vault-watch`）走 [CWD 契約](../AGENTS.md)：先進 vault root，再以 `schema/vault-map.md` 驗證位置。**跨專案查詢入口目前不存在**——曾有全域 `ask-vault`（headless 唯讀 Query），2026-08-14 因建成後實際未使用而移除，做法待重新構想；在那之前，別的專案要取本 vault 的知識就是使用者自行開 session 進來查。這條邊界仍是單向：別的專案能引用本 vault，本 vault 不會主動伸手進別的 repo，也不建立自動同步。
+repo-local 健檢 skill（`vault-lint`）走 [CWD 契約](../AGENTS.md)：先進 vault root，再以 `schema/vault-map.md` 驗證位置。**跨專案查詢入口目前不存在**——曾有全域 `ask-vault`（headless 唯讀 Query），2026-08-14 因建成後實際未使用而移除，做法待重新構想；在那之前，別的專案要取本 vault 的知識就是使用者自行開 session 進來查。這條邊界仍是單向：別的專案能引用本 vault，本 vault 不會主動伸手進別的 repo，也不建立自動同步。
 
 ## 架構：三層
 
@@ -50,22 +50,13 @@ repo-local 維護型 skill（`vault-youtube-sync`、`vault-lint`、`vault-watch`
 2. **`wiki/`（活知識庫）** — LLM 生成與維護的 markdown：摘要頁、實體頁、概念頁、比較頁、綜合頁。**LLM 完全掌管**——建頁、改頁、刪頁、交叉引用、維護 index，你只負責讀。
 3. **schema** — 規範文件與操作記憶（root 的 [`AGENTS.md`](../AGENTS.md) + `schema/` 下數檔；**各檔職責的權威清單在 [`vault-map.md`](vault-map.md) 治理表，此處不重列**），告訴 LLM wiki 怎麼組織、慣例是什麼、Ingest/Query/Lint 各走什麼流程。這是把 LLM 從通用聊天機器人變成**有紀律的 wiki 維護者**的關鍵設定，你與 LLM 隨時間共同演進它。
 
-### 本 vault 的自動產物層：feeds（不在原文三層裡）
+### 核心以外的產物已退場
 
-`feeds/` 集中只供使用者瀏覽的 skill 自動產物，不進 raw、wiki、Query 或 Lint：
-
-- `feeds/youtube/` 是使用者瀏覽的自動同步筆記；不進 raw 或 wiki。完整影片筆記凍結，draft／index／Base／checkpoint 由同步 skill 維護。
-- `feeds/watch/` 是 `vault-watch` 的 GitHub issue/PR 追蹤看板（`01.index.md`）與變更 digest；不進 raw 或 wiki，追蹤清單以看板為準。
-- lint 不產 feeds 產物——健檢的待處理清單是 `schema/BACKLOG.md`（agent 每輪讀回來約束自身行為的操作狀態，與 `MEMORY.md` 同層）。
-- `feeds/**` 不公開；原 Quartz 公開筆記來源已移出，發佈設定在本 repo 外。
-
-### 本 vault 的呈現層：docs/architecture（不在原文三層裡）
-
-原文沒有呈現層——slide deck、chart 只是 Query 答案的形式，好答案「filed back into the wiki」。本 vault 分歧：知識仍一律回存 wiki，但**使用者要看**的報告、讀本、架構圖（單檔 HTML）**按需**另落 `docs/architecture/` 作為 wiki 後置的快照層，不回頭同步；它是選配產物、不是每輪 ingest 的固定一站，多數 wiki 頁不會有對應 artifact。維護規則見 [`AGENTS.md`](../AGENTS.md)；生態各實作的產出層路線對照見 [[LLM-Wiki-生態實作比較]]。
+2026-10-13 使用者拍板完成本地清理：原自動產物層、HTML 架構圖與讀本及三個對應 skill 均已刪除，本 repo 只保留核心知識庫、運作規範與必要設定。歷史資料可回查 [自動產物快照](https://github.com/lllloo/obsidian-memory/tree/4451380c31878fd7aaeeae2efcbb4a55bdb59a08/feeds)、[HTML 快照](https://github.com/lllloo/obsidian-memory/tree/4451380c31878fd7aaeeae2efcbb4a55bdb59a08/docs/architecture) 與 [skill 快照](https://github.com/lllloo/obsidian-memory/tree/4451380c31878fd7aaeeae2efcbb4a55bdb59a08/.agents/skills)；歷史快照不參與現行維護。生態各實作的產出層路線對照仍見 [[LLM-Wiki-生態實作比較]]。
 
 ### 私人筆記已移出：Notion
 
-原 `cards/` 與 `topics/` 是三層系統之外的私人筆記與公開策展層。2026-10-13 使用者決定將 100 篇完整搬至 Notion，保留原文、分類、標籤與原始 Markdown 附件，逐篇核對後刪除本地原檔；新入口與遷移對照見 [`vault-map.md`](vault-map.md)。本 repo 保留核心知識庫與運作規範，`feeds/`、`docs/architecture/` 的搬離目的地另待決定。
+原 `cards/` 與 `topics/` 是三層系統之外的私人筆記與公開策展層。2026-10-13 使用者決定將 100 篇完整搬至 Notion，保留原文、分類、標籤與原始 Markdown 附件，逐篇核對後刪除本地原檔；新入口與遷移對照見 [`vault-map.md`](vault-map.md)。本 repo 保留核心知識庫、運作規範與必要設定。
 
 wiki 仍是 LLM 維護的活知識庫；私人操作筆記的閱讀與策展由使用者在 Notion 管理，不納入 vault 的 Ingest／Query／Lint。Notion 連結是供使用者回看的入口，agent 的日常維護與技術查詢不自動讀寫 Notion；只有使用者重新明確指定 Notion 任務才操作。原 Quartz 發佈設定位於另一個 repo，公開發佈另行管理。人的判斷價值仍在「這個我讀過、值得使用或分享」，不以 wiki 產出量衡量知識庫價值。
 
@@ -75,7 +66,7 @@ wiki 仍是 LLM 維護的活知識庫；私人操作筆記的閱讀與策展由�
 - **Query（查詢）** — 向 wiki 提問，LLM 先讀 index → 找相關頁 → 讀頁 → **附引用**綜合答案。答案形式依問題而定（markdown 頁、比較表、投影片、圖表、canvas）。關鍵洞見：**好答案可回存成新 wiki 頁**——你要的比較、分析、發現的關聯很有價值，不該消失在對話裡；這樣探索跟來源一樣複利累積。
 - **Lint（健檢）** — 定期檢查 raw／wiki／schema：機械層掃結構問題，語意層輪替審查近期變動頁的**矛盾與明確事實錯誤**（2026-07-22 拍板收緊：只抓「真的壞了」，交叉引用缺口／過時／措辭這類「能更好」的無底洞一律不報，避免每輪永遠改不完；互聯改在 ingest 新頁時建立）。可直接處理的發現由 agent 自主修補；只有真正需要使用者決策的項目才進 `schema/BACKLOG.md` 的「待你決定」，另以「Agent 已判」保留去重錨點。
 
-三動作的模型是本 vault 架構。概念上：Ingest 與 Query 由 agent 手動執行；自動蒐集（`vault-youtube-sync`）與健檢掃描（`vault-lint`）有專屬 skill。**各動作走哪個流程／skill、寫入哪個資料夾、lint 的自動修範圍與改制沿革，都是可執行細節，單一來源在 [`AGENTS.md`](../AGENTS.md)（三動作、Skills 表），此處不重列。**
+三動作的模型是本 vault 架構。概念上：Ingest 與 Query 由 agent 手動執行；健檢掃描由保留的 `vault-lint` skill 承載。**各動作走哪個流程／skill、寫入哪個資料夾、lint 的自動修範圍與改制沿革，都是可執行細節，單一來源在 [`AGENTS.md`](../AGENTS.md)（三動作、Skills 表），此處不重列。**
 
 ## Skill 升級訊號
 
@@ -104,7 +95,7 @@ wiki 長大後可能想要能更有效操作它的小工具，最明顯的是 **
 - **本地下載圖片**：把附件路徑設成固定資料夾（如 `raw/assets/`）、綁快捷鍵下載，讓 LLM 能直接看圖而非依賴會失效的 URL（LLM 無法一次讀含內嵌圖的 markdown，須先讀文字、再分開看圖）。**本 vault 以文字為主，尚未採用**；來源含關鍵視覺時再開 `raw/assets/`。
 - **圖譜視圖（graph view）**：看 wiki 形狀的最佳方式——什麼連什麼、哪些是樞紐、哪些是孤島。要讓筆記進圖譜，frontmatter 加 `parent: "[[01.index]]"`。
 - **Marp**：markdown 投影片格式，Obsidian 有 plugin，可從 wiki 內容直接生簡報。本 vault 目前未用。
-- **Dataview / Bases**：對 frontmatter 跑查詢生動態表。本 vault 用 Obsidian **Bases**（`.base`）取代 Dataview，如各索引頁的 `清單.base`／`02.影片清單.base`。
+- **Dataview / Bases**：對 frontmatter 跑查詢生動態表。本 vault 用 Obsidian **Bases**（`.base`）取代 Dataview，如 raw 索引頁的 `清單.base`。
 - **git repo**：wiki 就是一個 markdown 的 git repo——版本歷史、分支、協作免費得到。本 vault 即是。
 
 ## 為何有效
@@ -136,7 +127,7 @@ AI 承擔重複、瑣碎、容易被延後的維護工作，自主維護 wiki（
 - **不做無界的背景全庫語意掃描**：Ingest 收尾只檢當輪動到的頁；`vault-lint` 的機械層仍全掃規定範圍內可機械驗證的結構問題，語意層則依日期輪替審查近期變動頁的矛盾與明確事實錯誤，發現後由 agent 自主修補（交叉引用缺口、過時、措辭這類「能更好」的項不報，見上「三個動作」的 Lint 一節）。語意掃描以近期窗口與頁數上限控制成本，不隨 vault 規模無界成長。
 - **暫不寫 `log.md`**：見上「索引與日誌」，用 git log 代替。
 - **暫不上搜尋引擎（qmd 等）**：見上「選配」，現階段 Grep 夠用。
-- **暫不做圖片/assets 下載、Marp 簡報**：文字為主，需要時再開（按需的呈現層另見上方 docs/architecture 節）。
+- **暫不做圖片/assets 下載、Marp 簡報**：文字為主，需要時再開；原 HTML 呈現層已退場，歷史見上方永久快照。
 
 ## 細節在哪
 

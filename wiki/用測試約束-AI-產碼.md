@@ -2,7 +2,7 @@
 title: 用測試約束 AI 產碼
 description: AI 寫的測試為何驗證不到東西、判準的權威來源為何才是分類軸，以及 mutation、property-based 等手段的定位差異與防繞過分層
 created: 2026-08-06
-updated: 2026-10-07
+updated: 2026-10-13
 parent: "[[wiki/01.index]]"
 tags:
   - coding-agent
@@ -13,7 +13,7 @@ tags:
 
 「產碼太快就多寫測試」聽起來是常識，但**讓 AI 寫測試來約束 AI 寫的碼是循環論證**：模型會從「這段碼現在做了什麼」反推測試，而不是從「它應該做什麼」。要讓這條路線真的成立，得分開回答三個問題——**誰擁有 spec、測試本身可不可信、agent 能不能繞過**。本頁是 [[AI-產碼加速下的-review-瓶頸]] 四條路線中 B 的展開。
 
-> 人讀版是 `docs/architecture/` 的「AI 產碼的約束」三頁組，本頁對應第 2 頁 [`ai-constraints-2-testing.html`](../docs/architecture/ai-constraints-2-testing.html)（另兩頁由 [[AI-產碼加速下的-review-瓶頸]] 與 [[Uncle-Bob-的不讀碼約束閘門]] 承接）。該組是 2026-08-09 的快照，本頁維持完整密度與後續更新。
+> 人讀版為已退場的「AI 產碼的約束」三頁組，以下連結保留 Git 永久快照，本頁對應第 2 頁 [`ai-constraints-2-testing.html`](https://github.com/lllloo/obsidian-memory/blob/4451380c31878fd7aaeeae2efcbb4a55bdb59a08/docs/architecture/ai-constraints-2-testing.html)（另兩頁由 [[AI-產碼加速下的-review-瓶頸]] 與 [[Uncle-Bob-的不讀碼約束閘門]] 承接）。該組是 2026-08-09 的快照，本頁維持完整密度與後續更新。
 
 ## 一、AI 產測試的四種失效模式
 

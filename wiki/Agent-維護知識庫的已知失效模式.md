@@ -2,7 +2,7 @@
 title: Agent 維護知識庫的已知失效模式
 description: 長期由 agent 自主維護的 markdown 知識庫會怎麼壞：機制成立的三種退化、判定不適用的類比、無法驗證的盲點，逐條標證據強度
 created: 2026-07-21
-updated: 2026-10-07
+updated: 2026-10-13
 parent: "[[wiki/01.index]]"
 tags:
   - wiki
@@ -105,7 +105,7 @@ automation bias：人把自動化輸出當認知捷徑，產生 commission error
 
 **判讀**：批評有力度但**證據薄**——全串無人提出可驗證的量化證據，也無人做過對照。串中唯一收斂的建議是「draft freely, promote on approval」，但那是 Wuphf 這類**多 agent 團隊**場景的解法（多 agent 互相污染）；本 vault 是單使用者＋單 agent，capture 與 promote 之間沒有第三方，加 promotion gate 大概率只是把「事後看 diff」改名成「事前看 draft」，同時違反零守門設計。**故不因此串採用 promotion gate。**
 
-真正該吸收的是兩條不需守門即可處理、也不與設計衝突的：**寫太多**（johntash）與**物化索引漂移**（jermolene）。後者值得特別記——本 vault 的 `wiki/01.index.md` 正是手動維護的物化索引，而 Obsidian Bases（`.base`）就是 jermolene 所說的計算式視圖，vault 已在 `feeds/youtube/` 用了。23 頁尚不急，是為 100+ 頁預備的方向。
+真正該吸收的是兩條不需守門即可處理、也不與設計衝突的：**寫太多**（johntash）與**物化索引漂移**（jermolene）。後者值得特別記——本 vault 的 `wiki/01.index.md` 正是手動維護的物化索引，而 Obsidian Bases（`.base`）就是 jermolene 所說的計算式視圖，vault 曾在 [YouTube 自動產物](https://github.com/lllloo/obsidian-memory/tree/4451380c31878fd7aaeeae2efcbb4a55bdb59a08/feeds/youtube)使用（2026-10-13 已退場，連結為 Git 快照）。23 頁尚不急，是為 100+ 頁預備的方向。
 
 ## 不可引用的數字（附理由）
 

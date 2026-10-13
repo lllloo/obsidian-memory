@@ -2,7 +2,7 @@
 title: Agent Skill 腳本路徑的規範與實況
 description: SKILL.md 呼叫 bundled 腳本該怎麼寫路徑：規範明訂裸相對路徑、主流集合一致照做，但規範內部對誰負責解析自相矛盾，實測會找不到檔
 created: 2026-08-13
-updated: 2026-09-22
+updated: 2026-10-13
 parent: "[[wiki/01.index]]"
 tags:
   - claude-code
@@ -110,11 +110,13 @@ Agent Skills 規範（agentskills.io）`skill-creation/using-scripts` L98 逐字
 
 ## 本 vault 的拍板（2026-08-13）
 
-**採純 (a)**：全域 `~/.claude/rules/skill-writing.md` 改為「一律寫相對於 skill 目錄根的裸相對路徑，不用工具專屬替換變數」，`vault-lint`／`vault-watch`／`vault-youtube-sync` 共 11 處呼叫同步改寫（commit `b095ff1`）。取捨是接受首次 not-found 的風險，換取跨工具寫法統一——本 vault 的 skill 實體在 `.agents/skills/`，需被 Codex／OpenCode 讀到，`${CLAUDE_SKILL_DIR}` 與此目標直接衝突。
+**採純 (a)**：全域 `~/.claude/rules/skill-writing.md` 改為「一律寫相對於 skill 目錄根的裸相對路徑，不用工具專屬替換變數」，`vault-lint`／`vault-watch`／`vault-youtube-sync` 共 11 處呼叫同步改寫（[commit `b095ff1`](https://github.com/lllloo/obsidian-memory/commit/b095ff11319e82c89e2a3606bfd5a8d00c12e735)）。取捨是接受首次 not-found 的風險，換取跨工具寫法統一——本 vault 的 skill 實體在 `.agents/skills/`，需被 Codex／OpenCode 讀到，`${CLAUDE_SKILL_DIR}` 與此目標直接衝突。
 
 **`ask-vault` 曾為明列例外**：它由其他專案呼叫，cwd 既不在 vault root 也不在 skill 安裝根，裸相對路徑**結構上無基準可解析**，故維持佔位符寫法——(e) 在本 vault 的唯一適用情境，與 `MengTo/Skills` 的選擇同因。**該 skill 已於 2026-08-14 移除**（見 [[跨專案第二大腦整合模式]]），本 vault 現存 skill 全數為純 (a)，無例外。判斷本身不撤銷：這裡記的是「從別的 cwd 呼叫」這個結構條件會逼出 (e)，日後重做跨專案入口時會再次適用。
 
 同輪連帶修正 `vault-youtube-sync` 兩處路徑契約敘述：原寫「所有路徑為 repo root 相對」，機械替換後會自相矛盾，各標出 `scripts/` 相對 skill 目錄根的例外。
+
+**2026-10-13 現況**：`vault-watch`、`vault-youtube-sync` 與 `vault-page` 已退場，以上描述保留為歷史決策；[刪除前 skill 永久快照](https://github.com/lllloo/obsidian-memory/tree/4451380c31878fd7aaeeae2efcbb4a55bdb59a08/.agents/skills)可回查當時實作。現存 `vault-lint` 的腳本呼叫路徑維持原狀。
 
 ## 證據強度與勿引用
 

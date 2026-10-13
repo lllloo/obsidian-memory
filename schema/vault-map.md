@@ -23,7 +23,7 @@ tags:
 
 ## 資料夾索引
 
-> 路徑以 repo root 為基準（即 vault root）。agent 維護 `raw/` + `wiki/`，指定 skills 維護 `feeds/`；私人筆記已搬到 Notion，入口見下方「外部私人筆記」。
+> 路徑以 repo root 為基準（即 vault root）。agent 維護 `raw/` + `wiki/`；私人筆記已搬到 Notion，入口見下方「外部私人筆記」。
 
 ```
 .
@@ -31,23 +31,26 @@ tags:
 ├── raw/         — 原始來源，write-once。agent 可新增、不可修改，事實來源
 │   ├── clippings/ — 使用者以 Web Clipper 或手動放入的來源（01.index.md + 清單.base 索引；agent 不主動消化，使用者明指才處理）
 │   └── fetched/   — agent 依使用者提供 URL 擷取的來源（01.index.md + 清單.base 索引；落地後直接 ingest）
-├── wiki/          — 活知識庫：agent 綜合 raw 維護的摘要/實體/概念/綜合頁（01.index.md 為內容目錄，每次 ingest 更新）
-├── feeds/         — 【自動產物層，不屬三層系統】只供使用者瀏覽，不進 raw／wiki／ingest／query／lint
-│   ├── youtube/   — YouTube 自動同步筆記；各頻道含 01.index.md + 02.影片清單.base，只供使用者瀏覽
-│   └── watch/     — GitHub issue/PR 追蹤看板與變更 digest（vault-watch 產出，01.index.md 為追蹤清單）
-└── docs/          — 【呈現層，不屬三層系統】
-    └── architecture/ — 有長期回看價值的非 markdown 產出（單檔 HTML 圖／報告，01.index.html 為入口），納版控；agent 可自主建立更新，不進 ingest／query／lint，不對外發佈
+└── wiki/          — 活知識庫：agent 綜合 raw 維護的摘要/實體/概念/綜合頁（01.index.md 為內容目錄，每次 ingest 更新）
 ```
 
 ## 外部私人筆記
 
 [Obsidian 搬入筆記](https://app.notion.com/p/3f888d8b63ed818aac70e7035b8ed7c5) 是原 topics/cards 的新家。2026-10-13 完成遷移：topics 87 篇、cards 13 篇，共 100 篇；新增 98 篇使用共用資料庫，topics/cards 子頁面目前分別顯示 86／12 篇。原有 tmux、git archive 兩篇依使用者要求移回 [技術筆記](https://app.notion.com/p/0b16cf656c334d859fa477a953078bda)，維持原頁與 URL；保留原文、標籤與原始 Markdown 附件，入口另附原始路徑與 Notion URL 的遷移對照表。逐篇回讀與附件比對後，本地原檔已刪除。
 
-Notion 私人筆記不參與本 vault 的 Ingest／Query／Lint，不重新建立本地 topics/cards。上述連結僅供使用者回看，agent 不預設讀寫 Notion；只有使用者重新明確指定 Notion 任務才操作。`feeds/` 與 `docs/architecture/` 的搬離目的地仍待決定，目前維持原處。
+Notion 私人筆記不參與本 vault 的 Ingest／Query／Lint，不重新建立本地 topics/cards。上述連結僅供使用者回看，agent 不預設讀寫 Notion；只有使用者重新明確指定 Notion 任務才操作。
+
+## 已移除資料的歷史快照
+
+2026-10-13 本地清理已完成；以下固定於刪除前 commit，不是現行維護入口。
+
+- [自動產物](https://github.com/lllloo/obsidian-memory/tree/4451380c31878fd7aaeeae2efcbb4a55bdb59a08/feeds) — 原 YouTube 筆記、GitHub 追蹤看板與 digest。
+- [HTML 架構圖與讀本](https://github.com/lllloo/obsidian-memory/tree/4451380c31878fd7aaeeae2efcbb4a55bdb59a08/docs/architecture) — 原呈現層快照。
+- [Repo-local skill](https://github.com/lllloo/obsidian-memory/tree/4451380c31878fd7aaeeae2efcbb4a55bdb59a08/.agents/skills) — 退場三個 skill 的實作；現行只保留 `vault-lint`。
 
 ## Tag 查詢指南
 
-> agent 查詢範圍只限 `raw/` + `wiki/`；`feeds/` 與 Notion 私人筆記不在 vault Query 範圍內。
+> agent 查詢範圍只限 `raw/` + `wiki/`；Notion 私人筆記不在 vault Query 範圍內。
 
 | 主題 | Tags | 位置 |
 |------|------|------|
