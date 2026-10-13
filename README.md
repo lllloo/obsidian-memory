@@ -16,7 +16,8 @@ flowchart TD
         direction TB
         W[寫/更新 wiki 頁] --> IDX[更新 01.index<br/>最近更新滾 5 筆] --> XREF[補交叉引用] --> LT[收尾輕量 lint]
     end
-    FE & CL --> W
+    FE --> W
+    CL -->|使用者明確指示才 ingest| W
     LT --> WIKI[("wiki/ · 活知識庫<br/>三動作的樞紐")]:::hub
     WIKI --> RD["② Query<br/>讀 01.index → 讀頁"]
     RD --> ANS[附引用綜合答案]

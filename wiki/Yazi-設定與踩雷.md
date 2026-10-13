@@ -2,7 +2,7 @@
 title: Yazi 設定與踩雷
 description: 在終端多工器 pane 裡補上檔案與 diff 檢視的三條路線，含 snap 安裝的 PATH 陷阱、圖示與隱藏檔設定、WSL2 三條邊界與 pane 卡頓
 created: 2026-09-21
-updated: 2026-10-07
+updated: 2026-10-13
 source: https://yazi-rs.github.io/docs/
 parent: "[[wiki/01.index]]"
 tags:
@@ -81,7 +81,7 @@ run  = 'shell -- ya emit cd "$(git rev-parse --show-toplevel)"'
 
 1. **`for = "windows"` 在 WSL2 永遠不會命中**。`[opener]` 的平台判定是編譯期 `cfg!`（`platform.rs`：`Self::Windows => cfg!(windows)`），WSL2 跑的是 Linux build（`Triple: x86_64-unknown-linux-gnu`），原始碼無任何 WSL 特例分支。想用 Windows 程式開檔，必須在 unix/linux 分支自己填 `explorer.exe`／`wslview`。
 2. **Windows 缺 `file(1)` 那組坑不適用**。官方安裝文件要求 Windows 使用者裝 Git for Windows 並設 `YAZI_FILE_ONE`，[issue #3455](https://github.com/sxyazi/yazi/issues/3455) 的 debug 明載 `WSL: false`、`Triple: x86_64-pc-windows-msvc`，是原生 Windows。Ubuntu 預設已有 `file`，WSL2 不需設。
-3. **複製檔案到 Windows 剪貼簿：沒有內建，官方也沒給 WSL 寫法**。`yank` 只進 yazi 內部 buffer、`copy` 只複製路徑文字；官方 Tips 唯一談剪貼簿的一節標題字面就是「Linux: ...」，只給 xclip／wl-copy 的 `text/uri-list` 寫法。**本機實測**：`wl-copy` 在 WSLg 下能跑、能送字串，但 Windows 端 `Get-Clipboard -Format FileDropList` 回空、`-Format Text` 才拿到——沒有 CF_HDROP，貼到檔案總管貼不出檔案。旁證 [microsoft/wslg#467](https://github.com/microsoft/wslg/issues/467) 顯示 WSLg 剪貼簿橋接只做文字類格式。可行方向是改呼叫 PowerShell `Set-Clipboard -Path`，**未實測**。這與 [[WSL-剪貼簿貼圖到-Claude-Code]] 是同一條 WSLg 剪貼簿限制在不同方向上的表現（該頁是 Windows→WSL 的圖片，本頁是 WSL→Windows 的檔案）。
+3. **複製檔案到 Windows 剪貼簿：沒有內建，官方也沒給 WSL 寫法**。`yank` 只進 yazi 內部 buffer、`copy` 只複製路徑文字；官方 Tips 唯一談剪貼簿的一節標題字面就是「Linux: ...」，只給 xclip／wl-copy 的 `text/uri-list` 寫法。**本機實測**：`wl-copy` 在 WSLg 下能跑、能送字串，但 Windows 端 `Get-Clipboard -Format FileDropList` 回空、`-Format Text` 才拿到——沒有 CF_HDROP，貼到檔案總管貼不出檔案。**已被取代（2026-10-13）**：原「WSLg 剪貼簿橋接只做文字類格式」的概括不成立；[[WSL-剪貼簿貼圖到-Claude-Code]] 已記錄 Windows→WSL 的 `image/bmp` 傳輸實測。本節實測只能支持該環境下 `text/uri-list` 未轉成 Windows 的 CF_HDROP；[microsoft/wslg#467](https://github.com/microsoft/wslg/issues/467) 則是相反方向的檔案複製失敗回報（單一使用者、非官方確認），不能據此排除圖片支援。可行方向是改呼叫 PowerShell `Set-Clipboard -Path`，**未實測**。兩頁分別處理圖片格式解碼與檔案剪貼簿格式橋接的限制。
 
 ## 六、第一手心得（單一回報者，經 HN Algolia API 核對原句）
 
@@ -116,4 +116,4 @@ run  = 'shell -- ya emit cd "$(git rev-parse --show-toplevel)"'
 - 鍵位對照：[[Herdr-按鍵設定]]——要在 Herdr 綁一鍵開 yazi pane 的話設定寫在那裡，兩層鍵位可能互搶。
 - 上游選型：[[平行跑多個-coding-agent-的工具選型]]——本頁是該頁「終端層」方案在檔案檢視面的補件；該頁把 Orca 與 Herdr／Multica 並列為總表外的既有方案，詳見 [[Orca]]。
 - zsh 啟動檔規則：[[Node-版本管理-Volta-停止維護與-mise-遷移]]——第二節的 snap PATH 陷阱與該頁「非互動 shell 的 mise shims 要放 `.zshenv`」是同一套 zsh 讀檔範圍的兩個面。
-- 同源限制：[[WSL-剪貼簿貼圖到-Claude-Code]]——WSLg 剪貼簿橋接只做文字類格式，該頁是 Windows→WSL 方向，本頁第五節是 WSL→Windows 方向。
+- 格式限制對照：[[WSL-剪貼簿貼圖到-Claude-Code]]——**已被取代（2026-10-13）**：原「WSLg 剪貼簿橋接只做文字類格式」說法見第五節更正。該頁是 Windows→WSL 的 BMP 解碼問題，本頁第五節是 WSL→Windows 的檔案格式橋接問題。
