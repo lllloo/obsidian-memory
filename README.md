@@ -1,10 +1,10 @@
 # Obsidian Memory Vault
 
-個人 Obsidian vault，採 Karpathy [LLM Wiki](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f) 工作流：agent 讀不可變的 `raw/` 原料，漸進維護一套互聯的 `wiki/` 活知識庫。`cards/`、`topics/` 是使用者私人策展區，也是對外公開的層。公開版本在 [bugloop.com](https://bugloop.com)。
+個人 Obsidian vault，採 Karpathy [LLM Wiki](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f) 工作流：agent 讀不可變的 `raw/` 原料，漸進維護一套互聯的 `wiki/` 活知識庫。原 topics/cards 共 100 篇私人筆記已於 2026-10-13 搬至 [Notion「Obsidian 搬入筆記」](https://app.notion.com/p/3f888d8b63ed818aac70e7035b8ed7c5)，保留原文與原始 Markdown，核對後刪除本地原檔。核心知識庫與運作規範仍留在本 repo。
 
 ## 系統概覽
 
-vault 的維護就是三個動作（Ingest／Query／Lint），只在 `raw/`＋`wiki/` 上進行，不碰 `cards/topics/feeds`。`schema/` 不屬 raw／wiki 內容層；Lint 會額外掃描它並維護 `schema/BACKLOG.md`。可直接處理的 findings 由 agent 當場修補，只有真正需要使用者決策的項目才進「待你決定」；「Agent 已判」與「已婉拒」則保留為去重約束。
+vault 的維護就是三個動作（Ingest／Query／Lint），只在 `raw/`＋`wiki/` 上進行，不涵蓋 Notion 私人筆記或 `feeds/`。`schema/` 不屬 raw／wiki 內容層；Lint 會額外掃描它並維護 `schema/BACKLOG.md`。可直接處理的 findings 由 agent 當場修補，只有真正需要使用者決策的項目才進「待你決定」；「Agent 已判」與「已婉拒」則保留為去重約束。
 
 ```mermaid
 %%{init: {"theme": "neutral", "flowchart": {"curve": "basis", "nodeSpacing": 40, "rankSpacing": 50}}}%%
@@ -33,19 +33,17 @@ flowchart TD
 %%{init: {"theme": "neutral", "flowchart": {"curve": "basis", "nodeSpacing": 45, "rankSpacing": 60}}}%%
 flowchart TD
     subgraph SYS["三層系統 · 各層 agent 權限不同"]
-        SCHN["schema/ · 規範層 — 依規則維護<br/>CLAUDE·SYSTEM-DESIGN·MEMORY·BACKLOG"]:::rule
+        SCHN["schema/ · 規範層 — 依規則維護<br/>AGENTS·SYSTEM-DESIGN·MEMORY·BACKLOG"]:::rule
         RAWN["raw/ — 可新增·不可改<br/>（write-once 事實來源）"]:::wo
         WIKIN["wiki/ — 全權建改刪<br/>（活知識庫）"]:::full
         SCHN -.->|約束 agent 行為| RAWN & WIKIN
         RAWN -->|ingest| WIKIN
     end
     subgraph OUT["三層系統之外<br/>核心三動作跳過"]
-        CARDS["cards/"]:::off
-        TOPICS["topics/<br/>（回答時可唯讀查）"]:::off
-        FEEDS["feeds/ — 各 skill 自維護<br/>youtube·updates·watch"]:::off
+        NOTION["Notion · 私人筆記<br/>topics 87 篇・cards 13 篇"]:::off
+        FEEDS["feeds/ — 各 skill 自維護<br/>youtube·watch"]:::off
+        DOCS["docs/architecture/<br/>HTML 圖與讀本快照"]:::off
     end
-    WIKIN -->|使用者手動撿選複製| CARDS & TOPICS
-    CARDS & TOPICS ==>|唯一對外| QZ([Quartz 發佈 · bugloop.com])
     GP[git push<br/>agent 自主·事後 diff review]
     WIKIN & RAWN & FEEDS --> GP
 
@@ -60,7 +58,7 @@ flowchart TD
 - 🟦 **schema/（規範層）** — 定義 agent 怎麼維護這個 vault 的規則層。它**約束** agent、不是 agent 的產出物；agent 只在規則允許下維護其中的操作狀態（`MEMORY.md`、`BACKLOG.md`），治理文件（`AGENTS.md`、`SYSTEM-DESIGN.md`）由使用者定調。箭頭朝下＝schema 管 raw／wiki，不是反過來。
 - 🟨 **raw/（write-once）** — 事實來源，agent 可新增、落地後凍結不改。
 - 🟩 **wiki/（全權）** — 活知識庫，agent 自由建改刪，是唯一被 agent 完全掌管的層。
-- ⬜ **cards・topics・feeds** — 三動作全部跳過：cards／topics 是使用者私人策展＋唯一對外發佈層（agent 只在回答時可唯讀查 topics），feeds 由各 skill 自維護。
+- ⬜ **Notion・feeds・docs/architecture** — 三動作全部跳過：私人筆記在 Notion；feeds 由各 skill 自維護；docs/architecture 保存 HTML 快照。
 
 **沒有硬守門**——`git push` 亦由 agent 自主執行（2026-07-20 拍板移除原「push 前須明確同意」守門）。它會把 raw／wiki／feeds 一併推上遠端，該次 diff 由使用者事後在 GitHub 把關；force push 不在此授權內，仍需明確要求。wiki 日常維護同樣由 agent 自主；另有兩個流程級確認點：單次 ingest 預計觸及超過 15 頁，以及新增或修改 skill。
 
@@ -97,9 +95,12 @@ git clone https://github.com/lllloo/obsidian-memory.git
 - `feeds/` — 自動產物層，**不屬三層系統，只供使用者瀏覽，不進 raw 或 wiki**
   - `youtube/` — 自動同步影片筆記
   - `watch/` — GitHub issue／PR 追蹤看板與變更 digest
-- `cards/`、`topics/` — **使用者私人策展區，agent 不管理**；同時是 Quartz 唯一對外公開的層。使用者自行從 wiki 撿選內容放入（Quartz 發佈設定與流程不在本 repo）
-- `index.md` — 真人讀者入口（Quartz 網站首頁，列主題與 tag 連結）
+- `docs/architecture/` — HTML 架構圖與讀本快照；搬離目的地待決定。
+- Notion「Obsidian 搬入筆記」— 原 topics/cards 的新家；共用資料庫，以兩個子頁面分別瀏覽，入口與遷移對照見 `schema/vault-map.md`。
+- `index.md` — 真人讀者入口，連到核心知識庫、規範與外部私人筆記。
 - `.agents/skills/` — repo-local skills，遵循 [Agent Skills](https://agentskills.io) 開放標準（`.claude/skills` 為 symlink）
+
+長期方向是本 repo 只保留核心知識庫與運作規範。`feeds/`、`docs/architecture/` 本輪維持原處，等使用者決定目的地再搬離。原 topics/cards 是 [bugloop.com](https://bugloop.com) 的 Quartz 公開來源；外部發佈 repo 本輪未修改，後續發佈來源需在該專案另行處理。
 
 ## 規則與工作流
 
@@ -126,5 +127,5 @@ git clone https://github.com/lllloo/obsidian-memory.git
 
 | 檔案 | 給誰看 | 內容 |
 |---|---|---|
-| `index.md` | 真人讀者（Quartz 訪客） | bugloop.com 首頁，挑感興趣的主題逛 |
+| `index.md` | 真人讀者 | 核心知識庫與 Notion 私人筆記入口 |
 | `schema/vault-map.md` | AI / agent | Vault 結構地圖、tag 索引、查詢用地形圖 |

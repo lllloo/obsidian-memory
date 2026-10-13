@@ -1,23 +1,15 @@
 ---
-title: 記憶拼圖
+title: 核心知識庫入口
 created: 2026-03-29
-updated: 2026-06-26
+updated: 2026-10-13
+tags:
+  - index
 ---
 
-開發路上的筆記與發現，挑有興趣的看就好。
+本 repo 的閱讀入口；私人操作筆記已移至 Notion。
 
-## 主題
-
-- **[[topics/Claude-Code/index|Claude Code]]** — Claude Code 工具、設定與技巧
-- **[[topics/AI-Agent-工作流/index|AI Agent 工作流]]** — harness 設計、多 agent 協作、主流 agent framework 取徑
-- **[[topics/Obsidian/index|Obsidian]]** — 用 Obsidian 搭配 Claude Code 打造個人知識庫
-- **[[topics/UI設計/index|UI 設計]]** — 設計工具、DESIGN.md 系統、視覺靈感
-- **[[topics/前端技術/index|前端技術]]** — CSS、動效、切版原則、常見 bug
-- **[[topics/環境與部署/index|部署]]** — 上版流程、Quartz 發佈、CI/CD 踩坑
-
-## 依標籤探索
-
-- [#obsidian](/tags/obsidian) — Obsidian 相關筆記
-- [#claude-code](/tags/claude-code) — Claude Code 使用心得
-- [#切版](/tags/切版) — CSS 切版筆記
-- [#bug](/tags/bug) — 踩過的坑與解法
+- [知識目錄](wiki/01.index.md) — 活知識庫的主題與最近更新。
+- [運作模式](schema/SYSTEM-DESIGN.md) — Karpathy LLM Wiki 的心智模型。
+- [Vault Map](schema/vault-map.md) — 資料夾、規範職責與外部 Notion 入口。
+- [維護規則](AGENTS.md) — Ingest／Query／Lint 與寫入邊界。
+- [Obsidian 搬入筆記](https://app.notion.com/p/3f888d8b63ed818aac70e7035b8ed7c5) — 原 topics/cards 共 100 篇完整筆記。

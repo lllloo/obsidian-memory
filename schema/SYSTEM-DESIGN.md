@@ -1,7 +1,7 @@
 ---
 title: Vault 運作模式
 created: 2026-05-25
-updated: 2026-09-21
+updated: 2026-10-13
 tags:
   - vault
   - meta
@@ -12,7 +12,7 @@ tags:
 > 這份文件給人看，用來建立整體心智模型，逐節對齊 Karpathy 的 [LLM Wiki](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f)。
 > 可執行規則不放這裡：agent 維護規則、Ingest/Query/Lint、寫入慣例看 [`AGENTS.md`](../AGENTS.md)；導航與 tag 查詢看 [`vault-map.md`](vault-map.md)。
 
-一句話：**wiki 是腦的延伸，LLM 幫你維護；cards/topics 是你自己的抽屜。**
+一句話：**wiki 是腦的延伸，LLM 幫你維護；私人筆記另放 Notion。**
 
 ## 核心構想
 
@@ -57,20 +57,17 @@ repo-local 維護型 skill（`vault-youtube-sync`、`vault-lint`、`vault-watch`
 - `feeds/youtube/` 是使用者瀏覽的自動同步筆記；不進 raw 或 wiki。完整影片筆記凍結，draft／index／Base／checkpoint 由同步 skill 維護。
 - `feeds/watch/` 是 `vault-watch` 的 GitHub issue/PR 追蹤看板（`01.index.md`）與變更 digest；不進 raw 或 wiki，追蹤清單以看板為準。
 - lint 不產 feeds 產物——健檢的待處理清單是 `schema/BACKLOG.md`（agent 每輪讀回來約束自身行為的操作狀態，與 `MEMORY.md` 同層）。
-- Quartz 只應發佈 cards/topics，`feeds/**` 不公開；發佈設定在本 repo 外。
+- `feeds/**` 不公開；原 Quartz 公開筆記來源已移出，發佈設定在本 repo 外。
 
 ### 本 vault 的呈現層：docs/architecture（不在原文三層裡）
 
 原文沒有呈現層——slide deck、chart 只是 Query 答案的形式，好答案「filed back into the wiki」。本 vault 分歧：知識仍一律回存 wiki，但**使用者要看**的報告、讀本、架構圖（單檔 HTML）**按需**另落 `docs/architecture/` 作為 wiki 後置的快照層，不回頭同步；它是選配產物、不是每輪 ingest 的固定一站，多數 wiki 頁不會有對應 artifact。維護規則見 [`AGENTS.md`](../AGENTS.md)；生態各實作的產出層路線對照見 [[LLM-Wiki-生態實作比較]]。
 
-### 本 vault 的額外層：cards/topics（不在原文三層裡，系統不管）
+### 私人筆記已移出：Notion
 
-`cards/` 與 `topics/` 是本 vault 疊在三層之上的擴充，**不屬於 Karpathy 模型**：
+原 `cards/` 與 `topics/` 是三層系統之外的私人筆記與公開策展層。2026-10-13 使用者決定將 100 篇完整搬至 Notion，保留原文、分類、標籤與原始 Markdown 附件，逐篇核對後刪除本地原檔；新入口與遷移對照見 [`vault-map.md`](vault-map.md)。本 repo 保留核心知識庫與運作規範，`feeds/`、`docs/architecture/` 的搬離目的地另待決定。
 
-- **你的私人抽屜**：你愛放什麼放什麼，agent 完全不讀、不寫、不掃、不維護、不索引。
-- **唯一對外公開層**：Quartz 只發佈 cards/topics。你從 wiki 讀到覺得不錯的內容，**手動**撿選、複製進去對外發表。
-
-wiki 是 LLM 幫你養的活知識庫（私有、只給你讀）；cards/topics 是你親手策展、決定對世界公開的成品。這也回應 Karpathy 的反指標「**結構化垃圾場**」：AI 生一堆沒人讀、不拿來決策的精美 wiki 就只是垃圾。守門不攔在 wiki 生成前（那會拖垮維護成本），而攔在「你決定公開什麼」——用「撿進 cards/topics」這個人為動作表達「這個我讀過、值得對外」。
+wiki 仍是 LLM 維護的活知識庫；私人操作筆記的閱讀與策展由使用者在 Notion 管理，不納入 vault 的 Ingest／Query／Lint。原 Quartz 發佈設定位於另一個 repo，本次不調整外部發佈專案。人的判斷價值仍在「這個我讀過、值得使用或分享」，不以 wiki 產出量衡量知識庫價值。
 
 ## 三個動作（Operations）
 
@@ -122,7 +119,7 @@ wiki 長大後可能想要能更有效操作它的小工具，最明顯的是 **
 
 ## 人 / AI 分工
 
-- **你**：蒐集來源、提出問題、判斷價值、從 wiki 撿選公開進 cards/topics、事後 review GitHub diff。
+- **你**：蒐集來源、提出問題、判斷價值、在 Notion 管理私人筆記與策展、事後 review GitHub diff。
 - **AI**：讀、摘要、整理、交叉引用、歸檔、維護 wiki 一致性、結構健檢、commit 與 push。
 
 AI 承擔重複、瑣碎、容易被延後的維護工作，自主維護 wiki（含刪頁、push）不需逐步拍板——這正是「維護成本趨近於零」的重點。原「`git push` 前要你同意」守門已於 2026-07-20 移除（見 [`AGENTS.md`](../AGENTS.md)），改由事後 diff review 把關；另有一個流程級確認點——單次 ingest 觸及超過 15 頁先列清單問過（2026-07-10 借鏡 Hermes，防單來源大面積改動失控；門檻訂在典型 10–15 頁之上，只攔異常大改），那是確認節奏、不是守門。
@@ -135,7 +132,7 @@ AI 承擔重複、瑣碎、容易被延後的維護工作，自主維護 wiki（
 
 這些不是缺功能，而是設計選擇（原文皆為「optional / 建議」，本 vault 按需取捨）：
 
-- **不管 cards/topics**：使用者私人抽屜兼唯一公開層，策展與公開完全交給人；agent 的 Ingest/Query/Lint 一律跳過。
+- **不將 Notion 私人筆記納入 vault 維護**：原 cards/topics 已移出，策展由使用者管理；vault 的 Ingest／Query／Lint 仍只處理核心範圍。
 - **不做無界的背景全庫語意掃描**：Ingest 收尾只檢當輪動到的頁；`vault-lint` 的機械層仍全掃規定範圍內可機械驗證的結構問題，語意層則依日期輪替審查近期變動頁的矛盾與明確事實錯誤，發現後由 agent 自主修補（交叉引用缺口、過時、措辭這類「能更好」的項不報，見上「三個動作」的 Lint 一節）。語意掃描以近期窗口與頁數上限控制成本，不隨 vault 規模無界成長。
 - **暫不寫 `log.md`**：見上「索引與日誌」，用 git log 代替。
 - **暫不上搜尋引擎（qmd 等）**：見上「選配」，現階段 Grep 夠用。
