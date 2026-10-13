@@ -4,7 +4,7 @@
 
 ## 系統概覽
 
-vault 的維護就是三個動作（Ingest／Query／Lint），只在 `raw/`＋`wiki/` 上進行，不涵蓋 Notion 私人筆記或 `feeds/`。`schema/` 不屬 raw／wiki 內容層；Lint 會額外掃描它並維護 `schema/BACKLOG.md`。可直接處理的 findings 由 agent 當場修補，只有真正需要使用者決策的項目才進「待你決定」；「Agent 已判」與「已婉拒」則保留為去重約束。
+vault 的維護就是三個動作（Ingest／Query／Lint），只在 `raw/`＋`wiki/` 上進行，不涵蓋 Notion 私人筆記或 `feeds/`。Notion 連結僅供使用者回看；agent 不預設讀寫 Notion，只有使用者重新明確指定 Notion 任務時才操作。`schema/` 不屬 raw／wiki 內容層；Lint 會額外掃描它並維護 `schema/BACKLOG.md`。可直接處理的 findings 由 agent 當場修補，只有真正需要使用者決策的項目才進「待你決定」；「Agent 已判」與「已婉拒」則保留為去重約束。
 
 ```mermaid
 %%{init: {"theme": "neutral", "flowchart": {"curve": "basis", "nodeSpacing": 40, "rankSpacing": 50}}}%%
@@ -100,7 +100,7 @@ git clone https://github.com/lllloo/obsidian-memory.git
 - `index.md` — 真人讀者入口，連到核心知識庫、規範與外部私人筆記。
 - `.agents/skills/` — repo-local skills，遵循 [Agent Skills](https://agentskills.io) 開放標準（`.claude/skills` 為 symlink）
 
-長期方向是本 repo 只保留核心知識庫與運作規範。`feeds/`、`docs/architecture/` 本輪維持原處，等使用者決定目的地再搬離。原 topics/cards 是 [bugloop.com](https://bugloop.com) 的 Quartz 公開來源；外部發佈 repo 本輪未修改，後續發佈來源需在該專案另行處理。
+長期方向是本 repo 只保留核心知識庫與運作規範。`feeds/`、`docs/architecture/` 本輪維持原處，等使用者決定目的地再搬離。原 topics/cards 曾是 [bugloop.com](https://bugloop.com) 的 Quartz 公開來源；本 repo 已移出公開筆記層，外部發佈專案另行管理。
 
 ## 規則與工作流
 

@@ -127,8 +127,8 @@ Vault 會推上 GitHub 遠端 repo（`feeds/` 不屬公開層，但仍進 repo �
     - youtube
   ---
   ```
-- description 撰寫：給 Obsidian Bases table、Quartz SEO、AI 查詢用；情況 A（有 transcript）依內容寫；情況 B（無 transcript）描述頁面 description 已知內容，不推測補充。
-- 不使用 `#` 標題 heading（Quartz 從 frontmatter 自動產生）。
+- description 撰寫：給 Obsidian Bases 與 AI 查詢用；情況 A（有 transcript）依內容寫；情況 B（無 transcript）描述頁面 description 已知內容，不推測補充。
+- 正文不使用 `#` 一級標題；筆記標題保留在 frontmatter `title`，章節使用 `##` 分段。
 
 ## 內容品質標準
 

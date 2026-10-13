@@ -12,7 +12,6 @@ description: 將 YouTube 頻道影片批次轉成 Obsidian 筆記，支援指定
 ## 資料夾規則
 
 - 筆記存放：`feeds/youtube/<頻道名>/`（例：`feeds/youtube/Chase-H-AI/`）
-- `feeds/` 不屬公開層；Quartz 設定在本 repo 外，發佈端必須維持只發佈 cards/topics 或明確排除 `feeds/**`
 - 每個頻道資料夾下建立 `01.index.md` 與 `02.影片清單.base` 作為索引（數字前綴確保固定排第一）
 - 影片筆記的 frontmatter 需加 `parent: "[[01.index]]"`，讓 Obsidian 圖譜能從影片連回頻道 index（`.base` 檔案不產生圖譜連結，只有 property link 有效）
 - 完整影片筆記寫入後凍結；`draft: true` 占位可在重試成功時覆寫，頻道 index、Base 與 checkpoint 可由本 skill 維護

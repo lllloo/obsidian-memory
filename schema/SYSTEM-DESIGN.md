@@ -67,7 +67,7 @@ repo-local 維護型 skill（`vault-youtube-sync`、`vault-lint`、`vault-watch`
 
 原 `cards/` 與 `topics/` 是三層系統之外的私人筆記與公開策展層。2026-10-13 使用者決定將 100 篇完整搬至 Notion，保留原文、分類、標籤與原始 Markdown 附件，逐篇核對後刪除本地原檔；新入口與遷移對照見 [`vault-map.md`](vault-map.md)。本 repo 保留核心知識庫與運作規範，`feeds/`、`docs/architecture/` 的搬離目的地另待決定。
 
-wiki 仍是 LLM 維護的活知識庫；私人操作筆記的閱讀與策展由使用者在 Notion 管理，不納入 vault 的 Ingest／Query／Lint。原 Quartz 發佈設定位於另一個 repo，本次不調整外部發佈專案。人的判斷價值仍在「這個我讀過、值得使用或分享」，不以 wiki 產出量衡量知識庫價值。
+wiki 仍是 LLM 維護的活知識庫；私人操作筆記的閱讀與策展由使用者在 Notion 管理，不納入 vault 的 Ingest／Query／Lint。Notion 連結是供使用者回看的入口，agent 的日常維護與技術查詢不自動讀寫 Notion；只有使用者重新明確指定 Notion 任務才操作。原 Quartz 發佈設定位於另一個 repo，公開發佈另行管理。人的判斷價值仍在「這個我讀過、值得使用或分享」，不以 wiki 產出量衡量知識庫價值。
 
 ## 三個動作（Operations）
 

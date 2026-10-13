@@ -43,7 +43,7 @@ tags:
 
 [Obsidian 搬入筆記](https://app.notion.com/p/3f888d8b63ed818aac70e7035b8ed7c5) 是原 topics/cards 的新家。2026-10-13 完成遷移：topics 87 篇、cards 13 篇，共 100 篇；新增 98 篇使用共用資料庫，topics/cards 子頁面目前分別顯示 86／12 篇。原有 tmux、git archive 兩篇依使用者要求移回 [技術筆記](https://app.notion.com/p/0b16cf656c334d859fa477a953078bda)，維持原頁與 URL；保留原文、標籤與原始 Markdown 附件，入口另附原始路徑與 Notion URL 的遷移對照表。逐篇回讀與附件比對後，本地原檔已刪除。
 
-Notion 私人筆記不參與本 vault 的 Ingest／Query／Lint，不重新建立本地 topics/cards。`feeds/` 與 `docs/architecture/` 的搬離目的地仍待決定，目前維持原處。
+Notion 私人筆記不參與本 vault 的 Ingest／Query／Lint，不重新建立本地 topics/cards。上述連結僅供使用者回看，agent 不預設讀寫 Notion；只有使用者重新明確指定 Notion 任務才操作。`feeds/` 與 `docs/architecture/` 的搬離目的地仍待決定，目前維持原處。
 
 ## Tag 查詢指南
 
