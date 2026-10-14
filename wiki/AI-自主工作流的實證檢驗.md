@@ -2,7 +2,7 @@
 title: AI 自主工作流的實證檢驗
 description: spec-driven、長時自主 loop、驗證迴路、狀態持久化四類做法的證據盤點——vendor 敘事與獨立實證的落差，以及必須停止引用的空氣數字
 created: 2026-07-10
-updated: 2026-10-07
+updated: 2026-10-13
 parent: "[[wiki/01.index]]"
 tags:
   - ai-agent
@@ -51,7 +51,7 @@ agent 能以 50% 可靠度完成的任務長度，過去六年約**每 7 個月�
 
 ### Spec-driven development
 
-流程結構（**high**，多來源一致）：Spec Kit 走 `constitution → specify → clarify → plan → tasks → analyze → implement`（**已被取代（2026-09-17）**：官方 [README](https://github.com/github/spec-kit/blob/main/README.md) 現把主流程寫成「constitution 每專案一次；每個 feature 走 specify → plan → tasks → implement → converge」，並反覆 implement → converge 直到回報 Converged；clarify／analyze 不再出現在主流程敘述中；2026-09-24 以 GitHub API 複驗 `templates/commands/` 仍隨附 10 個指令模板含 clarify／analyze，故是敘述改變、指令未移除）；Kiro 三檔（需求／設計／任務）最輕量；[[OpenSpec]] 定位為 Spec Kit 的輕量替代（預設 core profile：explore（可選）→ propose → apply → sync（可選）→ archive；1.x 起改採「actions not phases」的 artifact DAG，依賴是 enabler 而非 phase gate，可隨時回頭改任一 artifact，見專屬頁）；Tessl 唯一朝 spec-as-source 走；BMAD 最重、最強調角色編排，走 Analyst→PM→PO→Architect→Scrum Master→Developer→QA 的多 agent 鏈（story files 在角色間交接），各角色是帶「互動指示」的 YAML 模板，靠 advanced elicitation（六頂帽子、五個 W、事後諸葛 hindsight-2020 等結構化提問法）逼 LLM 產出離開語料平均值，並把 PRD／架構大文件 shard 成小檔供下游 dev agent 按需載入、控 context 膨脹。
+流程結構（**high**，多來源一致）：Spec Kit 走 `constitution → specify → clarify → plan → tasks → analyze → implement`（**已被取代（2026-09-17）**：官方 [README](https://github.com/github/spec-kit/blob/main/README.md) 現把主流程寫成「constitution 每專案一次；每個 feature 走 specify → plan → tasks → implement → converge」，並反覆 implement → converge 直到回報 Converged；clarify／analyze 不再出現在主流程敘述中；2026-09-24 以 GitHub API 複驗 `templates/commands/` 仍隨附 10 個指令模板含 clarify／analyze，故是敘述改變、指令未移除）；Kiro 三檔（需求／設計／任務）最輕量；[[OpenSpec]] 定位為 Spec Kit 的輕量替代（預設 core profile：explore（可選）→ propose → apply（中途可 `update` 就地修訂規劃 artifact，1.6.0 起進 core）→ sync（可選）→ archive（2026-10-13 依官方 [glossary](https://github.com/Fission-AI/OpenSpec/blob/main/docs/glossary.md) 補 `update`，六指令清單見專屬頁；證據強度：官方 glossary 與 CHANGELOG 一手、未實測 CLI）；1.x 起改採「actions not phases」的 artifact DAG，依賴是 enabler 而非 phase gate，可隨時回頭改任一 artifact，見專屬頁）；Tessl 唯一朝 spec-as-source 走；BMAD 最重、最強調角色編排，走 Analyst→PM→PO→Architect→Scrum Master→Developer→QA 的多 agent 鏈（story files 在角色間交接），各角色是帶「互動指示」的 YAML 模板，靠 advanced elicitation（六頂帽子、五個 W、事後諸葛 hindsight-2020 等結構化提問法）逼 LLM 產出離開語料平均值，並把 PRD／架構大文件 shard 成小檔供下游 dev agent 按需載入、控 context 膨脹。
 
 **Kiro 的流程細節**（2026-07-17 deep-research 補；**弱～中，廠商自述流程模型、無獨立採用佐證**，查證者對標「中」或「弱」有分歧，此處從嚴取弱）：三階段 **Requirements（或 Bug Analysis）→ Design → Tasks**，每階段**以一份具名 markdown 落地為推進界標**（`requirements.md`／`bugfix.md`、`design.md`、`tasks.md`），**階段間預設人為核准閘門**（3-0）。官方另明列適用／不適用條件（Specs vs Vibe）與 Requirements-First／Design-First 兩種順序變體（3-0）。這是本輪唯一拿到「何時該用、何時不該用、如何選路」三欄俱全的 spec-driven 實例，可當設計自家流程時的**參照藍本**——但它是 Kiro 一家的實例，**不是 spec-driven 的通用定義**；且 Kiro 是活產品文件，流程隨時可能變動。
 
@@ -63,7 +63,7 @@ agent 能以 50% 可靠度完成的任務長度，過去六年約**每 7 個月�
 
 反面證據反而較實（皆 **medium**，單一案例或一手 issue，不可推廣為通則）：
 
-- Scott Logic 獨立實測 Spec Kit：33.5 分鐘 agent 執行＋3.5 小時人工審查，產出 689 行程式碼但 2,577 行 markdown，最終仍有明顯 bug。作者結論「the fastest path right now is still iterative prompting and review, not an industrialized spec pipeline」。
+- Scott Logic 獨立實測 Spec Kit：33.5 分鐘 agent 執行＋3.5 小時人工審查，產出 689 行程式碼但 2,577 行 markdown，最終仍有明顯 bug。**已被取代（2026-10-13）**：[原文](https://blog.scottlogic.com/2025/11/26/putting-spec-kit-through-its-paces-radical-idea-or-reinvented-waterfall.html)結局相反——首次啟動 dev server 即失敗，有一個明顯 bug（`circuitsData` 未從 datastore 載入），作者在 spec 流程外貼錯誤訊息給 chat agent 修好後即「fully functional」（repo `ColinEberhardt/kartlog` `spec-test` 分支 commit `8292058e`「bug fixes」可對證）；作者的批評是「It didn't result in better code or fewer bugs」，而非最終仍有 bug。對照組的一般迭代 prompting：8 分鐘 agent 執行、1,000 行程式碼無 markdown、15 分鐘審查＋9 分鐘功能測試小修，「without any bugs in the implementation」。作者結論原句：「For now, the fastest path is still iterative prompting and review, not industrialised specification pipelines.」（頁面先前引文為改寫，非原句；證據強度：作者部落格一手＋公開 repo commit diff 交叉證實，仍為單一作者單一案例，維持 medium）。
 - BMAD token 成本：GitHub issue 一手用戶回報（早期版本約 31,667 token/run），因為把大量 markdown artifact 每個 prompt 都塞進 context。
 - Kiro：2025-12 agent 判斷「刪除並重建環境」是最有效路徑、未經審批即執行，造成 AWS 中國區 Cost Explorer 中斷 13 小時。Amazon 定性為 user error／權限設定錯誤。**此事件與 spec 撰寫流程無直接關聯**（問題在 autonomous agent 的權限治理），但對「spec 帶來更高可控性」的行銷主張是實質反例。
 - **spec 漂移已被官方承認**：Spec Kit 維護者在 [discussion #1671](https://github.com/github/spec-kit/discussions/1671) 承認跨數十至數百 session 時「specifications gradually fall out of sync with implementation」，核心工作流未改，靠社群擴充緩解。**已被取代（2026-09-17，歸屬更正）**：該引文出自發文者 `jdrake6789`（`authorAssociation: NONE`，非維護者）描述自身觀察；串中唯一的 repo 協作者 `mnriem`（COLLABORATOR）的回應是指向社群擴充、表示核心工作流暫維持不變，並未承認漂移問題本身。「官方承認」不成立；「核心不改、靠擴充」仍成立。
@@ -125,11 +125,12 @@ agent 能以 50% 可靠度完成的任務長度，過去六年約**每 7 個月�
 
 但這條**不能無保留引用**：
 
+- **METR 自認已過時（2026-02-24）**：原 2025 頁頂部已掛 ⚠️『These results are out of date』，並發佈[續篇](https://metr.org/blog/2026-02-24-uplift-update/)——2025 年 8 月起新實驗 57 位開發者、143 repo、800+ 任務（含 10 位原研究者），工具改為 Claude Code／Codex 等 agentic 工具；新招募者 speedup −4%（CI −15%～+9%）、原開發者 −18%（CI −38%～+9%），兩者 CI 皆跨零。METR 自陳因選擇效應（開發者不願無 AI 工作而不參與或不提交任務、時薪 $150→$50、多 agent 並行使計時不準）新數據只是『very weak evidence』，但傾向認為現在 AI 更可能加速開發者。引用 19% 時須加註『METR 自認已過時，僅代表 2025 年 2–6 月工具』，且不可把續篇的 −4%／−18% 當作新結論引用（證據強度：METR 官方 blog 一手、續篇未同儕審查、METR 自評極弱、CI 跨零）。
 - **這不是 spec-driven 或 harness 的研究**，是泛用 AI coding assistant 研究。不能引為 spec-driven 失敗（也不能引為其成功）的證據。
 - 已知反駁（Emmett Shear 指出、Zvi Mowshowitz 整理）：16 位開發者中**只有 1 人**有超過一週的 Cursor 使用經驗——測到的可能是「學新工具的生產力低谷」而非工具上限。開發者對自己 repo 高度熟悉，削弱 AI 邊際效益。
 - 作者自陳的 5 項限制包含「本研究不能推翻『AI 能加速多數開發者』」。
 
-精確說法：**在對工具生疏、且在自己熟悉的高標準大型開源專案上工作的資深開發者身上，早期 2025 版 AI 工具反而拖慢速度**。
+精確說法：**在對工具生疏、且在自己熟悉的高標準大型開源專案上工作的資深開發者身上，早期 2025 版 AI 工具反而拖慢速度**（METR 於 2026-02-24 已將此結果標為過時）。
 
 ## 綜合結論
 

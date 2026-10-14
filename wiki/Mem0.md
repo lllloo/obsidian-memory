@@ -2,7 +2,7 @@
 title: Mem0
 description: AI agent 記憶層工具的整合路徑（plugin／MCP／CLI）、hook 實測消耗與失效模式證據，含本 vault 採 MCP-only 的拍板理由
 created: 2026-07-20
-updated: 2026-10-07
+updated: 2026-10-13
 source: https://github.com/mem0ai/mem0
 parent: "[[wiki/01.index]]"
 tags:
@@ -68,7 +68,7 @@ CLI（`@mem0/cli`）**不是替代品**：原始碼 `cli/node/src/plugin-sync.ts
 **獨立反證方向一致——「不如直接塞完整歷史」**：
 
 - HN `cpluss` 在 MemBench 跑 4,000 案例（harness 開源）：記憶系統「14–77× more expensive... and 31–33% less accurate at recalling facts than just passing the full history」〔獨立第三方 benchmark，單一模型／單一 benchmark〕
-- Zep 的重算指 full-context baseline ~73% vs mem0 ~68%〔**競品廠商，利益相關**〕
+- ~~Zep 的重算指 full-context baseline ~73% vs mem0 ~68%~~ **已被取代（2026-10-13）：出處歸錯**——這組數字出自 Mem0 論文自己的 Table 2（Full-context J 72.90 vs Mem0ᵍ 68.44，[arXiv 2504.19413](https://arxiv.org/abs/2504.19413)），[Zep 文章](https://www.getzep.com/blog/lies-damn-lies-statistics-is-mem0-really-sota-in-agent-memory/)只是引述並指出「Mem0's own results show their system being outperformed by a simple full-context baseline」；Zep 唯一重算的是 Zep 自身分數（Mem0 報 65.99 → Zep 重跑 75.14）〔~73 vs ~68 為 **Mem0 自報、對己不利**，證據強度高於競品重算；Zep 的 75.14 才是競品廠商利益相關數字，引用時分開看。兩個一手來源已回讀原句，未自行重跑 benchmark〕
 - [issue #2800](https://github.com/mem0ai/mem0/issues/2800)：多位研究者本地跑 LoCoMo 分數遠低於論文，**連用平台版也拿不到**
 - Penfield Labs 稽核 LoCoMo：6.4% 答案 key 有誤、LLM judge 接受最多 63% 的刻意錯誤答案
 
@@ -124,16 +124,16 @@ CLI（`@mem0/cli`）**不是替代品**：原始碼 `cli/node/src/plugin-sync.ts
 |---|---|---|
 | 一行安裝 | `npx mcp-add --name mem0-mcp --type http --url "https://mcp.mem0.ai/mcp/" --clients "claude code"` | `codex mcp add mem0 --url https://mcp.mem0.ai/mcp/ --bearer-token-env-var MEM0_API_KEY` |
 | 手動設定檔 | `.mcp.json` → `mcpServers.mem0`，`type: "http"` | `~/.codex/config.toml` → `[mcp_servers.mem0]` |
-| 認證寫法 | header `Authorization: Token ${MEM0_API_KEY}` | `bearer_token_env_var = "MEM0_API_KEY"` |
+| 認證寫法 | header `Authorization: Token ${MEM0_API_KEY}`（2026-07-21 快照，見下方已被取代註） | `bearer_token_env_var = "MEM0_API_KEY"` |
 
 兩點**文件沒講、但影響本 vault 用法**的落差：
 
-1. **認證 scheme 不同**——Claude Code 端是 `Token ` 前綴的自訂 header，Codex 端是原生 bearer token 欄位。同一把 key、兩種寫法，抄錯端會是 401 而非設定錯誤訊息。
+1. **認證 scheme 不同**——Claude Code 端是 `Token ` 前綴的自訂 header，Codex 端是原生 bearer token 欄位。同一把 key、兩種寫法，抄錯端會是 401 而非設定錯誤訊息。**已被取代（2026-10-13）**：現行官方 [mem0-mcp 頁](https://docs.mem0.ai/platform/mem0-mcp)已不再給 Claude Code 任何 `Authorization: Token ...` 的 `.mcp.json` 範例（整頁無 header／Authorization 字樣），統一寫「send your API key as a bearer token」並主推瀏覽器 OAuth 登入；端點 `https://mcp.mem0.ai/mcp/` 無金鑰時回 401、`WWW-Authenticate: Bearer`，`.well-known/oauth-protected-resource` 宣告 `bearer_methods_supported: ["header"]`（2026-10-13 實測）。實裝時以 `Authorization: Bearer ${MEM0_API_KEY}` 或瀏覽器登入為準；`Token ` 前綴是否仍被後端接受未驗證（無金鑰）〔官方文件一手＋端點 401 標頭與 OAuth well-known 實測三方一致〕。上表「認證寫法」列為 2026-07-21 快照，同受此註約束。
 2. **官方給的 Claude Code 手動路徑是專案級 `.mcp.json`**，只在該 repo 生效；本 vault 要的是**跨專案隨手記**，必須走 `claude mcp add --scope user`（見上節），照文件抄 `.mcp.json` 會得到一個只在單一專案能用的收件匣。Codex 端 `~/.codex/config.toml` 本來就是使用者級，無此問題。
 
 Codex 的 `codex mcp add --url` 存在，也**再次否證**官方另一頁那句「Codex 只支援 stdio」（見上節「資訊生態污染」）——本次官方整合頁自己就用了 HTTP url。
 
-⚠️ **一個類別錯置的釐清**：[[OpenSpec]] 不是 mem0 的整合對象。它不是 agent host（不跑 MCP／不裝 plugin），而是**裝進** host 的 workflow 框架（`docs/supported-tools.md` 逐字：「Codex is skills-only: OpenSpec installs `.codex/skills/openspec-*/SKILL.md`」）。兩者若同在一個 host，是**爭同一個位置**——OpenSpec 用 checked-in 可 review 的 spec 檔決定 agent 該遵守什麼，mem0 用雲端不可 review 的記憶做同件事，權威來源會分裂。查無任何 mem0×OpenSpec／spec-kit 的 prior art。
+⚠️ **一個類別錯置的釐清**：[[OpenSpec]] 不是 mem0 的整合對象。它不是 agent host（不跑 MCP／不裝 plugin），而是**裝進** host 的 workflow 框架（`docs/supported-tools.md` 2026-07-21 快照逐字：「Codex is skills-only: OpenSpec installs `.codex/skills/openspec-*/SKILL.md`」——**已被取代（2026-10-13）**：OpenSpec [commit 59bfb27a](https://github.com/Fission-AI/OpenSpec/commit/59bfb27a7607ebde62959a9dcbc2f563662c04ad)（2026-08-05，#1511）起改裝到 `.agents/skills/openspec-*/SKILL.md`，`.codex/skills` 列為 legacy 路徑並在安裝時 reconcile；現行 [`docs/supported-tools.md`](https://github.com/Fission-AI/OpenSpec/blob/main/docs/supported-tools.md) 原句為「Codex is skills-only: OpenSpec installs `.agents/skills/openspec-*/SKILL.md` for Codex even when delivery is set to `commands`」，skills-only／非 agent host 的論點不變〔GitHub commit diff 與 main 分支現行檔案一手回讀，未實際安裝驗證〕）。兩者若同在一個 host，是**爭同一個位置**——OpenSpec 用 checked-in 可 review 的 spec 檔決定 agent 該遵守什麼，mem0 用雲端不可 review 的記憶做同件事，權威來源會分裂。查無任何 mem0×OpenSpec／spec-kit 的 prior art。
 
 ## 相關頁
 

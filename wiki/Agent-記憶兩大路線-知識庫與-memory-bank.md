@@ -2,7 +2,7 @@
 title: Agent 記憶的兩大路線：知識庫與 memory bank
 description: 比較編譯式知識庫與 coding-agent memory bank 的目的、組織、讀取契約、維護方式及適用邊界
 created: 2026-07-14
-updated: 2026-07-22
+updated: 2026-10-13
 parent: "[[wiki/01.index]]"
 tags:
   - ai-agent
@@ -34,7 +34,7 @@ tags:
 - **讀取契約相反**：每次任務開始**無條件讀全部**（Cline 明言 not optional），而非 A 的 query-first 省讀。賣點就是「不靠記憶、靠重讀全部檔恢復」。
 - **維護**：agent 在重大變更後自更新檔；使用者可下 `update memory bank` 強制全檔覆核。
 
-**進階變體（維護自動化）**：[ai-memory](https://github.com/akitaonrails/ai-memory)、[Letta](https://docs.letta.com/letta-agent/memory) 把維護從「agent 自覺」變成 **runtime hook／自我編輯**——DB/SQLite-backed、SessionStart/SessionEnd hook 自動注入，Letta 甚至有 sleep-time「反思」子代理把教訓寫回並自動 git commit。
+**進階變體（維護自動化）**：[ai-memory](https://github.com/akitaonrails/ai-memory)、[Letta](https://docs.letta.com/letta-agent/memory) 把維護從「agent 自覺」變成 **runtime hook／自我編輯**——~~DB/SQLite-backed~~（**已被取代（2026-10-13）**：ai-memory 以 git-versioned markdown wiki 為 source of truth，SQLite 只是可從檔案重建的衍生索引（FTS／entity／embedding），見其 [README](https://github.com/akitaonrails/ai-memory/blob/main/README.md) 與 [docs/ARCHITECTURE.md](https://github.com/akitaonrails/ai-memory/blob/main/docs/ARCHITECTURE.md)；Letta 的記憶同為 git-backed markdown 檔案系統（[MemFS](https://docs.letta.com/letta-code/memfs)，雲端 agent 由 Letta 代管 repo），兩者的記憶本體都是 markdown、不是資料庫。證據強度：官方 repo 文件與 Letta 官方文件一手、未實測）、SessionStart/SessionEnd hook 自動注入，Letta 甚至有 sleep-time「反思」子代理把教訓寫回並自動 git commit。
 
 **定位**：服務**單一專案**的 agent 連續性，是「工作記憶」，不做跨來源知識累積。
 
@@ -51,7 +51,7 @@ tags:
 
 ## 交集傘與反方
 
-- **同屬「markdown + git as memory」大家族**：[Letta MemFS](https://docs.letta.com/letta-code/memfs)、[DiffMem](https://github.com/Growth-Kinetics/DiffMem) 橫跨兩條路線（git-backed markdown、每次編輯自動 commit），顯示兩路線在載體層收斂。
+- **同屬「markdown + git as memory」大家族**：[Letta MemFS](https://docs.letta.com/letta-code/memfs)、[DiffMem](https://github.com/Growth-Kinetics/DiffMem) 橫跨兩條路線（git-backed markdown、每次編輯自動 commit），顯示兩路線在載體層收斂。〔**已被取代（2026-10-13）**：「每次編輯自動 commit」只適用 MemFS（[官方文件](https://docs.letta.com/letta-code/memfs)：「Every memory edit is committed to the MemFS git repository」）；DiffMem 的 writer agent 只把更新 stage 進 git working tree，commit 由 `process_and_commit_session()`／`POST /memory/{user_id}/process-and-commit` 顯式原子觸發（[README](https://github.com/Growth-Kinetics/DiffMem/blob/main/README.md)：「Commits are explicit and atomic」；`api.py` `process_session`：「No commit until commit_session() is called」）。兩者共同點僅為 git-backed markdown。證據強度：官方 README 與原始碼 docstring 一手、未實際執行驗證。〕
 - **反方觀點**：向量記憶廠商 Zep 主張「[Markdown is not agent memory](https://blog.getzep.com/markdown-is-not-agent-memory/)」——markdown 記憶在**規模、時間演進、多 agent 並發**下會崩。優劣仍有爭議、非定論（且屬廠商立場）。
 
 ## 對本 vault 的含意：什麼進 vault、什麼留專案

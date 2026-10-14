@@ -2,7 +2,7 @@
 title: Agent 工作流 Pattern 藍本庫
 description: 設計 agent skill 時的 pattern 挑選清單：每項附定義、適用、失效條件、出處與強度，並收錄選用決策樹與被查證否決的組合宣稱
 created: 2026-07-17
-updated: 2026-09-22
+updated: 2026-10-13
 parent: "[[wiki/01.index]]"
 tags:
   - ai-agent
@@ -26,7 +26,7 @@ tags:
 | **強（僅限描述性）／中（規範性）** | vendor 工程指南：Anthropic《Building Effective Agents》、OpenAI《A Practical Guide to Building Agents》 | pattern **定義為何**屬 first-party、強度最高；**該不該這樣做**（單 agent 優先、簡單優先）是 lab 工程經驗值、非對照實驗 |
 | **弱** | 軼事觀察與社群口語 pattern | 田野觀察，不可當實測門檻 |
 
-**來源同源性警告**：LangGraph 官方 pattern 頁雖是獨立 primary source，但 LangChain 自承該教學係照 Anthropic 那篇重建，**不構成獨立印證**。領域一詞彙真正的獨立源頭只有 CSIRO catalogue 與各 pattern 原始論文——統計上的「多來源一致」在此處部分是回音而非收斂。
+**來源同源性警告**：LangGraph 官方 pattern 頁雖是獨立 primary source，但**不構成獨立印證**：其早期教學（langgraph repo tag 0.4.0 的 docs/tutorials/workflows，2025 年上半）在 intro 與 Prompt chaining／Routing／Orchestrator-Worker／Agent 四節逐節標「As noted in the Anthropic blog on Building Effective Agents」、直接引用 Anthropic 定義；[現行官方頁](https://docs.langchain.com/oss/python/langgraph/workflows-agents)（JS 版同）已拿掉所有該文引用，只剩範例用 ChatAnthropic，但 pattern 清單仍與 Anthropic 五項一致，同源判斷改以「早期版本逐節引用＋pattern 集合同源」為據（2026-10-13 更新：原「LangChain 自承」措辭對現行頁已不成立，讀者勿去現行頁找自承字句；證據強度：兩版官方原始碼一手——[現行 mdx](https://raw.githubusercontent.com/langchain-ai/docs/main/src/oss/langgraph/workflows-agents.mdx) 與 langgraph repo 0.4.0 tag 舊檔，tag 日期未獨立核實）。領域一詞彙真正的獨立源頭只有 CSIRO catalogue 與各 pattern 原始論文——統計上的「多來源一致」在此處部分是回音而非收斂。
 
 ## 第一層：選用 gate（在挑 pattern 之前先過）
 
@@ -84,7 +84,7 @@ tags:
 
 ### D. 有論文出處的 loop 類 pattern
 
-- **ReAct**（Yao et al., ICLR 2023，**強**）：LLM 以**交錯（interleaved）方式**生成 reasoning trace 與 task-specific action——reasoning 負責誘導、追蹤、更新 action plan 並處理例外，action 負責對接外部知識庫或環境取額外資訊。**但「interleaving 帶來 synergy 是效能主因」的因果宣稱已遭正式反駁**，應列為失效條件、不得寫入適用時機。provenance 數字（ALFWorld +34%、WebShop +10%，僅用一到兩個 in-context example）是 **PaLM-540B 世代**結果，且 ALFWorld 的 +34% 是 best-of-6 對 best-of-8（平均對平均僅 +20%）——**絕不可當當前 SOTA 複述**，只能當出身證明。
+- **ReAct**（Yao et al., ICLR 2023，**強**）：LLM 以**交錯（interleaved）方式**生成 reasoning trace 與 task-specific action——reasoning 負責誘導、追蹤、更新 action plan 並處理例外，action 負責對接外部知識庫或環境取額外資訊。**但「interleaving 帶來 synergy 是效能主因」的因果宣稱已遭正式反駁**，應列為失效條件、不得寫入適用時機。provenance 數字（ALFWorld +34%、WebShop +10%，僅用一到兩個 in-context example）是 **PaLM-540B 世代**結果，且 ALFWorld 的 +34% 是 best-of-6 對 best-of-8（平均對平均僅 +20%）【**已被取代（2026-10-13）**：ReAct 論文 Table 3 的 +34% 是 ReAct best-of-6（71%）對 BUTLER best-of-8（37%）；若改用 ReAct 六組 prompt 平均（57%）對同一 BUTLER best-of-8，只剩 +20%。論文未提供 BUTLER 平均值（BUTLER 原論文的 37% 本身即 8 個 seed 取最佳），故不存在「平均對平均」的比較，勿引用該說法。來源：[ReAct Table 3 與 §4 Results](https://ar5iv.labs.arxiv.org/html/2210.03629)、[ALFWorld Table 4 caption](https://ar5iv.labs.arxiv.org/html/2010.03768)；證據強度：兩篇論文一手（ar5iv 為 arXiv HTML 轉譯版，Table 3 數字與摘要一致）】——**絕不可當當前 SOTA 複述**，只能當出身證明。
 - **Reflexion**（NeurIPS 2023，**強**）：plan-act-reflect／self-reflection loop 的**主要論文級出處之一**（非唯一）。不更新權重，改以語言回饋強化 language agent——agent 對任務回饋訊號進行口語化反思（verbal reflection），存進 **episodic memory buffer**，供後續 trial 改善決策。回饋可為 **scalar 或 free-form language**，來源可為 **external（環境／編譯器／測試）或 internally simulated（自評）**，在 sequential decision-making、coding、language reasoning 三類任務皆優於 baseline。**前提是「存在可取得的回饋訊號」**——沒有回饋訊號時這個 pattern 不成立。
 - **Self-Refine**（NeurIPS 2023，**強**）：evaluator-optimizer／reflect 類的具名 pattern——**同一個 LLM** 依序扮演 generator、feedback provider、refiner 三種角色的迭代循環，不需 supervised training data、額外訓練或 RL，屬 **test-time** 方法，跨 7 類異質任務實證。
 

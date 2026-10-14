@@ -38,7 +38,7 @@ Octopus 那方的論點是：code review 看起來像瓶頸，只因為它的佇
 
 > 數一下你的專案裡，**已經通過 review 但還沒部署給使用者**的變更有幾個。答案是 0 或 1，那你的瓶頸真的在 review；超過 1，瓶頸在下游。
 
-**獨立印證**：2026-02 Thoughtworks 在 Deer Valley 主辦的 Future of Software Engineering 閉門工作坊（Agile Manifesto 25 週年，Martin Fowler 主辦，約 50 位資深實踐者，Chatham House Rule，[一手報告 PDF](https://www.thoughtworks.com/content/dam/thoughtworks/documents/report/tw_future%20_of_software_development_retreat_%20key_takeaways.pdf) 公開）得出同方向但更廣的結論：
+**獨立印證**：2026-02 Thoughtworks 在 Deer Valley 主辦的 Future of Software Engineering 閉門工作坊（Agile Manifesto 25 週年，Martin Fowler 主辦，約 40 位資深實踐者到場（與會者 Annie Vella [一手記述](https://annievella.com/posts/finding-comfort-in-the-uncertainty/)：「About 40 of us … gathered in Deer Valley, Utah」；Martin Fowler 原版 bliki 稱約 50 位**受邀**、martinfowler.com 現行版已刪該句；Thoughtworks 報告本身未給人數；2026-10-13 核對，與會者部落格一手、報告全文確認），Chatham House Rule，[一手報告 PDF](https://www.thoughtworks.com/content/dam/thoughtworks/documents/report/tw_future%20_of_software_development_retreat_%20key_takeaways.pdf) 公開）得出同方向但更廣的結論：
 
 > 「It is the same speed with more frustration, because the bottleneck has shifted from engineering capacity to everything else.」
 

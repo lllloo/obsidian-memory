@@ -45,11 +45,13 @@ Robert C. Martin 在 2026-07-23 的[推文](https://x.com/unclebobmartin/status/
 
 外加幾個只有 Clojure 版的：`dependency-checker`（元件邊界與依賴方向）、`deintroverter4clj`（見第三節第 7 項）、`speclj-structure-check`。跨語言的則是 [`Acceptance-Pipeline-Specification`](https://github.com/unclebob/Acceptance-Pipeline-Specification)（★168，Go/Babashka），以及編排層 [`swarm-forge`](https://github.com/unclebob/swarm-forge)（★1982）。
 
-**這些不是散落的玩具，有一份憲法把它們接起來。** `swarm-forge` 的 `constitution/articles/engineering.prompt` 開頭就是工具採購指令：
+**這些不是散落的玩具，有一份憲法把它們接起來。** `swarm-forge` 的 `swarmforge/constitution/articles/engineering.prompt` 開頭就是工具採購指令：
 
 > On startup, procure the latest version of each required CRAP, mutation, and DRY tool for the project language directly from the listed `github.com/unclebob/...` repositories and get each one ready to run.
 
-`swarm-forge` 提供三種編制，直接對應閘門的取捨光譜：
+（條文由 main 共用，各 pack 分支只放 `project.prompt` 與 `local-*.prompt` 特化；採購指令與 Guardrails 原句 2026-10-13 仍在——[main README](https://github.com/unclebob/swarm-forge/blob/main/README.md) 與 main tree 經 GitHub API 直讀。）
+
+`swarm-forge` 提供三種 pack 編制（另有 project-manager／lieutenant 兩種多專案 forge，見表後更新），直接對應閘門的取捨光譜：
 
 | 編制 | 角色 | 什麼時候用 |
 |---|---|---|
@@ -60,6 +62,8 @@ Robert C. Martin 在 2026-07-23 的[推文](https://x.com/unclebobmartin/status/
 | `squad` | squad-leader（＋動態生成的隱形 agent） | 實驗中：常駐一個可見的 leader，其餘 agent 由後續切片動態產生 |
 
 （分支清單與角色檔為 2026-08-09 經 GitHub API 直讀，`squad` 分支只有 leader 一個角色檔，屬未完成的實驗。）
+
+**2026-10-13 更新**（gh api 直讀分支 tree 與 [main README](https://github.com/unclebob/swarm-forge/blob/main/README.md)；未實際安裝執行 `get-swarm-forge` 驗證產品行為）：repo 現有 9 支分支。main 自 2026-09-01 起改為 landing page、installer 來源、共用 runtime 與共用工程憲法，本身不再是可跑的 forge；README 將 two/four/six-pack 列為 `get-swarm-forge` pack 產品，另新增 `project-manager`（可選 two/four/six-pack 模板的多專案 forge，附 host lieutenant）與 `lieutenant`（單一可設定專案模板＋planning lieutenant）兩種多專案 forge；`squad`、`sprint-module-squad`、`adversaries` 明文為「separate experimental workflows、非產品」。`squad` 分支已於 2026-08-20 加入 `troubleshooter` 常駐角色，並有 11 個 `role-templates`（analyst、architect、cleaner、code-reviewer、gherkin-writer、hardener、implementer、qa-procedure-writer、qa、senior-implementer、system-analyst），上句「只有 leader 一個角色檔」為當時快照、現已不成立。
 
 而 @rfleury 在串裡問的「你到底用這套做了什麼」，答案是 [`empire-2025`](https://github.com/unclebob/empire-2025)——經典戰棋遊戲 Empire 的 Clojure 重製版（★87，約 6 MB，100×60 地圖、九種兵種、電腦 AI）。這個答案很重要，第四節會回來談。
 
@@ -216,7 +220,7 @@ QA 在 `six-pack` 裡是一條完整的鏈，兩份角色檔講得很明白。`s
 
 原始碼層的 mutation 在 [[用測試約束-AI-產碼]] 已有完整證據盤點（Thoughtworks Radar Vol.34 唯一押注的一項、Meta ACH 的生產規模一手、以及待測碼本身可能有 bug 時 MSI 不適用的方法論缺口），此處只記他的增量。
 
-他的 `clj-mutate` 用一個**差分機制**解成本問題：原始碼檔尾嵌一份 manifest，預設**只變異上次執行後改動過的 top-level form**，並支援 `--lines` 只重測上一輪的存活者。這與 Meta ACH「不做全量變異」的方向一致，但手段不同——ACH 靠「只產與特定關注議題相關的 fault」縮範圍，他靠「只測改動過的部分」縮範圍。前者需要人先指定關注議題，後者不需要，代價是不會回頭複驗舊碼。
+他的 `clj-mutate` 用一個**差分機制**解成本問題：原始碼檔尾嵌一份 manifest，預設**只變異上次執行後改動過的 top-level form**——**已被取代（2026-10-13）**：自 2026-09-14 起（commit 1517f95）差分快照改存 `.metrics/mutate/<path>.edn`、不再嵌在原始碼檔尾，殘留的舊 footer 讀一次後即剝除；差分預設改為「重試上輪存活者＋新增／改寫的 top-level form」，未變動 form 的已殺結果不重跑（見 [README「Snapshots」節](https://github.com/unclebob/clj-mutate/blob/master/README.md)；一手 repo git log 與 README 原文核對，未實跑工具驗證）——並支援 `--lines` 只重測上一輪的存活者。這與 Meta ACH「不做全量變異」的方向一致，但手段不同——ACH 靠「只產與特定關注議題相關的 fault」縮範圍，他靠「只測改動過的部分」縮範圍。前者需要人先指定關注議題，後者不需要，代價是不會回頭複驗舊碼（新機制會持續重試存活者，此代價已部分緩解）。
 
 一個小細節透露了紀律：`crap.cljc` 的檔頭是 `;; mutation-tested: 2026-03-04`——工具自己也跑過自己。
 
@@ -349,7 +353,7 @@ blocked="$(printf '%s\n' "$changed" \
 | `crap4clj` 實作的是教科書 CRAP 公式 `CC²×(1−cov)³+CC` | **high**：直接讀 `src/crap4clj/crap.cljc` 原始碼 |
 | CRAP 實質上是複雜度上限（CC>30 無法靠測試贖回） | **high**：公式的數學性質，可自行驗算 |
 | 「crap evaluation」指 CRAP 度量而非自嘲 | **high**：前串原文＋他自有三個 crap4* repo |
-| 閘門數隨專案規模調整，非固定清單 | **high**：他本人推文＋`swarm-forge` 的 two/four/six-pack 分支設計 |
+| 閘門數隨專案規模調整，非固定清單 | **high**：他本人推文＋`swarm-forge` 的 two/four/six-pack 三種 pack，加 project-manager／lieutenant 多專案 forge（2026-10-13 直讀） |
 | gherkin mutation ＝變異 Gherkin example 值、非變異原始碼 | **high**：`Acceptance-Pipeline-Specification` README 明文定義 |
 | 覆蓋率控制測試數量後只與有效性低至中度相關 | **high**：ICSE 2014 同儕審查、31,000 組測試套件；本頁引用的是摘要，未逐段核對全文 |
 | 驗收規格與 parser 被 CI 機械鎖定，agent 改不了 | **high**：`acceptance-boundary-guard.yml` 與 `scripts/check-acceptance-boundary.sh` 全文可讀，`pull_request` 與 `push` 皆觸發 |

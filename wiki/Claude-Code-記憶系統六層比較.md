@@ -2,7 +2,7 @@
 title: Claude Code 記憶系統六層比較
 description: 從原生 CLAUDE.md 到跨工具統一大腦，六個層級的 AI 記憶方案沿「儲存位置」與「召回機制」兩軸拆解，含各層適用情境與升級門檻
 created: 2026-07-08
-updated: 2026-09-02
+updated: 2026-10-13
 parent: "[[wiki/01.index]]"
 tags:
   - claude-code
@@ -25,15 +25,15 @@ tags:
 1. **儲存位置（storage）**——資料放哪、什麼結構：markdown vs. vector、本地 vs. 雲端。
 2. **召回機制（recall）**——Claude 怎麼取得：自動複製進 context vs. 存 database 需要時才搜。
 
-核心敵人是 **context rot**：載入的 context 越多，模型對已載入資訊的召回越不完整。因此所有層級的共同紀律是**索引化 + 按需載入**（CLAUDE.md 控制在 ~200 行內，其餘拆獨立檔用引用）。
+核心敵人是 **context rot**：載入的 context 越多，模型對已載入資訊的召回越不完整。因此所有層級的共同紀律是**索引化 + 按需載入**（CLAUDE.md 控制在 ~200 行內，其餘拆獨立檔用引用）——Level 1 的 auto memory 索引上限即官方 200 行／25KB 規則（[官方 memory 文件](https://code.claude.com/docs/en/memory)，2026-10-13 查證）。
 
 ## 六個層級
 
 | Level | 方案 | 儲存 | 召回 | 何時升級到這層 |
 |---|---|---|---|---|
-| **1** 原生 | CLAUDE.md + automemory（`memory.md`） | 本地 markdown，索引結構 | session 啟動自動載入索引 | 預設就有，免費；先正確使用 |
+| **1** 原生 | CLAUDE.md + automemory（索引檔 `MEMORY.md`，位於 `~/.claude/projects/<project>/memory/`） | 本地 markdown，索引結構 | session 啟動自動載入索引；官方限定只載 `MEMORY.md` 前 200 行或 25KB（先到者為準），超出部分不載入（[官方 memory 文件](https://code.claude.com/docs/en/memory)，2026-10-13 查證；官方文件一手、未實測） | 預設就有，免費；先正確使用 |
 | **2** 可靠召回 | John Connelly / Paweł Huryn 的 hook 系統 | 本地 markdown，`~/.claude/memory` 雙層 | session start hook 注入記憶索引 | 常重複告訴 Claude 它早該知道的事 |
-| **3** 語意搜尋 | **memsearch**（Zilliz，移植自 OpenClaw）／ ClaudeMem | markdown + 語意向量 | UserPromptSubmit hook 自動注入 top-N 語意匹配 | 用超過一個月、檔案變多、關鍵字搜尋失效 |
+| **3** 語意搜尋 | **memsearch**（Zilliz，README 自述「inspired by OpenClaw」，非移植）／ ClaudeMem | markdown + 語意向量 | ~~UserPromptSubmit hook 自動注入 top-N 語意匹配~~ **已被取代（2026-10-13）**：現行 plugin 的 SessionStart hook 注入近期日誌、UserPromptSubmit hook 只輸出一行「Recall available」提示不搜尋，語意召回由 `memory-recall` skill 在 Claude 判斷需要時自行呼叫（pull-based、forked subagent）——[plugin README](https://github.com/zilliztech/memsearch/blob/main/plugins/claude-code/README.md) 與 [hook 原始碼](https://github.com/zilliztech/memsearch/blob/main/plugins/claude-code/hooks/user-prompt-submit.sh) 一手、未實測 | 用超過一個月、檔案變多、關鍵字搜尋失效 |
 | **4** 逐字召回 | **MemPalace** | 本地 SQL（實體關係）+ Chroma vector（逐字分塊） | session end / pre-compaction hook 背景索引；記憶宮殿式定址 | 想找當初決策的「確切文字」 |
 | **5** 自組織知識庫 | **Karpathy LLM Wiki** ／ Recall（代管）／ LightRAG（企業級） | 純 markdown，raw + wiki 兩層 | 讀 index 找頁再鑽（無需 vector DB） | 定期消化文章/影片/podcast，要跨來源互聯的「第二大腦」 |
 | **6** 跨工具單一大腦 | **OpenBrain**（Nate Jones）／ Mem0 | 自有 Postgres（Supabase），`thoughts` 表 + embedding | MCP server 當前門，各 AI 工具共用同一 DB | 跨多個 AI 工具（手機 ChatGPT、桌面 Claude Code…）要共用記憶 |
@@ -42,14 +42,14 @@ Level 1–3 資料夾結構相近、**可疊加同跑**；Level 5、6 屬不同�
 
 ## 幾個關鍵取捨
 
-- **markdown 優先 vs. vector/MCP**：memsearch 把一切存成可讀 markdown 並自動注入；ClaudeMem 走 MCP，需 Claude 主動決定呼叫搜尋工具，功能多（dashboard、團隊、費用追蹤）但較重。
+- **markdown 優先 vs. vector/MCP**：memsearch 把一切存成可讀 markdown 並自動注入；ClaudeMem 走 MCP，需 Claude 主動決定呼叫搜尋工具，功能多（dashboard、團隊、費用追蹤）但較重。**已被取代（2026-10-13）**：「自動注入 vs 主動呼叫」的對比已不成立——現行 memsearch plugin 的召回同樣由 Claude 主動呼叫 `memory-recall` skill，hook 只給提示（見上表 Level 3 註）；兩者殘餘差異在儲存格式（markdown vs SQLite）與 memsearch 的 Stop hook 自動摘要捕捉（plugin README 一手、未實測）。
 - **本地擁有 vs. 代管租用**：MemPalace 全本地；OpenBrain 是自有 DB 實例（跑在 Supabase 代管平台上，但 schema 與資料歸你、可遷移自管）；Recall、Mem0 則是 vendor 的記憶即服務，資料活在對方伺服器（可匯出 markdown，但等於租）。**Mem0 需分層看**（2026-07-20 查證修正）：軟體本身是原版 Apache 2.0、可完全自架（raw LICENSE 實查，無 Commons Clause／BUSL 附加），但**官方整合路徑（plugin／MCP／CLI）全部只連雲端**，要自架得走社群 MCP 或自接 SDK。故「等於租」對採用體驗成立、對軟體授權不成立——細節與失效模式見 [[Mem0]]。
 - **摘要 vs. 逐字**：Level 3 存摘要（省空間、可能漏細節）；Level 4 逐字不摘要，理論上什麼都不丟，但取回內容非 markdown、不可直讀。
 
 ## 在本 vault 的定位
 
 - 本 vault 就是 **Level 5 / Karpathy LLM Wiki** 的實作——見 [[LLM-Wiki-知識管理模式]]。適合對特定主題深度研究、跨來源互聯；作者原意即「不是操作性記憶，而是內容消化型第二大腦」。
-- [[Hermes-Agent]] 出現在來源的開場清單，屬「agent 自策展記憶 + skill」路線；且其 `hermes claw migrate` 對應本文 Level 3 反覆提到的 **OpenClaw** 記憶架構（memsearch 即移植自 OpenClaw）——Hermes 與 OpenClaw 同一血緣，值得日後專門對照。
+- [[Hermes-Agent]] 出現在來源的開場清單，屬「agent 自策展記憶 + skill」路線；且其 `hermes claw migrate` 對應本文 Level 3 反覆提到的 **OpenClaw** 記憶架構（memsearch README 自述受 OpenClaw 啟發，非移植；2026-10-13 核對）——Hermes 與 OpenClaw 同一血緣，值得日後專門對照。
 
 ## 關聯
 

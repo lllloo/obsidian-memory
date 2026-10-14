@@ -21,7 +21,7 @@ tags:
 |---|---|---|---|
 | [nvk/llm-wiki](https://github.com/nvk/llm-wiki) | 跨工具 skill | raw 不可變＋wiki 編譯＋index，**另有獨立 `output/` 產出層**（本欄先前漏記，2026-08-11 補；見下「產出層的生態路線」） | 雙連結（wikilink＋markdown 連結並寫）、structural guardian（操作後自動修瑣碎結構問題）、四層查詢深度、token 成本 benchmark |
 | [[Hermes-Agent]] 內建 `llm-wiki` skill | 官方 bundled skill | 逐字複刻三層 | raw 記 sha256 偵測來源漂移、每頁至少 2 條 outbound link、封閉 tag taxonomy、矛盾入 frontmatter 交使用者複核、10+ 頁大改動先問 |
-| [Astro-Han/karpathy-llm-wiki](https://github.com/Astro-Han/karpathy-llm-wiki) | Agent Skills 標準單一 skill | raw 不可變＋wiki＋index，三動作定義一致 | 跨四工具安裝（Claude Code／Cursor／Codex CLI／OpenCode，自述未獨立驗證）、Lint 含自動修復、維護 log.md |
+| [Astro-Han/karpathy-llm-wiki](https://github.com/Astro-Han/karpathy-llm-wiki) | Agent Skills 標準單一 skill | raw 不可變＋wiki＋index，三動作定義一致 | 跨四工具安裝（Claude Code／Cursor／Codex CLI／OpenCode，自述未獨立驗證——**已被取代（2026-10-13）**：該 repo [README](https://github.com/Astro-Han/karpathy-llm-wiki/blob/main/README.md)／SKILL.md 全歷史（含 2026-07 當時 HEAD 與現行 main）均無「未驗證」自述，Tool Compatibility 表只列安裝方式；「未獨立驗證各工具實際可用」是本 vault 查證時的保留，主詞應為本頁而非該專案。證據強度：clone 該 repo 比對全 git 歷史，一手；各工具實際可用與否仍未實測）、Lint 含自動修復、維護 log.md |
 | [Wuphf](https://github.com/nex-crm/wuphf)（Nex.ai，YC S26） | 本地 git repo＋MCP 工具 | raw markdown＋wiki，另加私有 notebook 暫存層 | git-native 為 canonical、Bleve BM25＋SQLite 為可重建 cache；per-entity append-only fact log（JSONL、deterministic id）與敘述性頁並存；notebook→wiki 的 promotion gate。**已被取代（2026-09-17）**：原 URL 現轉址到 `najmuzzaman-mohammad/gawkbot`，repo 已轉型為工作流自動化 bot（自述「open source grok bot」），上述 wiki 架構在現行 README 查無對應；本列與下方 Wuphf 相關論述僅為 2026-07 的歷史快照 |
 | [llm-wiki-kit](https://github.com/MauricioPerera/llm-wiki-kit) | git-native、Obsidian 相容 | 三層對應 | **explicit supersession chains**（矛盾不靜默覆寫，留取代鏈）；每次 ingest 為單一 atomic commit 可整筆 revert；三層檢索 grep→BM25→embeddings |
 | [wiki-garden](https://github.com/hachiware-labs/wiki-garden) | 分層知識庫 | raw 不可變＋sources／global／projects | 知識**作用域切分**（global 跨專案可重用 vs projects 僅該專案為真）；兩個主動成長動作 `nurture`（挑主題深化）與 `what's up`（點出發育不良的區域）；lint 唯讀只回報 |
@@ -36,14 +36,14 @@ tags:
 
 ## 已收斂的設計（跨實作一致）
 
-- **raw write-once**：nvk（「Once ingested, sources are never modified」，保存證據鏈供回溯）、Astro-Han、Hermes（近似，見下）皆凍結來源層。註：這是繼承 Karpathy 原始 gist 的規定而非各自獨立發明，但「無人反向」本身就是確立訊號。
+- **raw write-once**：nvk（2026-07-10 版 README 原文「Raw is immutable — once ingested, sources are never modified」，保存證據鏈供回溯；2026-08-10 起改為「[Raw is immutable in normal workflows](https://github.com/nvk/llm-wiki/blob/master/README.md)」，明寫使用者明示的 `/wiki:retract` 整條撤回為唯一例外——撤回是移除來源及其衍生引用，不是回頭改內容，常態仍凍結；2026-08-23 起 `retract --remove-from-logs` 連 append-only `log.md` 也開了隱私撤回口。證據強度：GitHub README 一手逐字比對三版，未實測 `/wiki:retract` 實際行為）、Astro-Han、Hermes（近似，見下）皆凍結來源層。註：這是繼承 Karpathy 原始 gist 的規定而非各自獨立發明，但「無人反向」本身就是確立訊號——nvk 的撤回口是「使用者主導的刪除」而非「agent 可改寫」，不構成反向。
 - **三層分層＋三動作**：raw／wiki／schema 與 Ingest／Query／Lint 的骨架在各實作間定義一致。
 - **query-first**：先讀 index、不盲掃全庫，各實作相同。
 - **markdown 為事實來源**：即使上了向量檢索也不放棄——[MemSearch](https://github.com/zilliztech/memsearch)（Zilliz）明言「向量庫只是可隨時從 .md 重建的衍生索引」。
 
 ## 明確分歧點（未收斂）
 
-- **log 載體**：nvk、Hermes 與 Astro-Han 用 append-only `log.md`（Hermes 超 500 條按年輪替，與 index 並列導航骨幹）；Letta MemFS 與本 vault 用 git 歷史。兩路線並存，取捨在「log.md 對不吃 git 的工具仍可讀」vs「git log 零維護成本」。（這只是「近期性怎麼承載」的一角，完整光譜見下節。）
+- **log 載體**：nvk、Hermes 與 Astro-Han 用 append-only `log.md`（Hermes 超 500 條按年輪替，與 index 並列導航骨幹；nvk 自 2026-08-23 起允許使用者明示的整條隱私撤回，見上「raw write-once」條）；Letta MemFS 與本 vault 用 git 歷史。兩路線並存，取捨在「log.md 對不吃 git 的工具仍可讀」vs「git log 零維護成本」。（這只是「近期性怎麼承載」的一角，完整光譜見下節。）
 - **lint 修補權**：LLM-Wiki 論文的 Error Book 與 nvk 的 structural guardian 支持「瑣碎結構項自動修」；本 vault 原採純報告制，2026-07-10 改窄版自動修（機械項放行、語意項仍報告制），2026-07-17 再改**全面自主修補**（語意項亦由 agent 直接修，與 wiki 全權一致；只有真需使用者的決策才進 backlog）——在此分歧點上從最保守端移到最自主端。
 - **自主權邊界**：Hermes 的 llm-wiki 治理面較保守——封閉 tag taxonomy、矛盾交使用者複核（僅日期可判定的取代可自主裁決）、10+ 頁大改動先問（其 skill 生成軸反而預設免核准，見 [[Hermes-Agent]]，「保守」限於 wiki 治理面）；本 vault 走全自主（原「唯一守門 git push」已於 2026-07-20 移除，push 亦自主、事後 diff review 把關）。無實證分高下，屬治理風格選擇。
 
@@ -85,7 +85,7 @@ tags:
 判讀：
 
 - **本 vault 與 arturseo-geo 的 output 方向相反**（wiki→呈現 vs output→升格 wiki），但共守同一條線：output ≠ wiki、不作 raw／wiki 的來源。arturseo 的沙盒動機是防生成內容污染知識庫——與 Wuphf promotion gate 同族，本 vault 已於「不採」節拍板不引入前置閘（單使用者＋單 agent 場景）。
-- **nvk 措辭有未解張力**：其流程第 15 步寫「Output artifacts — summaries, reports, slides — **filed back into the wiki**」，但目錄樹上 `output/` 與 `wiki/` 明確並列為獨立層。兩處說法不一致，歸路線時以目錄樹為準、標未解，勿引用其單邊。
+- **nvk 措辭有未解張力**：其 [README「The Flow」工作流清單](https://github.com/nvk/llm-wiki/blob/master/README.md)的 Output 一步寫「Output artifacts — summaries, reports, slides — **filed back into the wiki**」（步驟編號隨版本漂移：2026-08-11 掃描時為第 15 步、2026-10-13 現版為第 16 步，勿以編號對照；GitHub README 一手逐版比對），但目錄樹上 `output/` 與 `wiki/` 明確並列為獨立層。兩處說法不一致，歸路線時以目錄樹為準、標未解，勿引用其單邊。
 - **產出要不要納健檢，生態只有 nvk 說要**。其代價是每個產出要維護可追的證據鏈；本 vault 的快照定位（過時是設計內行為）刻意不做，兩者是一致的設計選擇而非優劣。
 - 本 vault 在此分歧的獨特組合：**手寫（不可重生）＋快照（不同步）＋不納健檢＋按需產出**。生態最接近的是 nvk，差在它納 audit 且產出可由指令重生。
 

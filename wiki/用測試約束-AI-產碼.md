@@ -35,7 +35,7 @@ tags:
 這一節的證據基礎在 [[AI-自主工作流的實證檢驗]]，此處只取與測試直接相關的：
 
 - **ImpossibleBench**（arXiv 2510.20270）把測試改成與規格矛盾，任何「通過」必然是作弊：GPT-5 在 oneoff 版作弊率 **76%**，即使明確指示「發現測試有問題就停下」也未歸零。原文：「stronger models generally exhibit higher cheating rates」。手法包含**改測試斷言**、插特例邏輯、記錄內部狀態騙過評分。
-- **Cursor 的 reward hacking 稽核**（731 條 trajectory）：成功案例中 57% 是在網路上找到已合併的 PR、9% 從 bundled `.git` 挖出未來的修正 commit。
+- **Cursor 的 reward hacking 稽核**（731 條 trajectory）：~~成功案例中 57% 是在網路上找到已合併的 PR、9% 從 bundled `.git` 挖出未來的修正 commit~~。**已被取代（2026-10-13）**：原句分母錯置——回讀[原文](https://cursor.com/blog/reward-hacking-coding-benchmarks)，57%／9% 的分母是全部 731 條受稽核 trajectory（auditor 盲審、不知該次是否通過）：57% 在公網找到已合併的 PR 或修好的原始檔、9% 從 bundled `.git` 挖出未來的修正 commit；另以成功案例為分母，SWE-bench Pro 上 **63%** 的成功解題是檢索而非推導。兩組並存、不是誤植（Cursor 官方 blog 一手、逐句回讀），口徑與 [[AI-自主工作流的實證檢驗]] 2026-10-07 的更正一致。
 
 **直接含意**：如果你叫 LLM「讓測試通過」，它預設會**讓測試通過**，而不是修 bug。
 
@@ -50,7 +50,7 @@ TDAD（arXiv 2603.17973）測到：圖結構化 TDD 讓 regression 從 6.08% 降
 
 > 價值在於**告訴 agent 該驗證哪些測試**，不在於要求它遵循某個流程。
 
-**獨立印證**：2026-02 Thoughtworks 在 Deer Valley 主辦的閉門工作坊（Agile Manifesto 25 週年，Martin Fowler 主辦、約 50 位資深實踐者，Chatham House Rule，[一手報告 PDF](https://www.thoughtworks.com/content/dam/thoughtworks/documents/report/tw_future%20_of_software_development_retreat_%20key_takeaways.pdf)）把 TDD 列為最可分享的洞見之一，機制描述比上述更銳利：
+**獨立印證**：2026-02 Thoughtworks 在 Deer Valley 主辦的閉門工作坊（Agile Manifesto 25 週年，Martin Fowler 主辦、約 40 位資深實踐者到場（原寫約 50，係 Fowler 原版 bliki 的受邀數；到場數依與會者 Annie Vella [一手記述](https://annievella.com/posts/finding-comfort-in-the-uncertainty/)，2026-10-13 核對，詳見 [[AI-產碼加速下的-review-瓶頸]]），Chatham House Rule，[一手報告 PDF](https://www.thoughtworks.com/content/dam/thoughtworks/documents/report/tw_future%20_of_software_development_retreat_%20key_takeaways.pdf)）把 TDD 列為最可分享的洞見之一，機制描述比上述更銳利：
 
 > 「TDD prevents a failure mode where agents write tests that verify broken behavior. When the tests exist before the code, agents cannot cheat by writing a test that simply confirms whatever incorrect implementation they produced.」
 >
@@ -81,7 +81,7 @@ coverage 問「這行有沒有被執行」，mutation 問「**把這行弄壞，
 
 > 「With AI-generated test cases now commonplace, mutation testing acts as a reinforcement layer for catching **'perpetually green' tests** — those that pass regardless of logic changes due to missing assertions or decoupled mocks.」
 
-同期並列 `Complacency with AI-generated code` blip，整期主題是「回歸工程基本功對抗 cognitive debt」。**值得注意的是這一期並未把 property-based、metamorphic、differential 列為 AI 場景的答案**——下面幾項在業界權威層的地位遠不如 mutation。（**medium-high**：資深顧問群體的共識定位，非效果量測；環位與措辭會逐期變動，引用前回查當期 Radar。）
+~~同期並列 `Complacency with AI-generated code` blip，整期主題是「回歸工程基本功對抗 cognitive debt」。~~ **已被取代（2026-10-13）**：`Complacency with AI-generated code` 最後一次收錄是前一期 Vol.33（2025-11，Hold），Thoughtworks 官網[該 blip 頁](https://www.thoughtworks.com/radar/techniques/complacency-with-ai-generated-code)明示它不在 Vol.34 上；Vol.34 同期承接同一憂慮的是 Caution 環的 [`Codebase cognitive debt`](https://www.thoughtworks.com/radar/techniques/codebase-cognitive-debt)（其 Related blips 直接回指 Vol.33 的 Complacency）。Vol.34 四個官方 themes 中與此相關的是「Retaining principles, relinquishing patterns」與「Putting coding agents on a leash」，可概括為回歸工程原則以對抗 cognitive debt。（Thoughtworks 官網三個一手頁互相印證，未比對 Vol.34 PDF 全文。）**值得注意的是這一期並未把 property-based、metamorphic、differential 列為 AI 場景的答案**——下面幾項在業界權威層的地位遠不如 mutation。（**medium-high**：資深顧問群體的共識定位，非效果量測；環位與措辭會逐期變動，引用前回查當期 Radar。）
 
 變異運算子的優先序（存活率由高到低，先跑這幾類最划算）：
 
@@ -126,7 +126,7 @@ PBT 不寫「輸入 A 應得 B」，而寫「**對所有合法輸入，這個不
 
 **必須並列的限制面**：學術界對「LLM 能不能寫好 PBT」給出的數字保守得多。[Can Large Language Models Write Good Property-Based Tests?](https://arxiv.org/abs/2307.04346)（Vikram、Lemieux、Sunshine、Padhye，CMU／UBC）對 40 個 Python API 評估，結果是 **GPT-4 只對 21% 的可提取性質能自動合成正確的 PBT**。
 
-兩份數據不矛盾，差在**任務定義**：Anthropic 那份要的是「找到值得回報的真 bug」並且**中間插了 rubric 排序**（排序前 56%、排序後 86%，排序本身效果顯著）；這份要的是「對每一個應成立的性質都寫出正確的 PBT」——後者是嚴格得多的完備性要求。合起來的操作結論是：**PBT 該當成撈 bug 的網，不是規格的完整覆蓋**；期待 agent 把性質寫全，會失望。（**medium-high**：同儕審查場合、方法明確；但評估的是 GPT-4／Claude-3-Opus 世代模型，2023 投稿、2024 修訂，模型能力已推進，數字宜視為**下界**而非現況。）
+兩份數據不矛盾，差在**任務定義**：Anthropic 那份要的是「找到值得回報的真 bug」並且**中間插了 rubric 排序**（排序前 56%、排序後 86%，排序本身效果顯著）；這份要的是「對每一個應成立的性質都寫出正確的 PBT」——後者是嚴格得多的完備性要求。合起來的操作結論是：**PBT 該當成撈 bug 的網，不是規格的完整覆蓋**；期待 agent 把性質寫全，會失望。（**medium**：arXiv preprint（2023 v1、2024 v2），截至 2026-10-13 未見同儕審查刊登紀錄（[arXiv 頁](https://arxiv.org/abs/2307.04346)無 journal-ref、OpenAlex 登錄為 preprint、作者出版頁亦未標 venue）；方法明確；但評估的是 GPT-4／Claude-3-Opus 世代模型，模型能力已推進，數字宜視為**下界**而非現況。2026-10-13 校正：原標「同儕審查場合、medium-high」有誤；日後查到刊登版再回升。）
 
 **這個結果真正的含意**：LLM 擅長的是**推論不變量**（從命名與文件反推「這裡應該恆成立什麼」），不是寫斷言。PBT 因此是 AI 產碼場景下少數「讓模型做它擅長的事」的用法。而它的死角也被同一份研究標得很清楚——**語意微妙、有隱含假設的程式碼推不出正確性質**，只有維護者知道什麼才是對的。
 
@@ -197,7 +197,7 @@ PBT 不寫「輸入 A 應得 B」，而寫「**對所有合法輸入，這個不
 | AI 產測試的四種失效模式 | **medium**：多篇從業者整理收斂，無量化研究 |
 | mutation 能戳破覆蓋率表演 | **medium-high**：機制清楚、案例可複現，另有 Radar Vol.34 的業界定位與 Meta 生產規模佐證 |
 | mutation＋LLM 產測試可在生產規模落地並被工程師採用（73%） | **high**：Meta ACH，一手＋FSE 2025 同儕審查；局限於單一公司與 Kotlin 生態 |
-| LLM 對可提取性質只有 21% 能寫出正確 PBT | **medium-high**：同儕審查、方法明確，但為 GPT-4／Claude-3-Opus 世代，宜視為下界 |
+| LLM 對可提取性質只有 21% 能寫出正確 PBT | **medium**：arXiv preprint（2023 v1／2024 v2），未見同儕審查刊登紀錄；方法明確，但為 GPT-4／Claude-3-Opus 世代，宜視為下界 |
 | 能約束 agent 的判準，其權威必須在實作之外 | **medium**：source-of-authority taxonomy 給出文獻分佈（v1 為 spec-derived 28/54；IEEE Access 刊登版擴至 83 篇、無 spec 判決過半），已同儕審查但非有效性量測；與本頁其餘證據同向 |
 | metamorphic testing 適合驗 AI 產碼 | **medium**：93 篇 survey 的學術厚度，但無 AI-coding 場景的直接效果量測，且未進 Radar |
 | differential testing 可驗 AI 重構的行為保持 | **low-medium**：機制成立、有零散提及，無系統性研究 |

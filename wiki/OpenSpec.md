@@ -2,7 +2,7 @@
 title: OpenSpec
 description: 說明 Fission-AI 輕量規格工具的安裝、目錄、delta spec 與五步工作流，並標示流程可信但效果未實證
 created: 2026-07-16
-updated: 2026-09-17
+updated: 2026-10-13
 source: https://github.com/Fission-AI/OpenSpec
 published: ""
 parent: "[[wiki/01.index]]"
@@ -246,9 +246,9 @@ OpenSpec 原生整合 **30+ 種 AI 助理**（2026-07-21 清點官方 [supported
 - **Spec 寫法**：用 **Given/When/Then** 具體場景取代模糊形容詞——這樣才能成為 AI 的實作契約。
 - **Scope 管理**：**多個小 change 勝過單一大 change**。
 
-## Stores（very early beta，medium）
+## Stores（beta，medium）
 
-1.5.0（2026-06-28）引入的 **stores**，官方定位是「組織 specs 與 changes 的更簡單模型」，**取代先前的 workspace 與 initiative 模型**。官方自標 *"very early beta — expect rough edges and breaking changes in upcoming releases"*，1.6.0 仍在修它的建立時序 bug。**結論：知道它存在即可，不建議現在押上去**；細節待穩定後回查。標 medium 是因為除 changelog 的一句定位外，尚無成篇文件可佐證其實際模型。
+1.5.0（2026-06-28）引入的 **stores**，官方定位是「組織 specs 與 changes 的更簡單模型」，**取代先前的 workspace 與 initiative 模型**。官方自標 *"very early beta — expect rough edges and breaking changes in upcoming releases"*，1.6.0 仍在修它的建立時序 bug。**結論：知道它存在即可，不建議現在押上去**；細節待穩定後回查。~~標 medium 是因為除 changelog 的一句定位外，尚無成篇文件可佐證其實際模型。~~ **已被取代（2026-10-13）**：官方已有成篇文件——README 以專節介紹 stores 並連到 [Stores User Guide](https://github.com/Fission-AI/OpenSpec/blob/main/docs/stores-beta/user-guide.md)（約 3000 字，含 setup／register／root 解析順序／references／worksets／限制），[cli.md](https://github.com/Fission-AI/OpenSpec/blob/main/docs/cli.md) 另有「Stores (standalone OpenSpec repos)」節列出 `store setup/register/unregister/remove/list/doctor`。現行定位：store 是「專責規劃的獨立 repo」（specs＋changes 同 `openspec/` 結構，靠 git push 共享，每台機器以 id 註冊），一般指令可用 `--store <id>` 對其操作，也可由 `config.yaml` 的 `store:` 指標或 `openspec config set defaultStore` 指定預設。官方用語已從「very early beta」改為「beta」，仍明言指令名、flag、檔案格式與 JSON 輸出可能跨版變動；changelog 1.9.0～1.14.1 持續有 stores 修正。「不建議現在押上去」的結論可由讀者依 beta 狀態自判，不再是因缺文件。（證據強度：官方 repo 一手來源 README／user-guide／cli.md／CHANGELOG 經回讀確認，未實測指令。）
 
 ## 時效性警告
 
@@ -262,10 +262,10 @@ OpenSpec 原生整合 **30+ 種 AI 助理**（2026-07-21 清點官方 [supported
 - delta specs 的 `ADDED/MODIFIED/REMOVED/RENAMED` 完整撰寫格式與 `validate` 的**全部**檢查規則——仍未逐條查證。1.6.0 的 changelog 顯示 requirement 解析有一輪大修（fence／metadata／多行 keyword 的處理），故舊版行為描述不可直接沿用。已實測確認的一條見下：
 
   **`## Purpose` 是主 spec 的硬性要求**（2026-07-21 實測 1.6.0，強度 high）：`markdown-parser.ts` 缺 Purpose 直接 `throw`，整份 spec 被放棄、其下 requirement 全不計數。實測缺 Purpose 的 spec 在 `openspec list --specs` 顯示 `requirements 0`，補上後即正常。因此 **`requirements 0` 要讀成「解析失敗」而非「真的沒寫需求」**。1.6.0 的 `validate` 已會直接點名（「Ensure spec includes ## Purpose and ## Requirements sections」並附範例），比舊版容易診斷。
-- stores 的實際資料模型與遷移路徑（見上節）。
+- ~~stores 的實際資料模型與遷移路徑~~ — 2026-10-13 已解：資料模型與指令見官方 Stores User Guide 與 cli.md（上節連結）；從舊 workspace／initiative 模型的遷移路徑官方文件未見專章，仍待回查。
 - ~~`/opsx:sync` 與 `/opsx:archive` 的分工~~ — 2026-07-21 已解：`sync` 把 delta 套回主 specs、在預設流程中為可選；`archive` 封存時會在需要時提示先 sync。
 - ~~`config.yaml` 欄位與 schema~~ — 2026-07-21 已解，見「專案設定」一節。
-- ~~Stores 是什麼~~ — 2026-07-21 已部分解答，見上節。
+- ~~Stores 是什麼~~ — 2026-07-21 部分解答、2026-10-13 已解，見上節。
 
 ## 相關頁面
 

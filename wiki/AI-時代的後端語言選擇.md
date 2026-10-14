@@ -2,7 +2,7 @@
 title: AI 時代的後端語言選擇
 description: PHP、Go、Node/TypeScript、Python 在接 AI 與讓 agent 寫後端兩面的證據盤點：生態差異明確，產碼品質排名互相矛盾
 created: 2026-09-23
-updated: 2026-09-24
+updated: 2026-10-13
 parent: "[[wiki/01.index]]"
 tags:
   - ai-agent
@@ -53,7 +53,7 @@ PHP-FPM 一個 worker 同時只處理一個同步請求，LLM 呼叫期間 worke
 |---|---|---|
 | SWE-bench Multilingual（SWE-agent＋Claude 3.7 Sonnet） | Rust 58.1%、Java 53.5%、**PHP 48.8%**、Ruby 43.2%、JS/TS 34.9%、**Go 31.0%**、C/C++ 28.6% | 每語言約 43 題，1 題約 2.3 個百分點；頁面自承難以判斷哪些因素最重要 |
 | SWE-Bench Pro 公開集（Scale AI，2025-09） | **Go 與 Python 普遍較高**，JS/TS 依模型從近 0% 到 30%+ | 只含 Python/JS/TS/Go，無 PHP；語言分析只用 50 回合、每題 $2 上限的軌跡；某些 repo 所有模型都低於 10% |
-| Multi-SWE-bench（2025-04，1,632 題） | 模型在 Python 強、難以泛化到其他語言 | 無 PHP；Python 分數取自另一資料集（SWE-bench Verified）；其他語言中難題比例較高；三種受測 agent 原本都為 Python 最佳化 |
+| Multi-SWE-bench（2025-04，1,632 題） | 模型在 Python 強、難以泛化到其他語言；論文 [§6.1.1](https://arxiv.org/html/2504.02605) 給出階層 Python > Java > Go/Rust > C/C++，**TS/JS 一致最低**，作者歸因含 event-driven／非同步範式（2026-10-13 一手回查，論文原文、未自行重跑評測） | 無 PHP；Python 分數取自另一資料集（SWE-bench Verified）；其他語言中難題比例較高；三種受測 agent 原本都為 Python 最佳化 |
 
 數字本身強度高（3-0、逐項對過一手）。但 **Go 在一份倒數第二、在另一份名列前茅**，本身就說明語言與 repo、題目難度分不開——high 只代表「評測得出這些數字」，不代表「語言 X 更適合 AI coding」。
 
@@ -92,9 +92,9 @@ PHP-FPM 一個 worker 同時只處理一個同步請求，LLM 呼叫期間 worke
 以下主張在對抗式驗證中被否決。依過往經驗 verifier 會過度否決，否決不等於事實為假，但**未經一手回查前一律勿引用**：
 
 - 「Octane＋Swoole 單一 worker 可用 coroutine 同時持有多條 LLM 連線」（0-3）
-- 「Multi-SWE-bench 呈 Python > Java > Go/Rust > C/C++、TS/JS 墊底並歸因於非同步範式」（0-3）
+- 「Multi-SWE-bench 呈 Python > Java > Go/Rust > C/C++、TS/JS 墊底並歸因於非同步範式」（0-3）——**已被取代（2026-10-13）**：一手回查 [arXiv 2504.02605 §6.1.1](https://arxiv.org/html/2504.02605)，論文原文確有此階層（high-level general-purpose > systems > low-level/HPC > web 最差；Java 第二、Go/Rust 勝 TS/JS 但輸 Java、TS/JS 一致最低）與「event-driven, asynchronous programming paradigms」歸因，可引用。但同節作者同時把跨語言差距歸因於 Multi-SWE-bench 難題比例較高、以及三種 agent 原為 Python 最佳化的 performance bias，引用時三因並陳，勿只引非同步一因。證據強度：論文一手原文逐句回讀（arXiv HTML v1，單一版本），排名為論文自述、未自行重跑評測。新結論見第二節 Multi-SWE-bench 列。
 - 「Boost 評測證明慣例＋官方 MCP 能明顯改善 AI 寫後端品質」（0-3，推論超出證據）
-- 「Laravel Boost 提供超過 15 個專用工具」（0-3，細節未回查）
+- 「Laravel Boost 提供超過 15 個專用工具」（0-3，細節未回查）——**已被取代（2026-10-13）**：一手回查 [Laravel 官方文件 AI Assisted Development 頁](https://laravel.com/docs/12.x/ai)（12.x／13.x 同句）確有「over 15 specialized tools」原句，可引用但須標「廠商自述、反映 v1.x 時期」：[laravel/boost](https://github.com/laravel/boost) repo `src/Mcp/Tools/` 在 v1.0.0 有 16 個 tool class，v1.8.8 移除 ReportFeedback、v2.3.0 移除 Artisan wrapper 類工具後，v2.10.3（2026-10-07）只剩 11 個，[官方 Boost 文件](https://laravel.com/docs/12.x/boost)「Available MCP Tools」表列 9 個；引用時寫「官方文件自述超過 15 個，現行版本實際約 11 個」。證據強度：官方文件逐字回讀＋ repo 目錄與 release notes 一手，未實際安裝執行 MCP server 列 tool 清單。
 - 「SWE-bench Multilingual 作者不把差異歸因於語言」（1-2，措辭問題）
 
 ## 開放問題

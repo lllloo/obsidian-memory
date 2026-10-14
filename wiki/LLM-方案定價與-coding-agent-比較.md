@@ -2,7 +2,7 @@
 title: LLM 方案定價與 coding agent 比較
 description: 主流 LLM 訂閱月費與 coding agent 三方案定價對照，依用途給經濟實惠推薦，含台幣概算、2026-09 覆核與第三方工具可用性
 created: 2026-07-08
-updated: 2026-10-07
+updated: 2026-10-13
 parent: "[[wiki/01.index]]"
 tags:
   - llm-pricing
@@ -33,7 +33,7 @@ tags:
 
 ## 二、Coding agent 三方比較（本 vault 重點）
 
-三者都是「訂閱綁一個 coding agent」，但模型來源差異巨大——~~**OpenCode Go 只能用中國實驗室的開源模型，沒有 Claude/GPT**~~ **已被取代（2026-09-02）**：Go 的模型清單已納入 GPT 與 Grok 等閉源模型（仍無 Claude），新結論見下方「2026-09-02 覆核」。
+三者都是「訂閱綁一個 coding agent」，但模型來源差異巨大——~~**OpenCode Go 只能用中國實驗室的開源模型，沒有 Claude/GPT**~~ **已被取代（2026-09-02）**：Go 的模型清單已納入 GPT 與 Grok 等閉源模型（仍無 Claude），新結論見下方「2026-09-02 覆核」。**已被取代（2026-10-13）**：Go 模型清單已納入 Claude Haiku 5.5（僅 Haiku 等級，無 Sonnet／Opus；[官網](https://opencode.ai/go)與 [docs](https://opencode.ai/docs/go/) 一手，docs 列其月額度 Go $15／Go Plus $60；未實際訂閱測試，清單輪替快、僅為當日快照）。
 
 | | **OpenCode Go** | **Claude Pro** | **ChatGPT Plus（Codex）** |
 |---|---|---|---|
@@ -53,7 +53,7 @@ tags:
 以官方定價頁重查一輪，記錄與上方 7 月快照的差異。**未變**：Claude Pro $20（年繳 $17）與 Max 從 $100 起、ChatGPT Go $8 / Plus $20 / Pro $100・$200、OpenCode Go 的金額計用量結構。變動如下：
 
 - **OpenCode Go 的模型清單不再限於中國開源模型**（官網一手，高信心）。2026-09-02 觀察到的 lineup 除 GLM、Kimi、Qwen、MiniMax、DeepSeek 外，另有 GPT 5.6 Luna、Grok 4.6、Hy4、LongCat、MiMo，以及 Meta 的 Muse Spark（限部分地區）。這推翻了上表原本「僅中國開源模型」的主張，連帶讓「模型天花板略遜頂級閉源」這條比 7 月時弱——但清單輪替極快，選型前務必回官網看當下版本，不要引用此處的具體型號。
-- **OpenCode Go 首月 $5 優惠已不見於官網**，現為單一 $10/月（可另行 top up credit）。**已被取代（2026-10-07）**：[官網](https://opencode.ai/go)與 [docs](https://opencode.ai/docs/go/) 現列兩檔——Go $10/月與 Go Plus $40/月（higher limits），且用量改為按模型分別計月額度（5 小時 20%／週 50%／月 100%），原本一體適用的 $12／$30／$60 金額上限不再適用所有模型（官方一手；模型清單仍含 GPT 與 Grok、仍無 Claude）。
+- **OpenCode Go 首月 $5 優惠已不見於官網**，現為單一 $10/月（可另行 top up credit）。**已被取代（2026-10-07）**：[官網](https://opencode.ai/go)與 [docs](https://opencode.ai/docs/go/) 現列兩檔——Go $10/月與 Go Plus $40/月（higher limits），且用量改為按模型分別計月額度（5 小時 20%／週 50%／月 100%），原本一體適用的 $12／$30／$60 金額上限不再適用所有模型（官方一手；模型清單仍含 GPT 與 Grok、仍無 Claude——**已被取代（2026-10-13）**：現已含 Claude Haiku 5.5（僅 Haiku，官網標 New），來源同上、官方 docs 與產品頁一手、未實測；清單輪替快，具體型號仍回官網查）。
 - **Google AI Plus 由 $7.99 降至 $4.99**（中信心：來自聚合站摘要，我未取得官方公告一手佐證；台灣 Google One 頁面顯示的 AI Plus 為 NT$330／2TB，與美區數字對不起來，是區域差異或某一邊過時，未判定）。
 - **Google AI Pro 的附帶儲存由 2TB 升至 5TB**，月費未動（台灣區頁面一手確認 5TB／NT$650）。
 - **ChatGPT 訂閱價格未動**，但 Go 層在 8 月加入無限文字對話、Business 新增 Premium 層（約 $100/席年繳、$125 月繳）——皆為聚合站摘要，中信心，未見官方頁一手佐證。
@@ -84,7 +84,7 @@ agy 本身內建 subagent、`/schedule` 排程、`/boost` 三層編排，並可�
 
 **選型含意**：若目標只是消耗閒置的 Google 池額度，直接開官方 `agy` 即可，委派層、MCP bridge 與外部排程器多為不必要的中介——agy 自帶排程，worker 端本身就有「規律」能力。
 
-**對推薦的影響**：OpenCode Go 是 OpenCode 自家託管方案、本來就不借別家訂閱，「跑量選 OpenCode Go」不受影響。但「Claude Pro 綁第三方 harness」這條路已關，Claude 訂閱只能在 Claude Code／官方 app 內用；想在 OpenCode 裡跑 Claude 得走 API 按量。GitHub Copilot、xAI 等其他家未查。
+**對推薦的影響**：OpenCode Go 是 OpenCode 自家託管方案、本來就不借別家訂閱，「跑量選 OpenCode Go」不受影響。但「Claude Pro 綁第三方 harness」這條路已關，Claude 訂閱只能在 Claude Code／官方 app 內用；想在 OpenCode 裡跑 Claude 得走 API 按量，或訂 OpenCode Go 用其清單內的 Claude Haiku 5.5（2026-10-13 [官網](https://opencode.ai/go)一手、未實測；僅 Haiku 等級，Sonnet／Opus 仍需 API）。GitHub Copilot、xAI 等其他家未查。
 
 ## 三、依用途的經濟實惠推薦
 

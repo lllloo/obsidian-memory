@@ -38,12 +38,12 @@ Agent Skills 規範（agentskills.io）`skill-creation/using-scripts` L98 逐字
 |---|---|---|
 | (a) 裸相對 `scripts/x.py` | 絕對主流 | `anthropics/skills` 8 個含 `scripts/` 的 skill 全數採用；`obra/superpowers` 唯一的腳本呼叫行亦然 |
 | (b) `${CLAUDE_SKILL_DIR}` | **0** | — |
-| (c) `${CLAUDE_PLUGIN_ROOT}` | **0** | — |
+| (c) `${CLAUDE_PLUGIN_ROOT}` | **0**（`SKILL.md` 正文）；`obra/superpowers` 在 `hooks/hooks.json` 使用 | — |
 | (d) 專案根相對 `.claude/skills/<name>/scripts/…` | **0** | 只作為 opencode#6900 的事後 workaround 出現，無人主動如此撰寫 |
 | (e) 佔位符 `<skill-root>/scripts/…` | ≥4，全在跨工具集合 | `MengTo/Skills`（Codex-first） |
 | (f) 腳本自我定位（`__file__`／`dirname "$0"`） | 0 確認樣本 | — |
 
-`obra/superpowers` 該列為本機實查（v6.3.0）：28 個 `SKILL.md`、3 個 `scripts/` 目錄，`CLAUDE_SKILL_DIR` 與 `CLAUDE_PLUGIN_ROOT` 命中數皆 0——**它是 plugin、用得到 `${CLAUDE_PLUGIN_ROOT}` 卻沒用**。`SKILL.md` 內唯一腳本呼叫是 `writing-skills/SKILL.md:320` 的 `./render-graphs.js ../some-skill`，配散文「Use `render-graphs.js` in this directory」，且那是給人手動跑的工具、不在 agent 流程上。
+`obra/superpowers` 該列為本機實查（v6.3.0）：28 個 `SKILL.md`（2026-10-13 複核 clone 計得 14，原計數方式待確認）、3 個 `scripts/` 目錄，`CLAUDE_SKILL_DIR` 與 `CLAUDE_PLUGIN_ROOT` 命中數皆 0——**它是 plugin、用得到 `${CLAUDE_PLUGIN_ROOT}` 卻沒用**。**已被取代（2026-10-13）**：上句「命中數皆 0／用得到卻沒用」僅對 `SKILL.md` 正文成立。同一 v6.3.0 tag 全 repo 實查 `CLAUDE_PLUGIN_ROOT` 命中 [`hooks/hooks.json`](https://raw.githubusercontent.com/obra/superpowers/v6.3.0/hooks/hooks.json)（SessionStart hook 指令 `"${CLAUDE_PLUGIN_ROOT}/hooks/run-hook.cmd" session-start`）、`hooks/session-start`（harness 偵測）、`tests/`、`docs/` 等多處；它是 plugin、在 hook 層確實用 `${CLAUDE_PLUGIN_ROOT}` 定位腳本，只是 skill 正文的腳本路徑不用。且 `RELEASE-NOTES.md` v5.0.1（2026-03-10）明載 brainstorming skill 原本用 `${CLAUDE_PLUGIN_ROOT}/lib/brainstorm-server/`，為跨平台可攜性刻意改成相對 `scripts/` 路徑——「不用」是有意選擇，非遺漏（證據強度：v6.3.0 tag 原檔 WebFetch 回讀＋本機 clone 同 tag grep＋`RELEASE-NOTES.md` 一手，未實測 hook 執行）。`SKILL.md` 內唯一腳本呼叫是 `writing-skills/SKILL.md:320` 的 `./render-graphs.js ../some-skill`，配散文「Use `render-graphs.js` in this directory」，且那是給人手動跑的工具、不在 agent 流程上。
 
 ### 主流沒被燙到的真正原因
 
@@ -86,14 +86,16 @@ Agent Skills 規範（agentskills.io）`skill-creation/using-scripts` L98 逐字
 
 ## Claude Code 專屬機制（規範不認）
 
-官方文件記載兩個替換變數，社群滲透率為零（見上表）：
+官方文件記載的替換變數已擴為四個（2026-10-13 回查 [skills 文件](https://code.claude.com/docs/en/skills.md)「Available string substitutions」，官方文件一手、未實測替換行為；本頁 2026-08-13 初稿時僅記兩個，各變數加入時點見官方 CHANGELOG），其中與 skill 腳本路徑直接相關的是 `${CLAUDE_SKILL_DIR}` 與 `${CLAUDE_PLUGIN_ROOT}`，社群滲透率為零（見上表；`${CLAUDE_PROJECT_DIR}`、`${CLAUDE_PLUGIN_DATA}` 未抽樣）：
 
 | 變數 | 值 | 範圍 |
 |---|---|---|
 | `${CLAUDE_SKILL_DIR}` | `SKILL.md` 所在目錄；plugin skill 時指向 skill 在 plugin 內的**子目錄**，非 plugin 根 | personal／project／plugin 三層皆可用 |
 | `${CLAUDE_PLUGIN_ROOT}` | plugin 安裝目錄絕對路徑 | 文件明載「Substituted only in plugin skills」 |
+| `${CLAUDE_PROJECT_DIR}` | 專案根目錄，與 hooks／MCP server 收到的 `CLAUDE_PROJECT_DIR` 同值；用於引用專案本地腳本 | personal／project／plugin 三層皆可用 |
+| `${CLAUDE_PLUGIN_DATA}` | plugin 持久資料目錄（`~/.claude/plugins/data/<id>/`），跨 plugin 更新保留 | 文件明載「Substituted only in plugin skills」 |
 
-**關鍵限制：這是字串替換，不是 shell 環境變數。** 官方只保證兩個替換位置——skill 的 markdown 正文，與 frontmatter `allowed-tools` 內的 Bash 規則。bundled 腳本自己的 process 環境不保證看得到 `$CLAUDE_SKILL_DIR`（`plugins-reference` 的 export 條款只涵蓋 hook process 與 MCP／LSP subprocess）。官方文件推薦寫法為 `python3 ${CLAUDE_SKILL_DIR}/scripts/visualize.py .`，理由是「不論安裝在 personal、project 或 plugin 層級都解析正確」，且只有這種寫法能讓 `allowed-tools: Bash(${CLAUDE_SKILL_DIR}/scripts/render.sh *)` 比對成功而免權限提示。
+**關鍵限制：這是字串替換，不是 shell 環境變數。** 官方只保證兩個替換位置——skill 的 markdown 正文，與 frontmatter `allowed-tools` 內的 Bash 規則。bundled 腳本自己的 process 環境不保證看得到 `$CLAUDE_SKILL_DIR`（`plugins-reference` 的 export 條款只涵蓋 hook process 與 MCP／LSP subprocess）。該頁現已改名為 [plugin manifest-reference](https://code.claude.com/docs/en/plugins/manifest-reference)，並明載「The variables aren't present in the environment of commands Claude runs through the Bash tool, in the main session or in a subagent」（2026-10-13 回查，官方文件一手、未實測），直接證實 bundled 腳本 process 看不到這些變數。官方文件推薦寫法為 `python3 ${CLAUDE_SKILL_DIR}/scripts/visualize.py .`，理由是「不論安裝在 personal、project 或 plugin 層級都解析正確」，且只有這種寫法能讓 `allowed-tools: Bash(${CLAUDE_SKILL_DIR}/scripts/render.sh *)` 比對成功而免權限提示。
 
 **這與 Anthropic 自家 skills repo 的做法不一致**：官方文件推薦替換變數，官方 skills repo 一律裸相對路徑。「官方建議」取決於問的是 CLI 文件還是 skills repo。
 

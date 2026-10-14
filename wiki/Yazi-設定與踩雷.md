@@ -50,7 +50,7 @@ show_hidden = true
 
 ## 三、對「看 agent 改了哪些檔」的專用件（一手）
 
-官方 monorepo 的 19 個外掛中只有兩個針對 Git，分工不同：
+官方 monorepo 的外掛（[README](https://github.com/yazi-rs/plugins/blob/main/README.md) 2026-10-13 列 20 個，2026-09-28 新增 `rclone.yazi`；確切清單回查 README。官方 README 一手，未實測外掛本身）中只有兩個針對 Git，分工不同：
 
 - **`git.yazi`**：把 Git 變更狀態顯示成檔案清單的 linemode。需 `require("git"):setup { order = 1500 }` 並在 `yazi.toml` 註冊 `[[plugin.prepend_fetchers]]`（`*` 與 `*/` 各一）。
 - **`vcs-files.yazi`**：直接列出變更檔案，實作為 `git diff --name-only --relative HEAD` 加 `git ls-files --others --exclude-standard`，以 `vcs://` 虛擬檔案系統 yield。**限制是相對 HEAD**——agent 一旦 commit，清單就不再列出。

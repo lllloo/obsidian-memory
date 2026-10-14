@@ -2,7 +2,7 @@
 title: Hermes Agent
 description: Nous Research 開源的自我進化 AI agent：學習迴路自動生成並改良 skill，跨 session 累積記憶與使用者模型
 created: 2026-07-08
-updated: 2026-10-07
+updated: 2026-10-13
 parent: "[[wiki/01.index]]"
 tags:
   - ai-agent
@@ -25,7 +25,7 @@ Nous Research 開源、MIT 授權的**自我進化 AI agent**，標語 *The agen
 | 機制 | 作用 |
 |---|---|
 | 有界核心記憶（Bounded core memory） | `MEMORY.md`／`USER.md`，各 2,200／1,375 字元上限（官方文件快照值，隨版本可變；出處 [[Hermes-Agent-NousResearch]]），session 開始一次性注入、中途絕不改變（保留 prefix cache）；寫爆時**不自動摘要精簡，直接報錯**，逼 agent 自己合併/刪除過時條目 |
-| Autonomous skill creation | 完成複雜任務（5+ 次工具呼叫）成功、解決錯誤、使用者糾正、或發現非顯而易見流程時觸發，自動把流程萃取成可重用 skill；預設免人工核准即可寫入 |
+| Autonomous skill creation | 完成複雜任務（5+ 次工具呼叫）成功、解決錯誤、使用者糾正、或發現非顯而易見流程時觸發，自動把流程萃取成可重用 skill；預設免人工核准即可寫入。**已被取代（2026-10-13）**：「5+ 次工具呼叫」為 2026-07 快照時官方 system prompt 的措辭，現已移除——官方 [`agent/prompt_builder.py`](https://github.com/NousResearch/hermes-agent/blob/main/agent/prompt_builder.py) 註解載明該句在訂閱制 OAuth 憑證下會觸發 Anthropic 伺服端內容過濾、以計費樣貌的 HTTP 400 浮現，現行 prompt 只寫「When you work out a non-trivial workflow, record it with skill_manage for future reuse」；官方 [skills.md](https://github.com/NousResearch/hermes-agent/blob/main/website/docs/user-guide/features/skills.md) 列的觸發情境為「值得重複的多步驟流程／遇錯後找到可行路徑／使用者糾正」，無數字門檻（一手來源已回讀，未實測；措辭切換的確切 commit／日期未能定位） |
 | Skill self-improvement | skill 在使用過程中自我修正 |
 | Autonomous Curator | 自主策展人：評分、合併重疊、封存過時、寫每輪報告、保護 pinned skill |
 | `llm-wiki` skill（官方內建） | **逐字複刻 Karpathy 的 LLM Wiki 模式**（raw/wiki/schema 三層），文件明言「Based on Andrej Karpathy's LLM Wiki pattern」——見 [[LLM-Wiki-知識管理模式]]；另維護 append-only `log.md`（超 500 條按年輪替，與 index 並列導航骨幹），在生態中的治理定位見 [[LLM-Wiki-生態實作比較]] |
@@ -45,7 +45,7 @@ Nous Research 開源、MIT 授權的**自我進化 AI agent**，標語 *The agen
 - **Agent Core** — 主推理迴路
 - **Gateway** — 單一 process 橋接多通訊平台（Telegram、Discord、Slack、WhatsApp、Signal、Matrix、Feishu、Teams… 官方稱 18–20+ 平台）
 - **Skills System** — 可攜、可分享的程序性記憶
-- **Tools（60+）** + **MCP Integration** — 內建工具集，並可接外部 MCP server 且過濾工具
+- **Tools（60+）** + **MCP Integration** — 內建工具集，並可接外部 MCP server 且過濾工具。**已被取代（2026-10-13）**：「60+」查無官方出處（來自 raw 彙整誤植）；官方 README 在快照時（[commit c6c1fd8](https://github.com/NousResearch/hermes-agent/blob/c6c1fd8b6b6828361bc117b532848537904ac562/README.md)）與[現行版](https://github.com/NousResearch/hermes-agent/blob/main/README.md)皆寫「40+ tools」，程式碼產生的 [tools-reference](https://github.com/NousResearch/hermes-agent/blob/main/website/docs/reference/tools-reference.md) 快照時列約 73、現列約 100 個（含 kanban／desktop 等條件啟用工具）；數字隨版本可變，引用時以 tools-reference 的 registry 計數為準（官方 README 與 tools-reference 原文已回讀，未實測）
 - **Subagents** — 隔離、可平行的子代理
 - **SOUL.md**（全域人格）／**Context Files**（專案級脈絡）— 塑形對話行為
 
@@ -55,8 +55,9 @@ Nous Research 開源、MIT 授權的**自我進化 AI agent**，標語 *The agen
 
 待辦事項、roadmap、task 不是放在有界核心記憶（`MEMORY.md`／`USER.md`）裡，而是另立一套獨立子系統：**SQLite 存儲的多 profile 持久任務佇列**（`~/.hermes/kanban.db`，WAL 模式；多板時 `~/.hermes/kanban/boards/<slug>/kanban.db`）。核心設計是「每次交接是一列任何 profile（或人）都能讀寫」，用以區分更輕量的 `delegate_task`（RPC 式、父層阻擋等子層返回、失敗即失敗、無審計軌跡）。原始細節見 [[Hermes-Agent-Kanban]]。
 
-- **Task 狀態機**：`triage → todo → ready → running → blocked → done → archived`，欄位含 `assignee`、`priority`、`workspace`（scratch/dir:\<path\>/worktree）、`max_retries`、`goal_mode` 等；`task_links`／`task_comments`／`task_runs`／`task_events` 等附屬表提供依賴、協作留言、重試歷史、審計日誌。
-- **Agent 工具**：`kanban_show`／`kanban_list`／`kanban_complete`／`kanban_block`／`kanban_heartbeat`／`kanban_comment`／`kanban_create`／`kanban_link`／`kanban_unblock`，worker 與 orchestrator 走不同典型流程。
+- **Task 狀態機**：`triage → todo → ready → running → blocked → review → done → archived`（`review` 為 2026-08-10 新增的非終端狀態，[[Hermes-Agent-Kanban]] 的 2026-07-11 快照早於此、仍列七態；實作另有 `scheduled` 排程欄，官方 docs 狀態列表未列），欄位含 `assignee`、`priority`、`workspace`（scratch/dir:\<path\>/worktree）、`max_retries`、`goal_mode` 等；`task_links`／`task_comments`／`task_runs`／`task_events` 等附屬表提供依賴、協作留言、重試歷史、審計日誌。
+- **`review` 交接**：worker 以 `kanban_request_review(summary=...)` 將同卡交付審查（移到 `review`、不是 block），reviewer 以 `kanban_complete` 結案或 `kanban_request_changes` 退回原實作者；CLI `hermes kanban reopen-review` 可把 changes-requested 的卡從 `review` 送回 ready/todo（2026-10-13 回查官方 [kanban.md](https://github.com/NousResearch/hermes-agent/blob/main/website/docs/user-guide/features/kanban.md) 與 `hermes_cli/kanban_workflow.py`，官方文件與原始碼一手、未實機驗證狀態轉移）。
+- **Agent 工具**：`kanban_show`／`kanban_list`／`kanban_complete`／`kanban_block`／`kanban_heartbeat`／`kanban_comment`／`kanban_create`／`kanban_link`／`kanban_unblock`，後續再加 same-card review 交接（`kanban_request_review`／`kanban_request_changes`）、附件（`kanban_attach`／`kanban_attach_url`／`kanban_attachments`）與 `kanban_schedule`（2026-10-13 回查：官方 [kanban.md](https://github.com/NousResearch/hermes-agent/blob/main/website/docs/user-guide/features/kanban.md)／[tools-reference](https://github.com/NousResearch/hermes-agent/blob/main/website/docs/reference/tools-reference.md) 列 14 個，main 原始碼 `tools/kanban_tools.py` 已註冊 15 個含 `kanban_schedule`；工具數隨版本可變，以官方 tools-reference 為準）；`kanban_unblock` 為 orchestrator 專用，依官方 kanban.md 會把阻擋任務送回原階段（`review` 或 `ready`，父層未完則 `todo`；tools-reference 對此描述略有出入）。worker 與 orchestrator 走不同典型流程。
 - **Dispatcher** 每 60 秒巡一輪（實作間隔快照值，隨版本可變，細節見 [[Hermes-Agent-Kanban]]）：回收逾時聲明與崩潰 worker、依 `task_links` 自動把父層 `done` 的子任務從 `todo` 升到 `ready`、控管全板／per-profile 並行上限。
 - 定位：Kanban 給「跨 agent 邊界、需存活重啟、可能要人工介入、需事後可探知」的工作；純同步子推理仍用 `delegate_task`。
 

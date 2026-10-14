@@ -2,7 +2,7 @@
 title: Building Effective Agents（Anthropic）
 description: 整理 workflows 與 agents 的架構分界、五種編排模式、augmented LLM 基石，以及由簡入繁的實作原則
 created: 2026-07-14
-updated: 2026-09-22
+updated: 2026-10-13
 source: "https://www.anthropic.com/engineering/building-effective-agents"
 published: 2024-12-19
 parent: "[[wiki/01.index]]"
@@ -68,7 +68,7 @@ agent 通常就是**在 loop 中依環境回饋使用工具的 LLM**：從人的
 兩個特別有價值的應用，共同點是**同時需要對話與行動、有明確成功準則、能形成回饋迴路、且有意義的人類監督**：
 
 - **客服**：對話流天生契合開放式 agent；工具拉取客戶資料／訂單／知識庫，退款／改單可程式化執行，成功可由「使用者定義的解決」明確衡量。已有公司採「僅對成功解決收費」的用量計價，顯示對成效的信心。
-- **coding agent**：程式解可由**自動測試驗證**、agent 能以測試結果為回饋迭代、問題空間結構良好、輸出品質可客觀衡量。Anthropic 自家實作已能僅憑 PR 描述解 SWE-bench Verified 的真實 GitHub issue；但自動測試驗功能之餘，**人審對「解是否合乎更廣系統需求」仍關鍵**。（強度但書：SWE-bench Verified 這條「輸出可客觀衡量」的佐證本身有雜訊——OpenAI 後來審計發現該 benchmark 59.4% 題目有實質缺陷、35.5% 測試過嚴，見 [[AI-自主工作流的實證檢驗]]；「可客觀衡量」在原則上成立，但不宜把單一 benchmark 分數當效果鐵證。）
+- **coding agent**：程式解可由**自動測試驗證**、agent 能以測試結果為回饋迭代、問題空間結構良好、輸出品質可客觀衡量。Anthropic 自家實作已能僅憑 PR 描述解 SWE-bench Verified 的真實 GitHub issue；但自動測試驗功能之餘，**人審對「解是否合乎更廣系統需求」仍關鍵**。（強度但書：SWE-bench Verified 這條「輸出可客觀衡量」的佐證本身有雜訊——OpenAI 後來審計該 benchmark 中 o3 在 64 次執行內未能穩定解出的 138 題（500 題中約 27.6% 的子集），發現其中 59.4% 有實質缺陷、35.5% 測試過嚴（[OpenAI 官方原文](https://openai.com/index/why-we-no-longer-evaluate-swe-bench-verified/)，一手；500 題母集合另由 [Hugging Face dataset card](https://huggingface.co/datasets/princeton-nlp/SWE-bench_Verified) 確認；未實測），見 [[AI-自主工作流的實證檢驗]]；「可客觀衡量」在原則上成立，但不宜把單一 benchmark 分數當效果鐵證。）
 
 ## ACI：為工具做 prompt engineering（附錄二）
 

@@ -2,7 +2,7 @@
 title: Agent Harness Engineering 框架綜述
 description: 整合 Anthropic 工程論述與原始碼 taxonomy，梳理 agent 外圍基礎設施的範疇、方法、實作比較與演進方向
 created: 2026-07-10
-updated: 2026-09-22
+updated: 2026-10-13
 parent: "[[wiki/01.index]]"
 tags:
   - ai-agent
@@ -79,7 +79,7 @@ Harness 是包裹在 LLM 外圍、負責「模型推理以外一切」的軟體�
 
 - **控制迴圈是組合不是類型**：五種 loop primitives（ReAct、generate-test-repair、plan-execute、multi-attempt retry、tree search）的組合；13 個中 11 個組合多個 primitives，7 個以 sequential ReAct loop 為主。
 - **工具表面差異巨大但能力收斂**：從 0 個 LLM 可呼叫工具（Aider，使用者驅動）到 37 個 action classes（Moatless Tools，full MCTS）；但 read／search／edit／execute 四類出現在所有給 LLM 自主權的 agent。
-- **context compaction 有七種策略**：硬截斷、sliding window、LLM 摘要、選擇性丟棄 tool result、SWE-agent polling、Gemini CLI verification probe、Cline 主動 compaction。
+- **context compaction 有七種策略**（論文 Table 11）：無機制、溢出即 crash（mini-swe-agent）；規則式截斷（SWE-agent／DARS-Agent，SWE-agent 另有 polling 參數保 prompt cache）；結構隔離（Prometheus／AutoCodeRover）；token 預算內選擇性納入（Moatless Tools）；scaffold 觸發的 LLM 摘要（Aider／OpenHands／Gemini CLI／Codex CLI／OpenCode）；LLM 摘要＋「Probe」驗證回合（Gemini CLI）；LLM 自主觸發 compaction（Cline 的 condense tool）。
 
 （強度：**medium**——單一作者 arXiv preprint（[2604.03515](https://arxiv.org/abs/2604.03515)）、未同儕審查、樣本限 coding agents；但主張多為可機械驗證的原始碼事實，附檔案路徑與行號。）
 

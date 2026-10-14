@@ -2,7 +2,7 @@
 title: Claude Code Hook 能力邊界
 description: 五種 hook type 各能做什麼、輸出契約如何決定能力上限，以及由此推出的「要 LLM 加工資料流就放在資料落地端」設計原則
 created: 2026-08-05
-updated: 2026-08-13
+updated: 2026-10-13
 source: https://code.claude.com/docs/en/hooks
 parent: "[[wiki/01.index]]"
 tags:
@@ -33,7 +33,7 @@ Hook 是 Claude Code 在特定事件點回呼外部邏輯的機制。討論「�
 - **不是所有事件都支援所有 type**。`SessionStart` 與 `Setup` 只支援 `command` 與 `mcp_tool`——想在 session 開場用 LLM 判斷點什麼，這條路直接不通。
 - **只有 `command` 能 `async`**。其餘 type 一律阻塞當下流程；`Stop` 上掛一個同步的 LLM hook，等於每輪回覆結束都要等它跑完。
 - **`Stop` 上的 `ok: false` 不是「擋下來」而是「繼續」**——reason 會被當成 Claude 的下一個指令、回合繼續。想用它把資料回傳給自己，結果是拿那段文字去戳模型繼續講話（連續 8 次 block 後 Claude Code 會 override 強制結束回合）。
-- **`claude -p` 會遞迴**。在 command hook 裡 shell out 呼叫 Claude，那個 session 一樣會載入你的全域 hook，於是它結束時又觸發同一個 hook。要靠環境變數旗標自己擋。
+- **`claude -p` 會遞迴**。在 command hook 裡 shell out 呼叫 Claude，那個 session 一樣會載入你的全域 hook，於是它結束時又觸發同一個 hook。要靠環境變數旗標自己擋。**已被取代（2026-10-13）**：官方有內建擋法，且在本頁建立前就存在（`--bare` 自 v2.1.81、`disableAllHooks` 自 v1.0.68，依官方 CHANGELOG；原句是漏查而非當時正確）。在 hook 內改呼叫 `claude --bare -p`，會跳過 hooks／skills／plugins／MCP／auto memory／CLAUDE.md 的自動載入，自然不會再觸發同一個 hook；代價是 bare 模式不讀 OAuth 登入與 keychain，需 `ANTHROPIC_API_KEY` 或 `--settings` 內的 `apiKeyHelper`。另一條路是傳 `--settings '{"disableAllHooks": true}'`，優先於 project／local 設定，但關不掉 managed settings 層設定的 hook。用訂閱登入、不想切 API key 的情境，仍可自寫環境變數旗標擋。官方已註明 `--bare` 將成為 `-p` 的預設，確切切換版本回查 [headless 文件](https://code.claude.com/docs/en/headless#start-faster-with-bare-mode) 與 [hooks 文件的 disable-or-remove-hooks 節](https://code.claude.com/docs/en/hooks#disable-or-remove-hooks)。（證據強度：官方 headless／hooks／cli-reference 文件與 GitHub CHANGELOG 一手互證，未實測遞迴是否真的中止。）
 
 ## 推論出的設計原則
 

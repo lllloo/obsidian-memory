@@ -2,7 +2,7 @@
 title: Orca
 description: Orca multi-agent IDE 的架構與運作機制：worktree 隔離、terminal 管理、supervised loop 與協調合約
 created: 2026-09-24
-updated: 2026-10-07
+updated: 2026-10-13
 parent: "[[wiki/01.index]]"
 tags:
   - coding-agent
@@ -23,7 +23,7 @@ Orca 將協調與執行切分為五個核心實體：
 ```
 Run（協調作業容器）
  └── Task DAG（工作單元與相依性）
-      └── Dispatch（單次執行嘗試，綁定 Terminal 與 Capability）
+      └── Dispatch（單次執行嘗試，綁定 Terminal；Capability 憑證已於 2026-09-30 移除，見下）
            └── Terminal（虛擬終端，運行特定 Agent）
                 └── Worktree（獨立 git 分支檢出，檔案系統隔離）
 ```
@@ -32,7 +32,7 @@ Run（協調作業容器）
 - **Terminal**：Orca 運行時管理的虛擬終端執行個體（具備唯一句柄，如 `term_<uuid>`）。Terminal 支援串流讀取、PTY 輸入注入（send）、命令派發與終端狀態等待（wait exit / tui-idle）。
 - **Run**：一次多 agent 協調作業的頂層容器（如 `run_<id>`）。界定本次編排的根目錄、Task 集合與非同步訊息信箱。
 - **Task**：Run 內部 DAG（有向無環圖）中的工作單元。具有嚴謹的狀態機（`ready`、`running`、`succeeded`、`failed`、`blocked` 等）與前置相依性。
-- **Dispatch**：Task 的一次具體執行嘗試（attempt / context，如 `ctx_<id>`）。每個 Dispatch 綁定特定的終端與專屬能力憑證（Dispatch Capability，如 `dcap_<id>`）。當某次執行因異常中止或失敗而需要重試時，原 Task 會建立全新的 Dispatch，使前次嘗試可能殘留的晚到訊息或無效心跳無法干擾新的執行。
+- **Dispatch**：Task 的一次具體執行嘗試（attempt / context，如 `ctx_<id>`）。每個 Dispatch 綁定特定的終端與專屬能力憑證（Dispatch Capability，如 `dcap_<id>`）。——**已被取代（2026-10-13）**：Orca 自 2026-09-30 起（commit [9afd1101](https://github.com/stablyai/orca/commit/9afd1101)，PR #23994）不再對每個 Dispatch 鑄造 per-Dispatch capability token，preamble、bundled skill guide 與 ask resume 提示也不再印出 `--dispatch-capability`；worker 報告與提問的授權改為由 host 核對實際 worker 行程，CLI 僅為舊版 host 保留接受並轉發該 flag。現況為「每個 Dispatch 綁定特定的終端」；worker 一律照 live preamble 中的實際執行檔、handle、Task ID、Dispatch ID 與其他 flag 執行，不自行補 `--dispatch-capability`（證據強度：官方 GitHub commit 訊息一手＋main 分支現行 skill-guide 一手交叉確認，未在本機實測 preamble 輸出）。當某次執行因異常中止或失敗而需要重試時，原 Task 會建立全新的 Dispatch，使前次嘗試可能殘留的晚到訊息或無效心跳無法干擾新的執行。`raw/` 的 2026-09-24 skill 快照中的 `--dispatch-capability` 範例為舊版寫法，引用前以現行 preamble 為準。
 
 ## Skill 分工判準：orca-cli 與 orchestration
 

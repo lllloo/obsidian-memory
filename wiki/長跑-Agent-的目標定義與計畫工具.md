@@ -2,7 +2,7 @@
 title: 長跑 Agent 的目標定義與計畫工具
 description: 讓自主迭代 agent 持續推進而不走偏的目標檔機制（分層、驗收判準、停止條件、防漂移措辭）與 SDD 工具生態的採用度實據
 created: 2026-07-30
-updated: 2026-10-07
+updated: 2026-10-13
 parent: "[[wiki/01.index]]"
 tags:
   - ai-agent
@@ -189,7 +189,7 @@ GitHub star 數，2026-07-30 以 `gh api`／`gh search` 直查核實（**star �
 
 ### 選擇判準
 
-- **要「先問清楚你要幹嘛、再幫你寫 spec 與計畫、然後照計畫不偏離地做完」** → `superpowers`。star 是第二名的兩倍，Claude Code 一行裝（`/plugin install superpowers@claude-plugins-official`，亦在官方 marketplace），skills 自動觸發不需記指令，支援 11 種 harness。README 描述的流程：不直接寫碼而是「steps back and asks you what you're really trying to do」→ 從對話中萃出 spec 並分段給你確認 → 你簽核設計後產出實作計畫 → subagent-driven development 逐項執行並互審，自稱「not uncommon for your agent to work autonomously for a couple hours at a time without deviating from the plan」。內建 red/green TDD、YAGNI、DRY 作為防膨脹紀律。
+- **要「先問清楚你要幹嘛、再幫你寫 spec 與計畫、然後照計畫不偏離地做完」** → `superpowers`。star 是第二名的兩倍，Claude Code 一行裝（`/plugin install superpowers@claude-plugins-official`，亦在官方 marketplace），skills 自動觸發不需記指令，支援 11 種 harness（2026-07-30 README 快照）。**已被取代（2026-10-13）**：README Installation 節現列 16 個安裝目標（新增 Devin CLI、Grok Build CLI、Qwen Code、Hermes Agent、Muse；v6.3.0／v6.4.1 兩次 release 加入），README 本身不寫固定數字，實際支援清單以 [README Installation 節](https://github.com/obra/superpowers/blob/main/README.md#installation) 為準，勿再引用釘死的數字（官方 README 一手＋GitHub API 歷史版本對照，僅讀文件未實測各 harness 安裝）。README 描述的流程：不直接寫碼而是「steps back and asks you what you're really trying to do」→ 從對話中萃出 spec 並分段給你確認 → 你簽核設計後產出實作計畫 → subagent-driven development 逐項執行並互審，自稱「not uncommon for your agent to work autonomously for a couple hours at a time without deviating from the plan」。內建 red/green TDD、YAGNI、DRY 作為防膨脹紀律。
   ⚠️ **本頁對 superpowers 只做了 README 直讀（前 70 行），未跑對抗式查證、未核實機制實作**。「連續自主數小時不偏離計畫」是**廠商／作者自述**。它另有商業服務（`sales@primeradiant.com`），非純社群專案。
 - **要最貼近 spec-kit 但更輕** → OpenSpec（見 [[OpenSpec]]，本 vault 已有逐節查證的專屬頁）。
 - **要分數驅動的收斂迴圈** → 上述工具皆不涵蓋，需自行加 goal-md 那套（並承擔上述 scalar 分數的張力）。
@@ -210,6 +210,7 @@ GitHub star 數，2026-07-30 以 `gh api`／`gh search` 直查核實（**star �
 | 「人類 checkpoint 擺在 tasks 拆解完成之後」 | 1-2 | **勿引用** |
 | 「goal-md 的 GOAL.md 全部欄位皆必填」 | 1-2 | **勿引用**（Iteration Log 等節標 Optional） |
 | 二手比較文引的 star 數（Superpowers 166k、spec-kit ~90k） | — | **勿引用**：2026-07-30 實查為 263,351／124,508，**二手比較文的數字系統性偏低** |
+| 「AgentSpec 發現文字約束累積後表現退化」 | — | **勿引用**：2026-10-13 一手複核 [arXiv 2503.18666](https://arxiv.org/html/2503.18666) 全文，該發現不存在於該論文（評估無 prompt-based 多規則基線）；命題本身另見開放問題末條所列兩篇 preprint |
 
 ## 兩條方法論教訓
 
@@ -230,7 +231,7 @@ GitHub star 數，2026-07-30 以 `gh api`／`gh search` 直查核實（**star �
 - **尺規隔離只有宣告、沒有機制**：測試／計分腳本與被改的程式碼同 repo 時，五個來源全部只做到「在 goal 檔標成不可編輯」，無一實作強制隔離（獨立 repo／唯讀 mount／分離 CI 身分）。這是整個機制群最大的單點失效。
 - **分層 goal 檔自身的漂移如何對帳**：spec-kit 生態自承缺實作後複檢（issue #1063、#1323；**已被取代（2026-09-17）**：兩者已於 2026-03-19 關閉，reconcile 以社群擴充落地，見上文），而長跑 agent 最需要這一段。現行 `/speckit.analyze` 與 `/speckit.converge` 是否真能對帳未經核實。
 - **「連續 N 輪無改善即停」的 N 該取多少**、多維度指標下「無進展」如何定義？goal-md 的 5、Ralph 的 10、Pi 的 3 皆為未調校預設。
-- **散文約束在什麼條件下能自動編譯成可執行 oracle**？Kiro 為 unchanged behavior 生成 property-based tests 是唯一前例，其可靠性、覆蓋率與失效模式無任何來源說明；而 AgentSpec（[arXiv 2503.18666](https://arxiv.org/abs/2503.18666)）發現文字約束**累積後表現退化**，暗示純文字路線有上限。
+- **散文約束在什麼條件下能自動編譯成可執行 oracle**？Kiro 為 unchanged behavior 生成 property-based tests 是唯一前例，其可靠性、覆蓋率與失效模式無任何來源說明；而 AgentSpec（[arXiv 2503.18666](https://arxiv.org/abs/2503.18666)）發現文字約束**累積後表現退化**，暗示純文字路線有上限。（**已被取代（2026-10-13）**：一手複核 [AgentSpec 全文](https://arxiv.org/html/2503.18666)，該論文是 DSL runtime enforcement 工作，評估只比較有／無 enforcement、無 prompt-based 多規則基線，全文無「約束累積後退化」的實驗或主張，僅 Section 6.2 定性稱其設計「avoids brittleness from prompt engineering or fine-tuning」；此歸因勿引用。「文字約束累積後退化」的命題另有一手來源：[arXiv 2608.02639](https://arxiv.org/abs/2608.02639)（Instruction Stacking Collapse：follow rate 隨約束累積從 ~96% 非線性降至最低 20%）與 [arXiv 2608.12426](https://arxiv.org/abs/2608.12426)（超過 5–6 條同時約束後可靠遵循即崩落）；兩者皆為 preprint、僅讀摘要未核實方法，且測的是通用指令遵循而非 coding agent 的 goal 檔。）
 - superpowers、GSD 的實際機制均未核實（僅 README 層），與本頁機制清單的對應關係不明。
 
 ## 相關頁

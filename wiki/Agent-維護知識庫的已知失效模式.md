@@ -33,9 +33,9 @@ tags:
 
 LLM 壓縮**不是均勻丟資訊，而是偏食脈絡類事實**（caveat、適用條件、限定詞）。壓縮後 context facts 佔比 25% → 9%，產物是「事實正確但決策含意相反」的摘要。
 
-實測：naive 壓縮決策翻轉率 **33.0%**，對照「重讀原文」的雜訊底線 11.0%，超出兩倍以上。把被刪的脈絡事實補回可救回 37% 的翻轉案例（隨機補其他事實僅 16–19%）。**緩解實測**：只改 prompt（要求保留 decision-relevant 限定詞）即 33.0% → **21.3%**——純 prompt 級介入就吃掉最大一塊改善。
+實測：naive 壓縮決策翻轉率 **33.0%**，對照「重讀原文」的雜訊底線 11.0%，超出兩倍以上。把被刪的脈絡事實補回可救回 37% 的翻轉案例（隨機補其他事實僅 16–19%）。**緩解實測**：只改 prompt（要求保留 decision-relevant 限定詞）即 33.0% → **21.3%**——純 prompt 級介入就吃掉最大一塊改善。**已被取代（2026-10-13）**：上列 33.0%／11.0%／21.3% 為 v1（2026-06-28）數字，當時 decision model 僅 Gemini-3.1-Flash-Lite；[v3](https://arxiv.org/html/2606.29251v3)（2026-09-17）改為 Gemini＋Claude-Haiku-4.5 兩模型平均，正文主結果修訂為 naive 壓縮翻轉率 **31.5%**、重讀原文底線 **7.0%**、contextualization 後 **21.2%**（皆 10-Q MD&A、壓縮器 GPT-5.4-Mini，v3 §4.2／§4.4／Table 2）。33.0／21.3 在 v3 只留在附錄 D／E 的 Gemini 單模型欄，11.0 全文已無。「超出兩倍以上」與「純 prompt 級介入吃掉最大一塊改善」的推論在 v3 數字下仍成立（31.5 vs 7.0 約 4.5 倍）。證據強度：一手 arXiv [v1](https://arxiv.org/html/2606.29251v1)／v3 HTML 逐字核對；論文仍為 industry track preprint，數字差異源於評估模型組成改變、非原結果被推翻。
 
-**強度：preprint、非同儕審查**（[When Summaries Distort Decisions, arXiv:2606.29251](https://arxiv.org/html/2606.29251)，S&P 100 財報 MD&A n=300／法說 n=297），但對照設計紮實且有商用系統部署驗證。**已被取代（2026-10-07）**：2026-09 上傳的 [v3](https://arxiv.org/abs/2606.29251) comment 標為「EMNLP 2026 Industry Track」錄取（作者自述、屬 industry track，非主會）；本節引用的數字在 v3 仍存在（一手 arXiv 原文已回讀）。
+**強度：preprint、非同儕審查**（[When Summaries Distort Decisions, arXiv:2606.29251](https://arxiv.org/html/2606.29251)，S&P 100 財報 MD&A n=300／法說 n=297），但對照設計紮實且有商用系統部署驗證。**已被取代（2026-10-07）**：2026-09 上傳的 [v3](https://arxiv.org/abs/2606.29251) comment 標為「EMNLP 2026 Industry Track」錄取（作者自述、屬 industry track，非主會）；本節引用的數字在 v3 仍存在（一手 arXiv 原文已回讀）——**此句已被取代（2026-10-13）**：v3 已修訂正文數字為 31.5／7.0／21.2，v1 的 33.0／21.3 僅存於附錄 Gemini 單模型欄、11.0 已移除，見上段標註；25%→9%、37%、16–19%、N=300／297 在 v3 逐字確認不變。
 
 **場景差距**：量測的是金融下游決策翻轉，wiki 無等價指標。但**機制**（壓縮偏食脈絡）與「摘要頁／綜合頁改寫」高度同構，類比成立。
 
@@ -88,7 +88,7 @@ automation bias：人把自動化輸出當認知捷徑，產生 commission error
 
 **沒有機制能證明 agent 真的在行動前搜尋過知識庫、真的用了取回的內容、真的因此改變了行為。** 這是 [Wuphf 第三方 review](https://zby.github.io/commonplace/agent-memory-systems/reviews/wuphf.html) 對該專案的批評，明指找不到 with/without-memory 的 ablation——**本 vault 同樣暴露**，我們沒有任何機制驗證這批 wiki 頁真的改善了回答品質。
 
-目前無解法，記為已知盲點而非假裝不存在。相關但方法論最嚴謹的一篇是 [Progressive Disclosure for LLM-Maintained Wiki KBs, arXiv:2607.04576](https://arxiv.org/pdf/2607.04576)（**預註冊 ablation**，題目與本 vault 幾乎完全對口），但其 PDF 文字層抽取失敗、**未取得任何數字**，只取到方向性描述（progressive disclosure＋prompt caching 降成本、觀察到 drift/contradiction/orphan/bloat、建議週期性 garbage collection）。**值得日後專門讀原文**。
+目前無解法，記為已知盲點而非假裝不存在。相關但方法論最嚴謹的一篇是 [Progressive Disclosure for LLM-Maintained Wiki KBs, arXiv:2607.04576](https://arxiv.org/pdf/2607.04576)（HTML 版可直接讀取：[arxiv.org/html/2607.04576v2](https://arxiv.org/html/2607.04576v2)；**預註冊 ablation**，題目與本 vault 幾乎完全對口），但其 PDF 文字層抽取失敗、**未取得任何數字**（已於 2026-10-13 取得，見下），只取到方向性描述（progressive disclosure＋prompt caching 降成本、觀察到 drift/contradiction/orphan/bloat、建議週期性 garbage collection）——**已被取代（2026-10-13）**：上述括號內的方向性描述（prompt caching 降成本、drift/contradiction/orphan/bloat、週期性 garbage collection）**不屬於該論文、勿引用**——v1／v2 全文皆無這些詞，prompt caching 只作實驗干擾控制與參考文獻出現。論文實際主張（[v2](https://arxiv.org/html/2607.04576v2)，2026-10-07）：在 709 頁 LLM 維護的 markdown KB 上做預註冊 ablation，四個 arm 頁面內容 byte-identical、只差存取結構（catalog＋每頁一行摘要＋keyword 檢索）；主結果：retrieval 組（A3）答案品質對基線（A0）非劣效（composite +0.01，95% CI −0.27～+0.26，預註冊邊界 δ=0.5，非劣效但非優越）；成本在 enforced／free／forced catalog-preload 三條件分別降 30%／34%／58%，CI 皆不含零，且省錢**不是**來自避免載入 monolithic index——能力強的 self-routing agent 本來就不載，而是來自更精準的存取（引用頁數與 tool turns 較少）。[v2 摘要](https://arxiv.org/abs/2607.04576)自承兩項限制：(1) 人類評分者與 gpt-5 judge 一致性遠低於預註冊門檻（κ<0.60 須重評；實測 correctness κ=0.30、completeness 0.56、citation 0.10），作者列為 disclosed deviation，品質結論倚賴 judge＋敏感度分析；(2) forced catalog-preload 條件下非劣效未建立（A3−A0 = −0.39，CI −1.01～+0.19），且僅取兩個最可靠維度時 A3 有小幅顯著劣勢（−0.18）。定位改為「唯一預註冊（OSF 2026-07-03）、但評分效度自承不足」，不再稱「方法論最嚴謹」。證據強度：單一作者 arXiv preprint、未同儕審查、單一 KB、單一人類評分者；以上數字皆自 v1／v2 HTML 全文與 abs 頁回讀確認。正文細節見 §5.1／§5.2／§5.5。
 
 ## 對立論述（Wuphf Show HN 串）
 
@@ -115,7 +115,7 @@ automation bias：人把自動化輸出當認知捷徑，產生 commission error
 - **「LLM wiki 超過 5–10 萬 token 就失效」**——多篇 2026 部落格互相轉述，**未找到原始實測來源**。不可當事實引用；但它指向的問題（index 頁隨頁數線性膨脹）是真的，值得自行觀察。
 - **Agent Drift 的「漂移中位數第 73 次互動出現」**（[arXiv:2601.04170](https://arxiv.org/html/2601.04170)）——**全來自模擬**、preprint、未同儕審查，且各項數據整齊得可疑（所有緩解 p<0.001、效果單調遞增）。**尤其別把「73 次互動」寫進任何頁面。**
 - **Knowledge Compounding 的「−84.6%」**（[arXiv:2604.11243](https://arxiv.org/abs/2604.11243)）——**僅 n=4 查詢**、單一系統、30 天數字為**推估非實測**。其理論框架另有價值（見 [`SYSTEM-DESIGN.md`](../schema/SYSTEM-DESIGN.md)「為何有效」），**但數字勿引**。
-- **[Silent Failure in LLM Agent Systems, arXiv:2606.08162](https://arxiv.org/pdf/2606.08162)**——單作者、無實驗的立場論文，「熵原理」是隱喻不是量測。概念貼切但**無證據價值**。
+- **[Silent Failure in LLM Agent Systems, arXiv:2606.08162](https://arxiv.org/pdf/2606.08162)**——~~單作者、無實驗的立場論文，「熵原理」是隱喻不是量測。概念貼切但**無證據價值**。~~ **已被取代（2026-10-13）**：回讀[原文 HTML](https://arxiv.org/html/2606.08162)，論文 §6「Experimental Verification」有四個自建平台實驗套件、約 4 萬次受控試驗與 Table 1–4，熵公式標為「Empirical Law」並從實驗資料估 α（§6.4，α_ref ≈ 0.0046），「無實驗」「隱喻」為誤判。但仍**單作者、僅 v1 preprint、未同儕審查**，且：摘要宣稱的 100,000+ 生產觀察正文無資料、§7.4 自承留待未來；α 估計只有「best-fit exponential（R²>0.95）」一句、權重與原始序列未公布、Figure 6 的 α=0.040 與 §6.4 的 0.0046 相差近 9 倍未解釋；Figure 7 的 3,336 runs 與 Real 套件 10,008 trials 不一致。概念貼切但實證透明度不足，**數字勿引**（結論不變，理由修正）。證據強度：arXiv HTML 全文一手回讀；PDF 未逐字核對，α 估計細節依摘要層級。
 
 ## 關聯
 

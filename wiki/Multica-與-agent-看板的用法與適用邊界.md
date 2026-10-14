@@ -2,7 +2,7 @@
 title: Multica 與 agent 看板的用法與適用邊界
 description: Multica 看板的執行模型、動作語意與 Squad 注入範圍，對照多 agent 分工與跨模型互審的實證，給出續用判準
 created: 2026-09-15
-updated: 2026-09-15
+updated: 2026-10-13
 parent: "[[wiki/01.index]]"
 tags:
   - ai-agent
@@ -23,7 +23,7 @@ Multica 迭代很快（patch 版常以數天為週期發佈），下文機制描
 
 - **agent＝可重複使用的身分與設定**。官方 `/docs/agents` 原句：「An agent is not a continuously running process. It is a reusable identity and configuration; it only produces concrete runs when work arrives.」每次工作進來才產生一個 run，也就是一次 headless CLI 呼叫。（強度：一手官方文件）
 - **脈絡靠 issue 傳遞，不靠共享對話**。官方宣傳的「Share all context」是指討論、紀錄、產出在工作區內全隊可見；文件沒說不同 agent 的 run 共享對話脈絡。multica-cli 的操作指南也建議把跨 run 的延續資訊（`pr_url`、`waiting_on` 等）寫進 issue metadata 供後續 run 重讀。已知例外有兩個：同一 agent 的重試在條件允許時會 `--resume` 前一個 session；回覆 agent 的留言會餵進它後續的 run。（強度：多頁一手文件互相一致；run 的 prompt 實際帶入多少留言沒逐行追）
-- **每個 run 都注入平台 brief**。Claude run 不走 `--append-system-prompt`，daemon 會在 workdir 寫一份 `CLAUDE.md` 讓 Claude Code 自行載入（`server/pkg/agent/claude.go` 註解，MUL-5392）。社群在 [#4358](https://github.com/multica-ai/multica/issues/4358) 量過 brief 大小：64 個 workdir 中位數約 23.4KB，其中約 62% 是每個 task 都一樣的平台樣板；後續實作把它壓到約 13.6KB（−36%）。（強度：社群自行量測、非官方數據，但量測方法有公開；大小會隨版本變動）
+- **每個 run 都注入平台 brief**。Claude run 不走 `--append-system-prompt`，daemon 會在 workdir 寫一份 `CLAUDE.md` 讓 Claude Code 自行載入（`server/pkg/agent/claude.go` 註解，MUL-5392）。社群在 [#4358](https://github.com/multica-ai/multica/issues/4358) 於 v0.4.13 時期量過 64 個 workdir：brief 中位數約 23.4KB，其中約 62% 是每個 task 都一樣的平台樣板。維護者 2026-08-07 結案時另以較晚的 main 為基準回報「約 21.3KB 壓到約 13.6KB（−36%）」——兩組數字基準不同（維護者明說 v0.4.13 的數字已不代表當時 main，但未交代 21.3KB 的確切版本），不能把 −36% 套在 23.4KB 上。（強度：社群量測非官方數據但方法公開；維護者數字為一手回報但無量測細節；大小會隨版本變動）
 
 這個模型直接決定了多角色分工的上限：Lead／Planner／Builder／Reviewer 之間的「交接」，本質是**一串互不共享 context 的獨立 run，靠 issue 留言串起來**。這正是 Cognition 在 [Don't Build Multi-Agents](https://cognition.com/blog/dont-build-multi-agents) 裡點名的第一原則的反面：可靠 agent 要共享完整 trace，不能只傳個別訊息（見 [[Context-優先與多-agent-的適用邊界]]）。
 
@@ -43,7 +43,7 @@ multica-cli 的 `SKILL.md` 原文：「Status changes are not cosmetic」「Ment
 
 agent 另外沒有 inbox，也收不到 `@all`；對 agent 的 @mention 是執行觸發，不是通知。
 
-**狀態模型**：內建 7 個狀態 `backlog | todo | in_progress | in_review | done | blocked | cancelled`，見 `SKILL.md` 與 `server/migrations/001_init.up.sql` 的 CHECK 約束。後來改成每個 workspace 可自訂狀態：每個自訂狀態對應 7 個 canonical category 之一，看板依 category 分欄，狀態目錄也會注入 agent brief（release notes #7065、#7306）。自訂狀態**不繼承**內建 In Review 的行為。（強度：一手原始碼與 release notes；看板實際 UX 沒親眼看過）
+**狀態模型**：內建 7 個狀態 `backlog | todo | in_progress | in_review | done | blocked | cancelled`，見 `SKILL.md` 與 `server/migrations/001_init.up.sql` 的 CHECK 約束。後來改成每個 workspace 可自訂狀態：每個自訂狀態對應 7 個 canonical category 之一，看板依 category 分欄，狀態目錄也會注入 agent brief（release notes #7065、#7306）。**已被取代（2026-10-13）**：#7065 的 7-category 模型已由 [PR #8261](https://github.com/multica-ai/multica/pull/8261)（2026-09-14 合併）收斂為 4 個 lifecycle category `unstarted | started | done | closed`，7 個內建狀態仍保留；看板、清單、swimlane、篩選、排序一律依**個別 status** 分欄（`Code Review` 與 `QA` 同屬 started 仍各自一欄），category 只是內部生命週期分類；API wire 層為相容既有 client 仍保留 7 值 category enum。狀態目錄注入 agent brief（#7306）未被推翻。自訂狀態**不繼承**內建 In Review 的 autopilot 完成行為（現行 issues.mdx 明列不繼承 Backlog parking、In Review autopilot completion、Blocked failure、In Progress recovery）。（強度：一手 PR #8261／#8438 與官方 issues.mdx 原句；看板實際 UX 仍未親眼看過）
 
 **人類把關點在 `in_review`**：agent 交付時自己把 issue 移到 `in_review`，不會移到 `done`。README 原句：「nothing ships without a human saying so」。（強度：一手官方文件）
 

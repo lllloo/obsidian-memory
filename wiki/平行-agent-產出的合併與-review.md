@@ -2,7 +2,7 @@
 title: 平行 agent 產出的合併與 review
 description: 多個 coding agent 平行產出後的整合面：衝突率實證、切分與合併順序、LLM 解衝突與 best-of-N 的上限、人工 review 變薄
 created: 2026-09-16
-updated: 2026-09-21
+updated: 2026-10-13
 parent: "[[wiki/01.index]]"
 tags:
   - coding-agent
@@ -15,7 +15,7 @@ tags:
 證據來源與強度：
 
 - **deep-research 3 票對抗驗證**（2026-09-15～16），本輪通過的主張全數 3-0、無否決。
-- **主 agent 回查**：各論文的標題、發表狀態與摘要數字，已從 arXiv 摘要頁逐篇核對。同儕審查的只有 AgenticFlict（AIware 2026）、2605.02273（EASE 2026）、2605.22534（MSR 2026），其餘為 preprint。
+- **主 agent 回查**：各論文的標題、發表狀態與摘要數字，已從 arXiv 摘要頁逐篇核對。同儕審查的只有 AgenticFlict（AIware 2026）、2605.02273（EASE 2026）、2605.22534（MSR 2026），其餘為 preprint。**已被取代（2026-10-13）**：R2E-Gym 已刊於 COLM 2025（[COLM 2025 官方接受名單](https://colmweb.org/2025/AcceptedPapers.html)＋[GitHub repo](https://github.com/R2E-Gym/R2E-Gym) About 標記「[COLM 2025]」；發表版標題為〈R2E-Gym: Procedural Environment Generation and Hybrid Verifiers for Scaling Open-Weights SWE Agents〉，arXiv 摘要頁未標 venue 故先前回查漏掉）。同儕審查者應為四篇：AgenticFlict（AIware 2026）、2605.02273（EASE 2026）、2605.22534（MSR 2026）、R2E-Gym（COLM 2025）；其餘仍為 preprint。證據強度：官方接受名單與官方 repo 兩個一手來源互證；未核對 COLM 發表版數字是否與本頁引用的 arXiv v1 一致。
 - **適用落差**：衝突率與 review 研究的對象都是 **GitHub 公開 PR**，不是本機平行 worktree。套到本機流程屬推論，下文不再逐句重複。
 - **時效**：LLM 解衝突與 best-of-N 的絕對數字來自 2025 世代模型，會隨模型進步過期。可以沿用的是結構性結論：挑選與驗證是瓶頸、文字合併不保證語意正確。
 
@@ -51,7 +51,7 @@ tags:
 - Graphite 的 stack-aware merge queue 可以把整個 stack 平行批次驗證。
 - stack 部分合併後，Graphite 會自動 rebase 上層分支。
 - `gh stack sync` 會串接 rebase 剩下的分支，並以 `--force-with-lease` 推送。
-- 已知問題：gh-stack issue #118（推送失敗）、#354（每次 rebase 會破壞 review 歷史）。
+- 已知問題（查核日 2026-10-13）：[#354](https://github.com/github/gh-stack/issues/354)（`gh stack sync` 每次 rebase 會破壞 PR review 歷史，仍開啟）、[#380](https://github.com/github/gh-stack/issues/380)（`gh stack push` fetch-then-lease 會讓 `--force-with-lease` 失效、無聲丟棄只存在遠端的 commit，仍開啟）。原列的 #118（推送失敗）已於 2026-06-15 由 [PR #124](https://github.com/github/gh-stack/pull/124) 修復並關閉，勿再引為現存問題。證據強度：GitHub issue／PR 原頁一手，未實測修復後行為。
 
 **讓 LLM 自動解衝突：約五到六成與開發者一致，不能免驗**：
 
@@ -85,7 +85,7 @@ tags:
   - 候選中至少一個正確的比例是 69.8%，隨機挑約 45.8%。
   - 用「模型自產測試投票＋專做挑選的多輪 trajectory」得到 57.4%，整個 benchmark 總成本約 2,300 美元。
   - 約補回隨機與理想挑選之間**一半**的差距。
-- [R2E-Gym](https://arxiv.org/abs/2504.07164)（preprint）26 次 rollout：
+- [R2E-Gym](https://arxiv.org/abs/2504.07164)（COLM 2025；頁面引用數字取自 arXiv v1）26 次 rollout：
   - 任一候選正確的上限有 64.4%。
   - 只用跑測試、或只用 LLM 評分的 verifier 都停在約 43%（43.7%、42.8%）。
   - **兩者混合**（先用 LLM 分數取前幾名，再加測試分數）可達 51%。

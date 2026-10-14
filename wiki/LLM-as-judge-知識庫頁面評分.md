@@ -2,7 +2,7 @@
 title: LLM-as-judge 知識庫頁面評分
 description: LLM-as-judge 給 wiki 頁評分的方案與方法學約束：rubric 決定信度、bias 匿名化擋不住、本 vault 實測分辨力不足
 created: 2026-07-21
-updated: 2026-10-07
+updated: 2026-10-13
 parent: "[[wiki/01.index]]"
 tags:
   - evaluation
@@ -45,7 +45,7 @@ tags:
 
 三項必須隨附的限定：
 
-1. 同一頁也給了三個穩定化槓桿——用固定 `evaluation_steps` 取代自由文字 criteria、加 `rubrics` 分數帶、`strict_mode` 二元化。所以文件說的是「**原生**絕對評分不穩」，不是「絕對評分無法穩定」。
+1. 同一頁也給了三個穩定化槓桿——用固定 `evaluation_steps` 取代自由文字 criteria、加 `rubric`（`List[Rubric]`，每項 `score_range` + `expected_outcome`）分數帶、`strict_mode` 二元化。所以文件說的是「**原生**絕對評分不穩」，不是「絕對評分無法穩定」。
 2. DAGMetric 並非決定性逃生口：每個判斷節點仍由 LLM 下判，決定性的只是給定路徑後的分數聚合。
 3. 資料模型上 `LLMTestCase.input` 為必填，評一份 wiki 頁得塞占位字串到 `input` 再從 `evaluation_params` 排除——可行但是 shoehorn。
 
@@ -57,7 +57,7 @@ Ragas、OpenAI Evals、LangSmith evaluators、Vale 的 LLM 擴充、Obsidian 生
 
 ### 1. rubric 是絕對評分的命脈——但失效方式反直覺
 
-*（強度：單一 preprint、未同儕審查；任務錯配明顯——「1–5 評指令回應且有參考答案」，非長篇 markdown 文件評分，更非繁中語料。arXiv 2506.13639，Yamauchi/Yano/Oyamada，NEC，2025-06）*
+*（強度：單一研究，已通過 workshop 同儕審查（GEM 2026，與 ACL 2026 同地，[ACL Anthology 2026.gem-main.19](https://aclanthology.org/2026.gem-main.19/)，2026-07；Anthology 一手頁面，未比對 Anthology 版與 arXiv v1 數字是否一致），非主會論文；任務錯配明顯——「1–5 評指令回應且有參考答案」，非長篇 markdown 文件評分，更非繁中語料。arXiv 2506.13639，Yamauchi/Yano/Oyamada，NEC，2025-06）*
 
 BIGGEN-Bench，Krippendorff α（括號內為與人類相關）：
 
@@ -80,7 +80,7 @@ BIGGEN-Bench，Krippendorff α（括號內為與人類相關）：
 
 對本 vault 最直接相關的一題：讓維護 wiki 的同一個模型評自己寫的頁，偏誤有多嚴重？
 
-**存在性**（arXiv 2404.13076，Panickssery/Bowman/Feng，COLM 2024）定義為「LLM evaluator 給自己的輸出打的分高於他人，而人類標註者認為兩者品質相當」——**有人類基線**，排除了「自評高只是因為真的比較好」這個簡單反駁。
+**存在性**（arXiv 2404.13076，Panickssery/Bowman/Feng，[NeurIPS 2024 主會 oral](https://papers.nips.cc/paper_files/paper/2024/hash/7f1f0218e45f5414c79c0679633e47bc-Abstract-Conference.html)）定義為「LLM evaluator 給自己的輸出打的分高於他人，而人類標註者認為兩者品質相當」——**有人類基線**，排除了「自評高只是因為真的比較好」這個簡單反駁。
 
 **機制不是看到署名**：2404.13076 用 fine-tuning 建立 self-recognition 能力與 self-preference 強度的關聯（example-level Kendall tau：GPT-3.5 on XSUM 0.41→0.74）；Wataoka et al.（arXiv 2410.21819）則歸因於 perplexity／熟悉度，「regardless of whether the outputs were self-generated」。
 
@@ -150,9 +150,9 @@ Zaveri 等人的系統性回顧整理出 **18 個品質維度、69 個指標**�
 
 ### 傳統二：Wikipedia 文章品質評估——證明了「不能搬」
 
-*（強度：官方 production model card，兩次獨立 fetch 數字一致；權重和 0.998）*
+*（強度：官方 production model card；下表為 2026-09-09 前舊版快照，兩次獨立 fetch 數字一致、權重和 0.998）*
 
-Wikimedia 生產環境的 language-agnostic 文章品質模型只用 6 個結構特徵：
+**已被取代（2026-10-13）：model card 於 2026-09-09 改版，新結論見下方「2026-09 改版後現況」**——Wikimedia 生產環境的 language-agnostic 文章品質模型只用 6 個結構特徵：
 
 | 特徵 | 權重 |
 |---|---|
@@ -163,9 +163,29 @@ Wikimedia 生產環境的 language-agnostic 文章品質模型只用 6 個結構
 | media | 0.114 |
 | categories | 0.070 |
 
-連結相關特徵僅約 11.5% 權重，且那個 wikilinks 特徵**只是密度**（`sqrt(# wikilinks) / normalized-page-length`），不含雙向性、語意或指向正確性。精確性提醒：若把 references(0.181) 與 categories(0.070) 也算成連結類結構，合計約 36%，**不宜簡化成「連結不重要」**。
+**已被取代（2026-10-13）：model card 於 2026-09-09 改版，新結論見下方「2026-09 改版後現況」**——連結相關特徵僅約 11.5% 權重，且那個 wikilinks 特徵**只是密度**（`sqrt(# wikilinks) / normalized-page-length`），不含雙向性、語意或指向正確性。精確性提醒：若把 references(0.181) 與 categories(0.070) 也算成連結類結構，合計約 36%，**不宜簡化成「連結不重要」**。新版為 ordinal logistic regression 係數，不能像舊版權重那樣直接當比例解讀，「11.5%」「36%」「權重和 0.998」的推算一律勿再引用（[model card 現行版](https://meta.wikimedia.org/wiki/Machine_learning_models/Production/Language-agnostic_Wikipedia_article_quality)，官方一手）。
 
-**最關鍵的是它為什麼搬不動**：這是無截距線性回歸映射到 0–1，各特徵以「**該 wiki 前 5% 文章**」為分母正規化。官方明載這使分數是相對於所在 wiki 族群分布的相對值——「在英文維基得 0.5 分的文章，若在簡明英文維基會得高得多的分數」。**22 頁的前 5% 只有 1 頁，校準步驟在此規模下數學上未定義。** model card 另自承不適用於 Wikipedia 以外專案，且「不評估行文品質，一篇塞滿假詞的長文章會被評為高品質」。
+#### 2026-09 改版後現況
+
+*（強度：官方 model card 一手（rev 31024888，Isaac (WMF)，2026-09-09，編輯摘要「updates to match newer HTML-based ordinal logistic regression model」）＋ Lift Wing 生產程式碼 `model.py` 的 `feature_order` 交叉一致；未實際呼叫 API 驗證分數，係數數字僅來自 model card）*
+
+[model card](https://meta.wikimedia.org/wiki/Machine_learning_models/Production/Language-agnostic_Wikipedia_article_quality) 已改為以文章 **HTML**（而非 wikitext）計算特徵的 **ordinal logistic regression**：Stub→FA 六級類別機率加權映射到 0–1；訓練資料為 2024-05 由編者評定的 2,542 篇（en/fr/hu/tr/zh/ar）。特徵由 6 個增為 9 個（新增 citations、messagebox、infobox），係數如下（[Lift Wing 生產程式碼](https://github.com/wikimedia/machinelearning-liftwing-inference-services/blob/main/src/models/articlequality/model_server/model.py) 的 `feature_order` 正是這 9 項）：
+
+| 特徵 | 係數 |
+|---|---|
+| page length | 6.28 |
+| citations | 1.16 |
+| messagebox | -0.95 |
+| media | 0.82 |
+| **wikilinks** | **0.70** |
+| infobox | 0.39 |
+| references | 0.24 |
+| sections | 0.23 |
+| categories | 0.08 |
+
+wikilinks 特徵仍只是密度（`# non-transcluded wikilinks (ns=0) / normalized-page-length`，不再開根號，頂標 0.45≈每節 5 個連結），仍不含雙向性、語意或指向正確性——本頁對該特徵的判讀不受改版影響。
+
+**最關鍵的是它為什麼搬不動**：這是無截距線性回歸映射到 0–1（**已被取代（2026-10-13）**：模型型態改為 ordinal logistic regression，見上節「2026-09 改版後現況」），各特徵以「**該 wiki 前 5% 文章**」為分母正規化。官方明載這使分數是相對於所在 wiki 族群分布的相對值——「在英文維基得 0.5 分的文章，若在簡明英文維基會得高得多的分數」。**22 頁的前 5% 只有 1 頁，校準步驟在此規模下數學上未定義。** model card 另自承不適用於 Wikipedia 以外專案，且「不評估行文品質，一篇塞滿假詞的長文章會被評為高品質」。上述限制在 2026-09 改版後 model card 仍原文保留，搬不動的結論不受改版影響。
 
 特徵空間本身倒是分類完整（*強度：ACM Computing Surveys 同儕審查系統性回顧，Moás & Lopes, FEUP, 2023*）：149 篇研究收集到 **321 個相異特徵**，分為 Content、Style、Readability、History、Network、Popularity 六族，Network 定義為「利用文章間連結量測影響力」。可攜限制同樣嚴重：History（版本史、多編者）與 Popularity（瀏覽量）在單人 vault 結構上不存在，Network 族是為百萬級語料設計的 centrality／PageRank 類量測，n=22 時統計基礎崩壞。**唯一可能有意義的是 Content／Style／Readability 三族**（單篇層級、不需大語料校準），但具體哪些特徵在繁中 22 頁上算得出來且有意義，未查（補充資料 Full Feature List.pdf 未取得）。
 

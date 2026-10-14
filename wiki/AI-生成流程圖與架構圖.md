@@ -2,7 +2,7 @@
 title: AI 生成流程圖與架構圖
 description: 以 Mermaid 為核心，整理程式架構逆向、流程文字轉圖與筆記視覺化的工具選型、工作流及準確度風險
 created: 2026-07-16
-updated: 2026-08-17
+updated: 2026-10-13
 parent: "[[wiki/01.index]]"
 tags:
   - diagram-as-code
@@ -113,8 +113,8 @@ GitHub 自 **2022-02** 起原生渲染 Mermaid（涵蓋 README/issue/PR/comment/
 
 - **可正常使用（高信心，官方 repo＋官網交叉確認）**：mermaid-js 官方團隊維護的 Live Editor，開源 **MIT**、**免費**、基本使用**免註冊登入**；官網 mermaid.js.org 首頁「Open Editor」直連，issue tracker 活躍至 2026-05。
 - **隱私＝這條做法的關鍵利多（高信心，官方原始碼 `serde.ts`＋維護者 discussion 確認）**：pako 把整張圖壓縮後編進 URL 的 **fragment（`#` 之後）**，依 HTTP 規範 **fragment 不送伺服器**、圖在瀏覽器本地渲染——貼 `view#pako:`／`edit#pako:` 連結時**圖內容不落任何遠端伺服器**，含專案內部資訊的架構圖可安心分享。**唯一外洩例外**：主動選「存成 GitHub gist」會落到 GitHub 基礎設施，敏感內容勿用此選項。
-- **主要限制＝URL 長度（中信心，官方 issue #52/#439/#1348 承認；長度數字部分為單一 blog，取保守值）**：整張圖編進 URL，**複雜大圖產生超長連結而失效**，實務安全門檻約 **2000 字元**（瓶頸多在中途 CDN/proxy 或聊天平台截斷，非瀏覽器本身——現代瀏覽器可承受 32K–64K+）。超限時改用 `mermaid` fenced code block 貼進 Obsidian／GitHub 原生渲染。
-- **可離線／自架（高信心）**：官方 Docker 映像 `ghcr.io/mermaid-js/mermaid-live-editor`，本質純靜態 SPA，核心作圖與渲染 100% client-side（PNG/SVG 匯出預設打 mermaid.ink，可用 `MERMAID_RENDERER_URL` 改指自架 renderer）。
+- **主要限制＝URL 長度（中信心，官方 issue mermaid-live-editor [#52](https://github.com/mermaid-js/mermaid-live-editor/issues/52)／[#439](https://github.com/mermaid-js/mermaid-live-editor/issues/439)／[#1176](https://github.com/mermaid-js/mermaid-live-editor/issues/1176) 承認（#1176 原為 mermaid-js/mermaid#1348，2023-03 轉移至 live-editor repo；舊 URL 仍可轉址。注意 live-editor 自身的 #1348 是 renovate 相依升版 PR，與此無關、勿引用——2026-10-13 複核修正，GitHub issue 原頁一手）；長度數字部分為單一 blog，取保守值）**：整張圖編進 URL，**複雜大圖產生超長連結而失效**，實務安全門檻約 **2000 字元**（瓶頸多在中途 CDN/proxy 或聊天平台截斷，非瀏覽器本身——現代瀏覽器可承受 32K–64K+）。超限時改用 `mermaid` fenced code block 貼進 Obsidian／GitHub 原生渲染。
+- **可離線／自架（高信心）**：官方 Docker 映像 `ghcr.io/mermaid-js/mermaid-live-editor`，本質純靜態 SPA，核心作圖與渲染 100% client-side（PNG/SVG 匯出預設打 mermaid.ink，~~可用 `MERMAID_RENDERER_URL` 改指自架 renderer~~ **已被取代（2026-10-13）**：`MERMAID_RENDERER_URL` 是 Dockerfile 的 build argument，由 Vite `import.meta.env` 在 `pnpm build` 時烤進 bundle；官方發布的 ghcr.io 映像以預設值建置、`docker run -e` 無法覆寫，要改指自架 renderer 須自行 `docker build --build-arg MERMAID_RENDERER_URL=…`。設空字串可停用 Actions 下的 PNG/SVG 連結。依據[官方 README「Docker」節](https://github.com/mermaid-js/mermaid-live-editor#docker)與 Dockerfile `ARG` 宣告，三份一手來源交叉一致、未實際 docker run 驗證）。
 - **免費／付費界線（高信心）**：即時協作與版本歷史屬付費 **Mermaid Chart**（同團隊 SaaS），不在免費 Live Editor；免費作圖＋pako 分享已足本 vault 用途。
 - **⚠️ 認站（高信心）**：官方唯一為 **mermaid.live**（對應 repo `mermaid-js/mermaid-live-editor`）；`mermaidonline.org`、`mermaideditor.com` 等為**非官方第三方 clone**，其隱私政策不適用官方站。
 - **❌ 勿引用（本輪對抗查證否決 1-2）**：「Mermaid 不存在付費層」——核心函式庫確為 MIT 開源，但生態**有**付費 Mermaid Chart，兩者須分清。

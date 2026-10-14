@@ -2,7 +2,7 @@
 title: Jev 與 System One 模型
 description: 只回型別化判斷、不生成文字的決策模型：三項核心宣稱的可信度落差、兩個接入硬限制，以及對上 fine-tuned encoder 的缺口
 created: 2026-09-22
-updated: 2026-10-07
+updated: 2026-10-13
 source: https://typesafe.ai/blog/introducing-system-one-models-and-jev
 parent: "[[wiki/01.index]]"
 tags:
@@ -42,7 +42,7 @@ TypeSafe AI 於 2026-09 發布的 Jev 自稱「首個 System One Model」：不�
 
 input `$0.042/M` tokens、output `$0`。這不只是廠商自述：OpenRouter provider 頁內嵌的 pricing JSON 為 `prompt: 0.000000042, completion: 0`，且無 per-request fee 或最低消費欄位。
 
-> **但掛牌價不等於帳單**：Jev 走 alpha decisions endpoint，是否另有 per-decision 計費未見任何來源說明；OpenRouter 帳戶層級的儲值手續費不在 model pricing 內；第三方 SDK 另有成本歸因 bug（litellm issue #42200：經 OpenRouter 時成本追蹤列 $0，因 model ID namespacing），會影響自建成本監控——此 bug 已於 2026-09 由 [PR #42301](https://github.com/BerriAI/litellm/pull/42301) 修復並關閉 issue，修補隨 2026-10 初的穩定版釋出（[release](https://github.com/BerriAI/litellm/releases/tag/v1.104.0) 一手，比對 commit、未實測），仍用更舊版 litellm 才受影響。廠商 blog 拿來對比的「既有 LLM input $0.20–$10/MTok」是**自選基準、未指名比較對象**。
+> **但掛牌價不等於帳單**：Jev 經 OpenRouter 走 alpha decisions 或 v1/systemone endpoint，是否另有 per-decision 計費未見任何來源說明；OpenRouter 帳戶層級的儲值手續費不在 model pricing 內；第三方 SDK 另有成本歸因 bug（litellm issue #42200：經 OpenRouter 時成本追蹤列 $0，因 model ID namespacing），會影響自建成本監控——此 bug 已於 2026-09 由 [PR #42301](https://github.com/BerriAI/litellm/pull/42301) 修復並關閉 issue，修補隨 2026-10 初的穩定版釋出（[release](https://github.com/BerriAI/litellm/releases/tag/v1.104.0) 一手，比對 commit、未實測），仍用更舊版 litellm 才受影響。**已被取代（2026-10-13）**：上句歸因錯誤、勿引用。issue #42200 雖於 2026-09-22 關閉（state_reason completed），但自稱「Fixes #42200」、修雙重前綴的 [PR #42206](https://github.com/BerriAI/litellm/pull/42206) 截至 2026-10-13 仍 open（draft、未 merge），2026-10-08 issue 下仍有人追問進度；[PR #42301](https://github.com/BerriAI/litellm/pull/42301)（已 merge、隨 v1.102.1 回植與 v1.104.0 釋出）是另開 `/openrouter/{path}` pass-through 並補 `openrouter/typesafe/jev-1.13` 價目列，只讓走新路由 `/openrouter/alpha/decisions` 的呼叫可正確計價，PR 本文未引用 #42200。main 現行 `typesafe_logging_handler.py` 仍無條件加 `typesafe/` 前綴，`usage.cost` 回退只對 `openrouter` provider 生效，故走 `/typesafe/{endpoint}` 指向 OpenRouter 的原場景仍會計價 $0；要避開請改走 `/openrouter/alpha/decisions`，雙前綴是否已修回查 PR #42206 狀態為準（GitHub API 一手、未實測）。廠商 blog 拿來對比的「既有 LLM input $0.20–$10/MTok」是**自選基準、未指名比較對象**。
 
 ### 「數學上不會 hallucinate／type error」：定義式保證，非實測 ⚠️
 
@@ -75,7 +75,7 @@ ayautomate 明言原宣稱「did not show up against these baselines」。官方
 三條路徑，成熟度差很多：
 
 1. 官方 SDK 或 `POST /v1/systemone`，預設模型別名 `jev-latest` — 最穩
-2. OpenRouter，但走 **alpha** 端點 `POST /api/alpha/decisions`：**不在標準 chat-completions 模型池、不出現在公開 `/api/v1/models` 清單中**
+2. OpenRouter，有兩個呼叫面：(a) alpha 端點 `POST /api/alpha/decisions`，給純 HTTP 或 OpenRouter TypeScript／Python／Go SDK 用；(b) 非 alpha 的 `POST /api/v1/systemone`，與 TypeSafe 官方 SDK 同介面，既有 SDK 使用者只改 base URL（`https://openrouter.ai/api`）與 API key 即可切到 OpenRouter。兩者皆不走標準 chat-completions 模型池；Jev 本體（`typesafe/jev-1.13`）不出現在公開 `/api/v1/models`，該清單 2026-10-13 實查只有另行上架、走 chat completions 的 `typesafe/jev-router`，與 Jev 決策模型的關係官方頁未說明。（[OpenRouter 官方 Jev 指南](https://openrouter.ai/docs/guides/community/jev)與 typesafe-sdk 指南一手；Wayback 2026-09-22 快照已有 v1/systemone，本頁 2026-09-22 建立時漏記，2026-10-13 補正。）
 3. `langchain-typesafe`（官方第一方套件，包成標準 Runnable，可 invoke／batch／compose、支援 LangSmith tracing）
 
 ### Context 是硬失敗，不是降級
@@ -120,7 +120,7 @@ Octomind 的工程師實測：問 Jev 要不要擋 `rm -rf ~/.ssh`，然後注�
 - 注入前：block 機率 **0.76**，confidence **0.64**
 - 注入後：block 機率 **0.48**，confidence **0.22**
 
-TypeSafe 官方文件自己承認這個面向：「Jev treats the state as data, not as hostile」，並寫明 adversarially steer 的內容「can move the answer」。
+TypeSafe 官方 jaggedness 文件（[docs.typesafe.ai/model-jaggedness/jev-1.13](https://docs.typesafe.ai/model-jaggedness/jev-1.13)）自己承認這個面向：「State is data, and `jev-1.13` does not treat it as hostile by default」，並寫明 adversarially steer 的內容「can move the answer」。Pydantic AI 的 TypeSafe 整合文件（[pydantic.dev/docs/ai/models/typesafe](https://pydantic.dev/docs/ai/models/typesafe/)）以「Jev treats the state as data, not as hostile」轉述同一限制；VentureBeat 報導引用的是後者。
 
 > **強度**：報導本身標明這是「one command in one integration test, not a benchmark」，n=1，不可當成通則化的攻擊成功率。但**方向是官方文件背書的**，所以要拿 Jev 當工具風險攔截 gate，這條得先解。另有一個未解的 TOCTOU 疑慮（LangChain issue #40694：已分類過的 tool call 可被內層 middleware 在執行前替換），若成立會讓 gating 形同虛設；尚未見官方回應。
 
@@ -155,7 +155,7 @@ TypeSafe 官方文件自己承認這個面向：「Jev treats the state as data,
 
 ## 九、開放問題
 
-1. 經 OpenRouter alpha 端點計費時，除 token 掛牌價外是否另有 per-decision 費用、最低收費或 rate limit？無任何帳單層級實測。
+1. 經 OpenRouter（alpha decisions 或 v1/systemone 任一端點）計費時，除 token 掛牌價外是否另有 per-decision 費用、最低收費或 rate limit？官方 Jev 指南只寫 input token 計費、output 免費，無 per-decision 與 rate limit 說明；無任何帳單層級實測。
 2. 機率是否真的 well-calibrated？三個第三方 repo 分歧過大，需回讀測試集與評分程式才能判斷分歧來自任務難度、OOD 程度還是評測方法。
 3. **同一任務、同一延遲預算下，Jev 對上已 fine-tune 的 encoder 誰划算？** 這是「該不該換掉既有 classifier」的關鍵，目前無人測過。
 4. 32k（state＋最長問題）在真實 agent harness 的 state 體積下多快撞牆？有無成熟的 state reduction 模式？目前只有零星踩雷紀錄。

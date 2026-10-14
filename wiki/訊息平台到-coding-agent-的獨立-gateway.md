@@ -2,7 +2,7 @@
 title: 訊息平台到 coding agent 的獨立 gateway
 description: 不綁 Hermes／OpenClaw 的訊息橋接工具盤點：cc-connect、ccgram 與各家官方 channel，依綁定緊密度分三層
 created: 2026-09-23
-updated: 2026-09-24
+updated: 2026-10-13
 parent: "[[wiki/01.index]]"
 tags:
   - coding-agent
@@ -22,7 +22,7 @@ tags:
 |---|---|---|---|---|
 | [cc-connect](https://github.com/chenhg5/cc-connect)（Go） | 約 15.6k／**無 LICENSE 檔**／2026-09-22 | 13 個：Telegram、Slack、Discord、Matrix、LINE、Feishu、DingTalk、WeCom、QQ 等，多數 long polling 免公網 IP | Claude Code、Codex、OpenCode、Copilot、Gemini CLI、Kimi CLI、任何 ACP 相容 agent（README 支援矩陣） | README 大半是中國 API 中繼商贊助廣告；「Pi」在矩陣標為「Cursor Background Agent」，語意待確認 |
 | OpenClaw Gateway | 隨 OpenClaw | OpenClaw 全部通道 | `agentRuntime.id` 可設 `openclaw`（預設，pi SDK 為底）、`codex`、`claude-cli`；`pi` 為舊別名 | 不能單獨裝，但可拿它前置 Claude Code／Codex；信任域設計見 [[OpenClaw-與-Hermes-Agent-比較]] |
-| [claw-orchestrator](https://github.com/Enderfga/claw-orchestrator) | 約 580／MIT／2026-09-22 | 非訊息 gateway | Claude Code、Codex、agy、Cursor、OpenCode 統一 runtime，對外 OpenAI 相容端點、MCP server、ACP agent | 是「gateway 底下那層」，不是 gateway 本身 |
+| [claw-orchestrator](https://github.com/Enderfga/claw-orchestrator) | 約 589／MIT／2026-10-11（2026-10-13 更新） | 非訊息 gateway | Claude Code、Codex、Antigravity（agy）、Grok Build、OpenCode 統一 runtime（Cursor 自 2026-08-22 退為 legacy engine，不在文件支援清單；Cursor 另可作 MCP host 接 clawo-mcp——依 [README](https://github.com/Enderfga/claw-orchestrator/blob/main/README.md) 與 commit／CHANGELOG 一手，未實測；2026-10-13 修正原誤列 Cursor 為 engine、漏列 Grok Build），對外 OpenAI 相容端點、MCP server、ACP agent | 是「gateway 底下那層」，不是 gateway 本身 |
 
 **勿依賴**：OpenACP（Open-ACP/OpenACP）在搜尋結果常出現，2026-09-23 主 repo 已 404，只剩 2026-04 的 Telegram／Signal／WhatsApp／Mattermost adapter 殘件。
 
@@ -35,7 +35,7 @@ tags:
 
 - **Claude Code Channels**（官方，research preview；四家裡唯一把「第三方聊天平台推進本機 session」做成官方功能的）：Telegram、Discord、iMessage 三個 plugin，需 Bun；`claude --channels plugin:telegram@claude-plugins-official` 啟動；配對碼加 sender 白名單；可轉發 permission prompt。Team／Enterprise 需管理員開 `channelsEnabled`。另有 Remote Control 從 claude.ai 或手機 app 接本機 session。
 - **pi**：[pi-messenger-bridge](https://github.com/tintinweb/pi-messenger-bridge)（MIT，約 74 星，2026-05-09 後未動；Telegram、WhatsApp、Slack、Discord、Matrix）、[pi-chat](https://github.com/earendil-works/pi-chat)（官方組織，Apache-2.0，約 401 星，2026-06-05；Discord／Telegram 各頻道一個 Gondolin micro-VM）、pi-telegram、TelePi。
-- **Codex**（2026-09-23 補查）：**沒有對應 Claude Code Channels 的官方功能**。官方兩條路都不是「第三方平台推進本機 CLI session」：Codex Remote 是 ChatGPT 手機 app 掃 QR 碼配對桌機（文件寫的是 ChatGPT 桌面 app，未提純 CLI），可開任務、核准指令、看 diff；Codex in Slack／Linear 是 `@Codex` 開雲端 chat，不碰本機。社群橋全為個位數星：OpenAB（openai/codex 討論 #13144，2026-02，每則訊息跑 `codex exec resume --last`）、codex-telegram-bridge（MIT，4 星，走 `codex app-server` 共用後端，2026-05 後未動）、telegram-codex-bridge（1 星）。要接 Codex 實務上仍是第一、二層的 cc-connect 或 ccgram，兩者都明列支援 Codex。
+- **Codex**（2026-09-23 補查）：**沒有對應 Claude Code Channels 的官方功能**。官方兩條路都不是「第三方平台推進本機 CLI session」：Codex Remote 是 ChatGPT 手機 app 掃 QR 碼配對桌機（手機端文件寫的是 ChatGPT 桌面 app、明言不能從 CLI 設定；但 CLI 另有 experimental 的 `codex remote-control`／`start`／`pair`，可在無桌面 app 的主機起 app-server daemon 並印手動配對碼——命令 2026-05 加入、`pair` 2026-06 加入，已載於[官方 CLI 命令參考](https://learn.chatgpt.com/docs/developer-commands?surface=cli)，與[手機端文件](https://learn.chatgpt.com/codex/remote-connections)彼此不一致；官方文件與 openai/codex 原始碼一手，純 CLI 主機能否被手機端實際配對未實測，2026-10-13 補查），可開任務、核准指令、看 diff；Codex in Slack／Linear 是 `@Codex` 開雲端 chat，不碰本機。社群橋全為個位數星：OpenAB（openai/codex 討論 #13144，2026-02，每則訊息跑 `codex exec resume --last`）、codex-telegram-bridge（MIT，4 星，走 `codex app-server` 共用後端，2026-05 後未動）、telegram-codex-bridge（1 星）。要接 Codex 實務上仍是第一、二層的 cc-connect 或 ccgram，兩者都明列支援 Codex。
 
 ## 判讀
 
