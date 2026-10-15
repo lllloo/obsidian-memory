@@ -2,7 +2,7 @@
 title: 長跑 Agent 的目標定義與計畫工具
 description: 讓自主迭代 agent 持續推進而不走偏的目標檔機制（分層、驗收判準、停止條件、防漂移措辭）與 SDD 工具生態的採用度實據
 created: 2026-07-30
-updated: 2026-10-13
+updated: 2026-10-15
 parent: "[[wiki/01.index]]"
 tags:
   - ai-agent
@@ -190,7 +190,7 @@ GitHub star 數，2026-07-30 以 `gh api`／`gh search` 直查核實（**star �
 ### 選擇判準
 
 - **要「先問清楚你要幹嘛、再幫你寫 spec 與計畫、然後照計畫不偏離地做完」** → `superpowers`。star 是第二名的兩倍，Claude Code 一行裝（`/plugin install superpowers@claude-plugins-official`，亦在官方 marketplace），skills 自動觸發不需記指令，支援 11 種 harness（2026-07-30 README 快照）。**已被取代（2026-10-13）**：README Installation 節現列 16 個安裝目標（新增 Devin CLI、Grok Build CLI、Qwen Code、Hermes Agent、Muse；v6.3.0／v6.4.1 兩次 release 加入），README 本身不寫固定數字，實際支援清單以 [README Installation 節](https://github.com/obra/superpowers/blob/main/README.md#installation) 為準，勿再引用釘死的數字（官方 README 一手＋GitHub API 歷史版本對照，僅讀文件未實測各 harness 安裝）。README 描述的流程：不直接寫碼而是「steps back and asks you what you're really trying to do」→ 從對話中萃出 spec 並分段給你確認 → 你簽核設計後產出實作計畫 → subagent-driven development 逐項執行並互審，自稱「not uncommon for your agent to work autonomously for a couple hours at a time without deviating from the plan」。內建 red/green TDD、YAGNI、DRY 作為防膨脹紀律。
-  ⚠️ **本頁對 superpowers 只做了 README 直讀（前 70 行），未跑對抗式查證、未核實機制實作**。「連續自主數小時不偏離計畫」是**廠商／作者自述**。它另有商業服務（`sales@primeradiant.com`），非純社群專案。
+  ⚠️ **本頁對 superpowers 只做了 README 直讀（前 70 行），未跑對抗式查證、未核實機制實作**。「連續自主數小時不偏離計畫」是**廠商／作者自述**。它另有商業服務（`sales@primeradiant.com`），非純社群專案。（2026-10-15 補：注入機制、無官方開關、小需求放行的版本差異與官方 marketplace 落後成因已一手核實，見 [[Superpowers]]；「數小時不偏離」仍屬自述。）
 - **要最貼近 spec-kit 但更輕** → OpenSpec（見 [[OpenSpec]]，本 vault 已有逐節查證的專屬頁）。
 - **要分數驅動的收斂迴圈** → 上述工具皆不涵蓋，需自行加 goal-md 那套（並承擔上述 scalar 分數的張力）。
 - **已在用 BMAD** → 它就是同一類的重量級版本；嫌重的輕量替代是 GSD（明確自稱如此）或 OpenSpec。
