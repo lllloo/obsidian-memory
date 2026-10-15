@@ -2,7 +2,7 @@
 title: Herdr 使用方法
 description: herdr 的 session／workspace 層級、持久化邊界、狀態偵測、CLI 委派原語、worktree 與 SSH 遠端用法，含偵測盲點
 created: 2026-09-15
-updated: 2026-10-07
+updated: 2026-10-15
 source: https://herdr.dev/docs/
 parent: "[[wiki/01.index]]"
 tags:
@@ -88,7 +88,7 @@ herdr 是 client/server 架構的終端多工器，骨架與 tmux 相同：背�
 
 搭配使用：`herdr notification show <title> [--body] [--sound none|done|request]` 可從腳本丟通知（本機 `--help` 核對，未經對抗查證）。
 
-官方 agent skill 可用 `npx skills add herdrdev/herdr --skill herdr -g` 安裝或 `herdr --skill` 印出，使用 CLI 前檢查 `HERDR_ENV=1`。（3-0）本機全域的 `herdr-agent` skill 即是這套原語的應用：開新 tab 啟動另一個 agent 派工，對方用 `herdr agent prompt` 把結論打回主 pane。
+官方 agent skill 可用 `npx skills add herdrdev/herdr --skill herdr -g` 安裝或 `herdr --skill` 印出，使用 CLI 前檢查 `HERDR_ENV=1`。（3-0）本機全域的 `herdr-agent` skill 即是這套原語的應用：開新 tab 啟動另一個 agent 派工，主 agent 在背景用 `herdr agent wait` 等對方停下、讀畫面最後一行結論轉達；只有不能背景執行的主 agent 才改由對方用 `herdr agent prompt` 回敲主 pane。官方 skill 管版面、worktree、多機等完整控制，本機 skill 只做「交派→放手→收結論」一條路徑，兩者分工不重疊。
 
 ## git worktree
 
