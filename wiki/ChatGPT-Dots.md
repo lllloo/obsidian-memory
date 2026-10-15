@@ -54,9 +54,24 @@ tags:
 | 簡訊 | 有限 beta，只開放美國 Pro，由第三方供應商傳送，Business／Enterprise 不能用 | 高 |
 | 其他 | 推出時 dot 不能主動打電話給使用者，也不能有獨立的 email 地址（可以連接你自己的信箱） | 高 |
 
-**平台的版本落差**：推出當天的公告與 release notes 都寫「首次建立要在桌面完成，之後才能在行動 app 傳訊息」。現行 Help Center 已改成行動 app 也能建立。兩份都是官方文件，差別在修訂時間。
+**平台的版本落差**：推出當天的公告與 release notes 都寫「首次建立要在桌面完成，之後才能在行動 app 傳訊息」。現行 Help Center 已改成行動 app 也能建立。兩份都是官方文件，差別在修訂時間；轉折點是下節 2026-10-05～09 那輪更新。
 
 Business Premium 至少要兩個席位，這一點只有單一第三方來源（usecarly），強度低。
+
+## 推出後更新
+
+### 2026-10-05～09
+
+**證據強度：高。** 來源是官方 [What's new：Create your dot in the ChatGPT mobile app](https://learn.chatgpt.com/docs/whats-new/dots-october-9-2026)（learn.chatgpt.com 可直讀，已回讀原句）。
+
+- **手機建立 dot**：iOS／Android 的 ChatGPT app 可直接建立 dot、命名、自訂外觀、連接 plugin，並直接開啟該 dot 的對話。推翻推出當天「首次建立限桌面」的說法。
+- **委派 Codex**：dot 可以在 Codex 開始工作、跟進既有 thread，並引用 ChatGPT 對話、既有 Codex thread 與 automation 的脈絡；判斷該延續舊 thread 還是開新 thread 的能力也有改進。
+- **讀寫 ChatGPT Work automations**：dot 可檢視排程中的工作並修改定期任務。
+- **thread 管理**：dot 管理的 thread 會隨工作內容自動改名，重複的「created task」訊息變少。
+
+OpenAI Developer Community 在 2026-10-13 有一篇[使用者轉貼](https://community.openai.com/t/dots-received-another-round-of-updates/1405896)（發文者身分未標示為 OpenAI 員工），內容與上列一致，另列雲端瀏覽與側邊欄載入加快、行動通知減少、審批按鈕不再被裁切、Enterprise 網頁與語音存取修正等小修。這些小修在官方頁屬一般性改進、未明指 dots，強度中。
+
+第三方指南（codersera）稱首月「dot 用量不計入額度」的期間在 2026-10 下旬結束；單一第三方來源、未對官方查證，**引用前回官方確認**。
 
 ## 評價：證據不足
 
