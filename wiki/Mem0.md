@@ -2,7 +2,7 @@
 title: Mem0
 description: AI agent 記憶層工具的整合路徑（plugin／MCP／CLI）、hook 實測消耗與失效模式證據，含本 vault 採 MCP-only 的拍板理由
 created: 2026-07-20
-updated: 2026-10-13
+updated: 2026-10-15
 source: https://github.com/mem0ai/mem0
 parent: "[[wiki/01.index]]"
 tags:
@@ -142,3 +142,4 @@ Codex 的 `codex mcp add --url` 存在，也**再次否證**官方另一頁那�
 - [[LLM-Wiki-生態實作比較]] — mem0 自家 repo 的 [discussion #4051](https://github.com/mem0ai/mem0/discussions/4051) 有人（自稱 mem0 fan）推薦 `MEMORY.md`＋git 作輕量替代，與本 vault `schema/MEMORY.md` 近乎同構；其自劃界線值得記：該路在「大量語意檢索」會斷，在「agent 接上進度」剛好
 - [[OpenSpec]] — 上述類別錯置的另一方
 - [[Agent-維護知識庫的已知失效模式]] — 本頁的「抽取污染、幻覺自我複製」與該頁「迭代重寫累積失真、壓縮偏食限定詞」同屬**反覆重編碼**家族，是同一機制在向量／自動抽取路線與 markdown wiki 路線上的兩種面貌；該頁另判定 model collapse 類比不成立，本頁的失效模式敘述亦不應援引該概念
+- [[ChatGPT-Dots]] — 同一類「agent 自行累積記憶」的商用產品；dot 推出期無法逐條檢視或刪除記憶，且與主 ChatGPT Memory 雙向回寫，是本頁污染擴散顧慮的另一種形態。

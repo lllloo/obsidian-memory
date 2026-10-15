@@ -2,7 +2,7 @@
 title: LLM 方案定價與 coding agent 比較
 description: 主流 LLM 訂閱月費與 coding agent 三方案定價對照，依用途給經濟實惠推薦，含台幣概算、2026-09 覆核與第三方工具可用性
 created: 2026-07-08
-updated: 2026-10-13
+updated: 2026-10-15
 parent: "[[wiki/01.index]]"
 tags:
   - llm-pricing
@@ -112,3 +112,4 @@ agy 本身內建 subagent、`/schedule` 排程、`/boost` 三層編排，並可�
 - [[四套-coding-agent-能力差異對照]]——四家能力矩陣；其「訂閱／登入」列補了一個本頁該注意的細節：pi 文件稱 Claude Pro／Max 可登入但走 extra usage 按 token 計費、不吃 plan 額度，OpenCode 文件則直接引 Anthropic 禁止條款下架該 plugin。
 - [[Coding-agent-指示檔與規則載入機制對照]]——本頁算錢與額度能否帶到第三方 harness；該頁是換 harness 時 `~/.claude/rules/` 這類規則檔能不能帶走的機制面（Codex／OpenCode／pi 都沒有 glob 條件載入）。
 - [[pi-與-OpenCode-v2-比較]] ——本頁只算錢，該頁比 OpenCode 與 pi 兩套第三方 harness 的能力取捨；「Codex for Open Source」支援清單兩頁共用
+- [[ChatGPT-Dots]] ——常駐 agent 只開放 Pro 與 Business Premium；推出時 Pro 多了 $500 一層（本頁只記到 $100／$200，未覆核其內容）；dot 在 Codex 啟動的任務吃同一份 Codex 額度

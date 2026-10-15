@@ -27,6 +27,7 @@ tags:
 - **勿重複提議**：`.gitignore` 不補 `.env`／金鑰規則；Obsidian Git bundle 維持 tracked，供換機使用。
 - **勿再提議**：lint／BACKLOG 不加執行心跳或「上次執行」欄，無發現的一輪零檔案變更；語意層不加獨立 refuter，review 靠事後 GitHub diff。
 - `vault-lint` 本身不碰 git；雲端 routine 已停用，目前只手動觸發，由呼叫端 agent commit／push。原 trigger `trig_018QPWmi5K8hiV7ghMvKnTU9` 留作重啟參照。
+- **研究結果回存 wiki 由 agent 自行判斷**（2026-10-15 使用者指示）：deep-research／Query 結束後不再問「要不要存」，值得就直接回存並在回覆中告知。
 - **跨 repo 的實作回該 repo 做**：本 vault 只存跨專案通用知識，不寫他 repo 的實作細節或專案狀態。
 - **playbook**：獨立私人 repo＋`lllloo/skills` 的 `/playbook` skill；查時掃檔名／title／description，不建索引；寫時 AI 開分支送 PR，由使用者審後合。只手動觸發，勿提議全域規範自動查；實作在那兩個 repo，本 vault 無跨專案查詢入口。
 - **私人筆記在 Notion**：tmux／git archive 保留原「技術筆記」入口，勿移入新資料庫；不重建 topics/cards。日常流程不讀寫 Notion，只有重新明確指定的 Notion 任務才操作。
