@@ -1,8 +1,8 @@
 ---
 title: Superpowers
-description: obra 的 agentic skills 框架：SessionStart 注入機制、無官方開關的維護者立場、小需求放行的版本分水嶺與官方 marketplace 版本落後成因
+description: obra 的 agentic skills 框架：SessionStart 注入機制、無官方開關的維護者立場、小需求放行與 marketplace 版本落後成因
 created: 2026-10-15
-updated: 2026-10-15
+updated: 2026-10-16
 source: https://github.com/obra/superpowers
 published: ""
 parent: "[[wiki/01.index]]"
