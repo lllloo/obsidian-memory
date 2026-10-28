@@ -2,7 +2,7 @@
 title: 長跑 Agent 的目標定義與計畫工具
 description: 讓自主迭代 agent 持續推進而不走偏的目標檔機制（分層、驗收判準、停止條件、防漂移措辭）與 SDD 工具生態的採用度實據
 created: 2026-07-30
-updated: 2026-10-15
+updated: 2026-10-28
 parent: "[[wiki/01.index]]"
 tags:
   - ai-agent
@@ -194,6 +194,20 @@ GitHub star 數，2026-07-30 以 `gh api`／`gh search` 直查核實（**star �
 - **要最貼近 spec-kit 但更輕** → OpenSpec（見 [[OpenSpec]]，本 vault 已有逐節查證的專屬頁）。
 - **要分數驅動的收斂迴圈** → 上述工具皆不涵蓋，需自行加 goal-md 那套（並承擔上述 scalar 分數的張力）。
 - **已在用 BMAD** → 它就是同一類的重量級版本；嫌重的輕量替代是 GSD（明確自稱如此）或 OpenSpec。
+
+## 具名實踐者怎麼讓 agent 一直跑（2026-10-28 補查）
+
+前面兩節記的是工具「規定了什麼」，本節記知名實踐者「自己怎麼做」。**他們彼此的做法有分歧**，沒有共識路線。強度：Anthropic、Steinberger 兩項由主 agent 回原文核對；Cherny 一項核對 InfoQ 報導（二手轉述他的公開貼文）；Yegge 一項只讀到二手報導，未核原 repo。
+
+| 人 | 路線 | 關鍵做法 | 強度 |
+|---|---|---|---|
+| Anthropic 工程團隊（[2025-11-26](https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents)） | **長時 harness** | initializer agent 只跑一次；之後每個 session 由 coding agent 只做一個 feature。狀態存在 JSON feature list（初始全為 failing，agent 只能改 `passes`）、進度檔、`init.sh`、git。session 開始先讀 git log 和進度檔，再跑一次端到端測試。原文：「It is unacceptable to remove or edit tests」 | 廠商一手、原文核對；無量化效果 |
+| Geoffrey Huntley | **Ralph loop**（`while` 迴圈反覆餵同一個 prompt） | 每輪都是乾淨 context，進度靠 git 累積。作者自己說不會用在既有 codebase，詳見 [[AI-自主工作流的實證檢驗]] | 作者一手、軼事 |
+| Boris Cherny（Claude Code 作者，[InfoQ 2026-01-10](https://www.infoq.com/news/2026/01/claude-code-creator-workflow/)） | **人主導、平行多開** | 本機 5 個、網頁 5–10 個 session，其中 10–20% 中途放棄。先在 Plan Mode 談到滿意，再切 auto-accept。最重要的一條是給 Claude 一個驗證自己成果的回饋迴路，報導稱品質可提升 2–3 倍（倍數無數據，勿引用）。CLAUDE.md 進 git，記錄錯誤。**幾乎不用 `--dangerously-skip-permissions`，只在 sandbox 裡跑長任務時才用** | 二手報導、原文核對 |
+| Peter Steinberger（[Just Talk To It](https://steipete.me/posts/just-talk-to-it)，2025-10） | **反長跑、反框架** | 3–8 個 Codex 放在 3×3 終端格，多數共用同一資料夾，不用 worktree。很少寫大計畫檔，靠對話討論。明說「寫大 spec 讓模型自己 build 幾小時」是「the old way of thinking」；認為編排工具在繞過當下的低效，subagent「mostly just charade」。agent 自己做 atomic commit；`/automerge` 等 CI 綠燈後 squash | 作者一手、原文核對 |
+| Steve Yegge（Gas Town，2026-01） | **重型多 agent 編排** | 一次 20–30 個 agent、七種角色；用 git-backed 的 Beads（JSON issue tracker）保存工作狀態，讓 agent crash 或重啟後能接續。作者自己警告不適合多數開發者 | 僅二手報導，未核原 repo |
+
+**共同點**：五人都要求**驗證迴路**和**進度存在 context 以外**（git、檔案）。**分歧**：要不要讓 agent 長時間無人值守。Anthropic、Huntley、Yegge 走自動化路線；Cherny、Steinberger 讓人留在迴圈裡，靠平行多開換產出。Cherny「長任務只在 sandbox 裡放權限」這點，也是無人值守的最低門檻。
 
 ## 勿引用清單
 
