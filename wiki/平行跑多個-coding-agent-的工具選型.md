@@ -2,7 +2,7 @@
 title: 平行跑多個 coding agent 的工具選型
 description: Herdr、Multica 以外本機平行跑 coding agent 的四類方案，逐項標各 agent 與 Linux 的支援度、維護狀態
 created: 2026-09-15
-updated: 2026-10-07
+updated: 2026-10-28
 parent: "[[wiki/01.index]]"
 tags:
   - ai-agent
@@ -104,3 +104,4 @@ deep-research 這兩面向零條通過驗證，以下由主 agent 回原文核�
 - 瓶頸：[[AI-產碼加速下的-review-瓶頸]]——Simon Willison 懷疑平行的理由正是 review 瓶頸。
 - 下游：[[平行-agent-產出的合併與-review]]——本頁選完工具之後，多份產出怎麼合併、review、挑選的實證與做法。
 - 額度：[[LLM-方案定價與-coding-agent-比較]]——三家混用的動機與 agy 生態「被派工為主」的分布。
+- 跑起來之後：[[多-agent-的人類監督與介入]]。本頁選完工具，該頁處理一人能同時盯幾個（fan-out 理論與 foreground 2–4 個的經驗值）、何時介入，以及卡住偵測。
