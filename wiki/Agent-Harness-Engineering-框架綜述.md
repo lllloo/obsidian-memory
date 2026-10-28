@@ -2,7 +2,7 @@
 title: Agent Harness Engineering 框架綜述
 description: 整合 Anthropic 工程論述與原始碼 taxonomy，梳理 agent 外圍基礎設施的範疇、方法、實作比較與演進方向
 created: 2026-07-10
-updated: 2026-10-13
+updated: 2026-10-28
 parent: "[[wiki/01.index]]"
 tags:
   - ai-agent
@@ -89,6 +89,19 @@ Harness 是包裹在 LLM 外圍、負責「模型推理以外一切」的軟體�
 2. **context 是有邊際報酬遞減的有限資源**，compaction／note-taking／subagent 隔離是三大應對。
 3. **驗證迴路是品質關鍵**——generator-evaluator、瀏覽器端對端測試；沒有 verify 環節模型會「自認完成」（但必要不充分——測試可被 agent 從內部滿足，證據見 [[AI-自主工作流的實證檢驗]]）。
 4. **harness 假設有生命週期**——為當下模型缺陷加的機制，模型升級後要重估、移除，否則變 dead weight。
+
+## 非 Anthropic 的一手實作分享（2026-10-28 補查）
+
+用來平衡本頁「來源集中 Anthropic」的限制。都是公司或作者談自家經驗，沒有對照實驗。
+
+| 來源 | 文章 | 重點 | 核對 |
+|---|---|---|---|
+| Cursor（Wilson Lin） | [Scaling long-running autonomous coding](https://cursor.com/blog/scaling-agents)，2026-01-14 | 數百個 agent 平行跑好幾週。扁平架構失敗：agent 用鎖互相協調，20 個的產出只等於 2～3 個；換成樂觀並行後，又變成只挑安全的小改動、避開難題。改成 planner 拆任務、worker 各自做不互相協調、judge 每輪決定要不要繼續，每輪從頭開始。原文：「The right amount of structure is somewhere in the middle」「the prompts matter more」 | 原文核對 |
+| Cognition（Walden Yan） | [Multi-Agents: What's Actually Working](https://cognition.com/blog/multi-agents-working)，2026-04-22 | 2025-06〈Don't Build Multi-Agents〉的續篇：「multi-agent systems work best today when writes stay single-threaded」。可行的三種：乾淨 context 的 review 迴圈、卡關時找更強模型（smart friend）、manager 拆任務再收結果 | 原文核對 |
+| OpenAI（Ryan Lopopolo） | [Harness engineering](https://openai.com/index/harness-engineering/)，2026-02-11 | 五個月內部產品，所有程式碼都由 Codex 寫，「Humans steer. Agents execute.」 | 原文 403 打不開，僅二手報導（InfoQ） |
+| Mitchell Hashimoto | [My AI Adoption Journey](https://mitchellh.com/writing/my-ai-adoption-journey)，2026-02-05 | 六步，第 5 步「Engineer the Harness」：agent 犯一次錯，就工程化一個解法，讓它不再犯同樣的錯；第 6 步「Always Have an Agent Running」 | 原文核對 |
+
+Cursor 文另記一條模型分工的觀察：該團隊認為 GPT-5.2 較適合長時自主與規劃，Opus 4.5 傾向提早停止、走捷徑。這是單一團隊在特定版本上的經驗，模型迭代後未必成立。
 
 ## 證據限制（2026-07-10 查證拍板）
 
