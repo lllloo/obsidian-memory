@@ -2,7 +2,7 @@
 title: 用測試約束 AI 產碼
 description: AI 寫的測試為何驗證不到東西、判準的權威來源為何才是分類軸，以及 mutation、property-based 等手段的定位差異與防繞過分層
 created: 2026-08-06
-updated: 2026-10-13
+updated: 2026-10-28
 parent: "[[wiki/01.index]]"
 tags:
   - coding-agent
@@ -175,6 +175,18 @@ PBT 不寫「輸入 A 應得 B」，而寫「**對所有合法輸入，這個不
 5. **最陰險的不是 `--no-verify`，是弱化規則本身**——刪掉一個 job、改掉必要檢查的名稱、把 glob 縮窄讓 hook 看不到重要檔案，然後「技術上完全遵守了」
 
 （**medium**：單一作者的實務整理，但每項繞過手法都可自行驗證；建議親自測一次 agent 是否真的被擋——沒實測過的護欄不算護欄。）
+
+## 具名實踐者的推薦（2026-10-28 補查）
+
+都是個人或機構的主張，不是效果實證。來源由主 agent 回原文核對，二手來源另外標明。
+
+- **Kent Beck**（[Augmented Coding: Beyond the Vibes](https://newsletter.kentbeck.com/p/augmented-coding-beyond-the-vibes)，2025-06-25）：用 TDD 帶 agent（他稱 agent 為 genie），盯三個警訊：「Loops」、「Functionality I hadn't asked for (even if it was a reasonable next step)」、「Any indication that the genie was cheating, for example by disabling or deleting tests」。第三條就是本頁第五節的繞過問題。
+- **Simon Willison**（[Agentic Engineering Patterns](https://simonwillison.net/guides/agentic-engineering-patterns/) 的 Testing and QA 章節）：三條模式。
+  - **Red/green TDD**：稱它是「a fantastic fit for coding agents」，並強調「It's important to confirm that the tests fail before implementing the code to make them pass」。
+  - **First run the tests**：開工第一句就叫 agent 先跑既有測試，用來了解 codebase 和基線。
+  - **Agentic manual testing**：讓 agent 用瀏覽器自動化之類的方式，自己動手測軟體。
+- **Anthropic 長時 harness**：用瀏覽器端對端驗證取代只跑單元測試，並明寫「It is unacceptable to remove or edit tests」，詳見 [[長跑-Agent-的目標定義與計畫工具]]。
+- **Thoughtworks Radar Vol.34**：mutation testing 放在 Trial 環，見第四節。網路搜尋沒有找到它對 approval testing、property-based testing、contract testing 的 AI 場景推薦（只看了搜尋結果，沒逐條查 Radar 頁面）。
 
 ## 六、落地判準與過度工程紅線
 
