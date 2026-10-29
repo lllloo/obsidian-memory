@@ -2,7 +2,7 @@
 title: Agent Skill 腳本路徑的規範與實況
 description: SKILL.md 呼叫 bundled 腳本該怎麼寫路徑：規範明訂裸相對路徑、主流集合一致照做，但規範內部對誰負責解析自相矛盾，實測會找不到檔
 created: 2026-08-13
-updated: 2026-10-13
+updated: 2026-10-29
 parent: "[[wiki/01.index]]"
 tags:
   - claude-code
@@ -86,7 +86,7 @@ Agent Skills 規範（agentskills.io）`skill-creation/using-scripts` L98 逐字
 
 ## Claude Code 專屬機制（規範不認）
 
-官方文件記載的替換變數已擴為四個（2026-10-13 回查 [skills 文件](https://code.claude.com/docs/en/skills.md)「Available string substitutions」，官方文件一手、未實測替換行為；本頁 2026-08-13 初稿時僅記兩個，各變數加入時點見官方 CHANGELOG），其中與 skill 腳本路徑直接相關的是 `${CLAUDE_SKILL_DIR}` 與 `${CLAUDE_PLUGIN_ROOT}`，社群滲透率為零（見上表；`${CLAUDE_PROJECT_DIR}`、`${CLAUDE_PLUGIN_DATA}` 未抽樣）：
+官方文件記載的替換變數已擴為四個（2026-10-13 回查 [skills 文件](https://code.claude.com/docs/en/skills.md)「Available string substitutions」，官方文件一手、未實測替換行為；本頁 2026-08-13 初稿時僅記兩個，各變數加入時點見官方 CHANGELOG）〔**已被取代（2026-10-29）**：「四個」是總數算錯——同節現列六個 `${CLAUDE_*}` 變數（另有 `$ARGUMENTS` 系列），與路徑相關的是下表四個，另有 `${CLAUDE_SESSION_ID}`、`${CLAUDE_EFFORT}` 兩個非路徑變數。2026-10-29 回查同頁，官方文件一手；這兩個非路徑變數何時加入文件未查，無法確定 2026-10-13 當時是否已列〕，其中與 skill 腳本路徑直接相關的是 `${CLAUDE_SKILL_DIR}` 與 `${CLAUDE_PLUGIN_ROOT}`，社群滲透率為零（見上表；`${CLAUDE_PROJECT_DIR}`、`${CLAUDE_PLUGIN_DATA}` 未抽樣）：
 
 | 變數 | 值 | 範圍 |
 |---|---|---|

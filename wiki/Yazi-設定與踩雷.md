@@ -2,7 +2,7 @@
 title: Yazi 設定與踩雷
 description: 在終端多工器 pane 裡補上檔案與 diff 檢視的三條路線，含 snap 安裝的 PATH 陷阱、圖示與隱藏檔設定、WSL2 三條邊界與 pane 卡頓
 created: 2026-09-21
-updated: 2026-10-13
+updated: 2026-10-29
 source: https://yazi-rs.github.io/docs/
 parent: "[[wiki/01.index]]"
 tags:
@@ -69,7 +69,7 @@ run  = 'shell -- ya emit cd "$(git rev-parse --show-toplevel)"'
 
 ## 四、踩雷
 
-**背景 pane 卡 5 秒（一手，開啟中）**。[issue #4331](https://github.com/sxyazi/yazi/issues/4331)：在 tmux 之類的多工器裡，進 yazi、開檔、按 `q` 離開時各卡約 5 秒。一位使用者比對 commit 後指出是 #4271 引入的，**26.8.15 之後的版本才有**。機制是 yazi 啟動時送 DA1 探測終端能力，在多工器裡走 passthrough，pane 在背景時回應回不來，一路等到 timeout；pane 在前景則不卡。補充（2026-10-07，單一回報者附對照數據、未實測）：2026-09-22 有回報者在同一個 issue 比對，同一版 yazi 在 tmux 3.7 下**連前景 pane 的 quit 都卡約 5 秒**，在 tmux 3.6 下則幾乎無延遲——他的解釋是 tmux ≤3.6 會把查詢回應漏進 active pane、碰巧讓探測完成，3.7 修掉這個漏洞後每個 pane 都卡，所以「前景不卡」只在 tmux ≤3.6 成立。他也把問題拆成兩個症狀：quit 延遲是 26.9.1 才引入；啟動時吃掉輸入則 26.8.15 起就有。目前無官方修正，留言提到的 workaround 是降版到 26.5.6 或改用 Alacritty。**回報全部來自 tmux，Herdr 是否重現未驗證**——Herdr 自行以 Rust 實作，對 DA1 passthrough 的處理不一定相同。
+**背景 pane 卡 5 秒（一手，2026-10-18 已關閉，只有緩解、沒有根治）**。[issue #4331](https://github.com/sxyazi/yazi/issues/4331)：在 tmux 之類的多工器裡，進 yazi、開檔、按 `q` 離開時各卡約 5 秒。一位使用者比對 commit 後指出是 #4271 引入的，**26.8.15 之後的版本才有**。機制是 yazi 啟動時送 DA1 探測終端能力，在多工器裡走 passthrough，pane 在背景時回應回不來，一路等到 timeout；pane 在前景則不卡。補充（2026-10-07，單一回報者附對照數據、未實測）：2026-09-22 有回報者在同一個 issue 比對，同一版 yazi 在 tmux 3.7 下**連前景 pane 的 quit 都卡約 5 秒**，在 tmux 3.6 下則幾乎無延遲——他的解釋是 tmux ≤3.6 會把查詢回應漏進 active pane、碰巧讓探測完成，3.7 修掉這個漏洞後每個 pane 都卡，所以「前景不卡」只在 tmux ≤3.6 成立。他也把問題拆成兩個症狀：quit 延遲是 26.9.1 才引入；啟動時吃掉輸入則 26.8.15 起就有。目前無官方修正，留言提到的 workaround 是降版到 26.5.6 或改用 Alacritty。**已被取代（2026-10-29）**：issue 已於 2026-10-18 以 completed 關閉。維護者 sxyazi [在 issue 留言](https://github.com/sxyazi/yazi/issues/4331#issuecomment-6246001064)判定根因在 tmux：背景 session 的 passthrough 序列會被 tmux 靜默丟棄，yazi 端無法根治，要等 tmux 改善 passthrough。yazi 端只做 best-effort 緩解，由 [PR #4432](https://github.com/sxyazi/yazi/pull/4432)（已合併）實作：探測回應的 timeout 從 5 秒降到 2 秒，並改成程式一啟動就開始計時；拿不到回應時走 fallback，部分功能的行為可能不同。截至 2026-10-29 這個緩解只在 nightly，還沒進正式版（最新正式版仍為 26.9.1，進版與否回查 [releases](https://github.com/sxyazi/yazi/releases)），snap 版要等下一個正式版。在那之前，降版到 26.5.6 或改用 Alacritty 的 workaround 仍適用（強度：GitHub API 讀 issue 留言與 PR 原文，一手；緩解效果未實測）。**回報全部來自 tmux，Herdr 是否重現未驗證**——Herdr 自行以 Rust 實作，對 DA1 passthrough 的處理不一定相同。
 
 **flavor 舊 key 被無聲忽略（一手）**。[ayu-dark.yazi issue #6](https://github.com/kmlupreti/ayu-dark.yazi/issues/6)，**測試版本正是 26.9.1**：yazi 未用 `deny_unknown_fields` 也未定 serde alias，舊 key 不報錯、不警告，只是那幾個元件悄悄退回內建預設色。`[help] on`→`chord`、`[help] run`→`action`、`[help] footer` 移除（皆 26.8.15）、`[completion]`→`[cmp]`（25.2.26）、`[select]`→`[pick]`（v0.4.0）。症狀是「顏色怪怪的但說不上哪裡」。
 

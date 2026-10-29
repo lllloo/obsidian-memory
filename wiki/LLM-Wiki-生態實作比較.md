@@ -2,7 +2,7 @@
 title: LLM Wiki 生態實作比較
 description: nvk、Hermes、Astro-Han 等 Karpathy LLM Wiki 實作與 Letta MemFS 等相鄰記憶系統的收斂設計、分歧點與實證證據對照
 created: 2026-07-10
-updated: 2026-10-13
+updated: 2026-10-29
 parent: "[[wiki/01.index]]"
 tags:
   - wiki
@@ -24,7 +24,7 @@ tags:
 | [Astro-Han/karpathy-llm-wiki](https://github.com/Astro-Han/karpathy-llm-wiki) | Agent Skills 標準單一 skill | raw 不可變＋wiki＋index，三動作定義一致 | 跨四工具安裝（Claude Code／Cursor／Codex CLI／OpenCode，自述未獨立驗證——**已被取代（2026-10-13）**：該 repo [README](https://github.com/Astro-Han/karpathy-llm-wiki/blob/main/README.md)／SKILL.md 全歷史（含 2026-07 當時 HEAD 與現行 main）均無「未驗證」自述，Tool Compatibility 表只列安裝方式；「未獨立驗證各工具實際可用」是本 vault 查證時的保留，主詞應為本頁而非該專案。證據強度：clone 該 repo 比對全 git 歷史，一手；各工具實際可用與否仍未實測）、Lint 含自動修復、維護 log.md |
 | [Wuphf](https://github.com/nex-crm/wuphf)（Nex.ai，YC S26） | 本地 git repo＋MCP 工具 | raw markdown＋wiki，另加私有 notebook 暫存層 | git-native 為 canonical、Bleve BM25＋SQLite 為可重建 cache；per-entity append-only fact log（JSONL、deterministic id）與敘述性頁並存；notebook→wiki 的 promotion gate。**已被取代（2026-09-17）**：原 URL 現轉址到 `najmuzzaman-mohammad/gawkbot`，repo 已轉型為工作流自動化 bot（自述「open source grok bot」），上述 wiki 架構在現行 README 查無對應；本列與下方 Wuphf 相關論述僅為 2026-07 的歷史快照 |
 | [llm-wiki-kit](https://github.com/MauricioPerera/llm-wiki-kit) | git-native、Obsidian 相容 | 三層對應 | **explicit supersession chains**（矛盾不靜默覆寫，留取代鏈）；每次 ingest 為單一 atomic commit 可整筆 revert；三層檢索 grep→BM25→embeddings |
-| [wiki-garden](https://github.com/hachiware-labs/wiki-garden) | 分層知識庫 | raw 不可變＋sources／global／projects | 知識**作用域切分**（global 跨專案可重用 vs projects 僅該專案為真）；兩個主動成長動作 `nurture`（挑主題深化）與 `what's up`（點出發育不良的區域）；lint 唯讀只回報 |
+| [wiki-garden](https://github.com/hachiware-labs/wiki-garden) | 分層知識庫 | raw 不可變＋sources／global／projects | 知識**作用域切分**（global 跨專案可重用 vs projects 僅該專案為真）；兩個主動成長動作 `nurture`（挑主題深化）與 `what's up`（點出發育不良的區域）；lint 唯讀只回報。**已被取代（2026-10-29）**：原 repo 已無法開啟（[GitHub API](https://api.github.com/repos/hachiware-labs/wiki-garden) 回 404；帳號 `hachiware-labs` 仍在但公開 repo 數為 0，研判已刪除或轉私有），repo search 亦未找到搬遷位置；本列、Maury 列的「與 wiki-garden 同構」與下方「產出層」表中 wiki-garden 的論述僅為 2026-07／08 的歷史快照，無法回查原文 |
 | [arturseo-geo/llm-knowledge-base](https://github.com/arturseo-geo/llm-knowledge-base)（2026-08-11 收錄） | AGENTS.md schema 標準＋範本 | raw＋wiki，另加 `output/` 沙盒層與 `learning/` 學習層 | **sandbox-first promotion**（生成內容預設落 `output/`，升格進 wiki 需人明示或達品質規則——方向與本 vault 相反，見下「產出層」節）；learning 層 FSRS 間隔複習＋自動 flashcards＋缺口追蹤（生態唯一「知識庫兼學習系統」設計）；`insights/` 人寫區 agent 依 schema 不碰 |
 | [SamurAIGPT/llm-wiki-agent](https://github.com/SamurAIGPT/llm-wiki-agent)（2026-08-11 收錄） | 跨四工具 skill（Claude Code／Codex／OpenCode／Gemini CLI） | raw＋wiki，另加 `graph/` 衍生視圖層 | 自動重生成 `graph.json`＋`graph.html`（vis.js 互動圖譜、SHA256-cached）——與快照式產出本質不同（可重生、恆同步）；wiki 內建 `log.md` 與 `overview.md` 活綜合頁 |
 | [Programming-With-Maury/Karpathy-LLM-Wiki](https://github.com/Programming-With-Maury/Karpathy-LLM-Wiki)（2026-08-11 收錄） | AGENTS.md schema | raw＋wiki，**無產出層**——查詢產物直接進 `wiki/domains/<domain>/queries/` | wiki 內部按 **domain 作用域**切分（`global/` 只收跨兩域以上重用頁，與 wiki-garden 同構）；另設 `archive/`（已合併淘汰頁）與 `staging/`（待審草稿） |
@@ -32,7 +32,7 @@ tags:
 
 **Wuphf 的 `/lint` 不值得抄**（2026-07-21 查證）：它抓的四類（矛盾、孤立、stale claim、死連結）與本 vault `vault-lint` 的覆蓋範圍**幾乎完全重合**，但矛盾偵測後是**由使用者手動標哪一邊勝出**——比本 vault 2026-07-17 拍板的「agent 自主修補」更保守，在「lint 修補權」這個分歧點上是退回而非前進。[第三方 review](https://zby.github.io/commonplace/agent-memory-systems/reviews/wuphf.html) 提出的批評對本 vault 更有價值——**無法證明 agent 真的搜尋過、真的用了記憶、真的因此改變行為**，且找不到 with/without ablation；此盲點本 vault 同樣暴露，見 [[Agent-維護知識庫的已知失效模式]]。
 
-相鄰路線（非 wiki 但同「markdown＋git as memory」家族）：[Letta](https://docs.letta.com/letta-agent/memory)（MemGPT 後繼）把 git-backed markdown 檔案系統（MemFS）設為新 agent 預設，每次記憶編輯自動 git commit；[ai-memory](https://github.com/akitaonrails/ai-memory)（自述 Karpathy-style LLM wiki）、[DiffMem](https://github.com/Growth-Kinetics/DiffMem)（git 差分記憶、grep 檢索、無 vector DB）同路線。此家族已是成形的主流選項，不是邊緣做法；反方觀點見向量記憶廠商 Zep 的[「Markdown is not agent memory」](https://blog.getzep.com/markdown-is-not-agent-memory/)——主張 markdown 記憶在規模、時間演進、多 agent 並發下會崩，優劣仍有爭議。此家族的完整清單（含授權、自建難度等中繼資料）見 [[Memory-Atlas]]，其中兩個機制上與本 vault 有實質差異：[ReMe](https://github.com/agentscope-ai/ReMe)（AgentScope／Alibaba）多一層**時間分層與固化**（`daily` 暫存後才固化進 `digest` 長期節點，本 vault 是 raw→wiki 一次到位）；[Basic Memory](https://github.com/basicmachines-co/basic-memory) 把**關係型別編進語法**（`requires [[X]]`），相對地本 vault 的 wikilink 無型別、關係只用相鄰散文說明（人可讀、機器無法解析）。
+相鄰路線（非 wiki 但同「markdown＋git as memory」家族）：[Letta](https://docs.letta.com/configuration/memory)（MemGPT 後繼）~~把 git-backed markdown 檔案系統（MemFS）設為新 agent 預設~~（**已被取代（2026-10-29）**：現行 [MemFS 文件](https://docs.letta.com/concepts/memfs)寫「All Letta agents use MemFS」，已是所有 agent 皆使用、不再限新 agent；舊 agent 的差別只剩記憶根目錄為 `system/`。原連結 `/letta-agent/memory` 現轉址到 `/configuration/memory`。限制：官方文件未寫明何時起擴及所有 agent，未查到切換版本），每次記憶編輯自動 git commit；[ai-memory](https://github.com/akitaonrails/ai-memory)（自述 Karpathy-style LLM wiki）、[DiffMem](https://github.com/Growth-Kinetics/DiffMem)（git 差分記憶、grep 檢索、無 vector DB）同路線。此家族已是成形的主流選項，不是邊緣做法；反方觀點見向量記憶廠商 Zep 的[「Markdown is not agent memory」](https://blog.getzep.com/markdown-is-not-agent-memory/)——主張 markdown 記憶在規模、時間演進、多 agent 並發下會崩，優劣仍有爭議。此家族的完整清單（含授權、自建難度等中繼資料）見 [[Memory-Atlas]]，其中兩個機制上與本 vault 有實質差異：[ReMe](https://github.com/agentscope-ai/ReMe)（AgentScope／Alibaba）多一層**時間分層與固化**（`daily` 暫存後才固化進 `digest` 長期節點，本 vault 是 raw→wiki 一次到位）；[Basic Memory](https://github.com/basicmachines-co/basic-memory) 把**關係型別編進語法**（`requires [[X]]`），相對地本 vault 的 wikilink 無型別、關係只用相鄰散文說明（人可讀、機器無法解析）。
 
 ## 已收斂的設計（跨實作一致）
 
@@ -73,7 +73,7 @@ tags:
 
 | 路線 | 誰 | 機制 |
 |---|---|---|
-| 收回 wiki（產物即 wiki 頁，原文路線） | Karpathy 原文、Maury、Hermes、wiki-garden | Maury 直接存 `wiki/domains/<domain>/queries/`；Hermes Query 第 ⑤ 步「File valuable answers back — create a page in `queries/` or `comparisons/`」（只收難以重推導的答案，瑣碎查詢不存）；wiki-garden 的 `nurture` 產物是「reviewable knowledge change」回存 wiki |
+| 收回 wiki（產物即 wiki 頁，原文路線） | Karpathy 原文、Maury、Hermes、wiki-garden | Maury 直接存 `wiki/domains/<domain>/queries/`；Hermes Query 第 ⑤ 步「File valuable answers back — create a page in `queries/` or `comparisons/`」（只收難以重推導的答案，瑣碎查詢不存）；wiki-garden 的 `nurture` 產物是「reviewable knowledge change」回存 wiki（wiki-garden repo 2026-10-29 已 404，此為 2026-08-11 歷史快照，見上方實作對照表） |
 | 獨立 output 層＝wiki **前置沙盒** | arturseo-geo | 「All generated content is written to `output/` by default. Promotion to `wiki/` requires explicit human instruction or the agent meeting the quality rules」；並明訂「**Output ≠ wiki.** Files in `output/` are query artifacts. They are not wiki articles」 |
 | 獨立 output 層＝wiki **後置產出** | nvk、本 vault（歷史） | nvk：`/wiki:output` 產七類（summary／report／study-guide／slides／timeline／glossary／comparison），`output/projects/<slug>/`＋`WHY.md` 分組，且 `/wiki:audit --artifact` 會**追產出的證據鏈**（生態唯一把產出納健檢的）；本 vault 曾以 [HTML 呈現層](https://github.com/lllloo/obsidian-memory/tree/4451380c31878fd7aaeeae2efcbb4a55bdb59a08/docs/architecture)作**手寫快照終點**（2026-10-13 已退場，連結為 Git 永久快照）——不進三動作、來源 wiki 頁變動不回頭同步、按需產出非固定一站 |
 | 自動衍生視圖（可重生，嚴格說不是「層」） | SamurAIGPT | `graph/` 每次重生成（SHA256-cached）、與 wiki 恆同步、刪除可重建——與快照式產出本質不同：快照不可重生、過時是設計內行為；衍生視圖永遠新鮮、但也裝不下手寫論述 |

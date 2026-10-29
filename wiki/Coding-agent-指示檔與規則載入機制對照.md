@@ -2,7 +2,7 @@
 title: Coding agent 指示檔與規則載入機制對照
 description: Claude Code、Codex、OpenCode、pi 與 Cursor、Copilot 的指示檔階層、多規則檔與 glob 條件載入支援度，附各家替代做法
 created: 2026-09-22
-updated: 2026-10-13
+updated: 2026-10-29
 parent: "[[wiki/01.index]]"
 tags:
   - coding-agent
@@ -20,7 +20,7 @@ tags:
 |---|---|---|---|---|
 | Claude Code | `~/.claude/CLAUDE.md`＋專案 `CLAUDE.md`／`AGENTS.md`，`@` 匯入 | `.claude/rules/*.md` | 原生 frontmatter `paths` | 啟動載全域與專案檔；子目錄 CLAUDE.md／AGENTS.md 與 path-scoped rules 在 session 中途依接觸檔案延遲載入 |
 | Codex | `~/.codex/AGENTS.md`＋git root 到 cwd 每層一檔 | 無（每目錄只取一檔） | 無 | 啟動時一次建鏈 |
-| OpenCode | `~/.config/opencode/AGENTS.md`＋每層 `AGENTS.md`（v2 不再 fallback `CLAUDE.md`） | v1：`instructions` glob 陣列；**v2 接受但不解析** | 無 glob；v2 子目錄 `AGENTS.md` 在 agent 讀到該區時延遲載入（目錄層級按需） | v1 啟動一次載入；v2 子目錄檔延遲載入、session 中編輯下一請求生效 |
+| OpenCode | `~/.config/opencode/AGENTS.md`＋每層 `AGENTS.md`（v2 不再 fallback `CLAUDE.md`） | `instructions` 陣列（檔案／glob／`~/` 路徑／HTTP(S) URL），v1、v2 都會載入，排在 AGENTS.md 之後（原記「v2 接受但不解析」**已被取代（2026-10-29）**，見下） | 無 glob 條件；v2 子目錄 `AGENTS.md` 在讀檔或列目錄時延遲載入（目錄層級按需） | v1 啟動一次載入；v2 全域與往上找到的 AGENTS.md 在 session 中編輯會於下一請求前注入，子目錄檔延遲載入、載入後再改不會自動重注入（需開新 session）（原記「v2 子目錄檔 session 中編輯下一請求生效」**已被取代（2026-10-29）**） |
 | pi | `~/.pi/agent/AGENTS.md`＋從 cwd 往上每層串接 | 無原生 | 無原生；extension 可自製 | 啟動時載入；extension 可在工具呼叫時介入 |
 | Cursor | `AGENTS.md`（純 markdown） | `.cursor/rules/*.mdc` | frontmatter `globs`＋`alwaysApply`＋`description` 三模式 | 依編輯器開啟檔案觸發 |
 | GitHub Copilot | `.github/copilot-instructions.md`＋就近 `AGENTS.md` | `.github/instructions/*.instructions.md` | frontmatter `applyTo` glob | 依接觸檔案觸發 |
@@ -37,7 +37,7 @@ Codex CLI 本體變動極快（2026-09 約每週一個 minor、alpha 每天數�
 
 ### OpenCode
 
-**v1／v2 分歧（2026-09-22 補）**：下段描述的是 v1 文件（opencode.ai/docs/rules）。v2 文件（opencode.ai/v2/docs/instructions）改為只認 `AGENTS.md`、不再 fallback `CLAUDE.md`；`instructions` 陣列 schema 仍接受但**目前不解析**（檔案、glob、URL 都不生效）；子目錄的 `AGENTS.md` 改成 agent 讀到該區域時才延遲載入，session 中編輯會在下一次請求前注入——這是四家 CLI 裡唯一「目錄層級、session 中途按需」的機制，仍不是 glob 條件，但比 Codex 的啟動時一次建鏈更接近 rules。**已被取代（2026-10-13）**：Claude Code 的子目錄 CLAUDE.md（長期行為）與子目錄 AGENTS.md（v2.1.277 起）同樣在 Claude 讀／寫／編輯該子目錄檔案時才載入、不在啟動時載（[官方 memory 文件](https://code.claude.com/docs/en/memory)「Instead of loading them at launch」；[官方 CHANGELOG](https://raw.githubusercontent.com/anthropics/claude-code/main/CHANGELOG.md) 2.1.288／2.1.290 一手，未實測），故此機制並非四家唯一，正確說法是「Codex／pi 都沒有的目錄層級按需機制」。OpenCode v2「session 中編輯於下一請求注入」的再注入特性，Claude Code 文件只提 compaction 後重載，是否 session 中編輯即生效未查證。
+**v1／v2 分歧（2026-09-22 補）**：下段描述的是 v1 文件（opencode.ai/docs/rules）。v2 文件（opencode.ai/v2/docs/instructions）改為只認 `AGENTS.md`、不再 fallback `CLAUDE.md`；`instructions` 陣列 schema 仍接受但**目前不解析**（檔案、glob、URL 都不生效）〔**已被取代（2026-10-29）**：現行 [v2 instructions 文件](https://opencode.ai/v2/docs/instructions) 寫明 `instructions` 陣列會實際載入，支援檔案、glob、`~/` 路徑與 HTTP(S) URL（5 秒逾時），依列出順序排在 AGENTS.md 之後，本機檔案變更也像 AGENTS.md 一樣更新；migrate-v1 文件亦把 `instructions` 列為不需遷移的欄位。文件未標日期，確切啟用版本未查到。它仍是無條件載入、不依接觸路徑觸發，「無 glob 條件載入」的結論不變〕；子目錄的 `AGENTS.md` 改成 agent 讀到該區域時才延遲載入，session 中編輯會在下一次請求前注入〔**已被取代（2026-10-29）**：同一份 v2 文件把兩種檔分開講——子目錄（nested）`AGENTS.md` 在讀檔或列目錄時延遲載入，載入後再修改**不會自動偵測**，要開新 session 才生效（原文「Edits to a nested file are not detected automatically after it loads. Start a new session when updated text must apply immediately.」）；「session 中編輯於下一次請求前注入」只適用全域與往上找到的 AGENTS.md〕——這是四家 CLI 裡唯一「目錄層級、session 中途按需」的機制，仍不是 glob 條件，但比 Codex 的啟動時一次建鏈更接近 rules。**已被取代（2026-10-13）**：Claude Code 的子目錄 CLAUDE.md（長期行為）與子目錄 AGENTS.md（v2.1.277 起）同樣在 Claude 讀／寫／編輯該子目錄檔案時才載入、不在啟動時載（[官方 memory 文件](https://code.claude.com/docs/en/memory)「Instead of loading them at launch」；[官方 CHANGELOG](https://raw.githubusercontent.com/anthropics/claude-code/main/CHANGELOG.md) 2.1.288／2.1.290 一手，未實測），故此機制並非四家唯一，正確說法是「Codex／pi 都沒有的目錄層級按需機制」。OpenCode v2「session 中編輯於下一請求注入」的再注入特性（2026-10-29 更正：只適用全域與往上找到的 AGENTS.md，子目錄檔載入後再改不會重注入，見上），Claude Code 文件只提 compaction 後重載，是否 session 中編輯即生效未查證。
 
 v1 官方 rules 文件：`instructions` 陣列接受檔名、glob（範例含 `.cursor/rules/*.md`、`packages/*/AGENTS.md`）與遠端 URL（5 秒 timeout），**全部在啟動時載入並與 AGENTS.md 串接**，不解析 frontmatter、不依接觸檔案決定。相容層會讀 Claude Code 的 `CLAUDE.md`、`~/.claude/CLAUDE.md`、`~/.claude/skills/` 當 fallback（可用 `OPENCODE_DISABLE_CLAUDE_CODE*` 環境變數關閉），但文件**未提 `.claude/rules/`**。官方對「按需載入」的建議是在 AGENTS.md 寫散文叫模型「看到 `@rules/x.md` 引用時再用 Read 讀」，靠模型自律而非機制。
 

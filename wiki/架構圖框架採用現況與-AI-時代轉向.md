@@ -2,7 +2,7 @@
 title: 架構圖框架採用現況與 AI 時代轉向
 description: C4／arc42／4+1／UML 誰是主流查無可信數據，唯一產物計數顯示框架本身就不是主流；並記 2026 年 C4 專用工具鏈封存與架構約束機構化的轉向
 created: 2026-08-10
-updated: 2026-09-24
+updated: 2026-10-29
 source: https://robertoverdecchia.github.io/papers/ECSA_2024.pdf
 parent: "[[wiki/01.index]]"
 tags:
@@ -54,7 +54,7 @@ ECSA 2024（Migliorini、Verdecchia、Malavolta、Lago、Vicario，《Architectu
 
 **`structurizr/cli`、`structurizr/java`、`structurizr/lite` 三個核心 repo 已全部 archived，最後 push 同為 2026-02-01**（**high**；本頁作者以 GitHub API 一手複驗，見下方「被誤殺的主張」）。stars 分別為 567、1,135、384。
 
-**但它們是被整併，不是被放棄**（**high**，2026-08-10 補查，GitHub API 驗 `created_at` 與 release）：新 monorepo `structurizr/structurizr` 建立於 **2025-11-30**（早於舊 repo 封存約兩個月），未封存、Apache-2.0、最新 release `v2026.06.28`（2026-06-29）、332 stars，頂層模組含 `structurizr-dsl`／`structurizr-export`／`structurizr-inspection`／`structurizr-component`／`structurizr-annotation`／`structurizr-mcp`／`structurizr-autolayout`。封存 repo 的 README 掛有官方遷移公告，`structurizr/cli` 原句：「The Structurizr CLI will not receive any further updates - please migrate to the new consolidated tooling.」授權為 open core，只有 `server` 為閉源商業版。
+**但它們是被整併，不是被放棄**（**high**，2026-08-10 補查，GitHub API 驗 `created_at` 與 release）：新 monorepo `structurizr/structurizr` 建立於 **2025-11-30**（早於舊 repo 封存約兩個月），未封存、Apache-2.0、~~最新 release `v2026.06.28`（2026-06-29）、332 stars~~（**已被取代（2026-10-29）**：之後仍持續發佈 release，2026-10 仍有新版、最後 push 在 2026-10 下旬，「整併不是收縮」的結論更站得住；確切版號與 stars 屬易變數字，回查 [GitHub releases](https://github.com/structurizr/structurizr/releases)），頂層模組含 `structurizr-dsl`／`structurizr-export`／`structurizr-inspection`／`structurizr-component`／`structurizr-annotation`／`structurizr-mcp`／`structurizr-autolayout`。封存 repo 的 README 掛有官方遷移公告，`structurizr/cli` 原句：「The Structurizr CLI will not receive any further updates - please migrate to the new consolidated tooling.」授權為 open core，只有 `server` 為閉源商業版。
 
 **故正確命題是「工具鏈從多 repo 整併為單一 monorepo」，不是「C4 作為產品正在收縮」。** 引用舊 repo 連結會誤導；多數教學與整合仍指向已封存的舊 repo，遷移斷層是真實的，但那是文件滯後而非專案停擺。⚠️ 遷移的主要說明文只掛在 Patreon 貼文（付費牆），`docs.structurizr.com` 全站未出現 "vNext" 一詞，該詞的確切所指無法確認。
 
@@ -62,7 +62,7 @@ ECSA 2024（Migliorini、Verdecchia、Malavolta、Lago、Vicario，《Architectu
 
 同時方向相反的訊號是 C4 語法進入通用 diagram-as-code 工具：Mermaid 官方文件有 C4 專頁、npm registry keywords 含 `c4 diagram`。但它在 Mermaid 內長期是二等公民（**high，3-0**）——官方文件掛警語「This is an experimental diagram for now」，不使用全自動佈局（靠敘述順序調位置），`Lay_U/D/L/R` 永不支援，sprites／tags／links／legend 與自訂 stereotypes 皆不支援。GitHub issue #7849（2026-06-12 開，仍 OPEN）目標是「replace the legacy row-grid C4 renderer with the unified rendering pipeline」；至 2026-08 元素形狀遷移（#7842）已併入 develop，**邊線與佈局仍是 legacy**。
 
-另有一份受 Structurizr 啟發的全新 `c4-beta` 語法 RFC 原型（PR #7843，作者 filipsajdak），**C4 model 作者 Simon Brown 本人參與 RFC 討論並對 `external` 關鍵字提出異議**（**high，3-0**）。但它至 2026-08-10 仍是 open draft、reviews 為空、已發布版本不含此語法，且 issue 內文自陳「Prepared with assistance from Claude Code」——屬生態聲量，不入採用率。
+另有一份受 Structurizr 啟發的全新 `c4-beta` 語法 RFC 原型（PR #7843，作者 filipsajdak），**C4 model 作者 Simon Brown 本人參與 RFC 討論並對 `external` 關鍵字提出異議**（**high，3-0**）。但它至 2026-08-10 仍是 open draft、reviews 為空、已發布版本不含此語法（**2026-10-29 回查 [PR #7843](https://github.com/mermaid-js/mermaid/pull/7843)**：已轉為非 draft、進入實質審查，累積數十筆 review，但仍未 merge，已發布版本仍不含此語法；追蹤 issue #7849 仍 OPEN），且 issue 內文自陳「Prepared with assistance from Claude Code」——屬生態聲量，不入採用率。
 
 把兩邊放在一起看，這條線索指向一個值得追蹤的趨勢判斷：**C4 作為「規格」正在擴散（Mermaid 內建 C4、c4-beta RFC）；作為「產品」則是工具鏈整併為 `structurizr/structurizr` monorepo、不是收縮**（原「產品正在收縮」判斷已被 2026-08-10 補查撤回，見 ① 節）。
 
@@ -96,7 +96,7 @@ ArchAgent（arXiv 2601.13007，Pan、Mao、Ma、Ling，2026-01-19）在 8 個 pr
 | Grundfos：C4 以 PlantUML 寫入 Markdown、與程式碼同 repo，非專用建模工具 | **high，3-0**（單一公司，作者自陳不可外推） |
 | Grundfos 無任何自動化文件—實作一致性檢查，只靠 code review | **high，2-1** |
 | Structurizr cli／java／lite 三 repo 已封存，最後 push 2026-02-01 | **high**（本頁 GitHub API 一手複驗，推翻原 0-3 否決） |
-| 上述封存為**整併**：新 monorepo `structurizr/structurizr` 建於 2025-11-30，2026-06-29 仍有 release | **high**（2026-08-10 補查，驗 `created_at` 與 release；封存 README 有官方遷移公告原文） |
+| 上述封存為**整併**：新 monorepo `structurizr/structurizr` 建於 2025-11-30，2026-10 仍持續發佈 release（確切版號回查 GitHub releases） | **high**（2026-08-10 補查，驗 `created_at` 與 release；2026-10-29 以 GitHub releases API 回查仍有新版；封存 README 有官方遷移公告原文） |
 | 三大雲廠商（AWS／Azure／GCP）皆不採用 C4；Microsoft 唯一具名提及但明列為可選 | **high**（官方文件一手，含 Azure WAF 原句） |
 | arc42 9.0 於 2025-07 發布（章 10 拆分）；2026 年 commit 僅翻譯與建置修正 | **high**（GitHub API ＋ `version.properties` 原文） |
 | component 層有可執行的圖—碼一致性檢查：ArchUnit `adhereToPlantUmlDiagram()` | **high**（官方 user guide） |
@@ -153,7 +153,7 @@ harness 的對抗查證把「Structurizr 官方工具鏈於 2026 年 2 月封存
 
 ## 時效性
 
-本頁快照日為 2026-08-10。Structurizr 封存狀態與 Mermaid C4 遷移進度都在移動中（#7842 已於 2026-07-30 併入 develop），任何「截至 2026-06」的敘述兩個月內即已部分過時；引用前建議回查 GitHub 現況。ECSA 2024 的 373 份視圖採自 2023 年的挖掘窗口，早於 agentic coding 普及。C4 的分層哲學本身十年未變，時效風險最低。
+本頁快照日為 2026-08-10（2026-10-29 回查並更新 structurizr monorepo release 狀態與 c4-beta PR 審查狀態）。Structurizr 封存狀態與 Mermaid C4 遷移進度都在移動中（#7842 已於 2026-07-30 併入 develop），任何「截至 2026-06」的敘述兩個月內即已部分過時；引用前建議回查 GitHub 現況。ECSA 2024 的 373 份視圖採自 2023 年的挖掘窗口，早於 agentic coding 普及。C4 的分層哲學本身十年未變，時效風險最低。
 
 ## 關聯
 

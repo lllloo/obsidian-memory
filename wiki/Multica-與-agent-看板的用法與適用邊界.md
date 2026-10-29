@@ -2,7 +2,7 @@
 title: Multica 與 agent 看板的用法與適用邊界
 description: Multica 看板的執行模型、動作語意與 Squad 注入範圍，對照多 agent 分工與跨模型互審的實證，給出續用判準
 created: 2026-09-15
-updated: 2026-10-13
+updated: 2026-10-29
 parent: "[[wiki/01.index]]"
 tags:
   - ai-agent
@@ -106,7 +106,7 @@ agent 另外沒有 inbox，也收不到 `@all`；對 agent 的 @mention 是執�
 |---|---|---|---|---|
 | Multica | 指派／@mention／狀態變更 | `github_repo` worktree；`local_directory` 預設 in_place | `in_review` → 人工合併 | 活躍 |
 | [Vibe Kanban](https://github.com/BloopAI/vibe-kanban) | 看板 issue → 建 workspace | 每個 workspace 給 agent 一條分支、一個 terminal、一個 dev server | UI 內看 diff、行內評論 → 開 PR | **README 首行宣告 sunsetting**（2026-09-15 回查，repo 未封存） |
-| [GitHub Copilot cloud agent](https://docs.github.com/en/copilot/concepts/agents/coding-agent/about-coding-agent) | 指派 issue 給 Copilot、PR 留言 @copilot | GitHub Actions 的暫時性環境（雲端，非本機 worktree） | PR review／merge | 一個 task 只開一個 PR、一次只在一條分支工作、每個 session 最長 59 分鐘硬上限；branch protection 不相容時要把 Copilot 加為 bypass actor（官方文件原句已回查） |
+| [GitHub Copilot cloud agent](https://docs.github.com/en/copilot/concepts/agents/coding-agent/about-coding-agent) | 指派 issue 給 Copilot、PR 留言 @copilot | 雲端執行環境三選一：cloud sandbox、GitHub Actions runner、Remote 自訂環境（都不是本機 worktree）。**已被取代（2026-10-29）**：原寫「GitHub Actions 的暫時性環境」，官方文件現列三種環境 | PR review／merge | 一個 task 只開一個 PR、一次只在一條分支工作；跑在 GitHub Actions 上的 session 最長 59 分鐘（官方只對 Actions session 寫明此上限），cloud sandbox 可跨多個 repo 工作；ruleset／branch protection 擋住時可替 Copilot 設 bypass（2026-10-29 回查官方文件）。**已被取代（2026-10-29）**：原寫「每個 session 最長 59 分鐘硬上限」，現只適用 GitHub Actions session |
 | Kagan（OpenCode 外掛）、briefboard | Backlog → In Progress → Review → Done | 各自 worktree 的專屬分支 | 執行前 intake＋合併前 review | 個位數到十幾星的個人專案，**未回查**，只當模式參考 |
 
 共通模式：**一個 task 對應一條隔離分支，合併權永遠留在人手上**。Multica 與 Copilot 都把「指派＝喚醒」做成核心互動，Vibe Kanban 則是先建 workspace 再跑 agent。

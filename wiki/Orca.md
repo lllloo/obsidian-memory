@@ -2,7 +2,7 @@
 title: Orca
 description: Orca multi-agent IDE 的架構與運作機制：worktree 隔離、terminal 管理、supervised loop 與協調合約
 created: 2026-09-24
-updated: 2026-10-13
+updated: 2026-10-29
 parent: "[[wiki/01.index]]"
 tags:
   - coding-agent
@@ -92,6 +92,7 @@ run-create ──> task-create ──> worker-start ──> check --wait
 - **Check（檢查協調指示）**：
   - 協調者的指示（如中止任務、調整需求）為非中斷式的持久化佇列，worker 不主動查詢就不會得知。
   - worker 必須在每個自然檢查點（例如開始修改新檔案前、跑完測試後、送出完成前）執行 `check --terminal <handle>`。
+  - **每批信件都要 ack**：處理完 `check` 回傳的整批訊息後，用回傳的 `deliveryId` 確認（`check --terminal <handle> --ack <deliveryId>`），這一步同時會讀下一批；重複到 `count` 為 0。沒 ack 的批次會一直重播，蓋住較新的 coordinator 指示。這條由 2026-10-26 的 commit [dad5c7dd](https://github.com/stablyai/orca/commit/dad5c7dd)（PR #26768）加進 [worker contract](https://github.com/stablyai/orca/blob/main/skill-guides/orchestration/references/worker-contract.md)（強度：main 分支現行 skill-guide 一手，未在本機實測）。`raw/` 的 2026-09-24 skill 快照沒有這條，引用前以現行 preamble 與 worker contract 為準。
   - 若收到 `consumer_fenced`，代表該任務已被 coordinator 取消或轉派，worker 必須立即停手退出，不得送出 `worker_done`。
 - **Ask（阻塞式提問）**：
   - 遇到需要協調者決策的事項時，**嚴禁**使用本地互動工具（例如 `AskUserQuestion` 或本機 TUI 彈窗，這會導致無人應答而永久卡死）。

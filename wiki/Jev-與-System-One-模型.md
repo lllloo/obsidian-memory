@@ -2,7 +2,7 @@
 title: Jev 與 System One 模型
 description: 只回型別化判斷、不生成文字的決策模型：三項核心宣稱的可信度落差、兩個接入硬限制，以及對上 fine-tuned encoder 的缺口
 created: 2026-09-22
-updated: 2026-10-13
+updated: 2026-10-29
 source: https://typesafe.ai/blog/introducing-system-one-models-and-jev
 parent: "[[wiki/01.index]]"
 tags:
@@ -18,7 +18,7 @@ TypeSafe AI 於 2026-09 發布的 Jev 自稱「首個 System One Model」：不�
 
 它落在 [[Building-Effective-Agents-Anthropic]] 五種 workflow pattern 裡的 **routing**（分類輸入導向專門後續任務）這一格，主打的就是該格「簡單常見問題導向便宜小模型」的極端化：把決策本身做成一個不會寫字的原語。
 
-證據強度分四層，逐條就地標：**契約層事實**（官方 docs／平台 metadata／回應 schema，多方可交叉核對）、**廠商自承**（官方 blog 明文，含其自陳限制）、**第三方獨立實測**、**未獨立核實**（僅搜尋摘要轉述，不可當引文）。全頁為 **2026-09-22 快照**，模型發布距查證僅七天，生態變動極快。
+證據強度分四層，逐條就地標：**契約層事實**（官方 docs／平台 metadata／回應 schema，多方可交叉核對）、**廠商自承**（官方 blog 明文，含其自陳限制）、**第三方獨立實測**、**未獨立核實**（僅搜尋摘要轉述，不可當引文）。全頁為 **2026-09-22 快照**，模型發布距查證僅七天，生態變動極快。本頁的實測、jaggedness 引文與 OpenRouter 模型 ID 都針對 Jev 1.13；2026-10 中官方已推出後繼版本，別名指向的變動見第三節接入路徑 1 的補註。
 
 ## 一、它是什麼（契約層事實）
 
@@ -74,7 +74,7 @@ ayautomate 明言原宣稱「did not show up against these baselines」。官方
 
 三條路徑，成熟度差很多：
 
-1. 官方 SDK 或 `POST /v1/systemone`，預設模型別名 `jev-latest` — 最穩
+1. 官方 SDK 或 `POST /v1/systemone`，預設模型別名 `jev-latest` — 最穩。**別名會移動**：2026-10-14 官方推出 Jev 1.14，`jev-latest` 與 `jev-preview` 已改指向 1.14，定價與 context 上限同 1.13（[官方 models 頁](https://docs.typesafe.ai/models)一手，2026-10-29 查）。官方提醒別名移動會讓答案改變，依信心值設門檻的場景應改釘版本 ID 而非用別名；當前別名指向哪一版以官方 models 頁為準。
 2. OpenRouter，有兩個呼叫面：(a) alpha 端點 `POST /api/alpha/decisions`，給純 HTTP 或 OpenRouter TypeScript／Python／Go SDK 用；(b) 非 alpha 的 `POST /api/v1/systemone`，與 TypeSafe 官方 SDK 同介面，既有 SDK 使用者只改 base URL（`https://openrouter.ai/api`）與 API key 即可切到 OpenRouter。兩者皆不走標準 chat-completions 模型池；Jev 本體（`typesafe/jev-1.13`）不出現在公開 `/api/v1/models`，該清單 2026-10-13 實查只有另行上架、走 chat completions 的 `typesafe/jev-router`，與 Jev 決策模型的關係官方頁未說明。（[OpenRouter 官方 Jev 指南](https://openrouter.ai/docs/guides/community/jev)與 typesafe-sdk 指南一手；Wayback 2026-09-22 快照已有 v1/systemone，本頁 2026-09-22 建立時漏記，2026-10-13 補正。）
 3. `langchain-typesafe`（官方第一方套件，包成標準 Runnable，可 invoke／batch／compose、支援 LangSmith tracing）
 
@@ -83,6 +83,8 @@ ayautomate 明言原宣稱「did not show up against these baselines」。官方
 口徑要講精確，兩個數字都對但語境不同：**OpenRouter 標 32K**（其 FAQ 明言這是該平台上 TypeSafe 全系列最大值），**官方文件則是「單次 request 總額 64k，其中 `state` 加最長的那一題合計上限 32k」**。直接引用「context window 只有 32,000」在 OpenRouter 語境下字面正確，套到直連 API 則低估總額。
 
 超限是 **HTTP 400 硬失敗**，不會截斷降級。真正卡 32k 的是 state 體積（長文件、DOM），不是題數多寡——第三方建議「Treat 32K as a hard failure boundary and target well under it」，且提到 context rot 使實用上限低於標示值。
+
+> **補充（2026-10-29）**：64k／32k 是**預設**上限，不是絕對上限。官方 models 頁現提供預設關閉的 Long context 選項：每個需要的 request 帶 `TypeSafe-Danger-Zone-Long-Context: true` header，單次 request 與單題 context 上限都拉到 262k，每 token 價格不變，但官方自陳較慢、較不準（[官方 models 頁](https://docs.typesafe.ai/models)一手，寫明 1.13 與 1.14 皆適用；未實測）。不帶 header 時超限仍是 400 硬失敗。此 header 是否經 OpenRouter 轉送生效，官方頁未寫明。
 
 ### middleware 層還不能押
 
@@ -158,7 +160,7 @@ TypeSafe 官方 jaggedness 文件（[docs.typesafe.ai/model-jaggedness/jev-1.13]
 1. 經 OpenRouter（alpha decisions 或 v1/systemone 任一端點）計費時，除 token 掛牌價外是否另有 per-decision 費用、最低收費或 rate limit？官方 Jev 指南只寫 input token 計費、output 免費，無 per-decision 與 rate limit 說明；無任何帳單層級實測。
 2. 機率是否真的 well-calibrated？三個第三方 repo 分歧過大，需回讀測試集與評分程式才能判斷分歧來自任務難度、OOD 程度還是評測方法。
 3. **同一任務、同一延遲預算下，Jev 對上已 fine-tune 的 encoder 誰划算？** 這是「該不該換掉既有 classifier」的關鍵，目前無人測過。
-4. 32k（state＋最長問題）在真實 agent harness 的 state 體積下多快撞牆？有無成熟的 state reduction 模式？目前只有零星踩雷紀錄。
+4. 預設 32k（state＋最長問題）在真實 agent harness 的 state 體積下多快撞牆？有無成熟的 state reduction 模式？目前只有零星踩雷紀錄。官方 Long context header 可把上限拉到 262k，但「較慢、較不準」到什麼程度官方未量化，也無第三方實測，換長 context 還是做 state reduction 仍無依據可判。
 5. `AutoModeMiddleware` 的 TOCTOU 缺口（issue #40694）是否讓風險 gating 形同虛設？未見官方回應或修復。
 
 ## 交叉引用

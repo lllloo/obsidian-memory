@@ -2,7 +2,7 @@
 title: OpenSpec
 description: 說明 Fission-AI 輕量規格工具的安裝、目錄、delta spec 與五步工作流，並標示流程可信但效果未實證
 created: 2026-07-16
-updated: 2026-10-13
+updated: 2026-10-29
 source: https://github.com/Fission-AI/OpenSpec
 published: ""
 parent: "[[wiki/01.index]]"
@@ -24,14 +24,18 @@ tags:
 
 ## 版本現況（2026-07-21，high）
 
-npm `@fission-ai/openspec` 最新為 **1.6.0**（2026-07-10 發佈）。**已被取代（2026-09-17）**：`npm view` 已到 1.13.1，本頁以下 1.6.0 的實測與描述未針對新版重驗，1.7–1.13 的變化見官方 changelog。**本頁早期內容寫於 0.x 時代，1.x 後最重要的變化是 OPSX 從實驗選項變成標準工作流**，舊的 `/openspec:*` 指令降級為 legacy 對照組。版本號會續動，具體以官方 changelog 為準。
+npm `@fission-ai/openspec` 最新為 **1.6.0**（2026-07-10 發佈）。~~**已被取代（2026-09-17）**：`npm view` 已到 1.13.1~~ **已被取代（2026-10-29）**：npm 版號已越過 1.13 繼續前進（2026-10 已發到 1.15 系列），不再在此追記版號，現行版本一律回查官方 [CHANGELOG](https://github.com/Fission-AI/OpenSpec/blob/main/CHANGELOG.md)。本頁以下 1.6.0 的實測與描述未針對新版重驗；1.15 起的免 Node 安裝見「安裝與初始化」節。**本頁早期內容寫於 0.x 時代，1.x 後最重要的變化是 OPSX 從實驗選項變成標準工作流**，舊的 `/openspec:*` 指令降級為 legacy 對照組。版本號會續動，具體以官方 changelog 為準。
 
 ## 安裝與初始化（high）
 
-前置需求：**Node.js 20.19.0+**（行為關鍵門檻，故保留版本號；其餘版本以官方 changelog 為準）。
+~~前置需求：**Node.js 20.19.0+**（行為關鍵門檻，故保留版本號；其餘版本以官方 changelog 為準）。~~ **已被取代（2026-10-29）**：1.15 起官方提供**免 Node.js 的單檔 binary 安裝**（macOS／Linux 跑官方 `install.sh`、Windows 跑 `install.ps1`），每個 release 附 macOS、Linux（glibc／musl）、Windows 的 x64／arm64 binary 與 `SHA256SUMS`（見官方 [CHANGELOG](https://github.com/Fission-AI/OpenSpec/blob/main/CHANGELOG.md)）。**Node.js 20.19.0+ 現在只是 npm／pnpm／yarn／bun 路徑的門檻**（npm `engines` 仍為 `node >=20.19.0`；行為關鍵門檻，故保留版本號），不再是整個工具的前置需求。
 
 ```bash
-# 全域安裝（官方主推）
+# 單檔 binary，免 Node.js（1.15 起）
+curl -fsSL https://raw.githubusercontent.com/Fission-AI/OpenSpec/main/scripts/binary/install.sh | sh   # macOS / Linux
+irm https://raw.githubusercontent.com/Fission-AI/OpenSpec/main/scripts/binary/install.ps1 | iex       # Windows PowerShell
+
+# 全域安裝（npm 路徑，需 Node.js 20.19+）
 npm install -g @fission-ai/openspec@latest
 
 # 其他套件管理器（bun 仍需 Node.js 20.19+ 在 PATH）
@@ -49,9 +53,10 @@ cd your-project && openspec init
 # 驗證與升級
 openspec --version
 openspec update            # 升級 CLI 後刷新產生的整合檔
+openspec update --dry-run  # 1.15 新增：先預覽會改哪些整合檔
 ```
 
-來源：官方 [README](https://github.com/Fission-AI/OpenSpec)、[installation.md](https://github.com/Fission-AI/OpenSpec/blob/main/docs/installation.md)、[getting-started.md](https://github.com/Fission-AI/OpenSpec/blob/main/docs/getting-started.md)、[openspec.dev](https://openspec.dev/)、npm registry — 六個來源逐字一致。
+來源：官方 [README](https://github.com/Fission-AI/OpenSpec)、[installation.md](https://github.com/Fission-AI/OpenSpec/blob/main/docs/installation.md)、[getting-started.md](https://github.com/Fission-AI/OpenSpec/blob/main/docs/getting-started.md)、[openspec.dev](https://openspec.dev/)、npm registry — 六個來源逐字一致（2026-07 查證，指 npm 等套件管理器路徑）；binary 安裝與 `update --dry-run` 依 2026-10-29 回讀官方 CHANGELOG 補入，未實測。
 
 ## 目錄結構（high）
 
@@ -159,7 +164,7 @@ graph TD
 | `openspec new change <name>` | 建立一個 change 目錄 |
 | `openspec validate [item-name]` | 驗證 change/spec 的結構問題 |
 | `openspec archive [change-name]` | 封存完成的 change，把 delta spec 合併回主 specs |
-| `openspec update` | 升級 CLI 後刷新產生的整合檔 |
+| `openspec update [--dry-run]` | 升級 CLI 後刷新產生的整合檔；`--dry-run`（1.15 起）只預覽不寫入 |
 | `openspec list` | 列出項目 |
 | `openspec status --change <name> [--json]` | 查該變更各 artifact 的 blocked/ready/done 狀態（skill 內部即靠它） |
 | `openspec instructions <artifact> --change <name> --json` | 取該 artifact 的模板、依賴路徑與「完成後解鎖什麼」 |
@@ -255,7 +260,7 @@ OpenSpec 原生整合 **30+ 種 AI 助理**（2026-07-21 清點官方 [supported
 - **命令命名的版本漂移已收斂但仍需留意**：`/opsx:*` 是現行標準，`/openspec:*` 為 legacy；舊教學與舊部落格多半仍寫舊前綴。引用具體斜線指令前回查你安裝版本。
 - **指令是否存在取決於 profile**：`new`／`continue`／`ff`／`verify`／`bulk-archive`／`onboard` 在預設 core profile 下**不會生成**，照抄 expanded 範例會找不到指令。
 - **archive 位置**在 v0.17.2 曾有 doc/command 不一致（issue #412），但正典結構確為 `changes/archive/`。
-- 版本號（Node 20.19+、套件版本）會隨迭代變動，行為關鍵處以官方 changelog 為準。
+- 版本號（Node 20.19+、套件版本）會隨迭代變動，行為關鍵處以官方 changelog 為準。Node 門檻自 1.15 起只適用 npm 等套件管理器路徑，binary 安裝不需 Node。
 
 ## 未解問題
 

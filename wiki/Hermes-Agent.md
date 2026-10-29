@@ -2,7 +2,7 @@
 title: Hermes Agent
 description: Nous Research 開源的自我進化 AI agent：學習迴路自動生成並改良 skill，跨 session 累積記憶與使用者模型
 created: 2026-07-08
-updated: 2026-10-13
+updated: 2026-10-29
 parent: "[[wiki/01.index]]"
 tags:
   - ai-agent
@@ -65,7 +65,7 @@ Nous Research 開源、MIT 授權的**自我進化 AI agent**，標語 *The agen
 
 ## 部署與 Model
 
-- **Terminal backends**：Local、Docker、SSH、Singularity、**Modal**（serverless、閒置近零成本）、**Daytona**（serverless、閒置休眠）——serverless 後端讓 agent 長駐又省錢。（2026-09-17 回查官方 README：已增為七種，新增 Vercel Sandbox。）
+- **Terminal backends**：Local、Docker、SSH、Singularity、**Modal**（serverless、閒置近零成本）、**Daytona**（serverless、閒置休眠）——serverless 後端讓 agent 長駐又省錢。（2026-09-17 回查官方 README：已增為七種，新增 Vercel Sandbox。）**已被取代（2026-10-29）**：2026-10-22 起 Singularity／Apptainer 移出核心、改為官方 `hermes-official-plugins` 裡的 `singularity` plugin（backend 名稱與設定鍵不變）；現行內建為六種——Local、Docker、SSH、Modal、Daytona、Vercel Sandbox——另可接 plugin backend（[官方 README](https://github.com/NousResearch/hermes-agent/blob/main/README.md)：「Six built-in terminal backends ... plus plugin backends such as Singularity/Apptainer」，一手、未實測）。後續增減以官方 README／releases 為準。
 - **Model-agnostic**：Nous Portal（自帶 web search／生圖／TTS／browser）、OpenRouter、OpenAI、任意 custom endpoint，`/model` 切換宣稱 300+ models。
 
 ## 成本控制
@@ -87,8 +87,8 @@ Hermes 24/7 長駐（有別於跑完即停的 Claude Code），背景任務、se
 - 原始資料：[[Hermes-Agent-NousResearch]]、[[Hermes-Agent-Kanban]]（任務佇列技術細節）；token 成本拆解與設定細節目前尚未落地 raw／wiki，暫以官方文件為準
 - 同源哲學：[[LLM-Wiki-知識管理模式]]（知識複利 vs. Hermes 的技能複利）
 - `llm-wiki` skill 治理細節與其他實作對照：[[LLM-Wiki-生態實作比較]]——sha256 漂移偵測、封閉 tag taxonomy、矛盾交使用者複核等機制在生態中的定位。
-- 直接競品對照：[[OpenClaw-與-Hermes-Agent-比較]]——與 OpenClaw 2.0 的逐軸比較。關鍵分歧是 skill 自我改良的把關形狀：Hermes 預設免人工核准即寫入，OpenClaw 的 Skill Workshop 走提案—審查—套用；兩者互有遷移路徑（`hermes claw migrate` 與 OpenClaw 的 Hermes 記憶匯入）。
-- 記憶架構對照：[[Claude-Code-記憶系統六層比較]]——Hermes 屬「agent 自策展記憶 + skill」路線，且與其中 Level 3 的 OpenClaw 血緣相關（`hermes claw migrate` 自 OpenClaw 匯入）。
+- 直接競品對照：[[OpenClaw-與-Hermes-Agent-比較]]——與 OpenClaw 2.0 的逐軸比較。關鍵分歧是 skill 自我改良的把關形狀：Hermes 預設免人工核准即寫入，OpenClaw 的 Skill Workshop 走提案—審查—套用——**已被取代（2026-10-29）**：OpenClaw 自穩定版 v2026.10.5 起改為變更立即套用、保留歷史版本、以 Undo 事後回退，與 Hermes 的把關形狀趨同，細節見比較頁「核心分歧」節；兩者互有遷移路徑（`hermes import-agent openclaw` 與 OpenClaw 的 Hermes 記憶匯入）。Hermes 側的遷移工具自 2026-10-22 起移出核心、改放官方 agent-importers plugin（需先 `hermes plugins install agent-importers`；`import-agent` 另支援 claude-code／codex／cursor），`hermes claw migrate` 保留為舊拼法、仍可用；`hermes setup` 首次執行時會偵測 `~/.openclaw`、`~/.claude` 等目錄並提議安裝 plugin 匯入（[官方 README](https://github.com/NousResearch/hermes-agent/blob/main/README.md) 一手，2026-10-29 更新）。
+- 記憶架構對照：[[Claude-Code-記憶系統六層比較]]——Hermes 屬「agent 自策展記憶 + skill」路線，且與其中 Level 3 的 OpenClaw 血緣相關（`hermes import-agent openclaw` 自 OpenClaw 匯入；舊拼法 `hermes claw migrate` 仍可用）。
 - 路線定位：[[Agent-記憶兩大路線-知識庫與-memory-bank]]——Hermes 的記憶子系統橫跨該頁兩條路線：`llm-wiki` skill 是路線 A（知識資產複利）的產品化代表，有界核心記憶則偏路線 B 的工作記憶性質。
 - 人類 PKM 對照：[[第二大腦方法論比較]]——Hermes 的「有界核心記憶 vs. 外接 llm-wiki／provider」雙軸結構，與 BASB（資源/專案管理）vs. Zettelkasten（深度連結）的互補分工邏輯同構（中等信心，2026-07-09 對抗式驗證）。
 - harness 工程脈絡：[[Agent-Harness-Engineering-框架綜述]]——Hermes 的 loop、skill 生成與有界記憶等構件可對照該頁的 harness 定義範疇（tools／memory／guardrails）。

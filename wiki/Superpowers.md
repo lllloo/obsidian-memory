@@ -2,7 +2,7 @@
 title: Superpowers
 description: obra 的 agentic skills 框架：SessionStart 注入機制、無官方開關的維護者立場、小需求放行與 marketplace 版本落後成因
 created: 2026-10-15
-updated: 2026-10-16
+updated: 2026-10-29
 source: https://github.com/obra/superpowers
 published: ""
 parent: "[[wiki/01.index]]"
@@ -57,7 +57,7 @@ tags:
 - 更新靠 `github-actions[bot]` 驗證（`claude plugin validate`）後開 bump PR，PR 說明明寫「not auto-merged by default」，需 Anthropic 人工審核合併。Superpowers 歷次 bump（如 [#5253](https://github.com/anthropics/claude-plugins-official/pull/5253)）都走此流程。
 - 該 repo 曾停用每夜 bump workflow，改由員工分批手動追版本（[#6284](https://github.com/anthropics/claude-plugins-official/pull/6284) 說明）；落後幅度因此可能拉長。
 - OpenAI 端同理：Codex 版落後時 obra 回「There's a manual review process on the OpenAI side」（[#1790](https://github.com/obra/superpowers/issues/1790)）——作者自己也只能等。
-- **狀態快照（2026-10-15）**：官方 marketplace 釘在 v6.4.1（sha `5bf4e78`），v6.4.2 未曾上架（推斷為手動追版空窗期被略過，無明確紀錄）；bump 到 v7.0.0 的 [#6565](https://github.com/anthropics/claude-plugins-official/pull/6565) 10/13 開出、`REVIEW_REQUIRED` 待審。GitHub 上未見其他使用者抱怨此落差。此快照會過期，自行確認方式：
+- **狀態快照（2026-10-15）**：官方 marketplace 釘在 v6.4.1（sha `5bf4e78`），v6.4.2 未曾上架（推斷為手動追版空窗期被略過，無明確紀錄）；bump 到 v7.0.0 的 [#6565](https://github.com/anthropics/claude-plugins-official/pull/6565) 10/13 開出、`REVIEW_REQUIRED` 待審。GitHub 上未見其他使用者抱怨此落差。**已被取代（2026-10-29）**：#6565 已於 2026-10-16 合併，官方 marketplace 現釘在 v7.0.0（sha `bb92a77`，與 v7.0.0 tag 相符）；上游 2026-10-21 已發 v7.0.1，對應 bump PR [#6847](https://github.com/anthropics/claude-plugins-official/pull/6847)（`bb92a777` → `b739a8af`）仍待審——人工審核造成的落後模式依舊（`gh pr view`、`gh api` 直讀一手）。此快照會過期，自行確認方式：
 
 ```bash
 # 官方 marketplace 目前釘的 sha

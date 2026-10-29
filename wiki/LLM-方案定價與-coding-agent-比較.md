@@ -2,7 +2,7 @@
 title: LLM 方案定價與 coding agent 比較
 description: 主流 LLM 訂閱月費與 coding agent 三方案定價對照，依用途給經濟實惠推薦，含台幣概算、2026-09 覆核與第三方工具可用性
 created: 2026-07-08
-updated: 2026-10-15
+updated: 2026-10-29
 parent: "[[wiki/01.index]]"
 tags:
   - llm-pricing
@@ -37,9 +37,9 @@ tags:
 
 | | **OpenCode Go** | **Claude Pro** | **ChatGPT Plus（Codex）** |
 |---|---|---|---|
-| 月費 | **$10**（首月 $5 的入手優惠已不見於官網）；另有 Go Plus $40/月的高額度檔（2026-10-07 [官網](https://opencode.ai/go)一手） | **$20**（年繳 $17） | **$20** |
+| 月費 | **$10**（首月 $5 的入手優惠已不見於官網）；另有 Go Plus $40/月的高額度檔（2026-10-07 [官網](https://opencode.ai/go)一手）。Go／Go Plus 限單人 workspace（如註冊時建立的 Personal workspace）；多人 workspace 走 **Go Teams $20／人／月**，每人各有 Go 額度，另加每模型每月多 $5 額度（2026-10-29 [官方 docs](https://opencode.ai/docs/go/) 一手；產品頁當日只列 Go／Go Plus 兩檔，Teams 只見於 docs） | **$20**（年繳 $17） | **$20** |
 | 綁的 agent | OpenCode（開源，MIT） | Claude Code | Codex（web/CLI/IDE/iOS） |
-| 能用的模型 | ~~**僅中國開源模型**：GLM、Kimi、Qwen、MiniMax、DeepSeek 等十餘個~~ **已被取代（2026-09-02）**：官網模型清單已納入 GPT 系列、Grok 與 Meta 系模型，不再只有中國實驗室，詳見下方覆核一節（版本輪替快，見 [官方模型清單](https://opencode.ai/go)） | Claude 自家 Sonnet / Opus / Haiku | GPT 系列 |
+| 能用的模型 | ~~**僅中國開源模型**：GLM、Kimi、Qwen、MiniMax、DeepSeek 等十餘個~~ **已被取代（2026-09-02）**：官網模型清單已納入 GPT 系列、Grok 與 Meta 系模型，不再只有中國實驗室，詳見下方覆核一節（版本輪替快，見 [官方模型清單](https://opencode.ai/go)）；2026-10 起另含 Claude Haiku（見上段）與 Google 系 Gemini 模型（2026-10-29 [官方 docs](https://opencode.ai/docs/go/) 一手、未實測，具體型號回官網查） | Claude 自家 Sonnet / Opus / Haiku | GPT 系列 |
 | 用量限制 | ~~按金額計：約 $12/5hr、$30/週、$60/月~~ **已被取代（2026-10-07）**：改為按模型分別訂月額度，5 小時窗口為月額度 20%、週窗口 50%（[官方 docs](https://opencode.ai/docs/go/) 一手）；各模型額度差異大，具體數字回官網查 | 滾動 5 小時視窗 + 週額度雙層 | 短視窗（數小時）+ 週額度雙層 |
 | 省心度 | 要自己選模型/路由 | 開箱即用 | 開箱即用 |
 | 模型天花板 | 開源 SOTA（略遜頂級閉源） | 頂級（Opus/Sonnet） | 頂級（GPT 旗艦） |

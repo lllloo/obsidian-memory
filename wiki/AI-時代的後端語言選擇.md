@@ -2,7 +2,7 @@
 title: AI 時代的後端語言選擇
 description: PHP、Go、Node/TypeScript、Python 在接 AI 與讓 agent 寫後端兩面的證據盤點：生態差異明確，產碼品質排名互相矛盾
 created: 2026-09-23
-updated: 2026-10-13
+updated: 2026-10-29
 parent: "[[wiki/01.index]]"
 tags:
   - ai-agent
@@ -107,5 +107,5 @@ PHP-FPM 一個 worker 同時只處理一個同步請求，LLM 呼叫期間 worke
 
 - [[用測試約束-AI-產碼]] — 本頁第二節「語言不是關鍵、回饋迴圈才是」的延伸：該頁講這個回饋迴圈本身怎麼被 agent 繞過、怎麼加固，是本頁判讀第 1 條的具體做法。
 - [[專案測試流程-後端-Laravel]] — 留在 Laravel 時的落地面：那套分層測試就是讓 agent 在 PHP 端也有快速回饋的閘門。
-- [[MCP-無狀態化-2026-07-28]] — 本頁 PHP MCP SDK 的背景：協議本身剛經歷無狀態化改版（移除 `initialize` 握手）。0.x SDK 是否已跟上該版，本輪未查證，採用前應先確認。
+- [[MCP-無狀態化-2026-07-28]] — 本頁 PHP MCP SDK 的背景：協議本身剛經歷無狀態化改版（移除 `initialize` 握手）。PHP MCP SDK 自 [v0.8.0](https://github.com/modelcontextprotocol/php-sdk/releases/tag/v0.8.0)（2026-08-25）起支援 2026-07-28 規格（含無狀態 HTTP transport，舊版規格仍保留相容），v0.9.0 起 stdio 也兩種 protocol era 都接（2026-10-29 依 GitHub release notes 一手補，未實測）；仍是 0.x、release 多有 BC break，採用前要鎖版本，確切支援範圍以 [releases](https://github.com/modelcontextprotocol/php-sdk/releases) 回查。
 - [[四套-coding-agent-能力差異對照]] — 本頁第二節談的「agentic 迴圈」在各家 harness 上的實際能力差異。
