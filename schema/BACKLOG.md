@@ -1,7 +1,7 @@
 ---
 title: Vault Lint Backlog
 created: 2026-07-13
-updated: 2026-10-13
+updated: 2026-11-09
 tags:
   - meta
   - lint
@@ -51,6 +51,14 @@ vault 健檢的**待處理清單**,由 `vault-lint` skill 每輪讀寫(手動或
 - STALE | `wiki/LLM-方案定價與-coding-agent-比較.md` | 孤立已修(補 2 條反鏈);定價數字仍為 2026-05~07 快照,頁面已標「回官網查」,agent 判**不值得例行 re-fetch**(11+ 廠商即時價、月月再過期)——要新快照再指示
 - RAWGAP | `raw/fetched/OpenSpec-OPSX-Workflow.md` | opsx.md 已於 2026-07-21 消化進 `wiki/OpenSpec.md`(工作流／設定／schema 三節重寫,該頁第 23 行明載);機械層因該 wiki 頁 `source` 指主 repo 非 opsx.md 而續 flag,此為已消化錨點;首見 2026-07-22
 - 維持現狀:無 in-vault 全文搜尋(21 頁 Grep 夠用)、evals 覆蓋不均(邊際價值低)
+
+**整理輪裁決(2026-11-09 第 1 輪試跑)**——判定不動的項,防下輪重提;只有所依據的頁實際變動才重新評估:
+
+- DEDUP-KEEP | `wiki/Herdr-使用方法.md` × `wiki/Herdr-按鍵設定.md` | 一頁是工具用法參考、一頁是個人按鍵設定與踩雷,用途不同,合併無查詢收益。重開條件:按鍵頁內容被用法頁吸收或廢止
+- DEDUP-KEEP | `wiki/OpenClaw-與-Hermes-Agent-比較.md` × `wiki/OpenClaw-與-Hermes-的實地使用心得.md` | 架構比較 vs 未實測的 HN 證詞,刻意隔離證據等級,合併會稀釋強度標註
+- DEDUP-KEEP | `wiki/專案測試流程.md` 與前端／後端兩子頁、`wiki/LLM-Wiki-知識管理模式.md` × `wiki/LLM-Wiki-生態實作比較.md` | 刻意的母子分層與模式／實作分工,標題相近但非重複
+- SPLIT-NO | 超過 200 行的 11 頁(最大 `wiki/Uncle-Bob-的不讀碼約束閘門.md` 384 行) | 逐頁看章節皆單一主題,長度來自深度而非混題;行數不作拆頁觸發,判準改為「一頁混了多個可獨立查詢的主題」。重開條件:頁面長出第二個獨立主題
+- STALE-CORE | `wiki/第二大腦方法論比較.md`、`wiki/設計品質的可量化檢測.md` | 符合「updated ≥90 天且入鏈 ≥5」,但 `updated` 不等於最後核對日(2026-10-14、10-29 全庫時效核對時內容未變的頁不改日期),且皆低波動主題;不動
 
 ## 已婉拒
 
