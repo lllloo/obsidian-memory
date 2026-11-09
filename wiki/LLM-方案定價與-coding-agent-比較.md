@@ -1,6 +1,6 @@
 ---
 title: LLM 方案定價與 coding agent 比較
-description: 主流 LLM 訂閱月費與 coding agent 三方案定價對照，依用途給經濟實惠推薦，含台幣概算、2026-09 覆核與第三方工具可用性
+description: 主流 LLM 訂閱月費與 coding agent 三方案定價對照，依用途給經濟實惠推薦，含台幣概算、2026-09／11 覆核與第三方工具可用性
 created: 2026-07-08
 updated: 2026-11-09
 parent: "[[wiki/01.index]]"
@@ -18,16 +18,16 @@ tags:
 |---|---|---|---|
 | ChatGPT **Go** | $8 | ~NT$248 | 便宜入門 |
 | Google **AI Plus** | $4.99 | ~NT$155 | 原 $7.99，2026-06-08 降價（中信心：聚合站，未見官方公告）；台灣 Google One 頁另標 NT$330／2TB，與美區數字對不上，區域差異待查 |
-| xAI **X Premium**（含 Grok） | $8 | ~NT$248 | 綁 X/Twitter |
+| xAI **X Premium**（含 Grok） | $8 | ~NT$248 | 綁 X/Twitter。**已被取代（2026-11-09）**：新客改走 X Subscription，$8 檔叫 Plus，含 Grok、Cursor 與 X 權益，見下方 2026-11-09 覆核 |
 | Mistral **Pro** | $14.99 | ~NT$465 | 歐系替代 |
 | **ChatGPT Plus** | $20 | ~NT$620 | 主流標配，含 Codex agent |
 | **Claude Pro**（年繳 $17/月） | $20 | ~NT$620 | 含 Claude Code，coding 首選 |
 | **Google Gemini AI Pro** | $19.99 | ~NT$620 | 含 **5TB** 儲存（原 2TB，2026 年內調升、價格未動）、Deep Research；台灣區 NT$650/月 |
 | **Perplexity Pro** | $20 | ~NT$620 | 每週 200 次搜尋 |
 | **Copilot Pro** | $19.99 | ~NT$620 | 綁 Microsoft Office |
-| SuperGrok | $30 | ~NT$930 | Grok 進階 |
-| **Max / Pro 高階層** | $100 / $200 | ~NT$3,100 / 6,200 | 重度～近乎無限 |
-| SuperGrok Heavy | $300 | ~NT$9,300 | 最高階 |
+| SuperGrok | $30 | ~NT$930 | Grok 進階。**已被取代（2026-11-09）**：新客改走 X Subscription Premium $30（含 SuperGrok、Cursor Pro 與 X Premium+ 權益） |
+| **Max / Pro 高階層** | $100 / $200 | ~NT$3,100 / 6,200 | 重度～近乎無限。2026-11 起 Claude 的 $200 檔改名 Ultra、ChatGPT Pro 另加 $500 檔，見下方 2026-11-09 覆核 |
+| SuperGrok Heavy | $300 | ~NT$9,300 | ~~最高階~~ **已被取代（2026-11-09）**：xAI 新方案最高檔為 X Subscription Ultra $200，本表最高月費改為 ChatGPT Pro 500 的 $500；舊訂戶可保留原方案 |
 
 **關鍵洞察**：入門付費層高度收斂在 **$20 一檔**，選誰主要看生態（coding 選 Claude、搜尋選 Perplexity/Gemini、Office 選 Copilot），不是看價差。省錢入門用 ChatGPT Go $8 或 Google AI Plus $4.99 即足；輕度使用者免費層就能撐。
 
@@ -40,7 +40,7 @@ tags:
 | 月費 | **$10**（首月 $5 的入手優惠已不見於官網）；另有 Go Plus $40/月的高額度檔（2026-10-07 [官網](https://opencode.ai/go)一手）。Go／Go Plus 限單人 workspace（如註冊時建立的 Personal workspace）；多人 workspace 走 **Go Teams $20／人／月**，每人各有 Go 額度，另加每模型每月多 $5 額度（2026-10-29 [官方 docs](https://opencode.ai/docs/go/) 一手；產品頁當日只列 Go／Go Plus 兩檔，Teams 只見於 docs） | **$20**（年繳 $17） | **$20** |
 | 綁的 agent | OpenCode（開源，MIT） | Claude Code | Codex（web/CLI/IDE/iOS） |
 | 能用的模型 | ~~**僅中國開源模型**：GLM、Kimi、Qwen、MiniMax、DeepSeek 等十餘個~~ **已被取代（2026-09-02）**：官網模型清單已納入 GPT 系列、Grok 與 Meta 系模型，不再只有中國實驗室，詳見下方覆核一節（版本輪替快，見 [官方模型清單](https://opencode.ai/go)）；2026-10 起另含 Claude Haiku（見上段）與 Google 系 Gemini 模型（2026-10-29 [官方 docs](https://opencode.ai/docs/go/) 一手、未實測，具體型號回官網查） | Claude 自家 Sonnet / Opus / Haiku | GPT 系列 |
-| 用量限制 | ~~按金額計：約 $12/5hr、$30/週、$60/月~~ **已被取代（2026-10-07）**：改為按模型分別訂月額度，5 小時窗口為月額度 20%、週窗口 50%（[官方 docs](https://opencode.ai/docs/go/) 一手）；各模型額度差異大，具體數字回官網查 | 滾動 5 小時視窗 + 週額度雙層（Pro／Max 皆同；$200 的 Ultra 已驗證帳號沒有 5 小時視窗、只剩週額度，見下方 2026-11-09 補記） | 短視窗（數小時）+ 週額度雙層 |
+| 用量限制 | ~~按金額計：約 $12/5hr、$30/週、$60/月~~ **已被取代（2026-10-07）**：改為按模型分別訂月額度，5 小時窗口為月額度 20%、週窗口 50%（[官方 docs](https://opencode.ai/docs/go/) 一手）；各模型額度差異大，具體數字回官網查 | 滾動 5 小時視窗 + 週額度雙層（Pro／Max 皆同；$200 的 Ultra 已驗證帳號沒有 5 小時視窗、只剩週額度，見下方 2026-11-09 覆核） | 短視窗（數小時）+ 週額度雙層 |
 | 省心度 | 要自己選模型/路由 | 開箱即用 | 開箱即用 |
 | 模型天花板 | 開源 SOTA（略遜頂級閉源） | 頂級（Opus/Sonnet） | 頂級（GPT 旗艦） |
 
@@ -86,7 +86,11 @@ agy 本身內建 subagent、`/schedule` 排程、`/boost` 三層編排，並可�
 
 **對推薦的影響**：OpenCode Go 是 OpenCode 自家託管方案、本來就不借別家訂閱，「跑量選 OpenCode Go」不受影響。但「Claude Pro 綁第三方 harness」這條路已關，Claude 訂閱只能在 Claude Code／官方 app 內用；想在 OpenCode 裡跑 Claude 得走 API 按量，或訂 OpenCode Go 用其清單內的 Claude Haiku 5.5（2026-10-13 [官網](https://opencode.ai/go)一手、未實測；僅 Haiku 等級，Sonnet／Opus 仍需 API）。GitHub Copilot、xAI 等其他家未查。
 
-## 2026-11-09 補記：Claude 高階方案改名，Ultra 取消 5 小時限制
+## 2026-11-09 覆核：三家高階方案重組（Claude／ChatGPT／xAI）
+
+2026 年 9–10 月三家都動了高階方案，方向一致：最高主力檔收斂在 $200 附近（Claude Ultra、X Ultra、ChatGPT Pro 200），用量限制越來越以「週總量」為主。
+
+### Claude：改名，Ultra 取消 5 小時限制
 
 使用者問「Claude 是不是沒有 5 小時限制了」，答案是**只有 $200 的 Ultra 已驗證帳號沒有，其餘方案都還有**。
 
@@ -94,6 +98,19 @@ agy 本身內建 subagent、`/schedule` 排程、`/boost` 三層編排，並可�
 - **限制結構**（2026-11-09 讀 [官方定價頁](https://claude.com/pricing)，一手、高信心）：Free、Pro、Max 仍標「every 5 hours and every week」雙層；Ultra 標「No 5-hour limit」，註腳寫「No 5-hour limit for verified accounts」，週額度 10x Pro 照舊。
 - **取消的是節奏，不是總量**：週上限沒動，一週能用的總量不變，只是不用再每 5 小時被打斷。
 - **怎樣算「已驗證」**：官方定價頁沒說明。媒體轉述 Help Center 的說法是 Anthropic 自動驗證，驗證完成前先套暫時的 5 小時限制；註冊時驗證手機號碼不算帳號驗證；驗證條件未公開（媒體轉述，中信心，未讀到 Help Center 原文）。另有單一指南稱 Settings > Usage 看不到「Current session」條就代表已驗證（低信心）。
+
+### ChatGPT：Pro 拆三檔，Pro 200 砍量翻案
+
+- **Pro 分三檔**：Pro 100（$100）、Pro 200（$200）、Pro 500（$500），只有 Pro 500 含 Ultrafast；Ultrafast 先從內含額度以 8 倍速率扣，扣完再以 6 倍速率扣 credits。官方定價頁一手確認 Pro 有「3 usage tiers」（2026-11-09 讀取）；各檔價格與 Ultrafast 規則出自 Help Center「About ChatGPT Pro tiers」，該頁擋爬（403），內容經搜尋摘要轉述，中高信心。
+- **Pro 200 砍量翻案**：9-29 的 email 預告 Pro 200 額度下修；10-29 宣布取消下修，同時 Pro 100 與 Pro 500 的 Work／Codex 額度加倍，Pro 200 低額度訂戶也拉到同一水準。官方說額度不對應固定則數，實際消耗看模型、context、推理量、工具呼叫與速度模式（Help Center 與 release notes，經搜尋摘要轉述，中高信心）。
+- **Free／Go 也能碰 Codex**：官方定價頁列 Free 與 Go 在桌面版可有限度使用 Work 與 Codex（一手）。
+
+### xAI：改賣 X Subscription，Grok 與 Cursor 綁在一起
+
+- **公司層**：SpaceX 於 2026-02 併購 xAI，2026-08-14 完成約 $60B 的 Cursor 收購，Cursor 團隊轉做 Grok 相關產品（[Bloomberg](https://www.bloomberg.com/news/articles/2026-08-14/spacex-completes-its-60-billion-cursor-acquisition)；併購 xAI 一事為 Wikipedia 等轉述）。官網品牌現為 SpaceXSI（docs 頁標題一手），媒體名稱不一。
+- **X Subscription**（2026-10-12，[官方公告](https://x.ai/news/x-subscription)一手）：Free／Plus $8／Premium $30／Super $100／Ultra $200，一份訂閱同時涵蓋 Grok、Cursor 與 X 權益。Premium、Super、Ultra 的用量分別是 Plus 的 4、15、50 倍；Grok 額度在 Grok app、X 的 Grok 分頁與 Cursor 共用一池，超出按 API 牌價 top-up。Premium 以上的 Cursor 仍可用第三方模型（媒體轉述：Claude／GPT 不吃額度、按 API 價計費）。舊 SuperGrok／Cursor／X Premium 訂戶可保留原方案，或轉換並按比例退款。
+
+**對推薦的影響**：主推薦不變。xAI 經 X Subscription 也成了「訂閱綁 coding agent（Cursor／Grok Build）」的一家，但本頁三方比較未納入、未實測；要評估得另查 Grok 模型在 Cursor 的實際表現。
 
 ## 三、依用途的經濟實惠推薦
 
