@@ -1,7 +1,7 @@
 ---
 title: Agent Memory
 created: 2026-07-09
-updated: 2026-10-13
+updated: 2026-11-09
 tags:
   - meta
 ---
@@ -16,7 +16,11 @@ tags:
 
 ## Skill 升級訊號候選
 
-判準見 [SYSTEM-DESIGN.md](SYSTEM-DESIGN.md)「Skill 升級訊號」。目前無活躍候選；以下只留重開條件：
+判準見 [SYSTEM-DESIGN.md](SYSTEM-DESIGN.md)「Skill 升級訊號」。
+
+- **活躍候選（2026-11-09 已提議，待使用者決定）**：全庫時效核對已手動跑 5 輪（2026-09-17 兩輪、10-07、10-14、10-29），達門檻。提議方向：先查入鏈多且久未更新的核心頁（obsidian-wiki `wiki-status` 的做法），並與「整理」輪合併。依據見 `wiki/AI-自主整理知識庫的機制.md`。使用者婉拒時移到「勿再提議」。
+
+以下只留重開條件：
 
 - deep-research 回存不另開 skill；僅在回存成為每週例行、或出現 AGENTS.md 未涵蓋的專屬流程時重評。
 - 貼 URL ingest 沿用 AGENTS.md 與全域 `defuddle`；日後明確要做網頁版 ingest skill 才重開。

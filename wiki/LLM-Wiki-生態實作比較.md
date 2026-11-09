@@ -2,7 +2,7 @@
 title: LLM Wiki 生態實作比較
 description: nvk、Hermes、Astro-Han 等 Karpathy LLM Wiki 實作與 Letta MemFS 等相鄰記憶系統的收斂設計、分歧點與實證證據對照
 created: 2026-07-10
-updated: 2026-10-29
+updated: 2026-11-09
 parent: "[[wiki/01.index]]"
 tags:
   - wiki
@@ -20,7 +20,7 @@ tags:
 | 實作 | 形式 | 與 Karpathy 三層的關係 | 特色機制 |
 |---|---|---|---|
 | [nvk/llm-wiki](https://github.com/nvk/llm-wiki) | 跨工具 skill | raw 不可變＋wiki 編譯＋index，**另有獨立 `output/` 產出層**（本欄先前漏記，2026-08-11 補；見下「產出層的生態路線」） | 雙連結（wikilink＋markdown 連結並寫）、structural guardian（操作後自動修瑣碎結構問題）、四層查詢深度、token 成本 benchmark |
-| [[Hermes-Agent]] 內建 `llm-wiki` skill | 官方 bundled skill | 逐字複刻三層 | raw 記 sha256 偵測來源漂移、每頁至少 2 條 outbound link、封閉 tag taxonomy、矛盾入 frontmatter 交使用者複核、10+ 頁大改動先問 |
+| [[Hermes-Agent]] 內建 `llm-wiki` skill | 官方 bundled skill（**已被取代（2026-11-09）**：2026-10-29 起移到 [`optional-skills/`](https://github.com/NousResearch/hermes-agent/blob/main/optional-skills/research/llm-wiki/SKILL.md)，仍是官方維護，但不再預設載入，需 `hermes skills install` 另行安裝；既有安裝保留。證據強度：該 repo 移動 commit 訊息與 optional-skills 說明一手核對） | 逐字複刻三層 | raw 記 sha256 偵測來源漂移、每頁至少 2 條 outbound link、封閉 tag taxonomy、矛盾入 frontmatter 交使用者複核、10+ 頁大改動先問 |
 | [Astro-Han/karpathy-llm-wiki](https://github.com/Astro-Han/karpathy-llm-wiki) | Agent Skills 標準單一 skill | raw 不可變＋wiki＋index，三動作定義一致 | 跨四工具安裝（Claude Code／Cursor／Codex CLI／OpenCode，自述未獨立驗證——**已被取代（2026-10-13）**：該 repo [README](https://github.com/Astro-Han/karpathy-llm-wiki/blob/main/README.md)／SKILL.md 全歷史（含 2026-07 當時 HEAD 與現行 main）均無「未驗證」自述，Tool Compatibility 表只列安裝方式；「未獨立驗證各工具實際可用」是本 vault 查證時的保留，主詞應為本頁而非該專案。證據強度：clone 該 repo 比對全 git 歷史，一手；各工具實際可用與否仍未實測）、Lint 含自動修復、維護 log.md |
 | [Wuphf](https://github.com/nex-crm/wuphf)（Nex.ai，YC S26） | 本地 git repo＋MCP 工具 | raw markdown＋wiki，另加私有 notebook 暫存層 | git-native 為 canonical、Bleve BM25＋SQLite 為可重建 cache；per-entity append-only fact log（JSONL、deterministic id）與敘述性頁並存；notebook→wiki 的 promotion gate。**已被取代（2026-09-17）**：原 URL 現轉址到 `najmuzzaman-mohammad/gawkbot`，repo 已轉型為工作流自動化 bot（自述「open source grok bot」），上述 wiki 架構在現行 README 查無對應；本列與下方 Wuphf 相關論述僅為 2026-07 的歷史快照 |
 | [llm-wiki-kit](https://github.com/MauricioPerera/llm-wiki-kit) | git-native、Obsidian 相容 | 三層對應 | **explicit supersession chains**（矛盾不靜默覆寫，留取代鏈）；每次 ingest 為單一 atomic commit 可整筆 revert；三層檢索 grep→BM25→embeddings |
@@ -28,6 +28,8 @@ tags:
 | [arturseo-geo/llm-knowledge-base](https://github.com/arturseo-geo/llm-knowledge-base)（2026-08-11 收錄） | AGENTS.md schema 標準＋範本 | raw＋wiki，另加 `output/` 沙盒層與 `learning/` 學習層 | **sandbox-first promotion**（生成內容預設落 `output/`，升格進 wiki 需人明示或達品質規則——方向與本 vault 相反，見下「產出層」節）；learning 層 FSRS 間隔複習＋自動 flashcards＋缺口追蹤（生態唯一「知識庫兼學習系統」設計）；`insights/` 人寫區 agent 依 schema 不碰 |
 | [SamurAIGPT/llm-wiki-agent](https://github.com/SamurAIGPT/llm-wiki-agent)（2026-08-11 收錄） | 跨四工具 skill（Claude Code／Codex／OpenCode／Gemini CLI） | raw＋wiki，另加 `graph/` 衍生視圖層 | 自動重生成 `graph.json`＋`graph.html`（vis.js 互動圖譜、SHA256-cached）——與快照式產出本質不同（可重生、恆同步）；wiki 內建 `log.md` 與 `overview.md` 活綜合頁 |
 | [Programming-With-Maury/Karpathy-LLM-Wiki](https://github.com/Programming-With-Maury/Karpathy-LLM-Wiki)（2026-08-11 收錄） | AGENTS.md schema | raw＋wiki，**無產出層**——查詢產物直接進 `wiki/domains/<domain>/queries/` | wiki 內部按 **domain 作用域**切分（`global/` 只收跨兩域以上重用頁，與 wiki-garden 同構）；另設 `archive/`（已合併淘汰頁）與 `staging/`（待審草稿） |
+| [Ar9av/obsidian-wiki](https://github.com/Ar9av/obsidian-wiki)（2026-11-09 收錄） | 多 skill 框架（約 40 個 skill）＋CLI，Obsidian 相容 | raw＋wiki＋index／log／hot，另有 `_raw/` 暫存與 `_archives/` | 自主整理工具最齊的實作：兩段式去重 `wiki-dedup`、共現找綜合頁的 `wiki-synthesize`（強制寫「Strongest Objection」）、只報入鏈多的過時核心頁的 `wiki-status`、有界 3 輪的 `wiki-research`；去重與 lint 預設只報告，綜合頁與交叉連結則直接寫入。細節與適用評估見 [[AI-自主整理知識庫的機制]] |
+| [Synto](https://github.com/kytmanov/synto)（2026-11-09 收錄） | CLI 編譯器（單人維護） | 筆記→概念文章編譯，概念身分存於 gitignore 的 `state.db` | 重複概念「偵測自動、合併由人拍板」；人工拆掉的 alias 留 denial tombstone 防下輪 ingest 接回；旁路狀態導致 `undo` 撤回不了概念合併，是純 git 架構的反面教材 |
 | 本 vault（obsidian-memory） | Obsidian vault＋repo-local skills | 三層＋Ingest/Query/Lint | 全自主治理（2026-07-20 起 push 亦自主、事後 diff review 把關）、lint 自主修補（真需使用者的決策才進 backlog）、cards/topics 人工策展公開層 |
 
 **Wuphf 的 `/lint` 不值得抄**（2026-07-21 查證）：它抓的四類（矛盾、孤立、stale claim、死連結）與本 vault `vault-lint` 的覆蓋範圍**幾乎完全重合**，但矛盾偵測後是**由使用者手動標哪一邊勝出**——比本 vault 2026-07-17 拍板的「agent 自主修補」更保守，在「lint 修補權」這個分歧點上是退回而非前進。[第三方 review](https://zby.github.io/commonplace/agent-memory-systems/reviews/wuphf.html) 提出的批評對本 vault 更有價值——**無法證明 agent 真的搜尋過、真的用了記憶、真的因此改變行為**，且找不到 with/without ablation；此盲點本 vault 同樣暴露，見 [[Agent-維護知識庫的已知失效模式]]。
@@ -116,6 +118,7 @@ tags:
 ## 關聯
 
 - 模式本體：[[LLM-Wiki-知識管理模式]]（原文提煉）；來源全文 [[LLM-Wiki-Karpathy]]
+- 自主整理切面：[[AI-自主整理知識庫的機制]]——本頁比各實作的整體設計，該頁只看「AI 自己去重、拆頁、補缺口」怎麼做、怎麼防失真，並評估哪些適合本 vault
 - 實作之一的完整實體頁：[[Hermes-Agent]]（其 `llm-wiki` skill 治理細節本頁已展開）
 - 記憶系統全景定位：[[Claude-Code-記憶系統六層比較]]——本頁的「markdown＋git 家族」對應其 Level 5，MemSearch 對應 Level 3（memsearch 同源）
 - 交換格式取捨：[[OKF-與本-vault-的相容性]]——OKF 的互通性價值保留給未來獨立匯出層，不影響本頁已拍板的不採雙連結決定。

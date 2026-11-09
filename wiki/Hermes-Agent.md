@@ -2,7 +2,7 @@
 title: Hermes Agent
 description: Nous Research 開源的自我進化 AI agent：學習迴路自動生成並改良 skill，跨 session 累積記憶與使用者模型
 created: 2026-07-08
-updated: 2026-10-29
+updated: 2026-11-09
 parent: "[[wiki/01.index]]"
 tags:
   - ai-agent
@@ -16,7 +16,7 @@ tags:
 
 Nous Research 開源、MIT 授權的**自我進化 AI agent**，標語 *The agent that grows with you*。定位為 coding／personal agent，與 Claude Code、OpenClaw 同類，但差異化主打**內建學習迴路**：記憶與 skill 是會複利成長的資產，而非每次從零開始。原始資料見 [[Hermes-Agent-NousResearch]]。
 
-> 這套哲學與本 vault 背後的 [[LLM-Wiki-知識管理模式]] 不只是「同源」，而是**同一套官方 skill**：Hermes 內建的 `llm-wiki` skill 直接聲明採用 Karpathy 的 LLM Wiki pattern，與本 vault 的三層架構一一對應——證明這套方法論已被獨立產品化，不是本 vault 的孤例。差別在 Hermes 另外疊了一條獨立複利軸：`llm-wiki`（陳述性知識，是什麼）之外，還有自主 **skill 庫**複利程序性知識（怎麼做），兩軸互補、各自演進。
+> 這套哲學與本 vault 背後的 [[LLM-Wiki-知識管理模式]] 不只是「同源」，而是**同一套官方 skill**：Hermes 內建的 `llm-wiki` skill（2026-10-29 起改為官方選裝、不再預設載入，見下表）直接聲明採用 Karpathy 的 LLM Wiki pattern，與本 vault 的三層架構一一對應——證明這套方法論已被獨立產品化，不是本 vault 的孤例。差別在 Hermes 另外疊了一條獨立複利軸：`llm-wiki`（陳述性知識，是什麼）之外，還有自主 **skill 庫**複利程序性知識（怎麼做），兩軸互補、各自演進。
 
 ## 核心差異：學習迴路（Learning Loop）
 
@@ -28,7 +28,7 @@ Nous Research 開源、MIT 授權的**自我進化 AI agent**，標語 *The agen
 | Autonomous skill creation | 完成複雜任務（5+ 次工具呼叫）成功、解決錯誤、使用者糾正、或發現非顯而易見流程時觸發，自動把流程萃取成可重用 skill；預設免人工核准即可寫入。**已被取代（2026-10-13）**：「5+ 次工具呼叫」為 2026-07 快照時官方 system prompt 的措辭，現已移除——官方 [`agent/prompt_builder.py`](https://github.com/NousResearch/hermes-agent/blob/main/agent/prompt_builder.py) 註解載明該句在訂閱制 OAuth 憑證下會觸發 Anthropic 伺服端內容過濾、以計費樣貌的 HTTP 400 浮現，現行 prompt 只寫「When you work out a non-trivial workflow, record it with skill_manage for future reuse」；官方 [skills.md](https://github.com/NousResearch/hermes-agent/blob/main/website/docs/user-guide/features/skills.md) 列的觸發情境為「值得重複的多步驟流程／遇錯後找到可行路徑／使用者糾正」，無數字門檻（一手來源已回讀，未實測；措辭切換的確切 commit／日期未能定位） |
 | Skill self-improvement | skill 在使用過程中自我修正 |
 | Autonomous Curator | 自主策展人：評分、合併重疊、封存過時、寫每輪報告、保護 pinned skill |
-| `llm-wiki` skill（官方內建） | **逐字複刻 Karpathy 的 LLM Wiki 模式**（raw/wiki/schema 三層），文件明言「Based on Andrej Karpathy's LLM Wiki pattern」——見 [[LLM-Wiki-知識管理模式]]；另維護 append-only `log.md`（超 500 條按年輪替，與 index 並列導航骨幹），在生態中的治理定位見 [[LLM-Wiki-生態實作比較]] |
+| `llm-wiki` skill（官方內建；**已被取代（2026-11-09）**：2026-10-29 起移到 `optional-skills/`，仍由官方維護但不再預設載入，需 `hermes skills install` 另行安裝，既有安裝保留——見[移動後位置](https://github.com/NousResearch/hermes-agent/blob/main/optional-skills/research/llm-wiki/SKILL.md)） | **逐字複刻 Karpathy 的 LLM Wiki 模式**（raw/wiki/schema 三層），文件明言「Based on Andrej Karpathy's LLM Wiki pattern」——見 [[LLM-Wiki-知識管理模式]]；另維護 append-only `log.md`（超 500 條按年輪替，與 index 並列導航骨幹），在生態中的治理定位見 [[LLM-Wiki-生態實作比較]] |
 | Session search（FTS5） | 所有 session 存進 SQLite `~/.hermes/state.db`，agent 用 `session_search` 工具以 FTS5 全文檢索過往對話做跨 session 回憶（官方 [memory.md](https://github.com/NousResearch/hermes-agent/blob/main/website/docs/user-guide/features/memory.md) 一手）；是否經 LLM 摘要兩份官方文件說法相左，見下方更正框 |
 | 外接長期知識庫 | 多個 memory provider 外掛（來源快照時 8 個：Honcho、Mem0、Supermemory、ByteRover 等）可選接，提供知識圖譜、語意檢索、自動事實抽取等，對應核心記憶（大腦）之外的圖書館 |
 

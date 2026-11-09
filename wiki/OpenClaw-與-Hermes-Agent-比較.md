@@ -2,7 +2,7 @@
 title: OpenClaw 與 Hermes Agent 比較
 description: 兩套自架常駐 personal agent 的對照：OpenClaw 的 Gateway 分離與審查式 skill 演進，對上 Hermes 的放手式進化
 created: 2026-09-02
-updated: 2026-10-29
+updated: 2026-11-09
 parent: "[[wiki/01.index]]"
 tags:
   - ai-agent
@@ -50,7 +50,7 @@ tags:
 
 也就是說：**Hermes 自動化程度更高、把關更弱；OpenClaw 2.0 自動化較保守、把關更嚴**——**已被取代（2026-10-13）**：此結論建立在 `propose` 流程為 OpenClaw 唯一落地路徑的前提上；2.0 預設即 `auto`，[PR #161057](https://github.com/openclaw/openclaw/pull/161057)（自穩定版 v2026.10.5 起生效；2026-10-29 更新，原寫「主線、尚未進穩定版 v2026.10.2」）更進一步只剩 off／auto 兩種模式、改用事後 Undo 回退制，兩者把關形狀趨同，差別縮為 OpenClaw 有逐版備份＋一鍵 Undo＋變更通知、Hermes 靠 Curator 事後整理（官方文件與 PR 描述一手、未實測）。下段「提案—審查—留痕」的同構比喻與結論節「有審查的建議系統」同受此影響。OpenClaw 的「提案—審查—留痕」模型，與本 vault `vault-lint` 的做法（agent 自主修，但需使用者決策的進 `BACKLOG.md` 並保留去重錨點）同構；Hermes 那種放手模式在本 vault 早有標記的風險——背景 skill-review agent 曾產生非預期副作用，見 [[Hermes-Agent]] 的待查風險。
 
-另一條 Hermes 獨有的軸是 **`llm-wiki` skill**：官方內建、逐字複刻 Karpathy 的 LLM Wiki pattern，也就是本 vault 的同一套方法論（見 [[LLM-Wiki-知識管理模式]]、[[LLM-Wiki-生態實作比較]]）。OpenClaw 的 Memory Wiki 是同名不同源的東西，2.0 之後定位為 built-in Memory 之外「保存人類筆記」的角色，**不宣稱採用 LLM Wiki pattern**——兩者不可混為一談。
+另一條 Hermes 獨有的軸是 **`llm-wiki` skill**：官方內建（**已被取代（2026-11-09）**：2026-10-29 起改為官方選裝、不再預設載入，見 [[Hermes-Agent]]）、逐字複刻 Karpathy 的 LLM Wiki pattern，也就是本 vault 的同一套方法論（見 [[LLM-Wiki-知識管理模式]]、[[LLM-Wiki-生態實作比較]]）。OpenClaw 的 Memory Wiki 是同名不同源的東西，2.0 之後定位為 built-in Memory 之外「保存人類筆記」的角色，**不宣稱採用 LLM Wiki pattern**——兩者不可混為一談。
 
 ## 安全：縮小但未關閉的差距
 
