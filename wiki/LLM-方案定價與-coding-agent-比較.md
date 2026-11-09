@@ -2,7 +2,7 @@
 title: LLM 方案定價與 coding agent 比較
 description: 主流 LLM 訂閱月費與 coding agent 三方案定價對照，依用途給經濟實惠推薦，含台幣概算、2026-09 覆核與第三方工具可用性
 created: 2026-07-08
-updated: 2026-10-29
+updated: 2026-11-09
 parent: "[[wiki/01.index]]"
 tags:
   - llm-pricing
@@ -40,7 +40,7 @@ tags:
 | 月費 | **$10**（首月 $5 的入手優惠已不見於官網）；另有 Go Plus $40/月的高額度檔（2026-10-07 [官網](https://opencode.ai/go)一手）。Go／Go Plus 限單人 workspace（如註冊時建立的 Personal workspace）；多人 workspace 走 **Go Teams $20／人／月**，每人各有 Go 額度，另加每模型每月多 $5 額度（2026-10-29 [官方 docs](https://opencode.ai/docs/go/) 一手；產品頁當日只列 Go／Go Plus 兩檔，Teams 只見於 docs） | **$20**（年繳 $17） | **$20** |
 | 綁的 agent | OpenCode（開源，MIT） | Claude Code | Codex（web/CLI/IDE/iOS） |
 | 能用的模型 | ~~**僅中國開源模型**：GLM、Kimi、Qwen、MiniMax、DeepSeek 等十餘個~~ **已被取代（2026-09-02）**：官網模型清單已納入 GPT 系列、Grok 與 Meta 系模型，不再只有中國實驗室，詳見下方覆核一節（版本輪替快，見 [官方模型清單](https://opencode.ai/go)）；2026-10 起另含 Claude Haiku（見上段）與 Google 系 Gemini 模型（2026-10-29 [官方 docs](https://opencode.ai/docs/go/) 一手、未實測，具體型號回官網查） | Claude 自家 Sonnet / Opus / Haiku | GPT 系列 |
-| 用量限制 | ~~按金額計：約 $12/5hr、$30/週、$60/月~~ **已被取代（2026-10-07）**：改為按模型分別訂月額度，5 小時窗口為月額度 20%、週窗口 50%（[官方 docs](https://opencode.ai/docs/go/) 一手）；各模型額度差異大，具體數字回官網查 | 滾動 5 小時視窗 + 週額度雙層 | 短視窗（數小時）+ 週額度雙層 |
+| 用量限制 | ~~按金額計：約 $12/5hr、$30/週、$60/月~~ **已被取代（2026-10-07）**：改為按模型分別訂月額度，5 小時窗口為月額度 20%、週窗口 50%（[官方 docs](https://opencode.ai/docs/go/) 一手）；各模型額度差異大，具體數字回官網查 | 滾動 5 小時視窗 + 週額度雙層（Pro／Max 皆同；$200 的 Ultra 已驗證帳號沒有 5 小時視窗、只剩週額度，見下方 2026-11-09 補記） | 短視窗（數小時）+ 週額度雙層 |
 | 省心度 | 要自己選模型/路由 | 開箱即用 | 開箱即用 |
 | 模型天花板 | 開源 SOTA（略遜頂級閉源） | 頂級（Opus/Sonnet） | 頂級（GPT 旗艦） |
 
@@ -85,6 +85,15 @@ agy 本身內建 subagent、`/schedule` 排程、`/boost` 三層編排，並可�
 **選型含意**：若目標只是消耗閒置的 Google 池額度，直接開官方 `agy` 即可，委派層、MCP bridge 與外部排程器多為不必要的中介——agy 自帶排程，worker 端本身就有「規律」能力。
 
 **對推薦的影響**：OpenCode Go 是 OpenCode 自家託管方案、本來就不借別家訂閱，「跑量選 OpenCode Go」不受影響。但「Claude Pro 綁第三方 harness」這條路已關，Claude 訂閱只能在 Claude Code／官方 app 內用；想在 OpenCode 裡跑 Claude 得走 API 按量，或訂 OpenCode Go 用其清單內的 Claude Haiku 5.5（2026-10-13 [官網](https://opencode.ai/go)一手、未實測；僅 Haiku 等級，Sonnet／Opus 仍需 API）。GitHub Copilot、xAI 等其他家未查。
+
+## 2026-11-09 補記：Claude 高階方案改名，Ultra 取消 5 小時限制
+
+使用者問「Claude 是不是沒有 5 小時限制了」，答案是**只有 $200 的 Ultra 已驗證帳號沒有，其餘方案都還有**。
+
+- **改名**：原 Max 5x（$100）改叫 Max，原 Max 20x（$200）改叫 Ultra。多數媒體報導日期為 2026-10-30，有一家寫 11-03（媒體轉述，如 [The New Stack](https://thenewstack.io/claude-ultra-session-limit/)、[Windows Report](https://windowsreport.com/anthropic-renames-claude-max-5x-and-20x-plans-removes-ultras-5-hour-limit/)）。
+- **限制結構**（2026-11-09 讀 [官方定價頁](https://claude.com/pricing)，一手、高信心）：Free、Pro、Max 仍標「every 5 hours and every week」雙層；Ultra 標「No 5-hour limit」，註腳寫「No 5-hour limit for verified accounts」，週額度 10x Pro 照舊。
+- **取消的是節奏，不是總量**：週上限沒動，一週能用的總量不變，只是不用再每 5 小時被打斷。
+- **怎樣算「已驗證」**：官方定價頁沒說明。媒體轉述 Help Center 的說法是 Anthropic 自動驗證，驗證完成前先套暫時的 5 小時限制；註冊時驗證手機號碼不算帳號驗證；驗證條件未公開（媒體轉述，中信心，未讀到 Help Center 原文）。另有單一指南稱 Settings > Usage 看不到「Current session」條就代表已驗證（低信心）。
 
 ## 三、依用途的經濟實惠推薦
 
