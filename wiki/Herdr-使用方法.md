@@ -1,8 +1,8 @@
 ---
 title: Herdr 使用方法
-description: herdr 的 session／workspace 層級、持久化邊界、狀態偵測、CLI 委派原語、worktree 與 SSH 遠端用法，含偵測盲點
+description: herdr TUI 的層級、持久化、狀態偵測、CLI 委派、worktree 與 SSH 遠端用法，另記 Herdr app／herdr-core 與 Windows 接 WSL
 created: 2026-09-15
-updated: 2026-10-15
+updated: 2026-11-10
 source: https://herdr.dev/docs/
 parent: "[[wiki/01.index]]"
 tags:
@@ -110,6 +110,24 @@ herdr 內建 worktree 指令（官方 cli-reference 原始檔＋本機 `--help`�
 3. 儲存的 SSH machines（`herdr machine`），在同一視窗切換本機與多台遠端。
 
 本機 client 可為 Linux、macOS、Windows；**遠端主機只能是 Linux 或 macOS**。已被取代（2026-10-07）：herdr 自 2026-09 中起支援 Windows x86_64 遠端主機（Windows ARM64 走 x64 模擬，best-effort），舊文件「Windows is not supported as the remote host」一句已移除；確切版本以[官方 CHANGELOG](https://github.com/herdrdev/herdr/blob/master/CHANGELOG.md) 為準（官方 CHANGELOG 與 [persistence-remote 文件](https://github.com/herdrdev/herdr/blob/master/docs/versions/0.9.3/website/src/content/docs/persistence-remote.mdx)一手、未實測）。direct terminal attach 則仍只支援 Linux／macOS，原生 Windows 不行（官方文件所述、未實測）。
+
+## Herdr app 與 herdr-core（另一條產品線）
+
+官方站根目錄現在是 **Herdr app**：原生桌面 app（macOS Apple silicon、Linux x86_64／arm64、Windows x86_64，另有手機版），底下跑的是 **herdr-core**（CLI 叫 `hc`），**不是**本頁上面寫的 Herdr TUI；TUI 文件已搬到 `herdr.dev/tui/docs/`。所以 TUI 的 session、workspace 不會出現在 app 裡，app 只看得到 herdr-core 的 terminal。app 設定與給 agent 讀的說明在 `~/.config/herdr-app/AGENTS.md`，core 的手冊用 `hc --skill`。（官方 [herdr.dev](https://herdr.dev/)、[core 頁](https://herdr.dev/core/)、[herdr-app](https://github.com/herdrdev/herdr-app)／[herdr-core](https://github.com/herdrdev/herdr-core) repo 一手，2026-11-10 讀）
+
+**app 的其他機器都是 core 的 machine**：app 側欄每個 space 屬於一台機器——本機，或 `hc machine ls` 列出的機器。app 內的「Add machine」對話框只列 `~/.ssh/config` 的 Host，等於跑 `hc machine add <target>`；不走 SSH 的接法要自己在終端下 `hc machine add --via <command>`，加好後 app 就會出現該機器。（herdr-app `defaults/mods/machine-add`、`defaults/AGENTS.md` 原始碼一手）
+
+### Windows app 接 WSL
+
+在 Windows 跑 app 時，WSL distro 不需要 SSH server，官方寫法是在 **PowerShell 7（`pwsh`）** 執行（Windows PowerShell 5.1 與 cmd 會弄壞內嵌引號）：
+
+```powershell
+hc machine add --via 'wsl.exe -d <distro 名> -e sh -c' --name wsl
+```
+
+distro 名用 `wsl -l -q` 查。WSL 裡沒有 `hc` 時，在互動終端下會先詢問是否複製過去。（herdr-core `docs/machines.md` 一手）
+
+踩雷：Windows 上的 `--via` 是 2026-11-09 才合併的修正（commit `093ddde`「fix(windows): support native via machine commands」），**修正前的發佈版在 Windows 一律拒絕 `--via`**，錯誤訊息是 `bad command "...": one line, run by sh here`（2026-11-10 本機實測重現）。遇到這個錯誤就先用 `hc --version` 看版本，更新到含此修正的版本再加；app 會自動更新 core。確切版本以 [herdr-core CHANGELOG](https://github.com/herdrdev/herdr-core/blob/main/CHANGELOG.md) 為準。
 
 ## 與相鄰工具的定位
 
