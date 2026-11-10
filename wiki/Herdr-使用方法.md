@@ -115,6 +115,14 @@ herdr 內建 worktree 指令（官方 cli-reference 原始檔＋本機 `--help`�
 
 官方站根目錄現在是 **Herdr app**：原生桌面 app（macOS Apple silicon、Linux x86_64／arm64、Windows x86_64，另有手機版），底下跑的是 **herdr-core**（CLI 叫 `hc`），**不是**本頁上面寫的 Herdr TUI；TUI 文件已搬到 `herdr.dev/tui/docs/`。所以 TUI 的 session、workspace 不會出現在 app 裡，app 只看得到 herdr-core 的 terminal。app 設定與給 agent 讀的說明在 `~/.config/herdr-app/AGENTS.md`，core 的手冊用 `hc --skill`。（官方 [herdr.dev](https://herdr.dev/)、[core 頁](https://herdr.dev/core/)、[herdr-app](https://github.com/herdrdev/herdr-app)／[herdr-core](https://github.com/herdrdev/herdr-core) repo 一手，2026-11-10 讀）
 
+**與 TUI 的主要差異**（官方首頁 FAQ、herdr-core README 一手）：
+
+- **狀態來源不同**：core 不讀畫面猜狀態、也不認 agent 品牌，只收程式自己用 OSC 7501（Program Status Protocol）回報的 working／done／blocked；不回報的程式照跑但沒有狀態，也不進 agent 清單。Claude Code（[官方 CHANGELOG](https://github.com/anthropics/claude-code/blob/main/CHANGELOG.md)）與 Codex（`openai/codex` 的 `terminal_program_status.rs`）已內建回報；agy 本輪未查。
+- **重開機不接回 agent**：重開機或 core 停止後 pane 回到原資料夾的新 shell，agent 不重啟也不 resume——TUI 的原生 agent session 還原在 app 沒有對應。
+- **agent 派工內建回報**：agent 可用 `hc run` 起 helper、`hc send` 改任務，helper 的報告、結束與求助自動回到派工的 agent。
+- **手機版與多機**：iPhone／iPad／Android 直連你的機器（無帳號、不經 Herdr 伺服器），SSH 機器的 agent 併入同一側欄。
+- **介面可改**：layout、側欄、按鍵、主題都是 `~/.config/herdr-app` 下的檔案，mod 是 JavaScript 小程式，官方有 layout／mod gallery。
+
 **app 的其他機器都是 core 的 machine**：app 側欄每個 space 屬於一台機器——本機，或 `hc machine ls` 列出的機器。app 內的「Add machine」對話框只列 `~/.ssh/config` 的 Host，等於跑 `hc machine add <target>`；不走 SSH 的接法要自己在終端下 `hc machine add --via <command>`，加好後 app 就會出現該機器。（herdr-app `defaults/mods/machine-add`、`defaults/AGENTS.md` 原始碼一手）
 
 ### Windows app 接 WSL
