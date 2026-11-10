@@ -129,6 +129,8 @@ distro 名用 `wsl -l -q` 查。WSL 裡沒有 `hc` 時，在互動終端下會�
 
 踩雷：Windows 上的 `--via` 是 2026-11-09 才合併的修正（commit `093ddde`「fix(windows): support native via machine commands」），**修正前的發佈版在 Windows 一律拒絕 `--via`**，錯誤訊息是 `bad command "...": one line, run by sh here`（2026-11-10 本機實測重現）。遇到這個錯誤就先用 `hc --version` 看版本，更新到含此修正的版本再加；app 會自動更新 core。確切版本以 [herdr-core CHANGELOG](https://github.com/herdrdev/herdr-core/blob/main/CHANGELOG.md) 為準。
 
+等不到新版的繞法是改走 SSH：WSL 開 sshd、Windows 公鑰放進 WSL 的 `authorized_keys`，WSL 裡用官方 `install.sh` 裝 core，Windows 的 `~/.ssh/config` 加一個 `HostName localhost` 的 Host，再 `hc machine add <該 Host>`（或在 app 的 Add machine 點選）。非互動 SSH 的 PATH 沒有 `~/.local/bin` 也沒關係，core 找不到時會退回 `$HOME/.local/bin/herdr-core`（herdr-core `machines.rs` 原始碼）。2026-11-10 本機實測連得上（WSL NAT 模式）。代價是 SSH 不會幫你開機：WSL 關機或閒置停掉後要先開一個 WSL 終端，`--via wsl.exe` 則會自己把 distro 帶起來。
+
 ## 與相鄰工具的定位
 
 - 對 [[Multica-與-agent-看板的用法與適用邊界]]（agent 判斷，非查證結論）：Multica 是非同步看板，agent 是身分、run 結束即走，人類在卡片把關點介入；herdr 是同步的終端層，agent 是常駐程序，人類即時盯側欄狀態。前者適合佇列化派工，後者適合同時跑幾個互動 session 並隨時插手。
