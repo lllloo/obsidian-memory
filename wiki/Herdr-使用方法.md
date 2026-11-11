@@ -150,6 +150,10 @@ distro 名用 `wsl -l -q` 查。WSL 裡沒有 `hc` 時，在互動終端下會�
 - `keys.json` 是一鍵對一指令，tmux 式 prefix 序列要靠 popup mod 才做得到；作者建議這類按鍵流程先留在 TUI。
 - app 預設每天送匿名使用資料，TUI 不會；在 `settings.json` 關掉，或用 `DO_NOT_TRACK=1`／`HERDR_TELEMETRY=0`。
 
+**TUI 會不會併進 core：官方未決**（2026-11-11 查）。主要維護者在 [herdr-app #63](https://github.com/herdrdev/herdr-app/issues/63) 回覆（2026-10-29）：兩邊刻意分開、目前不能共用 agent、app 不會接 TUI 的 server，「whether the tui moves onto herdr-core later is still open」，決定後會在該 issue 更新。之後同類請求持續出現且都沒有維護者回應：[herdr-core #115](https://github.com/herdrdev/herdr-core/issues/115)（下游整合開發者問該對哪套 API 開發）、[herdr #5944](https://github.com/herdrdev/herdr/issues/5944)（手機端不知道讀哪個 runtime）。#63 裡有人提議做 `hc import` 之類的單向匯入，維護者未回應。
+
+使用者反應（[HN 發表串](https://news.ycombinator.com/item?id=50298436) 與上述 issue，個人意見、非實證）：阻礙遷移的主要是要在新 core 重建所有 workspace（含 worktree），以及失去 TUI 經 SSH 從手機操作的能力；app 目前只有 GUI，偏好終端的人繼續用 TUI。HN 上「TUI 不太會再開發」是使用者推測，**勿引用為官方立場**。
+
 ## 與相鄰工具的定位
 
 - 對 [[Multica-與-agent-看板的用法與適用邊界]]（agent 判斷，非查證結論）：Multica 是非同步看板，agent 是身分、run 結束即走，人類在卡片把關點介入；herdr 是同步的終端層，agent 是常駐程序，人類即時盯側欄狀態。前者適合佇列化派工，後者適合同時跑幾個互動 session 並隨時插手。
