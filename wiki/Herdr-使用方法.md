@@ -2,7 +2,7 @@
 title: Herdr 使用方法
 description: herdr TUI 的層級、持久化、狀態偵測、CLI 委派、worktree 與 SSH 遠端用法，另記 Herdr app／herdr-core 與 Windows 接 WSL
 created: 2026-09-15
-updated: 2026-11-10
+updated: 2026-11-11
 source: https://herdr.dev/docs/
 parent: "[[wiki/01.index]]"
 tags:
@@ -138,6 +138,17 @@ distro 名用 `wsl -l -q` 查。WSL 裡沒有 `hc` 時，在互動終端下會�
 踩雷：Windows 上的 `--via` 是 2026-11-09 才合併的修正（commit `093ddde`「fix(windows): support native via machine commands」），**修正前的發佈版在 Windows 一律拒絕 `--via`**，錯誤訊息是 `bad command "...": one line, run by sh here`（2026-11-10 本機實測重現）。遇到這個錯誤就先用 `hc --version` 看版本，更新到含此修正的版本再加；app 會自動更新 core。確切版本以 [herdr-core CHANGELOG](https://github.com/herdrdev/herdr-core/blob/main/CHANGELOG.md) 為準。
 
 等不到新版的繞法是改走 SSH：WSL 開 sshd、Windows 公鑰放進 WSL 的 `authorized_keys`，WSL 裡用官方 `install.sh` 裝 core，Windows 的 `~/.ssh/config` 加一個 `HostName localhost` 的 Host，再 `hc machine add <該 Host>`（或在 app 的 Add machine 點選）。非互動 SSH 的 PATH 沒有 `~/.local/bin` 也沒關係，core 找不到時會退回 `$HOME/.local/bin/herdr-core`（herdr-core `machines.rs` 原始碼）。2026-11-10 本機實測連得上（WSL NAT 模式）。代價是 SSH 不會幫你開機：WSL 關機或閒置停掉後要先開一個 WSL 終端，`--via wsl.exe` 則會自己把 distro 帶起來。
+
+### 從 TUI 遷移到 app
+
+官方沒有獨立的遷移指南，唯一的遷移指引在 app 歡迎畫面：workspace 一律不搬（「Your herdr workspaces stay where they are; nothing moves over」），按鍵與設定則交給 agent 轉，官方給的提示句是「Read `herdr-app --skill`, then migrate my keybinds and settings from ~/.config/herdr/config.toml」。FAQ 說 TUI「keeps working」，兩邊不共用 agent，可以並存；沒提 TUI 是否繼續開發。（herdr-app `defaults/frame/welcome/main.js` 原始碼、[官方 FAQ](https://herdr.dev/faq) 一手，2026-11-11 讀）
+
+第三方實測補充（[Classmethod 2026-11-04](https://dev.classmethod.jp/en/articles/reona-herdr-app-herdr-core/)，單一作者在 macOS 上用 BETA 版測，非官方）：
+
+- TUI 裝的 Claude Code hook（`herdr integration install claude`）在 core 底下不會觸發，因為 hook 看 `HERDR_ENV` 這類變數，而 `hc` 起的 terminal 只帶 `HC_` 開頭的變數；Claude Code 改走 OSC 7501 回報，不需要 hook。
+- 新資料夾的信任提示不會變成 `blocked`，app 看不出 agent 在等輸入，要用 `hc read`／`hc keys` 手動處理。
+- `keys.json` 是一鍵對一指令，tmux 式 prefix 序列要靠 popup mod 才做得到；作者建議這類按鍵流程先留在 TUI。
+- app 預設每天送匿名使用資料，TUI 不會；在 `settings.json` 關掉，或用 `DO_NOT_TRACK=1`／`HERDR_TELEMETRY=0`。
 
 ## 與相鄰工具的定位
 
