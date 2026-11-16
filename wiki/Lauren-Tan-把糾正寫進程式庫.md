@@ -103,6 +103,15 @@ Code review 逐漸縮成看驗證產物：影片、截圖、圖、形式化驗�
 
 **在 Claude Code 用的限制**：指令要加前綴（`/pstack:poteto-mode`）；Bugbot、Cursor automations 這類 Cursor 專屬步驟會跳過；第三方 marketplace 預設不自動更新。`/deslop`、`control-ui` 等被引用的 skill 在另一個 `cursor-team-kit` plugin 裡，沒有一起附上。注意 pstack 本身是 prompt，屬於倒金字塔的散文層；`/correct` 才是把糾正往確定性層推的那一個。
 
+### 社群怎麼用（2026-11-16 查）
+
+找得到的大多是移植版和介紹文，**親身使用心得很少**，也沒有任何量測。
+
+- **移植版是主流用法**：[michael-denyer/pstack-claude](https://github.com/michael-denyer/pstack-claude) 在安裝前就把 Cursor 名稱轉成 Claude Code、Codex、Copilot、Pi 等 harness 的名稱（官方 Claude Code 版是讓 agent 在執行時自己轉換，多花 token），並加了 `SessionStart` 路由 hook，大任務時 `poteto-mode` 會自己啟動；它追上游，另外維護具名的政策分支。[backnotprop/pstack](https://github.com/backnotprop/pstack) 是同步上游的鏡像，用 `npx skills add backnotprop/pstack` 安裝時**可以只勾選要的 skill**。兩者的 GitHub star 數都在數千級（查詢當下）。
+- **Flavio Copes 的使用建議**（[A deep dive into pstack](https://flaviocopes.com/pstack/)，屬於個人看法）：只把 pstack 用在「看起來合理的 diff 還不夠」的工作上，例如要重現的 webhook 重複寄信、大型遷移、難搞的效能問題、可以早上驗收的 overnight run；改一個設定值或一句文字就不用整套。多個 agent 都用 frontier 模型，token 很快就燒完，所以例行工作用便宜模型，用 `/setup-pstack` 分配角色。prompt 的形狀是「現象＋完成條件（agent 能跑或檢查的東西）＋不能改變的行為」。
+- **Hermes 版的行為揭露**（[Hermes Marketplace 的 pstack 頁](https://hermes-agent.nousresearch.com/docs/plugins/pstack)）：autopilot、shipping、babysit 會 push 並 force-push agent 自己的分支、squash-merge PR；`reflect` 會不逐項詢問就在 tracker 開 backlog issue。上游 playbook 原文核對結果一致：shipping 用 `gh pr merge <pr> --squash`，autopilot-full 用 `--force-with-lease` force-push 自己的分支。
+- **skill 數量變動很快**：Flavio 文寫 47 個，Hermes 版寫 17 個 playbook 加 46 個 skill／原則，查詢當下上游目錄是 58 個。引用數量前要重查。
+
 ## 與既有頁的關係
 
 - 和 [[Uncle-Bob-的不讀碼約束閘門]] 是同一個方向的兩個極端案例：兩人都想用機械閘門取代逐行 review。Uncle Bob 的閘門偏測試與度量；Tan 的重心放在更前面的 API 設計與架構，讓錯誤從一開始就寫不出來。兩人都**沒有外部量測**。
