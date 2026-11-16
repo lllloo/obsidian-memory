@@ -90,6 +90,15 @@ Code review 逐漸縮成看驗證產物：影片、截圖、圖、形式化驗�
 | `/create-formal-verification-skill`、`/statechart` | 形式化驗證層：`/statechart` 檢查 TLA+ 模型，畫成使用者視角的 mermaid statechart，標出違規狀態 |
 | `/no-comments` | 禁註解：review 前移除註解，並針對註解宣稱的約束提議改用程式強制 |
 
+**`/correct` 拆解**（2026-11-16 讀 [SKILL.md](https://github.com/cursor/plugins/blob/main/pstack/skills/correct/SKILL.md) 原文）：只能手動觸發（`disable-model-invocation: true`），全文是一段短 prompt，沒有附腳本。它的設計前提是：把每個貢獻者都當成「只看得到自己打開的檔、照抄最近的範例、走最短能編譯的路」的 agent，所以 repo 要設計成「從單一檔案看起來對的改動，對整個 repo 也是對的」。流程分四步：
+
+1. **找出錯誤類型**：讀最近的 commit、revert、review 意見、agent 指示檔，以及解釋 workaround 的註解，把錯誤歸類。同一類發生過兩次才算數。
+2. **用最高能生效的層級修**：架構（state 只有一個 owner、每件事只有一種支援做法、隱藏內部讓錯的 import 直接失敗、手動同步的清單改成單一真相來源、刪掉會被照抄的舊做法）→ 型別（讓錯的狀態寫不出來；還能編譯過的，就加 lint／CI 檢查，錯誤訊息要點名該改用哪個檔案、型別或函式；已經很普遍的寫法只擋新增）→ 測試（修掉或刪掉行為壞了還會過、只改內部就會掛的測試）→ 文件與規則放最後，只用於需要判斷的事，因為 agent 跳過它們時什麼都不會失敗。
+3. **修完要證明**：先修最常見的幾類，一類一個 commit。每個新檢查都要證明它在**一個真實發生過的錯誤**上會失敗；本地與 CI 跑同一個指令。例外寫在違規那一行，附原因、到期日與人的核准。
+4. **維護規則表**：在 agent 指示檔裡放一張「規則 ↔ 由什麼強制執行」的表。之後每次被糾正就修錯並加規則；規則早就在、卻沒有東西強制執行的，算重犯，要在同一個改動裡升到最高能生效的層級；錯誤已經不可能發生的規則就刪掉。
+
+回報格式：每一類附證據、選了哪一層，以及**為什麼更高的層不行**。注意 README 說它會「mines history」，但 SKILL.md 列的來源都是 repo 內的痕跡，沒有對話紀錄；只在對話中口頭糾正、沒有留在 commit 或 review 裡的錯，它第一輪看不到，要靠第 4 步之後的持續循環補上。
+
 **整體結構**（2026-11-16 依 README 整理）：主入口是 `/poteto-mode`，依任務分派到二十多個 playbook（bug fix、perf、feature、refactoring、shipping、overnight 的 autonomous run／autopilot 等）。其餘 skill 在步驟需要時才觸發，另有一批「一條原則一個 skill」的 principle skill（如 `prove-it-works`、`fix-root-causes`、`encode-lessons-in-structure`），由 `poteto-mode` 在開始任務時讀取索引。委派用專屬的 `poteto-agent` subagent，README 明說換成通用 subagent 會跳過讀規則而漂移。它刻意不附 planning skill（「the best spec is code」）；`/automate-me` 會從你的對話紀錄產生自己的 `<name>-mode`，`/setup-pstack` 則設定各角色用哪個模型。
 
 **在 Claude Code 用的限制**：指令要加前綴（`/pstack:poteto-mode`）；Bugbot、Cursor automations 這類 Cursor 專屬步驟會跳過；第三方 marketplace 預設不自動更新。`/deslop`、`control-ui` 等被引用的 skill 在另一個 `cursor-team-kit` plugin 裡，沒有一起附上。注意 pstack 本身是 prompt，屬於倒金字塔的散文層；`/correct` 才是把糾正往確定性層推的那一個。
