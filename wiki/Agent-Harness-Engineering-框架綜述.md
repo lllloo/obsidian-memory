@@ -2,7 +2,7 @@
 title: Agent Harness Engineering 框架綜述
 description: 整合 Anthropic 工程論述與原始碼 taxonomy，梳理 agent 外圍基礎設施的範疇、方法、實作比較與演進方向
 created: 2026-07-10
-updated: 2026-10-28
+updated: 2026-11-16
 parent: "[[wiki/01.index]]"
 tags:
   - ai-agent
@@ -100,6 +100,7 @@ Harness 是包裹在 LLM 外圍、負責「模型推理以外一切」的軟體�
 | Cognition（Walden Yan） | [Multi-Agents: What's Actually Working](https://cognition.com/blog/multi-agents-working)，2026-04-22 | 2025-06〈Don't Build Multi-Agents〉的續篇：「multi-agent systems work best today when writes stay single-threaded」。可行的三種：乾淨 context 的 review 迴圈、卡關時找更強模型（smart friend）、manager 拆任務再收結果 | 原文核對 |
 | OpenAI（Ryan Lopopolo） | [Harness engineering](https://openai.com/index/harness-engineering/)，2026-02-11 | 五個月內部產品，所有程式碼都由 Codex 寫，「Humans steer. Agents execute.」 | 原文 403 打不開，僅二手報導（InfoQ） |
 | Mitchell Hashimoto | [My AI Adoption Journey](https://mitchellh.com/writing/my-ai-adoption-journey)，2026-02-05 | 六步，第 5 步「Engineer the Harness」：agent 犯一次錯，就工程化一個解法，讓它不再犯同樣的錯；第 6 步「Always Have an Agent Running」 | 原文核對 |
+| Lauren Tan（Grok Bot／SpaceXSI） | [All Code Is Slop (Except Mine)](https://ai.engineer/code/2026/talks/lauren-tan)，AI Engineer CODE 2026 演講 | 與 Hashimoto 第 5 步同形，但多給優先序：每次糾正 agent 先試改 API／架構，再做 lint／型別／測試，最後才寫進 rules 或 `AGENTS.md`；內圈不穩前不自動化外圈。團隊自報月 11,000 個 PR、revert 約 0.5%。詳見 [[Lauren-Tan-把糾正寫進程式庫]] | 官方逐字稿核對；數字為自報 |
 
 Cursor 文另記一條模型分工的觀察：該團隊認為 GPT-5.2 較適合長時自主與規劃，Opus 4.5 傾向提早停止、走捷徑。這是單一團隊在特定版本上的經驗，模型迭代後未必成立。
 
@@ -130,3 +131,4 @@ Cursor 文另記一條模型分工的觀察：該團隊認為 GPT-5.2 較適合�
 - [[OpenSpec]] — spec-driven 工具的具體實作，該頁以本頁作「業界怎麼說該建 agent」的框架層綜述互補，本頁回指其工具細節。
 - [[Agent-工作流-Pattern-藍本庫]] — **同樣直接補救本頁「來源集中 Anthropic」的證據限制**，但走的是另一條路：引入 CSIRO Data61 經同儕審查的 18-pattern catalogue 作為與 Anthropic 詞彙體系**獨立**的論文級 pattern 來源。該頁另揭一個本頁未標的來源陷阱——LangGraph 的 pattern 頁自承照 Anthropic 那篇重建，不構成獨立印證。
 - [[pi-與-OpenCode-v2-比較]]——OpenCode 之外補 pi 這個極簡端點，兩套 harness 的能力與 token 開銷對照。
+- [[Lauren-Tan-把糾正寫進程式庫]] — 本頁「非 Anthropic 一手實作分享」表中 Lauren Tan 一列的展開：信任倒金字塔、禁 API／目錄邊界／禁註解等具體做法，以及把這套做成 skill 的 pstack。
