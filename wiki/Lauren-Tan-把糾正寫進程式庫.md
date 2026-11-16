@@ -110,6 +110,7 @@ Code review 逐漸縮成看驗證產物：影片、截圖、圖、形式化驗�
 - **移植版是主流用法**：[michael-denyer/pstack-claude](https://github.com/michael-denyer/pstack-claude) 在安裝前就把 Cursor 名稱轉成 Claude Code、Codex、Copilot、Pi 等 harness 的名稱（官方 Claude Code 版是讓 agent 在執行時自己轉換，多花 token），並加了 `SessionStart` 路由 hook，大任務時 `poteto-mode` 會自己啟動；它追上游，另外維護具名的政策分支。[backnotprop/pstack](https://github.com/backnotprop/pstack) 是同步上游的鏡像，用 `npx skills add backnotprop/pstack` 安裝時**可以只勾選要的 skill**。兩者的 GitHub star 數都在數千級（查詢當下）。
 - **Flavio Copes 的使用建議**（[A deep dive into pstack](https://flaviocopes.com/pstack/)，屬於個人看法）：只把 pstack 用在「看起來合理的 diff 還不夠」的工作上，例如要重現的 webhook 重複寄信、大型遷移、難搞的效能問題、可以早上驗收的 overnight run；改一個設定值或一句文字就不用整套。多個 agent 都用 frontier 模型，token 很快就燒完，所以例行工作用便宜模型，用 `/setup-pstack` 分配角色。prompt 的形狀是「現象＋完成條件（agent 能跑或檢查的東西）＋不能改變的行為」。
 - **Hermes 版的行為揭露**（[Hermes Marketplace 的 pstack 頁](https://hermes-agent.nousresearch.com/docs/plugins/pstack)）：autopilot、shipping、babysit 會 push 並 force-push agent 自己的分支、squash-merge PR；`reflect` 會不逐項詢問就在 tracker 開 backlog issue。上游 playbook 原文核對結果一致：shipping 用 `gh pr merge <pr> --squash`，autopilot-full 用 `--force-with-lease` force-push 自己的分支。
+- **移植版會改觸發政策**：Denyer 版的 `/correct` 正文與上游一字不差，但拿掉了 `disable-model-invocation: true`。依 [Claude Code skills 文件](https://code.claude.com/docs/en/skills)，有這個旗標時 description 不進 context、只能手動觸發；拿掉後 description 會常駐 context，Claude 也能自己決定呼叫。只想手動用的話，應從上游或 backnotprop 鏡像取。
 - **skill 數量變動很快**：Flavio 文寫 47 個，Hermes 版寫 17 個 playbook 加 46 個 skill／原則，查詢當下上游目錄是 58 個。引用數量前要重查。
 
 ## 與既有頁的關係
