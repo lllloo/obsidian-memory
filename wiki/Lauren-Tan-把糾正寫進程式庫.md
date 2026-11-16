@@ -101,7 +101,7 @@ Code review 逐漸縮成看驗證產物：影片、截圖、圖、形式化驗�
 
 **整體結構**（2026-11-16 依 README 整理）：主入口是 `/poteto-mode`，依任務分派到二十多個 playbook（bug fix、perf、feature、refactoring、shipping、overnight 的 autonomous run／autopilot 等）。其餘 skill 在步驟需要時才觸發，另有一批「一條原則一個 skill」的 principle skill（如 `prove-it-works`、`fix-root-causes`、`encode-lessons-in-structure`），由 `poteto-mode` 在開始任務時讀取索引。委派用專屬的 `poteto-agent` subagent，README 明說換成通用 subagent 會跳過讀規則而漂移。它刻意不附 planning skill（「the best spec is code」）；`/automate-me` 會從你的對話紀錄產生自己的 `<name>-mode`，`/setup-pstack` 則設定各角色用哪個模型。
 
-**在 Claude Code 用的限制**：指令要加前綴（`/pstack:poteto-mode`）；Bugbot、Cursor automations 這類 Cursor 專屬步驟會跳過；第三方 marketplace 預設不自動更新。`/deslop`、`control-ui` 等被引用的 skill 在另一個 `cursor-team-kit` plugin 裡，沒有一起附上。注意 pstack 本身是 prompt，屬於倒金字塔的散文層；`/correct` 才是把糾正往確定性層推的那一個。
+**在 Claude Code 用的限制**：指令要加前綴（`/pstack:poteto-mode`）；Bugbot、Cursor automations 這類 Cursor 專屬步驟會跳過；第三方 marketplace 預設不自動更新。`/deslop`、`control-ui` 等被引用的 skill 在另一個 `cursor-team-kit` plugin 裡，沒有一起附上。**觸發方式**（2026-11-16 讀本機安裝的上游版）：官方版沒有附 hook。除了 `setup-pstack`，所有 skill 都設了 `disable-model-invocation: true`，Claude 不會自己啟動，`poteto-mode` 也一樣。playbook 不是 skill，只有在 `poteto-mode` 裡依任務描述挑選。所以要先手動進 `poteto-mode`，選哪個 playbook 才由任務描述決定，例如提到 ship、autopilot 就會被導到會 merge 的流程。注意 pstack 本身是 prompt，屬於倒金字塔的散文層；`/correct` 才是把糾正往確定性層推的那一個。
 
 ### 社群怎麼用（2026-11-16 查）
 
