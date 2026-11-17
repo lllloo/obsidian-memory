@@ -28,6 +28,12 @@ await edit(target, "maxAttempts: 3", "maxAttempts: 5");
 
 這與 Cloudflare 2025-09 提出的 [Code Mode](https://blog.cloudflare.com/code-mode/) 同一思路：把工具轉成程式 API 讓模型寫碼呼叫，理由是模型看過的真實程式碼遠多於工具呼叫範例（Cloudflare 原文主張，非獨立實證）。同名機制另見 [[四套-coding-agent-能力差異對照]] MCP 列記的 pi codemode（QuickJS 沙箱平行呼叫 MCP 工具），以及 OpenClaw 2.0 的 Code Mode（同樣實驗、預設關，見 `raw/fetched/OpenClaw-2.0-Release-Notes.md`）。
 
+**OpenAI Codex CLI 也有，且走得更深**（2026-11-17 讀 openai/codex 官方 repo 原始碼，commit `d32c2ba`；官方使用者文件索引查無 Code Mode 專頁，changelog 只有 PR 級條目；未實測）：
+
+- 早期的 `js_repl` 旗標已標為 Removed，改由 `code_mode`／`code_mode_only` 取代（[features/src/lib.rs](https://github.com/openai/codex/blob/d32c2ba608b18f82c92cb266ab51060d4059212c/codex-rs/features/src/lib.rs)）。`code_mode_only` 讓模型只看得到 `exec`、`wait` 兩個入口，其餘工具都從 JS 內呼叫；JS 跑在獨立 host process 的 V8（啟用 V8 sandbox），失敗時退回 in-process V8。
+- 使用者旗標 `code_mode` 仍標 UnderDevelopment、預設關，**但模型 metadata 的 `tool_mode` 優先於旗標**（[core/src/tools/mod.rs](https://github.com/openai/codex/blob/d32c2ba608b18f82c92cb266ab51060d4059212c/codex-rs/core/src/tools/mod.rs)），而內建模型目錄幾乎每個模型都設 `code_mode_only`，只有一個舊模型例外（[models-manager/models.json](https://github.com/openai/codex/blob/d32c2ba608b18f82c92cb266ab51060d4059212c/codex-rs/models-manager/models.json)）。推論：Codex 用這些模型時實際上預設就在 Code Mode Only；但內建目錄可能被伺服器下發的目錄覆蓋，實際值未實測。
+- 對照之下，Claude Code 是使用者 opt-in 的實驗功能；Codex 則由模型目錄決定、使用者旗標只是後備。
+
 ## 適合的工作
 
 官方建議用在需要很多相關工具呼叫的任務：跨多檔重複的修改、要先過濾再讀的搜尋結果、可同時跑的獨立指令。
