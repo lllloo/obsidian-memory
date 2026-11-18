@@ -2,7 +2,7 @@
 title: Coding agent 指示檔與規則載入機制對照
 description: Claude Code、Codex、OpenCode、pi 與 Cursor、Copilot 的指示檔階層、多規則檔與 glob 條件載入支援度，附各家替代做法
 created: 2026-09-22
-updated: 2026-10-29
+updated: 2026-11-19
 parent: "[[wiki/01.index]]"
 tags:
   - coding-agent
@@ -65,3 +65,4 @@ IDE 隨時知道使用者開著哪個檔，路徑條件是自然的觸發點；�
 - [[pi-與-OpenCode-v2-比較]]——該頁比兩套 harness 的整體能力取捨；本頁只切「指示檔與規則」這一個面向往下挖，pi「寫 extension 補一切」的哲學在此有具體實例。
 - [[LLM-方案定價與-coding-agent-比較]]——該頁算錢與訂閱額度能否給第三方 harness；本頁是換 harness 時規則檔能不能帶走的機制面。
 - [[Agent-Skill-腳本路徑的規範與實況]]——skill 跨 harness 可攜的前提（裸相對路徑），是本頁「純 skill 型 plugin 可直接搬」的依據。
+- [[Claude-5-世代的指示精簡原則]]——本頁講指示檔怎麼載入，該頁講 Claude 5 世代的指示檔裡該寫什麼、該刪什麼。
