@@ -2,7 +2,7 @@
 title: Lauren Tan 把糾正寫進程式庫
 description: Lauren Tan 在 AI Engineer CODE 2026 的主張：每次糾正 agent 都改成程式庫裡的確定性檢查，先穩內圈再自動化外圈，附數字強度與可直接用的 pstack skill
 created: 2026-11-16
-updated: 2026-11-16
+updated: 2026-11-19
 source: https://ai.engineer/code/2026/talks/lauren-tan
 published:
 parent: "[[wiki/01.index]]"
@@ -120,6 +120,7 @@ Code review 逐漸縮成看驗證產物：影片、截圖、圖、形式化驗�
 - 為 [[用測試約束-AI-產碼]] 的 property-based 層補一個 UI 端的實際案例（Bombadil），並把形式化驗證推到 TLA+／Lean。
 - [[不讀碼時該看哪些圖]] 提到「把架構邊界寫成 CI 上會 fail 的依賴規則」，`electron-main`／`electron-renderer` 正是現成的實例。
 - [[Agent-Harness-Engineering-框架綜述]] 的非 Anthropic 一手實作分享表收錄了 Mitchell Hashimoto「agent 犯一次錯就工程化一個解法」，和 Tan 的通則同形；Tan 多給了**優先序**：能改架構就不寫 lint，能寫 lint 就不寫散文。
+- [[Matt-Pocock-的-PR-瓶頸解法]] 用 `retro` 把重複的 review 意見轉成檢查或規範，是同一原則在 PR 流程上的做法；同樣沒有外部量測。
 
 ## 張力與限制
 
