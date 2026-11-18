@@ -1,6 +1,6 @@
 ---
 title: Claude Code 放手運行的安全與驗證
-description: 查證 Lydia Hallie 演講與 AI懶人報 EP474，整理 auto mode、deny 規則、沙箱、cloud session、hook 與 CI 的分工及缺口
+description: 查證 Lydia Hallie 演講與 AI懶人報 EP474，整理 auto mode、deny、沙箱、cloud、hook 與 CI 的分工及缺口
 created: 2026-11-19
 updated: 2026-11-19
 source: https://www.youtube.com/watch?v=-m3yj9YLmxs
