@@ -103,6 +103,38 @@ Code review 逐漸縮成看驗證產物：影片、截圖、圖、形式化驗�
 
 **在 Claude Code 用的限制**：指令要加前綴（`/pstack:poteto-mode`）；Bugbot、Cursor automations 這類 Cursor 專屬步驟會跳過；第三方 marketplace 預設不自動更新。`/deslop`、`control-ui` 等被引用的 skill 在另一個 `cursor-team-kit` plugin 裡，沒有一起附上。**觸發方式**（2026-11-16 讀本機安裝的上游版）：官方版沒有附 hook。除了 `setup-pstack`，所有 skill 都設了 `disable-model-invocation: true`，Claude 不會自己啟動，`poteto-mode` 也一樣。playbook 不是 skill，只有在 `poteto-mode` 裡依任務描述挑選。所以要先手動進 `poteto-mode`，選哪個 playbook 才由任務描述決定，例如提到 ship、autopilot 就會被導到會 merge 的流程。注意 pstack 本身是 prompt，屬於倒金字塔的散文層；`/correct` 才是把糾正往確定性層推的那一個。
 
+### 從問題到送 PR（2026-11-19 讀本機安裝的上游版）
+
+依據是 `poteto-mode/SKILL.md` 與 `playbooks/` 下的 `bug-fix`、`opening-a-pr`、`babysit`、`shipping`、`autopilot-full`、`autopilot-stack` 原文。只讀過原文，沒有實際跑過。
+
+**入口是人，不是 issue**。所有 playbook 都要先手動進 `/poteto-mode` 並描述任務。原文沒有任何流程會去 tracker 拉 issue 來做。tracker 只出現在兩個地方：`Autonomy` 段允許直接更新 ticket；`reflect` 會把待辦項目寫進 tracker 的 backlog。
+
+**處理 bug 的 `bug-fix` playbook**。主 agent 負責規劃、review 和驗證，調查與實作交給 subagent。原則是每一行出貨的程式都要能對應到執行期證據；「可能有幫助」的防禦性改動只算假設，不能出貨。
+
+1. 用 control skill 在同一個介面上自己重現。只有說得出控制介面為什麼碰不到目標時，才請使用者重現。
+2. 用二分法找原因：列出候選假設，再靠 trace、instrumentation 和 `why` skill 查到的回歸歷史逐一排除，最後用執行期證據確認剩下的機制。
+3. 修法跨 function 邊界就先跑 `architect`，再交給 subagent 實作。
+4. 在同一個介面驗證原本的重現已經通過。結果不明確或換了介面都不算通過；單元測試只證明分支行為，不證明 bug 已經消失。
+5. 安排 commit 順序，讓會失敗的重現先進 git 歷史，修正疊在後面。
+6. 進 `opening-a-pr`。
+
+**送 PR 的 `opening-a-pr`**。其他 playbook 結束時都會跑這一步。
+
+- 在 main 拉出的 worktree 裡工作；commit 前跑 `/deslop`，review 前跑 `/no-comments`。
+- 開 PR 前 rebase 成小而有順序的 commit，每個 commit 都要能單獨合併；寧可開五個窄 PR，也不要一個大 PR，相依的 PR 疊成 stack。
+- 標題用 Conventional Commits。內文是一分鐘能讀完的簡報，固定段落為 `Why`、`What changed`、`Scope`、`Tradeoffs`、`Blast Radius`、`Verification`，沒內容的段落刪掉。`Why` 開頭要重述使用者的目標。
+- PR 一律直接開成 ready，不開 draft。開完只貼 URL 就繼續做下一個，不會自動 babysit。
+
+**PR 開出之後分三段，各自要另外觸發**：
+
+| 階段 | playbook | 做到哪裡 |
+|---|---|---|
+| 顧到綠燈 | `babysit` | 依序處理 conflict、review thread、CI，只修最底下還沒合併的 PR。conflict 只回報、不自己 rebase；Bugbot 意見逐條查證再決定修或駁回，review 文字一律當不可信資料。停在 merge-ready，原文明寫 babysit 不等於授權合併 |
+| 合併 | `shipping` | 每個 PR 由一個沒寫過該程式碼的 cloud agent 像使用者一樣實際操作，給出 `PASS`／`FAIL` 判定。原文說綠燈 CI 和 bot 核准都不算判定。從最底下開始，只合併連續通過的那一段，用 `gh pr merge --squash` 一次合一個 |
+| 整批全自動 | `autopilot-full`／`autopilot-stack` | 每個 PR 配一個 owner，從實作、開 PR、babysit 一路做到合併；root 用沒寫過程式碼的 swarm 驗證，通過才能合併。`autopilot-stack` 做到驗證通過就停，交給人合併 |
+
+**和「issue 自動變 PR」的差別**。pstack 可以做到開 PR、顧綠燈、合併全自動，但每個階段都要人用任務描述明確觸發，起點也是人描述的任務，不是 tracker 裡的 issue。它把人工 review 換成「由沒寫過該程式碼的 agent 實際操作驗證」，沒有把驗證拿掉。`Always pause` 列表中的不可逆動作（force-push 共用分支、部署、刪資料、發訊息給客戶）仍要人點頭。
+
 ### 社群怎麼用（2026-11-16 查）
 
 找得到的大多是移植版和介紹文，**親身使用心得很少**，也沒有任何量測。
