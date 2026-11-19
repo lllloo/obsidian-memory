@@ -16,7 +16,7 @@ tags:
 
 **一句話主張**：很多看似需要推理的任務，其實可以拆成一連串「從已列好的選項裡挑一個」的極快判斷；把只會挑選、不會生成文字的決策模型（decision model／System One model）放在 agent 的**根節點**，LLM 或 coding agent 只當它可以選的其中一個選項，必要時才生成。
 
-原始逐字稿與官方閱讀頁見 `raw/fetched/AI-Engineer-Weitekamp-Recursive-Decision-Models.md`（YouTube `hFNbPmzzcEs`，2026-11-10 上傳，約 51 分鐘預錄線上演講）。
+原始逐字稿與官方閱讀頁見 [[AI-Engineer-Weitekamp-Recursive-Decision-Models]]（YouTube `hFNbPmzzcEs`，2026-11-10 上傳，約 51 分鐘預錄線上演講）。
 
 ## 講者與立場
 

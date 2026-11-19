@@ -1,6 +1,6 @@
 ---
 title: Lauren Tan 把糾正寫進程式庫
-description: Lauren Tan 在 AI Engineer CODE 2026 的主張：每次糾正 agent 都改成程式庫裡的確定性檢查，先穩內圈再自動化外圈，附數字強度與可直接用的 pstack skill
+description: Lauren Tan 主張每次糾正 agent 都改成程式庫裡的確定性檢查，先穩內圈再自動化外圈，附數字強度與 pstack skill
 created: 2026-11-16
 updated: 2026-11-19
 source: https://ai.engineer/code/2026/talks/lauren-tan

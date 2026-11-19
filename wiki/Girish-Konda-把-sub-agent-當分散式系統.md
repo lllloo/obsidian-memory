@@ -17,7 +17,7 @@ tags:
 
 > **一句話主張**：orchestrator 把工作分給多個 sub-agent，就是在蓋一個分散式系統（併發 worker、共享可變狀態、對外有副作用、結果合併）。分散式系統的老問題（部分失敗、逾時無法判讀、dirty read、無界 fan-out、重試造成重複寫入）全都會出現，只是介面被包成「傳入字串、回傳字串」而看不見。解法是把交接當網路呼叫，回傳**具名狀態**而非純文字，並由**程式碼**而非 prompt 強制檢查。
 
-原始資料：`raw/fetched/AI-Engineer-Konda-Sub-Agents-Are-a-Distributed-System.md`（官方閱讀頁＋完整機器逐字稿，YouTube `DxP5aW4VknQ`，約 23 分鐘）。
+原始資料：[[AI-Engineer-Konda-Sub-Agents-Are-a-Distributed-System]]（官方閱讀頁＋完整機器逐字稿，YouTube `DxP5aW4VknQ`，約 23 分鐘）。
 
 ## 講者與立場
 
