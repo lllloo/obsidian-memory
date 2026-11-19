@@ -2,7 +2,7 @@
 title: 平行 agent 產出的合併與 review
 description: 多個 coding agent 平行產出後的整合面：衝突率實證、切分與合併順序、LLM 解衝突與 best-of-N 的上限、人工 review 變薄
 created: 2026-09-16
-updated: 2026-10-28
+updated: 2026-11-19
 parent: "[[wiki/01.index]]"
 tags:
   - coding-agent
@@ -125,3 +125,7 @@ tags:
 - 適用邊界：[[Context-優先與多-agent-的適用邊界]]。第二節「互相依賴的任務依序做」是它在合併層的落地。
 - 互審方向性：[[Multica-與-agent-看板的用法與適用邊界]]。
 - 監督段：[[多-agent-的人類監督與介入]]。產出進到本頁之前、執行中途人怎麼盯與介入；該頁「批次事後審」的做法把壓力推向本頁處理的 review 瓶頸。
+
+## AI Engineer 2026 相關演講
+
+以下逐場深讀頁引用本頁作為脈絡或對照（2026-11-19 批次 ingest），跨場比較見 [[AI-Engineer-2026-演講精華-AI-工作流程]]：[[Patrick-Debois-多人多-agent-同時合進同一-main]]、[[Prasanna-Sankar-雲端-agent-的瓶頸一路移到開工]]、[[Joey-Wang-agent-量放大後壞掉的周邊系統]]、[[Ryan-Carson-一個-manager-session-帶-20-個-builder]]。

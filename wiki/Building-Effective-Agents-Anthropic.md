@@ -2,7 +2,7 @@
 title: Building Effective Agents（Anthropic）
 description: 整理 workflows 與 agents 的架構分界、五種編排模式、augmented LLM 基石，以及由簡入繁的實作原則
 created: 2026-07-14
-updated: 2026-10-13
+updated: 2026-11-19
 source: "https://www.anthropic.com/engineering/building-effective-agents"
 published: 2024-12-19
 parent: "[[wiki/01.index]]"
@@ -94,3 +94,7 @@ agent 通常就是**在 loop 中依環境回饋使用工具的 LLM**：從人的
 - 判準延伸：[[Context-優先與多-agent-的適用邊界]]——把本文「由簡入繁」原則落成可操作的決策清單，並補上「加複雜度（多 agent）實測會怎麼壞」的獨立證據（Cognition、MAST）。
 - evaluator-optimizer 落地：[[設計品質的可量化檢測]]——該頁把本文 **evaluator-optimizer** 的「生成→評估→回饋」迴路落到設計品質領域，用可執行、客觀的 evaluator（自動化檢測）撐起「報告→修正→重跑」閉環，是本文抽象模式在特定領域的具體落地案例。
 - 二分法定位引用：[[pi-workflow-編排-harness-與本-vault-分野]]——該頁以本文 workflows／agents 二分法與五種編排模式，把 pi-workflow 定位為路徑固定的 **workflow**（`foreach`＋`reduce` 屬 parallelization），對照 orchestrator-workers 的子任務動態委派。
+
+## AI Engineer 2026 相關演講
+
+以下逐場深讀頁引用本頁作為脈絡或對照（2026-11-19 批次 ingest），跨場比較見 [[AI-Engineer-2026-演講精華-AI-工作流程]]：[[Diogo-Almeida-助理不等於自動化]]、[[Rohan-Pandey-用貝氏最佳化找-serving-設定]]、[[Raymond-Weitekamp-遞迴決策模型與分類器當根節點]]、[[Meta-值班團隊-給每個輪替一個-AI-隊友]]。

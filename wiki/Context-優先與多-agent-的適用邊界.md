@@ -86,3 +86,7 @@ vault 外的獨立證據，界定「多 agent 何時反而更糟」：
 - 看板工具落地：[[Multica-與-agent-看板的用法與適用邊界]]——本頁判準套到 Multica 看板式多 agent 流程上（成員是互不共享 context 的 headless run、Squad Instructions 只到 leader），並補上本頁沒收的跨模型商互審方向性證據（Claude 審 Codex 有益、反向有害）。
 - 人的注意力側：[[多-agent-的人類監督與介入]]。本頁從 agent 失敗率看為什麼不要堆 agent，該頁用監督容量（fan-out ≈ 1+NT/IT、切換成本、保留餘裕）從人這一側補上同一個結論。
 - 指示內容落地：[[Claude-5-世代的指示精簡原則]]——本頁判斷「缺知識就補 context」，該頁延伸到 context 裡該留什麼、該刪什麼，並收錄 Anthropic 把 subagent 收回單一 agent 加 skill 的條件。
+
+## AI Engineer 2026 相關演講
+
+以下逐場深讀頁引用本頁作為脈絡或對照（2026-11-19 批次 ingest），跨場比較見 [[AI-Engineer-2026-演講精華-AI-工作流程]]：[[Walden-Yan-軟體工廠與給-agent-長期-job]]、[[Kundel-Guo-Codex-的新工作方式]]、[[Diogo-Almeida-助理不等於自動化]]、[[Girish-Konda-把-sub-agent-當分散式系統]]、[[Justin-Schroeder-把整個-harness-標準化]]、[[Stephen-Chin-與-Cassandra-Chin-PR-描述要附證據包]]、[[Prasanna-Sankar-雲端-agent-的瓶頸一路移到開工]]。

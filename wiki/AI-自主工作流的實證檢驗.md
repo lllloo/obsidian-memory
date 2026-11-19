@@ -2,7 +2,7 @@
 title: AI 自主工作流的實證檢驗
 description: spec-driven、長時自主 loop、驗證迴路、狀態持久化四類做法的證據盤點——vendor 敘事與獨立實證的落差，以及必須停止引用的空氣數字
 created: 2026-07-10
-updated: 2026-10-13
+updated: 2026-11-19
 parent: "[[wiki/01.index]]"
 tags:
   - ai-agent
@@ -164,3 +164,7 @@ agent 能以 50% 可靠度完成的任務長度，過去六年約**每 7 個月�
 - [[用測試約束-AI-產碼]] — 本頁 ImpossibleBench、Cursor 稽核、TDAD 三項證據的下游應用：該頁把「測試本身可被 agent 篡改」推進到工具層（mutation testing 驗測試可不可信、property-based testing 驗有沒有真 bug）與防繞過層，並就地把本頁 TDAD 的反直覺發現轉成操作結論——**價值在指明該驗證什麼，不在要求 agent 遵循 TDD 流程**。該頁另補上本頁沒有的一手正面證據（Anthropic 的 agentic PBT，984 份報告、排序後高分群 86% 有效、numpy 等 merged PR），是「加一個 agent 無法從內部滿足的判準」少數已被量化驗證的形態。
 - [[AI-產碼加速下的-review-瓶頸]] — 該頁 DORA 建議「投資測試自動化的 ROI 可能高於優化人工 review」能否成立，前提正是本頁記錄的 reward hacking 必須先解掉；該頁引用的 Cognition「獨立 context 的 code review agent 每 PR 抓 2 個 bug」亦出自本頁多 agent 一節。
 - [[LLM-as-judge-知識庫頁面評分]] — 補上本頁 LLM-as-judge self-preference 討論所欠的量化基礎：偏誤機制為 self-recognition 與 perplexity／熟悉度而非看到署名，故匿名化擋不住、跨模型家族才是有依據的緩解；同時記錄「rubric 缺失時 judge 自我一致但與人類脫鉤」這個對本頁「驗證迴路可被從內部滿足」的補強。
+
+## AI Engineer 2026 相關演講
+
+以下逐場深讀頁引用本頁作為脈絡或對照（2026-11-19 批次 ingest），跨場比較見 [[AI-Engineer-2026-演講精華-AI-工作流程]]：[[Walden-Yan-軟體工廠與給-agent-長期-job]]、[[Simon-Willison-2026-LLM-三個轉折點]]、[[Brandon-Thomas-用-agent-重做並開源桌面應用]]、[[Rajath-Kotyal-規格先驗再交給-agent]]、[[Ara-Khan-讓-agent-自動爬升-harness-與選題]]、[[Saloni-Gandhi-與-Ziwei-Guo-先驗證-judge-再讓-agent-自改]]。

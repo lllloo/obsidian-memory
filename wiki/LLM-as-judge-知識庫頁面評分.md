@@ -2,7 +2,7 @@
 title: LLM-as-judge 知識庫頁面評分
 description: LLM-as-judge 給 wiki 頁評分的方案與方法學約束：rubric 決定信度、bias 匿名化擋不住、本 vault 實測分辨力不足
 created: 2026-07-21
-updated: 2026-11-09
+updated: 2026-11-19
 parent: "[[wiki/01.index]]"
 tags:
   - evaluation
@@ -281,3 +281,7 @@ wikilinks 特徵仍只是密度（`# non-transcluded wikilinks (ns=0) / normaliz
 - [[LLM-Wiki-生態實作比較]] — 生態現況：各實作都沒在解「怎麼衡量寫得好不好」
 - [[多智能體研究系統-Anthropic]] — Anthropic 在生產系統中實際使用 LLM-as-judge 評測的做法
 - [[AI-自主整理知識庫的機制]] — nvk Librarian、obsidian-wiki 等以 LLM 自算分數挑整理對象的做法收在該頁；本頁的 self-preference bias 是那些分數的限制
+
+## AI Engineer 2026 相關演講
+
+以下逐場深讀頁引用本頁作為脈絡或對照（2026-11-19 批次 ingest），跨場比較見 [[AI-Engineer-2026-演講精華-AI-工作流程]]：[[Rohan-Pandey-用貝氏最佳化找-serving-設定]]、[[Stephen-Chin-與-Cassandra-Chin-PR-描述要附證據包]]、[[Saloni-Gandhi-與-Ziwei-Guo-先驗證-judge-再讓-agent-自改]]、[[Harshul-Jain-與-Parv-Khatri-自架-LLM-要會說不]]。

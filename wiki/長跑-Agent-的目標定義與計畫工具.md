@@ -2,7 +2,7 @@
 title: 長跑 Agent 的目標定義與計畫工具
 description: 讓自主迭代 agent 持續推進而不走偏的目標檔機制（分層、驗收判準、停止條件、防漂移措辭）與 SDD 工具生態的採用度實據
 created: 2026-07-30
-updated: 2026-10-28
+updated: 2026-11-19
 parent: "[[wiki/01.index]]"
 tags:
   - ai-agent
@@ -256,3 +256,7 @@ GitHub star 數，2026-07-30 以 `gh api`／`gh search` 直查核實（**star �
 - [[Agent-維護知識庫的已知失效模式]] — 本頁「對抗式查證會過度否決」與該頁「壓縮系統性丟限定詞」是同一族失效：都讓經過處理的知識比原始來源更不準確，且方向不隨機。
 - [[Agent-Harness-Engineering-框架綜述]] — 該頁記載業界主張該怎麼設計 harness；本頁的停止條件、完工 gate、進度落盤是那些主張在具體工具裡的落地形態。
 - [[ChatGPT-Dots]] — 本頁機制的產品化對照：dot 同樣是「給目標、設定自主規則、持續推進」，但官方未公開停止條件與驗收判準，本頁對走偏與 reward hacking 的預設警告同樣適用。
+
+## AI Engineer 2026 相關演講
+
+以下逐場深讀頁引用本頁作為脈絡或對照（2026-11-19 批次 ingest），跨場比較見 [[AI-Engineer-2026-演講精華-AI-工作流程]]：[[Walden-Yan-軟體工廠與給-agent-長期-job]]、[[Simon-Willison-2026-LLM-三個轉折點]]、[[Rajath-Kotyal-規格先驗再交給-agent]]、[[Ara-Khan-讓-agent-自動爬升-harness-與選題]]、[[Saloni-Gandhi-與-Ziwei-Guo-先驗證-judge-再讓-agent-自改]]。

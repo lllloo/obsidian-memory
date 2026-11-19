@@ -2,7 +2,7 @@
 title: Agent Harness Engineering 框架綜述
 description: 整合 Anthropic 工程論述與原始碼 taxonomy，梳理 agent 外圍基礎設施的範疇、方法、實作比較與演進方向
 created: 2026-07-10
-updated: 2026-11-16
+updated: 2026-11-19
 parent: "[[wiki/01.index]]"
 tags:
   - ai-agent
@@ -132,3 +132,7 @@ Cursor 文另記一條模型分工的觀察：該團隊認為 GPT-5.2 較適合�
 - [[Agent-工作流-Pattern-藍本庫]] — **同樣直接補救本頁「來源集中 Anthropic」的證據限制**，但走的是另一條路：引入 CSIRO Data61 經同儕審查的 18-pattern catalogue 作為與 Anthropic 詞彙體系**獨立**的論文級 pattern 來源。該頁另揭一個本頁未標的來源陷阱——LangGraph 的 pattern 頁自承照 Anthropic 那篇重建，不構成獨立印證。
 - [[pi-與-OpenCode-v2-比較]]——OpenCode 之外補 pi 這個極簡端點，兩套 harness 的能力與 token 開銷對照。
 - [[Lauren-Tan-把糾正寫進程式庫]] — 本頁「非 Anthropic 一手實作分享」表中 Lauren Tan 一列的展開：信任倒金字塔、禁 API／目錄邊界／禁註解等具體做法，以及把這套做成 skill 的 pstack。
+
+## AI Engineer 2026 相關演講
+
+以下逐場深讀頁引用本頁作為脈絡或對照（2026-11-19 批次 ingest），跨場比較見 [[AI-Engineer-2026-演講精華-AI-工作流程]]：[[Ara-Khan-讓-agent-自動爬升-harness-與選題]]、[[Justin-Schroeder-把整個-harness-標準化]]、[[Ayush-Bhardwaj-把-agent-繞路當成-CLI-的-bug-report]]、[[Joey-Wang-agent-量放大後壞掉的周邊系統]]、[[Galletta-與-Felisola-Caso-可信任財務分析-harness-五原則]]。

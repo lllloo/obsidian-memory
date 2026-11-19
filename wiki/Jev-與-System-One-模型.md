@@ -2,7 +2,7 @@
 title: Jev 與 System One 模型
 description: 只回型別化判斷、不生成文字的決策模型：三項核心宣稱的可信度落差、兩個接入硬限制，以及對上 fine-tuned encoder 的缺口
 created: 2026-09-22
-updated: 2026-10-29
+updated: 2026-11-19
 source: https://typesafe.ai/blog/introducing-system-one-models-and-jev
 parent: "[[wiki/01.index]]"
 tags:
@@ -173,3 +173,7 @@ TypeSafe 官方 jaggedness 文件（[docs.typesafe.ai/model-jaggedness/jev-1.13]
 ## 主要來源
 
 官方一手：[TypeSafe blog](https://typesafe.ai/blog/introducing-system-one-models-and-jev)、[docs: System One](https://docs.typesafe.ai/concepts/system-one)、[docs: models](https://docs.typesafe.ai/models)。平台與整合：[OpenRouter provider](https://openrouter.ai/provider/typesafe)、[LangChain 整合文件](https://docs.langchain.com/oss/python/integrations/providers/typesafe)、[Cloudflare AI models](https://developers.cloudflare.com/ai/models/typesafe/jev/)。第三方：[KDnuggets 誤讀校正](https://www.kdnuggets.com/what-everyone-is-getting-wrong-about-typesafe-ais-jev)、[ayautomate 獨立基準](https://www.ayautomate.com/blog/jev-vs-llm-benchmark)、[reticle.sh 限制實測](https://reticle.sh/blog/what-jev-cannot-do)、[VentureBeat prompt injection](https://venturebeat.com/security/companies-are-putting-jev-in-charge-of-ai-agent-decisions-and-prompt-injection-can-influence-the-verdict)、[The Register](https://www.theregister.com/ai-and-ml/2026/09/16/typesafe-ai-debuts-model-for-machines-that-plays-doom/5296711)。文獻：[arXiv 2602.06370](https://arxiv.org/abs/2602.06370)、[arXiv 2605.26128](https://arxiv.org/abs/2605.26128)。
+
+## AI Engineer 2026 相關演講
+
+以下逐場深讀頁引用本頁作為脈絡或對照（2026-11-19 批次 ingest），跨場比較見 [[AI-Engineer-2026-演講精華-AI-工作流程]]：[[Diogo-Almeida-助理不等於自動化]]、[[Rohan-Pandey-用貝氏最佳化找-serving-設定]]、[[Kush-Agrawal-用-agent-佇列補測試]]、[[Raymond-Weitekamp-遞迴決策模型與分類器當根節點]]。

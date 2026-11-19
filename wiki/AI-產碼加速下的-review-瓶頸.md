@@ -124,3 +124,7 @@ DORA 的質化分析給了一個比「速度變快」更有解釋力的框架：
 - [[平行-agent-產出的合併與-review]] — 多 agent 平行產出時的版本：衝突率、合併順序、best-of-N 挑選上限，以及一份企業研究觀測到的具體機制——PR 量增 3.1 倍、reviewer 只增 1.5 倍，缺口由 AI review 吸收、人工 review 退化成無留言放行。
 - [[設計品質的可量化檢測]] — 同構的方法論在設計領域的版本：把「好不好」拆成可機械檢測的訊號，並承認工具只能推到及格線、及格線之後是品味。本頁的 A 路線（LLM review）面對的是同一條界線。
 - [[Matt-Pocock-的-PR-瓶頸解法]] — 若本頁的自我檢驗確認瓶頸真在 review，該頁提供一套單一實踐者的流程：自動檢查、AI review、人工只守難以回復的改動；該頁沒有效果量測。
+
+## AI Engineer 2026 相關演講
+
+以下逐場深讀頁引用本頁作為脈絡或對照（2026-11-19 批次 ingest），跨場比較見 [[AI-Engineer-2026-演講精華-AI-工作流程]]：[[Walden-Yan-軟體工廠與給-agent-長期-job]]、[[Simon-Willison-2026-LLM-三個轉折點]]、[[Brandon-Thomas-用-agent-重做並開源桌面應用]]、[[Diogo-Almeida-助理不等於自動化]]、[[Kush-Agrawal-用-agent-佇列補測試]]、[[Dmitry-Buykin-每週小幅修剪取代大重寫]]、[[Stephen-Chin-與-Cassandra-Chin-PR-描述要附證據包]]、[[Brian-Douglas-把糾正存成團隊-review-資料]]、[[Meta-值班團隊-給每個輪替一個-AI-隊友]]、[[Prasanna-Sankar-雲端-agent-的瓶頸一路移到開工]]、[[Chetas-Joshi-Robinhood-資料-PR-混合審查]]。

@@ -92,3 +92,7 @@ tags:
 - 載入機制：[[Coding-agent-指示檔與規則載入機制對照]]——該頁說明指示檔怎麼載入，本頁說明裡面該寫什麼。
 - 放手運行：[[Claude-Code-放手運行的安全與驗證]]——本頁精簡給模型的指示，該頁說明不能只靠指示的安全與驗證要交給哪一層。
 - 規範分流：[[Matt-Pocock-的-PR-瓶頸解法]]——該頁主張把寫法規範移到 review 階段，是精簡常駐指示的一種較激進做法。
+
+## AI Engineer 2026 相關演講
+
+以下逐場深讀頁引用本頁作為脈絡或對照（2026-11-19 批次 ingest），跨場比較見 [[AI-Engineer-2026-演講精華-AI-工作流程]]：[[Kundel-Guo-Codex-的新工作方式]]、[[Nikolay-Petrov-量出-skill-裡模型已知的內容]]、[[Dmitry-Buykin-每週小幅修剪取代大重寫]]、[[Ayush-Bhardwaj-把-agent-繞路當成-CLI-的-bug-report]]。

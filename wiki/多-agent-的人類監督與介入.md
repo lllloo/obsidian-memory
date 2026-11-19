@@ -2,7 +2,7 @@
 title: 多 agent 的人類監督與介入
 description: 一人同時盯多個 coding agent 的上限、何時打斷、升級與核准機制、卡住偵測訊號與審核點位置，附強度標註
 created: 2026-10-28
-updated: 2026-10-28
+updated: 2026-11-19
 parent: "[[wiki/01.index]]"
 tags:
   - ai-agent
@@ -139,3 +139,7 @@ tags:
 - 目標與驗收：[[長跑-Agent-的目標定義與計畫工具]]。規格與完成條件是提高 NT 的主要手段。
 - 同源失效機制：[[Agent-維護知識庫的已知失效模式]]。automation bias 讓例行核准退化成橡皮圖章。
 - 工具落地：[[Orca]]、[[Herdr-使用方法]]。
+
+## AI Engineer 2026 相關演講
+
+以下逐場深讀頁引用本頁作為脈絡或對照（2026-11-19 批次 ingest），跨場比較見 [[AI-Engineer-2026-演講精華-AI-工作流程]]：[[Patrick-Debois-多人多-agent-同時合進同一-main]]、[[Prasanna-Sankar-雲端-agent-的瓶頸一路移到開工]]、[[Joey-Wang-agent-量放大後壞掉的周邊系統]]、[[Ryan-Carson-一個-manager-session-帶-20-個-builder]]。
