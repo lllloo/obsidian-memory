@@ -153,6 +153,7 @@ Code review 逐漸縮成看驗證產物：影片、截圖、圖、形式化驗�
 - [[不讀碼時該看哪些圖]] 提到「把架構邊界寫成 CI 上會 fail 的依賴規則」，`electron-main`／`electron-renderer` 正是現成的實例。
 - [[Agent-Harness-Engineering-框架綜述]] 的非 Anthropic 一手實作分享表收錄了 Mitchell Hashimoto「agent 犯一次錯就工程化一個解法」，和 Tan 的通則同形；Tan 多給了**優先序**：能改架構就不寫 lint，能寫 lint 就不寫散文。
 - [[Matt-Pocock-的-PR-瓶頸解法]] 用 `retro` 把重複的 review 意見轉成檢查或規範，是同一原則在 PR 流程上的做法；同樣沒有外部量測。
+- [[AI-Engineer-2026-演講精華-AI-工作流程]] 綜合同屆其他 28 場，第 6 節的 Douglas、Ara Khan、Robinhood 也主張把糾正累積成 skill、任務或 review 規則，是本頁通則的多方佐證（皆自報）。
 
 ## 張力與限制
 
