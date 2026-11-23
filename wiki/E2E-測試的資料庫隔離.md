@@ -2,7 +2,7 @@
 title: E2E 測試的資料庫隔離
 description: 端到端測試為什麼必須用獨立資料庫、獨立到什麼程度、重置點該放哪，以及平行執行與誤刪正式資料的防線
 created: 2026-08-28
-updated: 2026-08-28
+updated: 2026-11-23
 parent: "[[wiki/01.index]]"
 tags:
   - testing
@@ -56,6 +56,8 @@ E2E 昂貴，逐條 refresh database 會慢到沒人願意跑，於是就沒人�
 
 代價是測試之間有殘留資料，所以斷言不能寫成「列表共有 3 筆」這種依賴全域狀態的形式——要斷言的是**自己剛造的那筆**存不存在、值對不對。這跟 [[專案測試流程]] 的「斷言要具體」是同一條紀律在 E2E 的形態：弱斷言在這裡不只是容忍錯誤，還會直接變成隨殘留量增加而崩掉的 flaky。
 
+這個節奏與 Playwright 官方的隔離原則相容：官方要求 "Each test should be completely isolated from another test and should run independently with its own local storage, session storage, data, cookies etc."（[best practices](https://playwright.dev/docs/best-practices)，**high**），談資料時只要求控制資料，沒規定每條測試都重置 database。「每條自己造、只斷言自己那筆」就是 E2E 能做到的隔離。
+
 **fixture 要固定、可重現**。用寫死的 seeder，不要用隨機 factory 灌初始資料——隨機資料讓失敗無法重現，而 E2E 的失敗本來就最難查。
 
 ## 防止跑到正式資料庫
@@ -65,6 +67,17 @@ E2E 的清理動作（重建 schema、清表）具破壞性，一旦環境設定
 做法是在執行破壞性動作前加一道守衛：檢查目前連線的 database 名稱是否符合約定（例如必須含 `_e2e` 字樣），不符合就直接中止。這條檢查很便宜，而且它擋的是那種只會發生一次、但發生就無法補救的錯誤。
 
 同一個理由，E2E 用的環境設定檔要進版控忽略清單、或至少與正式設定明確分檔，不讓「複製一份改一改」變成預設操作。
+
+## 擋住刪除與付款請求的漏洞（2026-11-23）
+
+不想讓 E2E 觸發刪除或真實付款時，常見做法是用 Playwright 的 `page.route` 攔截：`route.abort()` 讓請求失敗，`route.fulfill()` 回假回應且不經網路（[network 文件](https://playwright.dev/docs/network)，**high**）。但它有兩個攔不到的地方：
+
+- **只攔瀏覽器發出的請求。** 若是 Laravel 後端去呼叫金流 API，瀏覽器端看不到那個請求，要在後端用 `Http::fake` 或金流商 sandbox 金鑰。（推論：由攔截的作用範圍推出，非該頁原文。）
+- **Service Worker 會接管請求。** 前台若註冊了 Service Worker（例如 MSW），請求會 "invisible to browserContext.route() and page.route()"，官方建議把 `serviceWorkers` 設為 `'block'`（同上，**high**）。
+
+## 工具選擇補記
+
+Laravel 官方 Dusk 文件現在寫 "For new projects, we recommend using Pest for browser testing"（[Dusk 文件](https://laravel.com/docs/dusk)，**high**）。Pest 4 的 [browser testing](https://pestphp.com/docs/browser-testing) 底層是 Playwright，可與 Unit／Feature 測試放同一套件。它能否沿用 `RefreshDatabase`、平行執行時 database 怎麼分，**未查**；落地前要先確認，因為本頁開頭「交易包不住另一個進程」的前提可能因它的執行方式而不同。
 
 ## 關聯
 
