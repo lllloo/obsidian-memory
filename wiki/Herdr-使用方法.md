@@ -2,7 +2,7 @@
 title: Herdr 使用方法
 description: herdr TUI 的層級、持久化、狀態偵測、CLI 委派、worktree 與 SSH 遠端用法，另記 Herdr app／herdr-core 與 Windows 接 WSL
 created: 2026-09-15
-updated: 2026-11-11
+updated: 2026-11-24
 source: https://herdr.dev/docs/
 parent: "[[wiki/01.index]]"
 tags:
@@ -151,6 +151,8 @@ distro 名用 `wsl -l -q` 查。WSL 裡沒有 `hc` 時，在互動終端下會�
 - app 預設每天送匿名使用資料，TUI 不會；在 `settings.json` 關掉，或用 `DO_NOT_TRACK=1`／`HERDR_TELEMETRY=0`。
 
 **TUI 會不會併進 core：官方未決**（2026-11-11 查）。主要維護者在 [herdr-app #63](https://github.com/herdrdev/herdr-app/issues/63) 回覆（2026-10-29）：兩邊刻意分開、目前不能共用 agent、app 不會接 TUI 的 server，「whether the tui moves onto herdr-core later is still open」，決定後會在該 issue 更新。之後同類請求持續出現且都沒有維護者回應：[herdr-core #115](https://github.com/herdrdev/herdr-core/issues/115)（下游整合開發者問該對哪套 API 開發）、[herdr #5944](https://github.com/herdrdev/herdr/issues/5944)（手機端不知道讀哪個 runtime）。#63 裡有人提議做 `hc import` 之類的單向匯入，維護者未回應。
+
+2026-11-24 再查：仍無官方表態。#63 是 2026-10-29 就以 completed 關閉、之後沒有維護者更新；新開的 [herdr-core #369](https://github.com/herdrdev/herdr-core/issues/369)（同機 TUI 與 app 共用一套 runtime）與累積十多則 +1 的 [herdr-core #25](https://github.com/herdrdev/herdr-core/issues/25)（要一個 core 用的終端 client，SSH 進 headless Linux 用）都沒有維護者回覆。TUI 自 2026-10-14 後沒有新發佈，repo 只零星合併修正（GitHub commits 與 CHANGELOG 一手；只看得出開發放緩，不代表官方說要停）。社群的暫代做法：非官方 [hc-tui](https://github.com/followcat/hc-tui) 直接接官方 `hc`，提供側欄、tab／split 與 `--remote` SSH，並讀 app 的 space／tab 資料（作者自述，那份資料的格式並非公開契約，未實測）；另有人在 TUI pane 裡跑 `hc attach` 做單向鏡像（#25 留言）。
 
 使用者反應（[HN 發表串](https://news.ycombinator.com/item?id=50298436) 與上述 issue，個人意見、非實證）：阻礙遷移的主要是要在新 core 重建所有 workspace（含 worktree），以及失去 TUI 經 SSH 從手機操作的能力；app 目前只有 GUI，偏好終端的人繼續用 TUI。HN 上「TUI 不太會再開發」是使用者推測，**勿引用為官方立場**。
 
