@@ -2,7 +2,7 @@
 title: Nikolay Petrov 量出 skill 裡模型已知的內容
 description: 把 SKILL.md 拆成原子問答、有無 skill 對照量出模型已知內容；附 Dokimi 回查、數字強度與照做步驟
 created: 2026-11-19
-updated: 2026-11-19
+updated: 2026-11-25
 source: https://ai.engineer/code/2026/talks/online-skills-knowledge
 published: 2026-11-11
 parent: "[[wiki/01.index]]"
@@ -196,7 +196,7 @@ Skill 只是文字，要靠 eval 證明它改善了工作。他的例子：
 
 ## 勿引用
 
-- **「SKILL.md 有 70% 是模型已知的」當通則**：70% 是 Dokimi 研究中 `claude-opus-5`、寬鬆評分、Intel 自家 33 個 skill 的結果。三個熱門 repo 在寬鬆評分下是 45–71%，嚴格評分只有約 18–22%。引用時要附模型、評分方式與 skill 集合。
+- **「SKILL.md 有 70% 是模型已知的」當通則**：70% 是 Dokimi 研究中 `claude-opus-5`、寬鬆評分、Intel 自家 33 個 skill 的結果。三個熱門 repo 在寬鬆評分下是 45–71%；嚴格評分只查到 mattpocock 的 Haiku 18%，Intel 自家 skill 集上 `claude-opus-5` 為 22%。引用時要附模型、評分方式與 skill 集合。
 - **「Opus 5.5 已知 70% → 22%」**：投影片標 Opus 5.5，但它引用的 Dokimi 文件寫的是 `claude-opus-5`，沒找到 Opus 5.5 的同組數字。要引用請寫 `claude-opus-5`（0.700 → 0.216），並註明來源是 Dokimi 文件。
 - **「已知內容可以刪」**：Dokimi 四種結果表的「delete it」字樣與 README、演講本身都矛盾，以「刪前要跑 eval」為準。
 

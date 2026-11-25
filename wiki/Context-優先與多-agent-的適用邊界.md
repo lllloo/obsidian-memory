@@ -2,7 +2,7 @@
 title: Context 優先與多 agent 的適用邊界
 description: 以 Anthropic、Cognition 與 MAST 證據界定多 agent 的效益與代價，建立 context 優先的實務決策判準
 created: 2026-07-14
-updated: 2026-11-19
+updated: 2026-11-25
 parent: "[[wiki/01.index]]"
 tags:
   - ai-agent
@@ -76,7 +76,7 @@ vault 外的獨立證據，界定「多 agent 何時反而更糟」：
 
 ## 交叉引用
 
-- 挑選清單引用：[[Agent-工作流-Pattern-藍本庫]]——該頁「多 agent 失效邊界」一條（誤配 peer input：過度採信不健全回饋或反過來忽略他 agent 輸出）是本頁 MAST 實證的濃縮版；要完整失敗分類與適用域判準讀本頁，要設計時的快速挑選讀該頁。
+- 挑選清單引用：[[Agent-工作流-Pattern-藍本庫]]——該頁「多 agent 失效邊界」一條（誤配 peer input：過度採信不健全回饋或反過來忽略他 agent 輸出）出自 arXiv 2404.11584 轉述 AgentVerse（原始出處可追 MAST FM-2.5／2.6），本頁的 MAST 實證提供更完整的失敗分類；要完整失敗分類與適用域判準讀本頁，要設計時的快速挑選讀該頁。
 - 模式原型：[[Building-Effective-Agents-Anthropic]]——「由簡入繁、只在複雜度能實證改善時才加」是本頁判準的上游原則；本頁補上「加了複雜度（多 agent）實測會怎麼壞」的獨立證據。
 - 方法對照：[[多智能體研究系統-Anthropic]]——該頁是「多 agent 划算」的成功案例，本頁界定它成立的**適用域邊界**（讀重、可平行）。
 - 證據平衡：[[Agent-Harness-Engineering-框架綜述]]——該頁自陳「來源集中 Anthropic」，本頁引入 Cognition／MAST 兩個非 Anthropic 來源，是對那條證據限制的直接補救。

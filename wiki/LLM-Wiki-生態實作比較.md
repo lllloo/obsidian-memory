@@ -2,7 +2,7 @@
 title: LLM Wiki 生態實作比較
 description: nvk、Hermes、Astro-Han 等 Karpathy LLM Wiki 實作與 Letta MemFS 等相鄰記憶系統的收斂設計、分歧點與實證證據對照
 created: 2026-07-10
-updated: 2026-11-09
+updated: 2026-11-25
 parent: "[[wiki/01.index]]"
 tags:
   - wiki
@@ -30,7 +30,7 @@ tags:
 | [Programming-With-Maury/Karpathy-LLM-Wiki](https://github.com/Programming-With-Maury/Karpathy-LLM-Wiki)（2026-08-11 收錄） | AGENTS.md schema | raw＋wiki，**無產出層**——查詢產物直接進 `wiki/domains/<domain>/queries/` | wiki 內部按 **domain 作用域**切分（`global/` 只收跨兩域以上重用頁，與 wiki-garden 同構）；另設 `archive/`（已合併淘汰頁）與 `staging/`（待審草稿） |
 | [Ar9av/obsidian-wiki](https://github.com/Ar9av/obsidian-wiki)（2026-11-09 收錄） | 多 skill 框架（約 40 個 skill）＋CLI，Obsidian 相容 | raw＋wiki＋index／log／hot，另有 `_raw/` 暫存與 `_archives/` | 自主整理工具最齊的實作：兩段式去重 `wiki-dedup`、共現找綜合頁的 `wiki-synthesize`（強制寫「Strongest Objection」）、只報入鏈多的過時核心頁的 `wiki-status`、有界 3 輪的 `wiki-research`；去重與 lint 預設只報告，綜合頁與交叉連結則直接寫入。細節與適用評估見 [[AI-自主整理知識庫的機制]] |
 | [Synto](https://github.com/kytmanov/synto)（2026-11-09 收錄） | CLI 編譯器（單人維護） | 筆記→概念文章編譯，概念身分存於 gitignore 的 `state.db` | 重複概念「偵測自動、合併由人拍板」；人工拆掉的 alias 留 denial tombstone 防下輪 ingest 接回；旁路狀態導致 `undo` 撤回不了概念合併，是純 git 架構的反面教材 |
-| 本 vault（obsidian-memory） | Obsidian vault＋repo-local skills | 三層＋Ingest/Query/Lint | 全自主治理（2026-07-20 起 push 亦自主、事後 diff review 把關）、lint 自主修補（真需使用者的決策才進 backlog）、cards/topics 人工策展公開層 |
+| 本 vault（obsidian-memory） | Obsidian vault＋repo-local skills | 三層＋Ingest/Query/Lint | 全自主治理（2026-07-20 起 push 亦自主、事後 diff review 把關）、lint 自主修補（真需使用者的決策才進 backlog）、cards/topics 人工策展公開層（已被取代（2026-10-13）：cards/topics 已移出，私人筆記遷至 Notion、公開發佈由外部 repo 管理） |
 
 **Wuphf 的 `/lint` 不值得抄**（2026-07-21 查證）：它抓的四類（矛盾、孤立、stale claim、死連結）與本 vault `vault-lint` 的覆蓋範圍**幾乎完全重合**，但矛盾偵測後是**由使用者手動標哪一邊勝出**——比本 vault 2026-07-17 拍板的「agent 自主修補」更保守，在「lint 修補權」這個分歧點上是退回而非前進。[第三方 review](https://zby.github.io/commonplace/agent-memory-systems/reviews/wuphf.html) 提出的批評對本 vault 更有價值——**無法證明 agent 真的搜尋過、真的用了記憶、真的因此改變行為**，且找不到 with/without ablation；此盲點本 vault 同樣暴露，見 [[Agent-維護知識庫的已知失效模式]]。
 

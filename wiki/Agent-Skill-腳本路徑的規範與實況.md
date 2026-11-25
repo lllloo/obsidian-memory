@@ -2,7 +2,7 @@
 title: Agent Skill 腳本路徑的規範與實況
 description: SKILL.md 呼叫 bundled 腳本該怎麼寫路徑：規範明訂裸相對路徑、主流集合一致照做，但規範內部對誰負責解析自相矛盾，實測會找不到檔
 created: 2026-08-13
-updated: 2026-10-29
+updated: 2026-11-25
 parent: "[[wiki/01.index]]"
 tags:
   - claude-code
@@ -43,7 +43,7 @@ Agent Skills 規範（agentskills.io）`skill-creation/using-scripts` L98 逐字
 | (e) 佔位符 `<skill-root>/scripts/…` | ≥4，全在跨工具集合 | `MengTo/Skills`（Codex-first） |
 | (f) 腳本自我定位（`__file__`／`dirname "$0"`） | 0 確認樣本 | — |
 
-`obra/superpowers` 該列為本機實查（v6.3.0）：28 個 `SKILL.md`（2026-10-13 複核 clone 計得 14，原計數方式待確認）、3 個 `scripts/` 目錄，`CLAUDE_SKILL_DIR` 與 `CLAUDE_PLUGIN_ROOT` 命中數皆 0——**它是 plugin、用得到 `${CLAUDE_PLUGIN_ROOT}` 卻沒用**。**已被取代（2026-10-13）**：上句「命中數皆 0／用得到卻沒用」僅對 `SKILL.md` 正文成立。同一 v6.3.0 tag 全 repo 實查 `CLAUDE_PLUGIN_ROOT` 命中 [`hooks/hooks.json`](https://raw.githubusercontent.com/obra/superpowers/v6.3.0/hooks/hooks.json)（SessionStart hook 指令 `"${CLAUDE_PLUGIN_ROOT}/hooks/run-hook.cmd" session-start`）、`hooks/session-start`（harness 偵測）、`tests/`、`docs/` 等多處；它是 plugin、在 hook 層確實用 `${CLAUDE_PLUGIN_ROOT}` 定位腳本，只是 skill 正文的腳本路徑不用。且 `RELEASE-NOTES.md` v5.0.1（2026-03-10）明載 brainstorming skill 原本用 `${CLAUDE_PLUGIN_ROOT}/lib/brainstorm-server/`，為跨平台可攜性刻意改成相對 `scripts/` 路徑——「不用」是有意選擇，非遺漏（證據強度：v6.3.0 tag 原檔 WebFetch 回讀＋本機 clone 同 tag grep＋`RELEASE-NOTES.md` 一手，未實測 hook 執行）。`SKILL.md` 內唯一腳本呼叫是 `writing-skills/SKILL.md:320` 的 `./render-graphs.js ../some-skill`，配散文「Use `render-graphs.js` in this directory」，且那是給人手動跑的工具、不在 agent 流程上。
+`obra/superpowers` 該列為本機實查（v6.3.0）：~~28~~ 個 `SKILL.md`（已被取代（2026-11-25）：v6.3.0 tag 經 GitHub git tree API 實計 14 個）、3 個 `scripts/` 目錄，`CLAUDE_SKILL_DIR` 與 `CLAUDE_PLUGIN_ROOT` 命中數皆 0——**它是 plugin、用得到 `${CLAUDE_PLUGIN_ROOT}` 卻沒用**。**已被取代（2026-10-13）**：上句「命中數皆 0／用得到卻沒用」僅對 `SKILL.md` 正文成立。同一 v6.3.0 tag 全 repo 實查 `CLAUDE_PLUGIN_ROOT` 命中 [`hooks/hooks.json`](https://raw.githubusercontent.com/obra/superpowers/v6.3.0/hooks/hooks.json)（SessionStart hook 指令 `"${CLAUDE_PLUGIN_ROOT}/hooks/run-hook.cmd" session-start`）、`hooks/session-start`（harness 偵測）、`tests/`、`docs/` 等多處；它是 plugin、在 hook 層確實用 `${CLAUDE_PLUGIN_ROOT}` 定位腳本，只是 skill 正文的腳本路徑不用。且 `RELEASE-NOTES.md` v5.0.1（2026-03-10）明載 brainstorming skill 原本用 `${CLAUDE_PLUGIN_ROOT}/lib/brainstorm-server/`，為跨平台可攜性刻意改成相對 `scripts/` 路徑——「不用」是有意選擇，非遺漏（證據強度：v6.3.0 tag 原檔 WebFetch 回讀＋本機 clone 同 tag grep＋`RELEASE-NOTES.md` 一手，未實測 hook 執行）。`SKILL.md` 內唯一腳本呼叫是 `writing-skills/SKILL.md:320` 的 `./render-graphs.js ../some-skill`，配散文「Use `render-graphs.js` in this directory」，且那是給人手動跑的工具、不在 agent 流程上。
 
 ### 主流沒被燙到的真正原因
 
@@ -51,7 +51,7 @@ Agent Skills 規範（agentskills.io）`skill-creation/using-scripts` L98 逐字
 
 - `wshobson/agents`：180 個 `SKILL.md`，只有 4 個 `scripts/` 目錄；放寬到 `assets/` 下被呼叫的可執行檔也才 6/180（3.3%）
 - `MengTo/Skills`：127 個 `SKILL.md`、10 個 skill 級 `scripts/`
-- `obra/superpowers`：3/28
+- `obra/superpowers`：3/14（原記 3/28，分母已被取代（2026-11-25），見上）
 - `vercel-labs` 的 `find-skills`（skills.sh 顯示約 2.9M installs，人氣最高的單一 skill）：目錄下**只有 `SKILL.md`**，六條可執行指令全是外部 CLI（`npx skills find/add/update/init`）——把邏輯發佈成套件，路徑問題不存在
 
 推論：**把邏輯包進 bundled 腳本、`SKILL.md` 只留呼叫行**這種設計（本 vault 的 skill 全走這條）落在主流最少踩、也最容易壞的那格，「主流用 (a)」對這種設計的參考價值低於表面。

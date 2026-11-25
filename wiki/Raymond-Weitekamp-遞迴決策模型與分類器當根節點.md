@@ -2,7 +2,7 @@
 title: Raymond Weitekamp 遞迴決策模型與分類器當根節點
 description: Weitekamp 主張讓只會挑選的決策模型當 agent 根節點、LLM 降為選項之一；整理 RDM 三規則、map、arbiter 與回查落差
 created: 2026-11-19
-updated: 2026-11-19
+updated: 2026-11-25
 source: https://ai.engineer/talks/hFNbPmzzcEs-your-agent-doesnt-need-llm-every-decision
 published: 2026-11-10
 parent: "[[wiki/01.index]]"
@@ -177,7 +177,7 @@ tags:
 
 - **翻轉 routing pattern 的位置**：[[Building-Effective-Agents-Anthropic]] 的 routing 是 LLM workflow 裡的一個分類步驟；Weitekamp 把它推到極端，讓分類器當根、LLM 只是被路由到的選項之一。兩者不衝突，但他的版本只在「選項能事先列舉」時成立，這正是他自己指出的弱點。
 - **與 Jev 頁互補也互相牽制**：[[Jev-與-System-One-模型]] 列出的「該不該換掉既有 fine-tuned encoder 沒人測過」缺口，演講沒有回答；反過來，演講補上 Jev 頁沒有的東西——多次決策的組合方式（遞迴、map、arbiter）。Jev 頁的 prompt injection 證據直接限制了演講中「拿 Jev 判斷 tool call 能否執行」這個用法。
-- **複雜度 gate**：[[Agent-工作流-Pattern-藍本庫]] 的選用 gate 要求先用簡單解。Galton board、分層搜尋、影像裁切三個例子他自己都承認一次呼叫或好的 vision model 就能解，遞迴是為了展示，實際採用前應先過這個 gate。
+- **複雜度 gate**：[[Agent-工作流-Pattern-藍本庫]] 的選用 gate 要求先用簡單解。Galton board 與影像裁切兩例他自己承認一次呼叫或好的 vision model 就能解（分層搜尋則以一次塞 12,000 類會撐爆 context 為遞迴理由），遞迴是為了展示，實際採用前應先過這個 gate。
 - 與 [[AI-Engineer-2026-演講精華-AI-工作流程]] 的「能確定性處理就不用 LLM」那條相呼應：該頁把本場濃縮成一句，本頁補完整論證與回查。
 
 ## 主要來源

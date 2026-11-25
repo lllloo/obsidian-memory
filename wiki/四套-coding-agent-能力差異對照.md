@@ -2,7 +2,7 @@
 title: 四套 coding agent 能力差異對照
 description: Claude Code、Codex、OpenCode v2、pi 在指示檔、skill、hook、MCP、subagent、沙箱、SDK 等十五個維度的差異對照
 created: 2026-09-22
-updated: 2026-10-29
+updated: 2026-11-25
 parent: "[[wiki/01.index]]"
 tags:
   - coding-agent
@@ -18,7 +18,7 @@ tags:
 
 | 維度 | Claude Code | Codex CLI | OpenCode v2 | pi |
 |---|---|---|---|---|
-| 指示檔 | `CLAUDE.md`／`AGENTS.md` 階層、`@` 匯入、`.claude/rules/*.md` 的 `paths` glob | `AGENTS.md` 每目錄一檔、root→cwd 串接、32 KiB 靜默截斷、無 `@`、無 glob | 只認 `AGENTS.md`（v2 不再 fallback `CLAUDE.md`）；子目錄檔在 agent 讀到該區時**延遲載入**；`instructions` 陣列 v2 接受但**不解析** | `AGENTS.md`／`CLAUDE.md` cwd 往上串接；`SYSTEM.md` 整個取代 system prompt、`APPEND_SYSTEM.md` 附加 |
+| 指示檔 | `CLAUDE.md`／`AGENTS.md` 階層、`@` 匯入、`.claude/rules/*.md` 的 `paths` glob | `AGENTS.md` 每目錄一檔、root→cwd 串接、32 KiB 靜默截斷、無 `@`、無 glob | 只認 `AGENTS.md`（v2 不再 fallback `CLAUDE.md`）；子目錄檔在 agent 讀到該區時**延遲載入**；`instructions` 陣列 v2 接受但**不解析**（已被取代（2026-10-29）：現行 v2 文件寫明會載入，見 [[Coding-agent-指示檔與規則載入機制對照]]） | `AGENTS.md`／`CLAUDE.md` cwd 往上串接；`SYSTEM.md` 整個取代 system prompt、`APPEND_SYSTEM.md` 附加 |
 | Skills | `SKILL.md`，personal／project／plugin 三層，`allowed-tools` 預核，`${CLAUDE_SKILL_DIR}` | `SKILL.md`，`.agents/skills` 每層＋`~/.agents/skills`＋`/etc/codex/skills`，自動偵測變更，`$skill` 顯式呼叫 | `SKILL.md` 六個來源（含 `.claude/skills`、`.agents/skills`），另可指 HTTP catalog；`permission.skill` 可 allow/ask/deny | `SKILL.md`（agentskills.io），`settings.json` 可指到 `~/.claude/skills`、`~/.codex/skills` 借用；`/reload` 熱重載 |
 | Hooks | PreToolUse／PostToolUse／UserPromptSubmit／Stop／SubagentStop／PreCompact／SessionStart／SessionEnd／Notification／PermissionRequest 等；`settings.json`；PreToolUse 可阻擋 | 事件名與 Claude Code 幾乎同名（SessionStart／UserPromptSubmit／PreToolUse／PostToolUse／PreCompact／PostCompact／SubagentStart／SubagentStop／Stop／Interrupt 等）；`hooks.json`；handler 可為 command 或 mcp_tool；非受管 hook 須先 `/hooks` 信任；相容 `CLAUDE_PLUGIN_ROOT` 環境變數 | plugin 的 `ctx.*.hook()`：session（prompt／context／compaction／generate）、permission evaluate、shell create.before、tool execute.before/after；事件走 `ctx.event.subscribe()`；**v1 plugin 在 v2 不能跑** | extension 40 個事件，`tool_call` 可擋、`tool_result` 可改、`context` 可改送模型內容、可改 TUI 任何區塊；jiti 直接載 `.ts` |
 | MCP | stdio／HTTP／SSE（棄用）／WebSocket，OAuth，local／project／user 三 scope | stdio／Streamable HTTP，OAuth 含 DCR，`codex mcp add`，每工具 `approval_mode` | `mcp.servers`，stdio／Streamable HTTP，remote 預設開 OAuth（PKCE、DCR） | ~~**無內建**，官方立場「CLI＋README 取代 MCP」，要用裝社群 bridge package~~——已被取代（2026-10-05）：v0.99.0 起 MCP 為 built-in extension，stdio／streamable HTTP＋OAuth，`mcp.json`（全域或信任後的專案層）或 `pi.registerMcpServer()`，`pi mcp add／login`；搭配 codemode（模型寫 JS 在 QuickJS 沙箱平行呼叫工具）與 `tool_search` 延遲宣告；可在 `pi config` 以 `-builtin:mcp` 關閉（[v0.99.0 release](https://github.com/earendil-works/pi/releases/tag/v0.99.0)） |
@@ -38,8 +38,8 @@ tags:
 
 - **Codex 補齊擴充面的速度**：hooks 事件名、`CLAUDE_PLUGIN_ROOT` 相容、`.claude/skills` 路徑相容（OpenCode、pi 也讀），三家都在往 Claude Code 的目錄慣例靠攏。Claude Code 專屬且三家都沒有的只剩 `.claude/rules/` 的 `paths` glob 與 `@` 匯入，細節見 [[Coding-agent-指示檔與規則載入機制對照]]。
 - **Codex 的 `rules` 是另一個東西**：`~/.codex/rules/*.rules` 是 Starlark 寫的 exec policy（哪些指令可在沙箱外跑），與 Claude Code 的規則檔同名不同物，查文件時別混。
-- **自動審核是 Codex 獨有**：Guardian／auto_review 把越界 approval 交給另一個 Codex agent 依政策審，其他三家都是人審或不審。
-- **OpenCode v2 的暫時性退化**：不跑 LSP、無診斷；不支援 sharing；`instructions` 不解析；v1 plugin 全數失效。挑 OpenCode 時要分清看的是 v1 還 v2 文件。
+- **自動審核的做法不同**：Codex 的 Guardian／auto_review 把越界 approval 交給另一個 Codex agent 依政策審；Claude Code 的 auto mode 改用分類器自動判斷放行與否（見 [[Claude-Code-放手運行的安全與驗證]]）；OpenCode、pi 是人審或不審。
+- **OpenCode v2 的暫時性退化**：不跑 LSP、無診斷；不支援 sharing；`instructions` 不解析（已被取代（2026-10-29）：現行 v2 會載入，見 [[Coding-agent-指示檔與規則載入機制對照]]）；v1 plugin 全數失效。挑 OpenCode 時要分清看的是 v1 還 v2 文件。
 - **pi 的 Claude 訂閱登入是灰色地帶**：文件說可登入但走 extra usage 計費；OpenCode 文件則直接引 Anthropic 禁止條款而下架。兩家對同一件事的處理相反，引用前看清楚各自措辭。
 - **Claude Code 是唯一閉源**，也是唯一只跑單一模型家族的。
 

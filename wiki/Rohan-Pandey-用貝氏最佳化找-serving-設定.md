@@ -2,7 +2,7 @@
 title: Rohan Pandey 用貝氏最佳化找 serving 設定
 description: DigitalOcean 線上場示範：依流量組合與 goodput 目標讓 Optuna 迴圈找自架模型 serving 設定，附回查與證據限制
 created: 2026-11-19
-updated: 2026-11-19
+updated: 2026-11-25
 source: https://ai.engineer/code/2026/talks/online-rohan-optimization
 published: 2026-11-12
 parent: "[[wiki/01.index]]"
@@ -97,7 +97,7 @@ tags:
 
 ## 能不能搬到個人 Claude Code／Codex 工作流程
 
-**多數人用不到**：只用 Claude、OpenAI 等託管 API 的話，serving 參數由供應商決定，沒有東西可調。這場和日常 coding agent 工作流程關係不大，[[AI-Engineer-2026-演講精華-AI-工作流程]] 的來源清單也標為「個人開發者適用度低」。
+**多數人用不到**：只用 Claude、OpenAI 等託管 API 的話，serving 參數由供應商決定，沒有東西可調。這場和日常 coding agent 工作流程關係不大（同屆綜合見 [[AI-Engineer-2026-演講精華-AI-工作流程]]）。
 
 **自架模型（vLLM）時可以照做**，讓 Claude Code 幫你寫腳本、在背景跑：
 

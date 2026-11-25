@@ -2,7 +2,7 @@
 title: LLM 方案定價與 coding agent 比較
 description: 主流 LLM 訂閱月費與 coding agent 三方案定價對照，依用途給經濟實惠推薦，含台幣概算、2026-09／11 覆核與第三方工具可用性
 created: 2026-07-08
-updated: 2026-11-09
+updated: 2026-11-25
 parent: "[[wiki/01.index]]"
 tags:
   - llm-pricing
@@ -26,7 +26,7 @@ tags:
 | **Perplexity Pro** | $20 | ~NT$620 | 每週 200 次搜尋 |
 | **Copilot Pro** | $19.99 | ~NT$620 | 綁 Microsoft Office |
 | SuperGrok | $30 | ~NT$930 | Grok 進階。**已被取代（2026-11-09）**：新客改走 X Subscription Premium $30（含 SuperGrok、Cursor Pro 與 X Premium+ 權益） |
-| **Max / Pro 高階層** | $100 / $200 | ~NT$3,100 / 6,200 | 重度～近乎無限。2026-11 起 Claude 的 $200 檔改名 Ultra、ChatGPT Pro 另加 $500 檔，見下方 2026-11-09 覆核 |
+| **Max / Pro 高階層** | $100 / $200 | ~NT$3,100 / 6,200 | 重度～近乎無限。2026 年 9–10 月起 Claude 的 $200 檔改名 Ultra（約 2026-10-30）、ChatGPT Pro 另加 $500 檔（不晚於 2026-09-29），見下方 2026-11-09 覆核 |
 | SuperGrok Heavy | $300 | ~NT$9,300 | ~~最高階~~ **已被取代（2026-11-09）**：xAI 新方案最高檔為 X Subscription Ultra $200，本表最高月費改為 ChatGPT Pro 500 的 $500；舊訂戶可保留原方案 |
 
 **關鍵洞察**：入門付費層高度收斂在 **$20 一檔**，選誰主要看生態（coding 選 Claude、搜尋選 Perplexity/Gemini、Office 選 Copilot），不是看價差。省錢入門用 ChatGPT Go $8 或 Google AI Plus $4.99 即足；輕度使用者免費層就能撐。
@@ -138,4 +138,4 @@ agy 本身內建 subagent、`/schedule` 排程、`/boost` 三層編排，並可�
 - [[四套-coding-agent-能力差異對照]]——四家能力矩陣；其「訂閱／登入」列補了一個本頁該注意的細節：pi 文件稱 Claude Pro／Max 可登入但走 extra usage 按 token 計費、不吃 plan 額度，OpenCode 文件則直接引 Anthropic 禁止條款下架該 plugin。
 - [[Coding-agent-指示檔與規則載入機制對照]]——本頁算錢與額度能否帶到第三方 harness；該頁是換 harness 時 `~/.claude/rules/` 這類規則檔能不能帶走的機制面（Codex／OpenCode／pi 都沒有 glob 條件載入）。
 - [[pi-與-OpenCode-v2-比較]] ——本頁只算錢，該頁比 OpenCode 與 pi 兩套第三方 harness 的能力取捨；「Codex for Open Source」支援清單兩頁共用
-- [[ChatGPT-Dots]] ——常駐 agent 只開放 Pro 與 Business Premium；推出時 Pro 多了 $500 一層（本頁只記到 $100／$200，未覆核其內容）；dot 在 Codex 啟動的任務吃同一份 Codex 額度
+- [[ChatGPT-Dots]] ——常駐 agent 只開放 Pro 與 Business Premium；推出時 Pro 多了 $500 一層（見本頁 2026-11-09 覆核）；dot 在 Codex 啟動的任務吃同一份 Codex 額度

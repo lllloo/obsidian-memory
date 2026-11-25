@@ -2,7 +2,7 @@
 title: 第二大腦實踐與本 vault 優化
 description: 比較 PARA、Zettelkasten、Evergreen notes、LYT 與 Digital Garden，將其轉成此 LLM Wiki 的最小可行優化
 created: 2026-07-11
-updated: 2026-11-09
+updated: 2026-11-25
 parent: "[[wiki/01.index]]"
 tags:
   - pkm
@@ -19,7 +19,7 @@ tags:
 
 | 實踐 | 核心單位 | 主要收益 | 不宜照搬之處 | 對本 vault 的採用 |
 |---|---|---|---|---|
-| PARA / BASB | 有終點的專案與可行動性 | 讓資訊服務當前成果，而非變成收藏 | 它管理人類的任務、責任與檔案，不是研究 wiki 的資訊架構 | 保持在使用者自行管理的 `cards/`、`topics/`；wiki 僅提供可引用的研究與決策材料 |
+| PARA / BASB | 有終點的專案與可行動性 | 讓資訊服務當前成果，而非變成收藏 | 它管理人類的任務、責任與檔案，不是研究 wiki 的資訊架構 | 保持在使用者自行管理的私人筆記（2026-10-13 起為 Notion，原 `cards/`、`topics/` 已移出本 vault）；wiki 僅提供可引用的研究與決策材料 |
 | Zettelkasten | 原子、彼此連結的想法 | 跨來源重組觀點、讓綜合隨使用累積 | 將所有內容強拆成原子卡會增加 LLM 維護面，且 raw 本就該保留原貌 | wiki 的概念頁優先按問題／概念而非作者或單篇來源組織；摘要頁不必機械切碎 |
 | Evergreen notes | 可被反覆修訂的概念頁 | 把新證據併入同一主張，避免同概念散落 | 需要人持續寫作的工作流，不適合套到所有來源筆記 | 對會反覆出現的主張維護一頁活頁，並保留矛盾與證據限制 |
 | Linking Your Thinking（ARC） | Add → Relate → Communicate 的想法流 | 暴露「收很多、連不出、寫不出」各自不同的瓶頸 | ARC 是診斷框架，不是資料模型或成效證明 | 每次 ingest 至少補「為何重要／與何者相關」；Query 的好答案可回存為可傳達的綜合頁 |
@@ -31,7 +31,7 @@ tags:
 
 [Tiago Forte 對 PARA 的說明](https://fortelabs.com/blog/para/)將 Projects 定義為有目標的短期工作、Areas 定義為持續責任，主張依當前成果而非學科分類資訊。這與本 vault 的研究型定位不衝突：**PARA 應停在行動層，wiki 應停在可重用的知識層。**
 
-因此不在 `wiki/` 重建 `Projects/Areas/Resources/Archives`。使用者要推進一個成果時，可在自己的 `cards/` 或 `topics/` 建一張簡短 project brief，手動連到相關 wiki 頁；agent 不讀寫該私人層。這使行動需求拉動研究，而不讓一次性專案結構污染可長期重用的概念頁。
+因此不在 `wiki/` 重建 `Projects/Areas/Resources/Archives`。使用者要推進一個成果時，可在自己的 Notion 私人筆記建一張簡短 project brief，手動連到相關 wiki 頁；agent 不讀寫該私人層。這使行動需求拉動研究，而不讓一次性專案結構污染可長期重用的概念頁。
 
 ### Evergreen notes：以概念頁取代「每本書一頁」
 
@@ -73,13 +73,13 @@ Ingest 時，wiki 摘要的開頭或結尾至少回答一項：它改變了哪�
 
 ### 4. 行動與研究維持單向交接
 
-需要完成的成果，使用者在私人 `cards/`／`topics/` 自行維護 goal、next decision 與相關 wiki 連結；當成果產生可廣泛重用的結論，再由使用者選擇餵回 raw/wiki。這採用 PARA 的「組織為行動服務」，又保留本 vault「只收跨專案通用知識」的邊界。Hermes Agent 亦把行動層（Kanban 任務佇列）獨立於兩種記憶之外，與此分工同構，見 [[第二大腦方法論比較]] 的 AI agent 呼應節。
+需要完成的成果，使用者在 Notion 私人筆記自行維護 goal、next decision 與相關 wiki 連結；當成果產生可廣泛重用的結論，再由使用者選擇餵回 raw/wiki。這採用 PARA 的「組織為行動服務」，又保留本 vault「只收跨專案通用知識」的邊界。Hermes Agent 亦把行動層（Kanban 任務佇列）獨立於兩種記憶之外，與此分工同構，見 [[第二大腦方法論比較]] 的 AI agent 呼應節。
 
 ## 證據限制
 
 - PARA、LYT、Evergreen notes 與 Digital Garden 的主張主要來自方法創始人或實踐者，適合作為設計啟發，不構成其生產力效果的獨立實證。
 - Zettelkasten 的結構層文章描述作者長期經驗，其頁數門檻不可直接移植為本 vault 的硬規則。
-- 本 vault 的操作建議是根據現有 schema 與上述方法的結構比對，不代表使用者的私人行動系統已被檢查；`cards/`、`topics/` 依設計未被讀取。
+- 本 vault 的操作建議是根據現有 schema 與上述方法的結構比對，不代表使用者的私人行動系統已被檢查；私人筆記（2026-10-13 起在 Notion）依設計未被讀取。
 
 ## 關聯
 

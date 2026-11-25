@@ -2,7 +2,7 @@
 title: ChatGPT Dots
 description: OpenAI 在 ChatGPT 推出的常駐 agent：雲端電腦、plugin 連接、背景主動研究與記憶共享機制，含方案地區限制與隱私缺口
 created: 2026-10-15
-updated: 2026-10-29
+updated: 2026-11-25
 source: https://openai.com/index/introducing-dots/
 published: 2026-09-29
 parent: "[[wiki/01.index]]"
@@ -24,7 +24,7 @@ tags:
 - **運算環境**：雲端電腦會跨次保留狀態，用來做研究、處理檔案、執行軟體。可以選擇連接你自己的電腦，此功能預設關閉，一次只能連一台，而且那台電腦要在線、開著 ChatGPT app。
 - **app 連接**：走 plugin 生態，官方宣稱可連 4,000 個以上 app（官方數字，未獨立驗證）。**plugin 權限由 dots、ChatGPT、ChatGPT Work、Codex 共用**，dot 只能在你既有的授權範圍內使用已設定的連線。
 - **主動研究（proactive research）**：你沒在用它時，它會用已連接的 app 在背景找可以幫忙的事，並存成私人筆記。這時的工具限定唯讀，不能發訊息、不能改 app 內容、不能操控瀏覽器或電腦。**唯讀只限這個背景模式**，dot 正式執行任務時不受此限。
-- **聯絡管道**：可在 ChatGPT 桌面版、網頁版、行動 app 傳訊息或語音通話，也能接 Slack 與 Teams。訊息管道要從桌面端設定。2026-10 下旬起另有簡訊管道（美國 Pro beta），見下方方案表的簡訊列。
+- **聯絡管道**：可在 ChatGPT 桌面版、網頁版、行動 app 傳訊息或語音通話，也能接 Slack 與 Teams（Teams 見推出公告；2026-11-19 讀到的官方開發者 Dots 頁只列 Slack、未列 Teams，見 [[Kundel-Guo-Codex-的新工作方式]]，要用前以當下產品設定為準）。訊息管道要從桌面端設定。2026-10 下旬起另有簡訊管道（美國 Pro beta），見下方方案表的簡訊列。
 - 官方另預告「specialist dots」：給企業用，每個 dot 有自己的身分與憑證，負責明確的職務。目前只有企業試點，沒有公開推出。
 
 「24/7 朝目標工作」「隨回饋持續學習」是行銷文案，沒有獨立驗證。
@@ -104,6 +104,6 @@ OpenAI Developer Community 在 2026-10-13 有一篇[使用者轉貼](https://com
 
 ## 關聯
 
-- [[LLM-方案定價與-coding-agent-比較]] — dot 只有 Pro 與 Business Premium 才有，而且推出時出現了 Pro 500 這一層，比該頁記錄的 $100／$200 多了一級。dot 在 Codex 啟動的任務會吃同一份 Codex 額度。
+- [[LLM-方案定價與-coding-agent-比較]] — dot 只有 Pro 與 Business Premium 才有，而且推出時出現了 Pro 500 這一層，該頁 2026-11-09 覆核已補記 Pro 三檔。dot 在 Codex 啟動的任務會吃同一份 Codex 額度。
 - [[長跑-Agent-的目標定義與計畫工具]] — dot 的「給目標＋設定自主規則＋持續推進」是該頁目標檔機制的產品化形態。但官方沒有公開停止條件或驗收判準怎麼定，該頁對 reward hacking 與走偏的警告同樣適用。
 - [[Mem0]] — 同屬「agent 自行累積記憶」的設計；dot 推出期無法逐條刪除記憶，與該頁的記憶污染問題屬於同類風險。

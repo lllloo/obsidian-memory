@@ -2,7 +2,7 @@
 title: OpenClaw 與 Hermes Agent 比較
 description: 兩套自架常駐 personal agent 的對照：OpenClaw 的 Gateway 分離與審查式 skill 演進，對上 Hermes 的放手式進化
 created: 2026-09-02
-updated: 2026-11-09
+updated: 2026-11-25
 parent: "[[wiki/01.index]]"
 tags:
   - ai-agent
@@ -44,7 +44,7 @@ tags:
 
 | | OpenClaw 2.0 | Hermes |
 |---|---|---|
-| 觸發 | 大量工作與持久性糾正可產生改進提案；亦可顯式 `/learn` 或掃描過往工作 | 完成 5+ 次工具呼叫的複雜任務、解錯、被使用者糾正、發現非顯而易見流程 |
+| 觸發 | 大量工作與持久性糾正可產生改進提案；亦可顯式 `/learn` 或掃描過往工作 | 完成 5+ 次工具呼叫的複雜任務、解錯、被使用者糾正、發現非顯而易見流程（已被取代（2026-10-13）：5+ 次數字門檻已自官方 prompt 移除，現行觸發情境見 [[Hermes-Agent]]） |
 | 落地 | **提案 → 人工審查 → apply／reject／quarantine**，決策綁定當時審過的那個修訂版，後續修訂需重審——**已被取代（2026-10-13）**：OpenClaw 主線（[PR #161057](https://github.com/openclaw/openclaw/pull/161057)，2026-10-08 合入；自穩定版 v2026.10.5（2026-10-18）起生效——2026-10-29 更新，原寫「v2026.10.5 beta 起、尚未進最新穩定版 v2026.10.2」）已退場提案／審查／quarantine 模型，改為變更立即套用、保留前十版、以 Undo 事後回退（[官方 self-learning 文件](https://docs.openclaw.ai/tools/self-learning)：「Every change applies immediately and can be undone.」；一手、未實測）；另注意 2.0（v2026.8.1）當時預設模式即為 `auto` 自動套用（該版 tag 內 docs/tools/self-learning.md 原文），提案流程只是 `propose` 選項與使用者自寫 skill／顯式 /learn 的路徑，原句將其視為唯一落地路徑屬過度簡化 | **預設免人工核准即可寫入** |
 | 治理 | 可選背景審查；週排程 job 回顧整批 skill、記錄使用與結果、保留專門化 skill、做可還原備份（**已被取代（2026-10-13）**：週排程 curator job `skill-collection-review:<agentId>` 已退場，Gateway 升級時刪除其 cron row、無替代；改為確定性、無排程的未使用 skill 清理取代 LLM curator 週審——30 天無活動即封存、每 agent 每日至多檢查一次、可隨時 restore；舊週審備份 `collection-backups/` 不再被讀取。依據[官方 skill-workshop 文件](https://docs.openclaw.ai/tools/skill-workshop)與 docs/automation/cron-jobs/payloads.md、原始碼 src/cron/system-owned-declaration.ts 三處互證，一手、未實測；變更來自 2026-10-08 主線 [PR #161057](https://github.com/openclaw/openclaw/pull/161057)，自穩定版 v2026.10.5 起生效（2026-10-29 更新，原寫「尚未進最新穩定版 v2026.10.2」），引用前回查官方 releases） | Autonomous Curator 評分、合併重疊、封存過時、保護 pinned skill、寫每輪報告 |
 

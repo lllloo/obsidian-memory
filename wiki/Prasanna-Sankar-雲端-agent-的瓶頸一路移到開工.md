@@ -2,7 +2,7 @@
 title: Prasanna Sankar 雲端 agent 的瓶頸一路移到開工
 description: Vorflux 的 Sankar 依序拆解雲端 agent 從環境到 merge 的六個瓶頸，再談人成為專案經理後改由常駐 Autobot 自己開工，附回查
 created: 2026-11-19
-updated: 2026-11-19
+updated: 2026-11-25
 source: https://www.ai.engineer/talks/TlOAhw9t5DA-merge-is-bottleneck
 published: 2026-11-10
 parent: "[[wiki/01.index]]"
@@ -178,6 +178,6 @@ tags:
 - **和 Lauren Tan 的順序相反**：[[Lauren-Tan-把糾正寫進程式庫]] 主張先穩內圈（程式庫、lint、驗證）再自動化外圈，否則只是更快產出更多 slop。Sankar 幾乎只講外圈。他自己列的失敗模式「只把告警靜音、沒修根因」正是 Tan 那套要擋的東西；照 Tan 的順序，Autobot 應該排在 repo 有足夠確定性檢查之後。
 - **平行上限和既有經驗值一致**：[[多-agent-的人類監督與介入]] 記錄 Kilo Code 訪談的 foreground 2–4 個、Morph 部落格「超過約 8 個就改由 lead agent 協調、人只管 lead」。Sankar 的「超過 10 件就變專案管理，所以讓主 agent 當經理」是同一個轉折點的另一個經驗值，也是同樣的解法。該頁也提醒核准閘門會退化成橡皮圖章，正好對應 Sankar 樂觀描述的「approve、approve、approve」。
 - **merge 這一段比較淺**：[[Patrick-Debois-多人多-agent-同時合進同一-main]] 把同一個問題講得深很多：每合一個 PR 其他都要 rebase 重測、要用 speculative merge train、要比對意圖。[[平行-agent-產出的合併與-review]] 也記錄了文字無衝突不代表語意正確。Sankar 只說「持續 rebase、自己合」，沒碰這些。
-- **subagent 給更多智力預算的說法有條件**：[[Context-優先與多-agent-的適用邊界]] 整理的證據是多 agent 在可平行的「知識問題」上有效，在需要一致決策的「編排問題」上容易出錯。Sankar 的「新 context window 等於更多智力預算」只講了好處；他把 build 交給 subagent 的前提是相依圖切得乾淨。
+- **subagent 給更多智力預算的說法有條件**：[[Context-優先與多-agent-的適用邊界]] 整理的證據是多 agent 在讀重、可平行的工作上有效，在寫重、需要一致決策的工作（如 coding）上容易出錯。Sankar 的「新 context window 等於更多智力預算」只講了好處；他把 build 交給 subagent 的前提是相依圖切得乾淨。
 - **「瓶頸移到 review／merge」本身有爭議**：[[AI-產碼加速下的-review-瓶頸]] 記錄大家共用的「瓶頸已移到 review」前提，認知調查與行為觀測對不上。Sankar 的 profiling 是另一個未量測的認知來源。
 - **反方提醒**：[[Diogo-Almeida-助理不等於自動化]] 主張現在的 LLM 是為「人在旁邊修正」最佳化的，無人值守要每次都做對。Sankar 的 Autobot 用核准鏈和新人比喻來處理這點，但核准鏈越長，越接近「助理」而不是「自動化」。

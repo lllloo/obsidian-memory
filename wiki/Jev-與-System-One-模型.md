@@ -2,7 +2,7 @@
 title: Jev 與 System One 模型
 description: 只回型別化判斷、不生成文字的決策模型：三項核心宣稱的可信度落差、兩個接入硬限制，以及對上 fine-tuned encoder 的缺口
 created: 2026-09-22
-updated: 2026-11-19
+updated: 2026-11-25
 source: https://typesafe.ai/blog/introducing-system-one-models-and-jev
 parent: "[[wiki/01.index]]"
 tags:
@@ -29,6 +29,8 @@ TypeSafe AI 於 2026-09 發布的 Jev 自稱「首個 System One Model」：不�
 | `Choice` | 選項＋`probabilities`＋`confidence` |
 | `Score` | 分數＋`probabilities`＋`confidence` |
 | `Noul` | 回 yes 的機率，**刻意沒有 `confidence` 欄位**——機率本身就是答案 |
+
+（以上為 1.13 快照；據 [docs.typesafe.ai/models](https://docs.typesafe.ai/models) 2026-11-19 查，2026-10-14 推出的 1.14 另新增 Box 題型，見 [[Diogo-Almeida-助理不等於自動化]] 回查表。）
 
 這不只是行銷定位，是可在三處獨立交叉核對的契約：官方 docs 逐字「System One models do not write replies, produce code, or generate explanations of their reasoning.」；OpenRouter 的模型 metadata 標 `output_modalities: [decisions]`、`has_text_output: false`；Cloudflare AI docs 給出獨立於廠商 blog 的 response schema，三種回應皆無任何文字欄位。
 

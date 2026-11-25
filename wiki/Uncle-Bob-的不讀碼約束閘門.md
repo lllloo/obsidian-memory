@@ -2,7 +2,7 @@
 title: Uncle Bob 的不讀碼約束閘門
 description: 逐項解剖「不讀 agent 產碼、改用測試與度量包圍它」這套主張——每道閘門實際擋住什麼、他自己寫的工具怎麼實作、以及這套方案撐不住的三個地方
 created: 2026-08-09
-updated: 2026-11-16
+updated: 2026-11-25
 parent: "[[wiki/01.index]]"
 tags:
   - coding-agent
@@ -284,7 +284,7 @@ QA 在 `six-pack` 裡是一條完整的鏈，兩份角色檔講得很明白。`s
 
 > Do not edit mutation testing or Gherkin acceptance mutation manifests by hand […]
 
-`AGENTS.md` 的「Never modify an acceptance test `.txt` file without explicit permission」同樣如此。對照 [[用測試約束-AI-產碼]] 第五節引的 ImpossibleBench 量測——**GPT-5 在測試與規格矛盾時作弊率 76%，即使明確指示「發現測試有問題就停下」也未歸零**——這類指示的可靠度不該被高估。
+`AGENTS.md` 的「Never modify an acceptance test `.txt` file without explicit permission」同樣如此。對照 [[用測試約束-AI-產碼]] 第二節引的 ImpossibleBench 量測——**GPT-5 在測試與規格矛盾時作弊率 76%，即使明確指示「發現測試有問題就停下」也未歸零**——這類指示的可靠度不該被高估。
 
 **但有一道護欄他真的工程化了，而且正好是最該工程化的那一道。** `empire-2025` 唯一的 GitHub Actions workflow 叫 `acceptance-boundary-guard.yml`，在 `pull_request` 與 `push` 都跑，執行 `scripts/check-acceptance-boundary.sh`。腳本的核心是：
 
@@ -377,7 +377,7 @@ blocked="$(printf '%s\n' "$changed" \
 
 - [[Lauren-Tan-把糾正寫進程式庫]] — 同一路線的另一個極端案例：同樣想用機械閘門取代逐行 review，但 Tan 的重心在 API 與架構層，讓錯誤一開始就寫不出來，本頁的重心則在測試與度量。兩者都只有自報成果、沒有外部量測。
 - [[用測試約束-AI-產碼]] — 本頁是該頁的**人物案例層**：該頁盤點「哪些手段有多少證據」，本頁盤點「一個把這條路線推到極致的人實際搭了什麼」。兩處實質互補：本頁第 2 項的 **gherkin acceptance mutation** 補上該頁沒有的驗收層假測試偵測，第 7 項的 **introverted test 靜態偵測**則把該頁「同義反覆」失效模式從人工偵測法升級成可掃描的檢查。反過來，該頁第五節的五層防繞過正是本頁第四節判定這套方案漏洞所用的尺。
-- [[AI-產碼加速下的-review-瓶頸]] — 本頁是該頁四條路線中「**約束前移**」的極端案例：Uncle Bob 不是改善 review，而是整條廢掉 review 換成前移的閘門。該頁引 DORA 的「投資測試自動化的 ROI 可能高於優化人工 review」，本頁是那句話被推到底之後的樣子。
+- [[AI-產碼加速下的-review-瓶頸]] — 本頁是該頁四條路線中「**約束前移**」的極端案例：Uncle Bob 不是改善 review，而是廢掉人工逐行 review、改由前移的閘門與 reviewer agent 承接。該頁引 DORA 的「投資測試自動化的 ROI 可能高於優化人工 review」，本頁是那句話被推到底之後的樣子。
 - [[專案測試流程]] — 一個意外的收斂：`engineering.prompt` 要求「Separate testable modules from environmentally unsuitable modules that open GUIs […] Maximize testable code and minimize the unsuitable boundary」，與該頁「第一個動作不是寫測試而是把判斷抽離框架」是同一條紀律，只是他講的是 GUI、該頁講的是 Vue 元件與 Laravel Controller。第五節的可搬性表則是本頁對該頁的具體回饋。
 - [[AI-自主工作流的實證檢驗]] — 本頁第四節第 1 點的證據基礎（ImpossibleBench 的 76% 作弊率）出自該頁；該頁「驗證迴路必要但不充分，因為測試本身可被 agent 篡改」正是本頁判定 prompt 層護欄不足的依據。
 - [[不讀碼時該看哪些圖]] — 同一處境（不讀 agent 產碼）的另一組答案，且與本頁在**機制上同形**：本頁最高性價比的結論是把驗收規格檔用 CI guard 機械鎖死，該頁則是把架構邊界寫成 CI 上會 fail 的依賴規則——都不是靠人記得檢查，而是把判準外移成機械閘門。差別在射程：本頁的閘門管「行為對不對」，該頁的管「東西有沒有放對地方」，兩者都不可替代對方。

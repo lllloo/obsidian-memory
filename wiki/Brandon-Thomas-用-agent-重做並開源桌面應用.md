@@ -2,7 +2,7 @@
 title: Brandon Thomas 用 agent 重做並開源桌面應用
 description: 深讀 Brandon Thomas 演講並回查 GitHub，整理 agent 以 Rust 重做 Photoshop 的做法、自報數字與 Autocraft
 created: 2026-11-19
-updated: 2026-11-19
+updated: 2026-11-25
 source: https://ai.engineer/code/2026/talks/brandon-thomas
 published: 2026-11-12
 parent: "[[wiki/01.index]]"
@@ -189,7 +189,7 @@ agent 產改動的速度一上去，CI 先倒。編譯慢的語言（Rust、C++�
 
 ## 與既有頁的關係
 
-- [[AI-Engineer-2026-演講精華-AI-工作流程]] 是同屆 28 場的綜合，本頁是其中 Thomas 一場的深讀。注意該頁把他的分流寫成「UI 層放手」，原話是「桌面應用、遊戲，以及基本上不可變的東西」。
+- [[AI-Engineer-2026-演講精華-AI-工作流程]] 是同屆 28 場的綜合，本頁是其中 Thomas 一場的深讀。
 - 和 [[Lauren-Tan-把糾正寫進程式庫]] **有張力**：Tan 主張先穩內圈（架構、lint、驗證）再自動化，否則自動化只會量產 slop；Thomas 說桌面應用「給 agent 完全信任」。不過從 repo 看，PhotoCraft 其實有 SonarCloud、CodeRabbit 和對照原版輸出的 oracle，Autocraft 也有多層 review 和人工核准。他嘴上說的放手，實際上有一層驗證撐著；演講只是沒講這部分。
 - [[Matt-Pocock-的-PR-瓶頸解法]] 用「單向門／雙向門」判斷 review 強度，和 Thomas 的分流同一個方向。差別是 Matt 提醒小 diff 也可能是單向門，正好反駁「桌面應用不可變」的說法。
 - [[AI-產碼加速下的-review-瓶頸]] 指出 review 之後還有下游佇列；Thomas 的「CI 撐不住、改自架」是瓶頸移到 build／CI 的實例（他的自報經驗）。

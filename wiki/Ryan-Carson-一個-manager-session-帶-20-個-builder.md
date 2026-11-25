@@ -2,7 +2,7 @@
 title: Ryan Carson 一個 manager session 帶 20 個 builder
 description: Carson 讓不寫碼的 manager session 經排程巡視帶約 20 個 builder，影片驗收與錄影招募，附 Devin 回查
 created: 2026-11-19
-updated: 2026-11-19
+updated: 2026-11-25
 source: https://ai.engineer/talks/BTtyguoPvBU-one-founder-manages-20-ai-coding-agents
 published: 2026-11-09
 parent: "[[wiki/01.index]]"
@@ -166,6 +166,6 @@ Codex 是否有對應的「巡視排程＋session 互傳」功能，本輪**未�
 - **供應商與客戶講同一套**：[[Walden-Yan-軟體工廠與給-agent-長期-job]] 是 Devin 的廠商 Cognition 自己的內部做法：雲端 VM、影片當交付證據、人只在一天結束時看升級上來的決定。Carson 是 Devin 客戶，描述的流程幾乎一樣。這可以互相印證「產品能這樣用」，但兩者都依賴同一個產品，**不能當作兩個獨立來源**互相佐證效果。
 - **同一個數字，兩種解讀**：[[Prasanna-Sankar-雲端-agent-的瓶頸一路移到開工]] 說雲端能平行 20–30 件、但超過 10 件他就吃不消，所以讓常駐 agent 當專案經理；Carson 的解法相同（加一層 manager），但宣稱人能跟 manager 帶約 20 個。[[多-agent-的人類監督與介入]] 整理的經驗值是 foreground 2–4 個、超過約 8 個就改由 lead agent 協調、人只管 lead，Carson 正是這個轉折之後的形態。該頁也記錄 fan-out 取決於 agent 能被放著多久，Carson 的 15 分鐘巡視和 3 輪上限就是在拉長「可被放著的時間」。
 - **巡視交給程式，與 Konda 一致**：[[Girish-Konda-把-sub-agent-當分散式系統]] 主張子 agent 交接的檢查要由程式碼強制、不靠 prompt。Carson 的「不能信任 manager 自己巡，要用 automation」是同一個原則的實務版。但他只保證巡視**時機**，子 session 回報什麼、算不算卡住，仍是 manager 用自然語言判斷，沒有 Konda 主張的具名狀態。
-- **影片證據的弱點**：[[Stephen-Chin-與-Cassandra-Chin-PR-描述要附證據包]] 要求驗證段由執行紀錄產生，並提醒 approval gate 會退化成橡皮圖章。Carson 自己就差點在手機上「OK ship it」，正好是這個失效模式的現場例子；他的對策是先讀預期行為再看片，和 Chin 的方向一致，但影片只能證明畫面，不能證明沒畫到的路徑沒壞。
+- **影片證據的弱點**：[[Stephen-Chin-與-Cassandra-Chin-PR-描述要附證據包]] 要求驗證段由執行紀錄產生；[[多-agent-的人類監督與介入]] 則提醒 approval gate 會退化成橡皮圖章。Carson 自己就差點在手機上「OK ship it」，正好是這個失效模式的現場例子；他的對策是先讀預期行為再看片，和 Chin 的方向一致，但影片只能證明畫面，不能證明沒畫到的路徑沒壞。
 - **merge 這段比 Debois 淺**：[[Patrick-Debois-多人多-agent-同時合進同一-main]] 把多人多 agent 合進同一個 main 拆成派工公告、意圖衝突檢查、speculative merge train。Carson 的 migration 編號撞號只是其中最表面的一類，他交給一個「自由發揮」的 merge queue manager session，沒說它怎麼檢查語意衝突。[[平行-agent-產出的合併與-review]] 也記錄文字無衝突不代表語意正確。
 - **與「先穩內圈」的順序**：[[Lauren-Tan-把糾正寫進程式庫]] 主張先把糾正變成 lint、型別與可執行檢查，再放大外圈的自動化。Carson 的品質關卡是 reviewer agent、QA agent 和人看影片，幾乎都是 agent 判斷加人眼，沒談程式庫本身的確定性檢查。

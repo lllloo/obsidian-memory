@@ -2,7 +2,7 @@
 title: Orca
 description: Orca multi-agent IDE 的架構與運作機制：worktree 隔離、terminal 管理、supervised loop 與協調合約
 created: 2026-09-24
-updated: 2026-10-29
+updated: 2026-11-25
 parent: "[[wiki/01.index]]"
 tags:
   - coding-agent
@@ -59,7 +59,7 @@ Run（協調作業容器）
 2. **重大陷阱：GNOME 螢幕朗讀器衝突**：
    - 在標準 Linux 與 GNOME 桌面環境中，系統內建的 `/usr/bin/orca` 是 **GNOME 螢幕朗讀器（GNOME Screen Reader）**。
    - 若在 Orca 環境外或一般 bash shell 中直接裸打 `orca`，系統**不會**啟動 Orca IDE，而是會喚醒螢幕朗讀器語音合成程式。
-   - **慣例要求**：在腳本、自動化或 agent 提示詞中，應始終呼叫解析後的具體執行檔 `orca-ide`（或檢查環境提供的 stub 指令），切勿在非受控環境裸跑 `orca`。
+   - **慣例要求**：在腳本、自動化或 agent 提示詞中，應呼叫依上列解析順序取得的具體執行檔（Linux 受控終端外為 `orca-ide`，或檢查環境提供的 stub 指令），切勿在非受控的 Linux shell 裸跑 `orca`。
 
 ## Supervised Loop 協調骨幹
 
