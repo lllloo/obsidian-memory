@@ -36,6 +36,3 @@ tags:
 - **研究結果回存 wiki 由 agent 自行判斷**（2026-10-15 使用者指示）：deep-research／Query 結束後不再問「要不要存」，值得就直接回存並在回覆中告知。
 - **跨 repo 的實作回該 repo 做**：本 vault 只存跨專案通用知識，不寫他 repo 的實作細節或專案狀態。
 - **playbook**：獨立私人 repo＋`lllloo/skills` 的 `/playbook` skill；查時掃檔名／title／description，不建索引；寫時 AI 開分支送 PR，由使用者審後合。只手動觸發，勿提議全域規範自動查；實作在那兩個 repo，本 vault 無跨專案查詢入口。
-- **私人筆記在 Notion**：tmux／git archive 保留原「技術筆記」入口，勿移入新資料庫；不重建 topics/cards。日常流程不讀寫 Notion，只有重新明確指定的 Notion 任務才操作。
-- **本 repo 只供 AI 跑核心流程**（2026-10-13）：不重建真人入口、架構讀本或 PR 合併 Discord 通知；保留 raw／wiki、規範、`vault-lint` 與必要設定。歷史入口集中於 `schema/vault-map.md`。
-- **勿重建** `feeds/`、`docs/architecture/`、`vault-youtube-sync`、`vault-watch`、`vault-page`、`vault-updates-daily`（含輕量版）。

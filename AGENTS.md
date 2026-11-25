@@ -20,11 +20,11 @@
 
 `schema/BACKLOG.md` 是 `vault-lint` 的健檢待處理清單:agent **每輪讀回來約束自身行為**的操作狀態(去重、跳過已婉拒、判斷退場),與 `MEMORY.md` 同層,不是給人瀏覽的 feed 產物。lint 發現由 agent 自主修補;**只有真正需要使用者的決策**(需使用者才有的資訊、動 raw write-once、動憲法檔／skill)才進「待你決定」,agent 判定維持現狀／待觸發者則進「Agent 已判」作去重錨點;使用者退回的修法記入「已婉拒」,agent 之後不再重提。寫入該檔時頁面引用一律用反引號、不得用 wikilink(`schema/` 在死連結掃描範圍內)。
 
-**私人筆記已移至 Notion。** 不重建 `topics/`、`cards/`；私人筆記不納入 Ingest／Query／Lint，也不作為 `raw/`／`wiki/` 的來源。外部入口見 `schema/vault-map.md`。
+**私人筆記已移至 Notion。** 不重建 `topics/`、`cards/`；tmux／git archive 保留原「技術筆記」入口，勿移入新資料庫；私人筆記不納入 Ingest／Query／Lint，也不作為 `raw/`／`wiki/` 的來源。外部入口見 `schema/vault-map.md`。
 
 **Notion 操作邊界（2026-10-13 使用者拍板）**：本 repo 的日常維護與技術查詢只使用本地核心知識庫與規範，不自動連線查讀或修改 Notion。文件中的 Notion 連結是供使用者回看的外部入口，不代表 agent 可自行存取。只有使用者重新明確指定 Notion 任務時，才在該任務授權範圍內操作；既往遷移的授權不延伸為後續操作許可。
 
-**本 repo 只供 AI 執行核心流程（2026-10-13 使用者拍板）**：保留 raw／wiki、規範、`vault-lint` 與必要設定；不重建真人入口 `index.md`、架構讀本或 PR 合併 Discord 通知。公開發佈由外部 repo 管理。本地已移除自動產物與 HTML 呈現層；未經使用者重新指定，不重建 `feeds/`、`docs/architecture/`、`vault-youtube-sync`、`vault-watch`、`vault-page`。歷史快照入口集中於 `schema/vault-map.md`。
+**本 repo 只供 AI 執行核心流程（2026-10-13 使用者拍板）**：保留 raw／wiki、規範、`vault-lint` 與必要設定；不重建真人入口 `index.md`、架構讀本或 PR 合併 Discord 通知。公開發佈由外部 repo 管理。本地已移除自動產物與 HTML 呈現層；未經使用者重新指定，不重建 `feeds/`、`docs/architecture/`、`vault-youtube-sync`、`vault-watch`、`vault-page`、`vault-updates-daily`（含輕量版）。歷史快照入口集中於 `schema/vault-map.md`。
 
 ## 守門：無
 
