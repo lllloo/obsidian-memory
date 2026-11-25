@@ -1,0 +1,67 @@
+#!/usr/bin/env python3
+"""git pre-commit：跑 lint_scan.py 機械層，有發現就擋下 commit。
+
+啟用（每個 clone 一次）：git config core.hooksPath .agents/skills/vault-lint/scripts
+FM／DEADLINK／ORPHAN／INDEXGAP 全庫任一筆都擋；RAWGAP 只擋本次 staged 的 raw（既有錨點不影響）。
+"""
+
+import subprocess
+import sys
+from pathlib import Path
+
+sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+sys.stderr.reconfigure(encoding="utf-8", errors="replace")
+
+SCANNER = Path(__file__).with_name("lint_scan.py")
+HINTS = {
+    "FM": "frontmatter 不合規（description 要 30–80 字、必填欄位見 AGENTS.md 寫入慣例第 4 條）",
+    "DEADLINK": "連結目標不存在，改連實際檔名或改用外部 URL",
+    "ORPHAN": "沒有任何 wiki 頁連到這頁，至少從 1 個相關頁補連結",
+    "INDEXGAP": "新頁沒登進 wiki/01.index.md",
+    "RAWGAP": "raw/fetched 檔沒被任何 wiki 頁用 wikilink 引用（反引號路徑不算）",
+}
+
+
+def staged_paths() -> set[str]:
+    out = subprocess.run(
+        ["git", "diff", "--cached", "--name-only", "--diff-filter=ACMR", "-z"],
+        capture_output=True, check=True,
+    ).stdout.decode("utf-8")
+    return {p for p in out.split("\0") if p}
+
+
+def blocks(kind: str, rest: str, staged: set[str]) -> bool:
+    # RAWGAP 有 BACKLOG 錨點的既有項，只擋本次新增的 raw；其餘類別全庫歸零，任何一筆都擋
+    # （刪頁、改名、改索引會讓沒被 staged 的別頁斷鏈或漏登）
+    if kind == "RAWGAP":
+        return rest in staged
+    return kind in HINTS
+
+
+def main() -> int:
+    staged = staged_paths()
+    result = subprocess.run(
+        [sys.executable, str(SCANNER)], capture_output=True, text=True, encoding="utf-8",
+    )
+    lines = result.stdout.splitlines()
+    if result.returncode != 0 or "SCAN:complete" not in lines:
+        print("vault pre-commit：lint_scan.py 沒有正常跑完，本次不擋，請手動檢查。", file=sys.stderr)
+        print(result.stderr, file=sys.stderr)
+        return 0
+
+    hits = []
+    for line in lines:
+        kind, _, rest = line.partition(":")
+        if blocks(kind, rest, staged):
+            hits.append((kind, line))
+    if not hits:
+        return 0
+
+    print("vault pre-commit：機械層有問題，修好再 commit。", file=sys.stderr)
+    for kind, line in hits:
+        print(f"  {line}\n    → {HINTS[kind]}", file=sys.stderr)
+    return 1
+
+
+if __name__ == "__main__":
+    sys.exit(main())
