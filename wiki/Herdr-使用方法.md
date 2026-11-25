@@ -1,8 +1,8 @@
 ---
 title: Herdr 使用方法
-description: herdr TUI 的層級、持久化、狀態偵測、CLI 委派、worktree 與 SSH 遠端用法，另記 Herdr app／herdr-core 與 Windows 接 WSL
+description: herdr TUI 的層級、持久化、狀態偵測、CLI 委派、worktree 與 SSH 用法，另記 Herdr app 與 Windows 接 WSL
 created: 2026-09-15
-updated: 2026-11-24
+updated: 2026-11-25
 source: https://herdr.dev/docs/
 parent: "[[wiki/01.index]]"
 tags:
