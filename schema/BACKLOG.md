@@ -1,7 +1,7 @@
 ---
 title: Vault Lint Backlog
 created: 2026-07-13
-updated: 2026-11-09
+updated: 2026-11-25
 tags:
   - meta
   - lint
@@ -21,9 +21,7 @@ vault 健檢的**待處理清單**,由 `vault-lint` skill 每輪讀寫(手動或
 
 ## 設定
 
-- `semantic_days: 7` — 語意層只審近 N 天有 git 變動的 wiki 頁
-- `semantic_page_cap: 10` — 語意層單次最多審幾頁;超過時依日期無狀態輪替批次
-- `semantic_utc_offset: +08:00` — `semantic_days` 日曆窗口與每日輪替日期使用的 UTC offset
+- `semantic_batch: 10` — 語意層平行審查每批頁數;窗口內全部頁一輪審完,本值只控制併發
 
 ## 待你決定(真正需要使用者,其餘見 `Agent 已判`)
 

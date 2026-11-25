@@ -59,7 +59,7 @@ class LintScanTests(unittest.TestCase):
 
     def run_scan(self) -> subprocess.CompletedProcess[str]:
         return subprocess.run(
-            [sys.executable, "-B", str(SCRIPT), "--days", "0"],
+            [sys.executable, "-B", str(SCRIPT)],
             cwd=self.vault,
             capture_output=True,
             text=True,
@@ -194,6 +194,22 @@ class LintScanTests(unittest.TestCase):
         self.assertNotIn("INDEXGAP:wiki:甲頁.md", result.stdout)
         self.assertIn("INDEXGAP:wiki:乙頁.md", result.stdout)
         self.assertIn("SUMMARY:indexgap=1", result.stdout)
+
+    def test_index_summary_must_equal_page_description(self) -> None:
+        description = "說明測試頁面的核心概念、適用情境與相關知識連結，供自動化檢查使用"
+        self.write_note(
+            "wiki/01.index.md", "索引",
+            f"- [[甲頁]] — {description}\n- [[乙頁|乙]] — 手寫的另一種摘要",
+        )
+        self.write_note("wiki/甲頁.md", "甲頁", "[[乙頁]]")
+        self.write_note("wiki/乙頁.md", "乙頁", "[[甲頁]]")
+
+        result = self.run_scan()
+
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertNotIn("INDEXDRIFT:wiki:甲頁.md", result.stdout)
+        self.assertIn("INDEXDRIFT:wiki:乙頁.md", result.stdout)
+        self.assertIn("SUMMARY:indexdrift=1", result.stdout)
 
     def test_wiki_description_and_parent_are_required(self) -> None:
         self.write_note("wiki/01.index.md", "索引", "[[缺欄頁]]")

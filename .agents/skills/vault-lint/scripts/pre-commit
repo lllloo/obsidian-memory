@@ -2,11 +2,13 @@
 """git pre-commit：跑 lint_scan.py 機械層，有發現就擋下 commit。
 
 啟用（每個 clone 一次）：git config core.hooksPath .agents/skills/vault-lint/scripts
-FM／DEADLINK／ORPHAN／INDEXGAP 全庫任一筆都擋；RAWGAP 只擋本次 staged 的 raw（既有錨點不影響）。
+FM／DEADLINK／ORPHAN／INDEXGAP／INDEXDRIFT 全庫任一筆都擋；RAWGAP 只擋本次 staged 的 raw（既有錨點不影響）。
+掃的是 staged 快照（匯出到暫存目錄），不是工作目錄：未 stage 的半成品不影響判定。
 """
 
 import subprocess
 import sys
+import tempfile
 from pathlib import Path
 
 sys.stdout.reconfigure(encoding="utf-8", errors="replace")
@@ -18,6 +20,7 @@ HINTS = {
     "DEADLINK": "連結目標不存在，改連實際檔名或改用外部 URL",
     "ORPHAN": "沒有任何 wiki 頁連到這頁，至少從 1 個相關頁補連結",
     "INDEXGAP": "新頁沒登進 wiki/01.index.md",
+    "INDEXDRIFT": "wiki/01.index.md 的索引行摘要要逐字等於該頁 description",
     "RAWGAP": "raw/fetched 檔沒被任何 wiki 頁用 wikilink 引用（反引號路徑不算）",
 }
 
@@ -40,9 +43,14 @@ def blocks(kind: str, rest: str, staged: set[str]) -> bool:
 
 def main() -> int:
     staged = staged_paths()
-    result = subprocess.run(
-        [sys.executable, str(SCANNER)], capture_output=True, text=True, encoding="utf-8",
-    )
+    with tempfile.TemporaryDirectory() as snapshot:
+        subprocess.run(
+            ["git", "checkout-index", "--all", f"--prefix={snapshot}/"], check=True,
+        )
+        result = subprocess.run(
+            [sys.executable, "-B", str(SCANNER.resolve())], cwd=snapshot,
+            capture_output=True, text=True, encoding="utf-8",
+        )
     lines = result.stdout.splitlines()
     if result.returncode != 0 or "SCAN:complete" not in lines:
         print("vault pre-commit：lint_scan.py 沒有正常跑完，本次不擋，請手動檢查。", file=sys.stderr)

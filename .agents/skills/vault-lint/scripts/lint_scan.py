@@ -9,18 +9,17 @@
   TAG:<tag>:<count>          tag 盤點（同義異寫漂移由主 agent 判讀）
   RAWGAP:<file>              raw 檔未被任何 wiki 頁引用（待消化原料）
   INDEXGAP:<dir>:<file>      index 漏登（wiki 索引缺失時另列 INDEXGAP:wiki:01.index.md）
+  INDEXDRIFT:wiki:<file>     wiki 索引行摘要與該頁 description 不一致（以 description 為準）
   BASEIDX:<dir>              該 index 用 .base 動態清單，跳過漏登檢查
-  CHANGED:<file>             近 N 天有 git 變動的 wiki 頁（語意層輸入）
   SUMMARY:<key>=<value>      各類計數
   SCAN:complete              掃描正常跑完的標記（熔斷用：無此行或有 ERROR: 行 → 該輪不退場）
 
-用法：python3 .agents/skills/vault-lint/scripts/lint_scan.py [--days 7]
+用法：python3 .agents/skills/vault-lint/scripts/lint_scan.py
 """
 
 import argparse
 import json
 import re
-import subprocess
 import sys
 from pathlib import Path
 
@@ -49,6 +48,7 @@ WIKILINK_RE = re.compile(r"\[\[([^\[\]]+?)\]\]")
 MDLINK_RE = re.compile(r"\]\(([^)]+)\)")
 FENCE_RE = re.compile(r"^```.*?^```", re.MULTILINE | re.DOTALL)
 INLINE_CODE_RE = re.compile(r"`[^`\n]*`")
+INDEX_ENTRY_RE = re.compile(r"^- \[\[([^\[\]|#]+)(?:\|[^\[\]]*)?\]\] — (.+)$", re.MULTILINE)
 
 
 def is_excluded(path: Path) -> bool:
@@ -134,9 +134,7 @@ def extract_md_targets(text: str) -> list:
 
 
 def main() -> int:
-    ap = argparse.ArgumentParser()
-    ap.add_argument("--days", type=int, default=7, help="語意層取近 N 天變動的 wiki 頁")
-    args = ap.parse_args()
+    argparse.ArgumentParser().parse_args()
 
     root = Path(".")
     if not (root / "schema" / "vault-map.md").is_file():
@@ -184,7 +182,7 @@ def main() -> int:
             for target in resolve_wikilink(t):
                 inbound.setdefault(target, set()).add(p)
 
-    findings = {k: [] for k in ("DEADLINK", "ORPHAN", "FM", "RAWGAP", "INDEXGAP", "BASEIDX", "CHANGED")}
+    findings = {k: [] for k in ("DEADLINK", "ORPHAN", "FM", "RAWGAP", "INDEXGAP", "INDEXDRIFT", "BASEIDX")}
 
     def top_of(p: Path) -> str:
         return rel[p].split("/", 1)[0]
@@ -300,32 +298,22 @@ def main() -> int:
         if is_wiki_content_page(p) and p.stem not in wiki_idx_text:
             findings["INDEXGAP"].append(f"INDEXGAP:wiki:{p.name}")
 
-    # ---- CHANGED：近 N 天 git 變動的 wiki 頁（語意層輸入）----
-    try:
-        # core.quotepath=false：關掉 git 對非 ASCII 檔名的 octal 逃逸，
-        # 否則中文檔名頁面會被輸出成 "\346\226\207..." 逃逸字串，
-        # 使下方 startswith("wiki/") 過濾靜默漏抓，語意層形同半殘。
-        r = subprocess.run(
-            ["git", "-c", "core.quotepath=false", "log",
-             f"--since={args.days} days ago", "--name-only", "--pretty=format:"],
-            capture_output=True, text=True, encoding="utf-8", errors="replace",
-        )
-        changed = sorted({
-            line.strip() for line in r.stdout.splitlines()
-            if line.strip().startswith("wiki/") and line.strip().endswith(".md")
-            and not line.strip().endswith("01.index.md") and (root / line.strip()).is_file()
-        })
-        findings["CHANGED"] = [f"CHANGED:{c}" for c in changed]
-    except OSError:
-        print("ERROR:git-unavailable（CHANGED 清單缺漏，語意層請自行判斷範圍）")
+    # ---- INDEXDRIFT：索引行摘要必須等於該頁 description ----
+    # 兩處手抄會各自漂移；description 是單一事實來源，索引行照抄。
+    for target, summary in INDEX_ENTRY_RE.findall(wiki_idx_text):
+        for page in resolve_wikilink(target.strip()):
+            if not is_wiki_content_page(page) or "description" not in fms.get(page, {}):
+                continue
+            if summary.strip() != unquote_scalar(fms[page]["description"]):
+                findings["INDEXDRIFT"].append(f"INDEXDRIFT:wiki:{page.name}")
 
     # ---- 輸出 ----
-    for key in ("DEADLINK", "ORPHAN", "FM", "RAWGAP", "INDEXGAP", "BASEIDX", "CHANGED"):
+    for key in ("DEADLINK", "ORPHAN", "FM", "RAWGAP", "INDEXGAP", "INDEXDRIFT", "BASEIDX"):
         for line in findings[key]:
             print(line)
     for line in tag_lines:
         print(line)
-    for key in ("DEADLINK", "ORPHAN", "FM", "RAWGAP", "INDEXGAP", "CHANGED"):
+    for key in ("DEADLINK", "ORPHAN", "FM", "RAWGAP", "INDEXGAP", "INDEXDRIFT"):
         print(f"SUMMARY:{key.lower()}={len(findings[key])}")
     print(f"SUMMARY:tags={len(tag_counts)}")
     scanned_targets = sum(1 for p in texts if is_linkcheck_target(p))
