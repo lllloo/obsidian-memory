@@ -2,7 +2,7 @@
 title: Hermes Agent
 description: Nous Research 開源的自我進化 AI agent：學習迴路自動生成並改良 skill，跨 session 累積記憶與使用者模型
 created: 2026-07-08
-updated: 2026-11-09
+updated: 2026-11-26
 parent: "[[wiki/01.index]]"
 tags:
   - ai-agent
@@ -77,6 +77,17 @@ Hermes 24/7 長駐（有別於跑完即停的 Claude Code），背景任務、se
 - **削減常駐 context**：每則訊息都附帶全部已啟用的 tools/skills/MCP，不用的直接關；MCP 用 tool search 按需載入單一工具。
 - **Hard limits 防空轉**：max tokens、max turns（來源快照時預設 150，屬版本可變預設值，可下修；**已被取代（2026-09-17）**：官方 `hermes_cli/config_defaults.py` 現行 `agent.max_turns` 預設為 `None` 即無上限，註解說明回合上限曾造成任務中途無聲截斷，要防空轉須自行設正整數）、hard stop、cron job 回合上限，避免卡住時燒光額度。
 - 用量追蹤：token 使用記錄存 root database，`insights` 指令看近 30 天成本分解。
+
+## 2026-11 結構變動（v0.23 系列）
+
+依官方 [v0.23.0 release notes](https://github.com/NousResearch/hermes-agent/releases/tag/v0.23.0)（2026-11-05，一手、未實測；之後的 patch 版完整說明延到下一個 minor 版才補）：
+
+- **單一 gateway 擁有所有 session**：CLI、TUI、Desktop、編輯器（ACP）、訊息 bot、cron 改為 client 接同一個 gateway，不再各跑一份 agent——官方說這是先前訊息重複寫入或在不同介面間遺失的原因。
+- **Webapp**：由自家 gateway 把整個 Desktop workspace 開在瀏覽器，預設關閉（`webapp.enabled`）。
+- **Skill 治理**：內建 skill 從 58 降為 44（Word／PowerPoint／Excel 合併為 `microsoft-office`）；新增 `hermes curator lock`，鎖住手工策展的 skill，agent 任何工具（含 YOLO 模式）都不能改寫——是上方「Skill self-improvement／Curator」放手式進化的第一個人工護欄。
+- **Delegation 可插拔**：官方 `advanced-delegation` plugin 可把子任務派到指定 model 或另一個 profile，`/delegation` 切換。
+- **付費 MCP 工具標價與花費上限**：approval prompt 顯示單次價格與該 chat 累計，超過上限前即使 YOLO 模式也會詢問。
+- **瀏覽器工具收斂**：舊的 `browser_*` 系列工具移除，統一走 `browser_exec`；`hermes mcp serve` 改名 `hermes mcp-serve`（移入 plugin）。
 
 ## 周邊
 
